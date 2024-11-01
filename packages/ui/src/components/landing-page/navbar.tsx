@@ -3,8 +3,12 @@ import { buttonVariants } from "@repo/ui/components/ui/button";
 import Container from "@repo/ui/components/landing-page/container.tsx";
 import Icons from "@repo/ui/components/landing-page/icons.tsx";
 
-function Navbar() {
-  // const user = await currentUser(); TODO: REFACTOR THIS INTO PROPER CUSTOM HOOK
+interface Props {
+  isUserLoggedIn: boolean;
+}
+
+function Navbar({ isUserLoggedIn }: Props): JSX.Element {
+  console.log("Navbar", isUserLoggedIn);
 
   return (
     <header className="px-4 h-14 sticky top-0 inset-x-0 w-full bg-background/40 backdrop-blur-lg border-b border-border z-50">
@@ -33,25 +37,37 @@ function Navbar() {
             </ul>
           </nav>
           <div className="flex items-end justify-center gap-4">
-            {/*{user ? (*/}
-            {/*    <UserButton/>*/}
-            {/*) : (*/}
-            <Link
-              className={buttonVariants({ size: "sm", variant: "ghost" })}
-              href="/sign-in"
-            >
-              Login
-            </Link>
-            <Link
-              className={buttonVariants({
-                size: "sm",
-                className: "hidden md:flex",
-              })}
-              href="/sign-up"
-            >
-              Start free trial
-            </Link>
-            {/*)}*/}
+            {/* CREATE A PROPER USER ICON WITH COMBOBOX OPTIONS */}
+            {isUserLoggedIn ? (
+              <div className="flex items-center gap-2">
+                {/*<Icons.user className="w-6 h-6" />*/}
+                <Link
+                  className={buttonVariants({ size: "sm", variant: "ghost" })}
+                  href="/dasboard"
+                >
+                  Dasboard
+                </Link>
+                <span className="text-sm font-medium">User</span>
+              </div>
+            ) : (
+              <div>
+                <Link
+                  className={buttonVariants({ size: "sm", variant: "ghost" })}
+                  href="/sign-in"
+                >
+                  Login
+                </Link>
+                <Link
+                  className={buttonVariants({
+                    size: "sm",
+                    className: "hidden md:flex",
+                  })}
+                  href="/sign-up"
+                >
+                  Start free trial
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </Container>

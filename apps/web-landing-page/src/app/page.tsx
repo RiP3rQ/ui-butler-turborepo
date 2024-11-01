@@ -23,14 +23,17 @@ import Icons from "@repo/ui/components/landing-page/icons";
 import Navbar from "@repo/ui/components/landing-page/navbar";
 import type { TODO_TYPE } from "@/types/todo.ts";
 import { features, perks, pricingCards, reviews } from "@/constants";
+import { isUserLoggerIn } from "@/helpers/logged-in-user.ts";
 
-export default function Home() {
+export default async function Home() {
   const firstRow = reviews.slice(0, reviews.length / 2);
   const secondRow = reviews.slice(reviews.length / 2);
 
+  const userLoggedIn = await isUserLoggerIn();
+
   return (
     <div className="flex flex-col items-center w-full">
-      <Navbar />
+      <Navbar isUserLoggedIn={userLoggedIn} />
       <section className="w-full relative flex items-center justify-center flex-col px-4 md:px-0 py-8">
         {/* hero */}
         <Wrapper>
