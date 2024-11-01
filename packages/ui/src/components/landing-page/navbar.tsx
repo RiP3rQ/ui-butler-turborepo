@@ -43,9 +43,9 @@ function Navbar({ isUserLoggedIn }: Props): JSX.Element {
                 {/*<Icons.user className="w-6 h-6" />*/}
                 <Link
                   className={buttonVariants({ size: "sm", variant: "ghost" })}
-                  href="/dasboard"
+                  href="/dashboard"
                 >
-                  Dasboard
+                  Dashboard
                 </Link>
                 <span className="text-sm font-medium">User</span>
               </div>

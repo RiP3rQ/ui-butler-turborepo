@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { cn } from "@repo/ui/lib/utils";
+import { cn } from "@repo/ui/lib/utils.ts";
 
 export function LampContainer({
   children,
