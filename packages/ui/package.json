@@ -8,7 +8,7 @@
     "dist"
   ],
   "exports": {
-    "./globals.css": "./src/styles/globals.css",
+    "./globals.css": "./src/globals.css",
     "./postcss.config": "./postcss.config.mjs",
     "./tailwind.config": "./tailwind.config.ts",
     "./lib/*": "./src/lib/*.ts",
@@ -21,7 +21,8 @@
   },
   "license": "MIT",
   "scripts": {
-    "build": "tailwindcss -i src/styles/globals.css -o ./dist/index.css",
+    "build": "tailwindcss -i src/globals.css -o ./dist/index.css",
+    "dev": "tsup --watch",
     "lint": "eslint src/",
     "type-check": "tsc --noEmit",
     "ui": "pnpm dlx shadcn@latest"
@@ -36,24 +37,27 @@
     "clsx": "^2.1.1",
     "framer-motion": "^11.11.11",
     "lucide-react": "^0.454.0",
-    "next": "15.0.2",
-    "next-themes": "^0.3.0",
-    "react": "19.0.0-rc-02c0e824-20241028",
-    "react-dom": "19.0.0-rc-02c0e824-20241028",
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7"
   },
   "peerDependencies": {
-    "react": "^18.2.0"
+    "next": "15.0.2",
+    "next-themes": "^0.3.0",
+    "react": "19.0.0-rc-02c0e824-20241028",
+    "react-dom": "19.0.0-rc-02c0e824-20241028",
+    "tailwindcss": "^3.4.1",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@repo/config-tailwindcss": "workspace:*",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/react": "^18.2.61",
     "autoprefixer": "^10.4.18",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
+    "tsup": "^8.3.5",
     "typescript": "5.5.4"
   },
   "overrides": {

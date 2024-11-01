@@ -3,7 +3,7 @@ import { buttonVariants } from "@repo/ui/components/ui/button";
 import Container from "@repo/ui/components/landing-page/container.tsx";
 import Icons from "@repo/ui/components/landing-page/icons.tsx";
 
-const Navbar = async () => {
+function Navbar() {
   // const user = await currentUser(); TODO: REFACTOR THIS INTO PROPER CUSTOM HOOK
 
   return (
@@ -32,7 +32,7 @@ const Navbar = async () => {
               </Link>
             </ul>
           </nav>
-          <div className="flex items-center gap-4">
+          <div className="flex items-end justify-center gap-4">
             {/*{user ? (*/}
             {/*    <UserButton/>*/}
             {/*) : (*/}
@@ -57,6 +57,6 @@ const Navbar = async () => {
       </Container>
     </header>
   );
-};
+}
 
 export default Navbar;
