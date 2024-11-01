@@ -163,6 +163,9 @@ importers:
         specifier: 19.0.0-rc-02c0e824-20241028
         version: 19.0.0-rc-02c0e824-20241028(react@19.0.0-rc-02c0e824-20241028)
     devDependencies:
+      '@repo/config-tailwindcss':
+        specifier: workspace:*
+        version: link:../../packages/config-tailwindcss
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../packages/config-eslint
