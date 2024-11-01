@@ -2,10 +2,10 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcryptjs';
-import { User } from '../users/schema/user.schema';
 import { UsersService } from '../users/users.service';
 import { Response } from 'express';
 import { TokenPayload } from './token-payload.interface';
+import { users } from '../users/schema/schema';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +15,11 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(user: User, response: Response, redirect = false) {
+  async login(
+    user: typeof users.$inferSelect,
+    response: Response,
+    redirect = false,
+  ) {
     const expiresAccessToken = new Date();
     expiresAccessToken.setMilliseconds(
       expiresAccessToken.getTime() +
@@ -37,7 +41,8 @@ export class AuthService {
     );
 
     const tokenPayload: TokenPayload = {
-      userId: user._id.toHexString(),
+      userId: user.id.toString(),
+      email: user.email,
     };
     const accessToken = this.jwtService.sign(tokenPayload, {
       secret: this.configService.getOrThrow('JWT_ACCESS_TOKEN_SECRET'),
@@ -53,8 +58,8 @@ export class AuthService {
     });
 
     await this.usersService.updateUser(
-      { _id: user._id },
-      { $set: { refreshToken: await hash(refreshToken, 10) } },
+      { userId: user.id.toString(), email: user.email },
+      { refreshToken: await hash(refreshToken, 10) },
     );
 
     response.cookie('Authentication', accessToken, {
@@ -84,19 +89,21 @@ export class AuthService {
       }
       return user;
     } catch (err) {
+      console.error(err);
       throw new UnauthorizedException('Credentials are not valid.');
     }
   }
 
-  async veryifyUserRefreshToken(refreshToken: string, userId: string) {
+  async veryifyUserRefreshToken(refreshToken: string, email: string) {
     try {
-      const user = await this.usersService.getUser({ _id: userId });
+      const user = await this.usersService.getUser({ email: email });
       const authenticated = await compare(refreshToken, user.refreshToken);
       if (!authenticated) {
         throw new UnauthorizedException();
       }
       return user;
     } catch (err) {
+      console.error(err);
       throw new UnauthorizedException('Refresh token is not valid.');
     }
   }
