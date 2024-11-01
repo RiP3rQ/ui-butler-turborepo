@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { CurrentUser } from './current-user.decorator';
 import { Response } from 'express';
@@ -18,6 +18,19 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ) {
     await this.authService.login(user, response);
+  }
+
+  @Post('register')
+  async register(
+    @Body() body: { email: string; password: string },
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    // get user from request body
+    const user = {
+      email: body.email,
+      password: body.password,
+    };
+    await this.authService.register(user, response);
   }
 
   @Post('refresh')

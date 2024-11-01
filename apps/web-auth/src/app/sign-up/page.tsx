@@ -2,10 +2,12 @@
 
 import { useFormState } from "react-dom";
 import { GoogleLoginButton } from "react-social-login-buttons";
-import login from "@/app/sign-in/server-action.ts";
+import register from "@/app/sign-up/server-action.ts";
+import Link from "next/link";
+import { Button } from "@repo/ui/components/ui/button";
 
 export default function Register() {
-  const [state, formAction] = useFormState(login, { error: "" });
+  const [state, formAction] = useFormState(register, { error: "" });
 
   return (
     <form action={formAction}>
@@ -27,15 +29,18 @@ export default function Register() {
           }`}
         />
         {state?.error}
-        <button type="submit" className="btn btn-primary">
-          Login
-        </button>
+        <Button type="submit" variant={"default"}>
+          Register
+        </Button>
         <div className="flex">
           <GoogleLoginButton
             onClick={() =>
               (window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`)
             }
           />
+        </div>
+        <div className={"underline cursor-pointer"}>
+          <Link href={"/sign-in"}>or Login instead</Link>
         </div>
       </div>
     </form>

@@ -78,6 +78,66 @@ export class AuthService {
     }
   }
 
+  async register(
+    user: { email: string; password: string },
+    response: Response,
+    redirect = true,
+  ) {
+    const expiresAccessToken = new Date();
+    expiresAccessToken.setMilliseconds(
+      expiresAccessToken.getTime() +
+        parseInt(
+          this.configService.getOrThrow<string>(
+            'JWT_ACCESS_TOKEN_EXPIRATION_MS',
+          ),
+        ),
+    );
+
+    const expiresRefreshToken = new Date();
+    expiresRefreshToken.setMilliseconds(
+      expiresRefreshToken.getTime() +
+        parseInt(
+          this.configService.getOrThrow<string>(
+            'JWT_REFRESH_TOKEN_EXPIRATION_MS',
+          ),
+        ),
+    );
+
+    const newUser = await this.usersService.createUser(user);
+
+    const tokenPayload: TokenPayload = {
+      userId: newUser.id.toString(),
+      email: user.email,
+    };
+    const accessToken = this.jwtService.sign(tokenPayload, {
+      secret: this.configService.getOrThrow('JWT_ACCESS_TOKEN_SECRET'),
+      expiresIn: `${this.configService.getOrThrow(
+        'JWT_ACCESS_TOKEN_EXPIRATION_MS',
+      )}ms`,
+    });
+    const refreshToken = this.jwtService.sign(tokenPayload, {
+      secret: this.configService.getOrThrow('JWT_REFRESH_TOKEN_SECRET'),
+      expiresIn: `${this.configService.getOrThrow(
+        'JWT_REFRESH_TOKEN_EXPIRATION_MS',
+      )}ms`,
+    });
+
+    response.cookie('Authentication', accessToken, {
+      httpOnly: true,
+      secure: this.configService.get('NODE_ENV') === 'production',
+      expires: expiresAccessToken,
+    });
+    response.cookie('Refresh', refreshToken, {
+      httpOnly: true,
+      secure: this.configService.get('NODE_ENV') === 'production',
+      expires: expiresRefreshToken,
+    });
+
+    if (redirect) {
+      response.redirect(this.configService.getOrThrow('AUTH_UI_REDIRECT'));
+    }
+  }
+
   async verifyUser(email: string, password: string) {
     try {
       const user = await this.usersService.getUser({

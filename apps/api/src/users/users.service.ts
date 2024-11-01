@@ -20,10 +20,16 @@ export class UsersService {
   ) {}
 
   async createUser(data: CreateUserRequest) {
-    await this.database.insert(users).values({
-      ...schema.users,
-      password: await hash(data.password, 10),
-    }); // request validation
+    console.log('data', data);
+
+    const newUser = await this.database
+      .insert(users)
+      .values({
+        ...data,
+        password: await hash(data.password, 10),
+      })
+      .returning(); // request validation
+    return newUser[0];
   }
 
   async getUsers() {
@@ -37,7 +43,7 @@ export class UsersService {
       .select()
       .from(users)
       .where(eq(users.email, data.email));
-    if (user) {
+    if (!user || user?.length > 0) {
       return user;
     }
     return this.createUser(data);
