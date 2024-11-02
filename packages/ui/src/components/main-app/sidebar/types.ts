@@ -5,3 +5,14 @@ export interface BundlesType {
   url: string;
   icon: LucideIcon;
 }
+
+export interface NavMainType {
+  title: string;
+  url: string;
+  icon?: LucideIcon;
+  isActive?: boolean;
+  items?: {
+    title: string;
+    url: string;
+  }[];
+}

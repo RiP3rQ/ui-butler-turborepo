@@ -6,6 +6,7 @@ import {
   BookOpen,
   Bot,
   CircleMinusIcon,
+  ComponentIcon,
   DollarSignIcon,
   Frame,
   HistoryIcon,
@@ -17,7 +18,6 @@ import {
   Settings2,
   SquareTerminal,
 } from "lucide-react";
-import Link from "next/link";
 import { VercelLogoIcon } from "@radix-ui/react-icons";
 import { NavMain } from "@repo/ui/components/main-app/sidebar/nav-main";
 import { NavUser } from "@repo/ui/components/main-app/sidebar/nav-user";
@@ -28,9 +28,9 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@repo/ui/components/ui/sidebar";
-import Icons from "@repo/ui/components/landing-page/icons.tsx";
 import { SavedBundles } from "@repo/ui/components/main-app/sidebar/saved-components-bundles.tsx";
 import type { BundlesType } from "@repo/ui/components/main-app/sidebar/types.ts";
+import { CustomSidebarHeader } from "@repo/ui/components/main-app/sidebar/sidebar-header.tsx";
 
 // This is sample data.
 const data = {
@@ -41,10 +41,16 @@ const data = {
   },
   navMain: [
     {
+      title: "Save new component",
+      url: "/save-new-component",
+      icon: ComponentIcon,
+      isActive: false,
+    },
+    {
       title: "Playground",
       url: "#",
       icon: SquareTerminal,
-      isActive: true,
+      isActive: false,
       items: [
         {
           title: "History",
@@ -110,17 +116,17 @@ const data = {
   ],
   savedBundles: [
     {
-      name: "Shadcn components",
+      name: "Shadcn _components",
       url: "#",
       icon: Frame,
     },
     {
-      name: "Vercel components",
+      name: "Vercel _components",
       url: "#",
       icon: VercelLogoIcon,
     },
     {
-      name: "Black&White components",
+      name: "Black&White _components",
       url: "#",
       icon: Map,
     },
@@ -131,12 +137,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <div className="flex items-center justify-center w-full">
-          <Link className="flex items-center gap-2" href="/">
-            <Icons.logo className="size-8" />
-            <span className="text-lg font-medium">UI-Butler</span>
-          </Link>
-        </div>
+        <CustomSidebarHeader />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />

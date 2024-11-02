@@ -4,8 +4,8 @@ import Wrapper from "@repo/ui/components/landing-page/wrapper";
 import Container from "@repo/ui/components/landing-page/container";
 import Link from "next/link";
 import { Button } from "@repo/ui/components/ui/button";
-import { BorderBeam } from "@repo/ui/components/custom-ui/border-beam";
-import SectionBadge from "@repo/ui/components/custom-ui/section-badge";
+import { BorderBeam } from "@repo/ui/components/landing-page/custom-ui/border-beam";
+import SectionBadge from "@repo/ui/components/landing-page/custom-ui/section-badge";
 import { cn } from "@repo/ui/lib/utils";
 import {
   Card,
@@ -15,8 +15,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/components/ui/card";
-import Marquee from "@repo/ui/components/custom-ui/marquee";
-import { LampContainer } from "@repo/ui/components/custom-ui/lamp";
+import Marquee from "@repo/ui/components/landing-page/custom-ui/marquee";
+import { LampContainer } from "@repo/ui/components/landing-page/custom-ui/lamp";
 import Footer from "@repo/ui/components/landing-page/footer";
 import { Input } from "@repo/ui/components/ui/input";
 import Icons from "@repo/ui/components/landing-page/icons";

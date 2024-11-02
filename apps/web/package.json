@@ -9,22 +9,24 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "react": "19.0.0-rc-02c0e824-20241028",
-    "react-dom": "19.0.0-rc-02c0e824-20241028",
+    "@repo/ui": "workspace:*",
+    "lucide-react": "^0.454.0",
     "next": "15.0.2",
-    "@repo/ui": "workspace:*"
+    "react": "19.0.0-rc-02c0e824-20241028",
+    "react-dom": "19.0.0-rc-02c0e824-20241028"
   },
   "devDependencies": {
+    "@repo/config-tailwindcss": "workspace:*",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@repo/config-tailwindcss": "workspace:*",
-    "typescript": "^5",
+    "@repo/types": "workspace:*",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "15.0.2",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "eslint": "^8",
-    "eslint-config-next": "15.0.2"
+    "typescript": "^5"
   }
 }
