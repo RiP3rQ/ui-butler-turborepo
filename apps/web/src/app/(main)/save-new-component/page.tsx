@@ -10,10 +10,25 @@ import {
   TestTubeDiagonalIcon,
 } from "lucide-react";
 import type { EditorActionsType } from "@repo/types/code-editor-types";
+import { useExecuteRunActionDialogState } from "@repo/ui/state/execute-run-action-state";
+import { ActionRunDialog } from "@repo/ui/components/main-app/code-editor/action-run-dialog";
 
-export default function SaveNewComponentPage() {
+export default function SaveNewComponentPage(): JSX.Element {
+  const { updateIsOpen, updateActionTitle, updateActionSubTitle } =
+    useExecuteRunActionDialogState();
+
   async function testFunction() {
     await console.log("Test function");
+  }
+
+  function testHandlerFunction() {
+    updateIsOpen(true);
+    updateActionTitle(
+      "Create unit tests for this component - Run action execution",
+    );
+    updateActionSubTitle(
+      "Here you can see execution of the creation of unit tests for this component in action. With execution information, logs and final output.",
+    );
   }
 
   const ACTIONS = [
@@ -25,7 +40,7 @@ export default function SaveNewComponentPage() {
     {
       title: "Create unit tests for this component",
       icon: TestTubeDiagonalIcon,
-      function: testFunction,
+      function: testHandlerFunction,
     },
     {
       title: "Create E2E tests for this component",
@@ -50,23 +65,26 @@ export default function SaveNewComponentPage() {
   };
 
   return (
-    <div className="flex items-center flex-col pt-10 h-screen">
-      <div className="mb-6 flex items-center justify-center flex-col">
-        <Label className="text-2xl font-semibold underline">
-          Save new component
-        </Label>
-        <Label className="text-lg font-light">
-          Using the code editor below, you can write your component code and
-          then choose to save it or run an action.
-        </Label>
+    <>
+      <ActionRunDialog />
+      <div className="flex items-center flex-col pt-10 h-screen">
+        <div className="mb-6 flex items-center justify-center flex-col">
+          <Label className="text-2xl font-semibold underline">
+            Save new component
+          </Label>
+          <Label className="text-lg font-light">
+            Using the code editor below, you can write your component code and
+            then choose to save it or run an action.
+          </Label>
+        </div>
+        <div className="w-full max-w-5xl h-[60vh]">
+          <CodeEditor
+            actions={ACTIONS}
+            className="w-full"
+            handleSaveAction={() => handleSaveAction()}
+          />
+        </div>
       </div>
-      <div className="w-full max-w-5xl h-[60vh]">
-        <CodeEditor
-          actions={ACTIONS}
-          className="w-full"
-          handleSaveAction={() => handleSaveAction()}
-        />
-      </div>
-    </div>
+    </>
   );
 }

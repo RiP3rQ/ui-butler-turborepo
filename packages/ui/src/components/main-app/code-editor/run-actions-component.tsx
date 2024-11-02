@@ -31,7 +31,10 @@ export function RunCodeEditorActions({
       <DropdownMenuContent className="w-56">
         <DropdownMenuGroup>
           {actions.map((action, index) => (
-            <DropdownMenuItem key={index} onClick={action.function}>
+            <DropdownMenuItem
+              key={action.title + index}
+              onClick={action.function}
+            >
               {action.title}
               <DropdownMenuShortcut>
                 <action.icon className="size-4" />
