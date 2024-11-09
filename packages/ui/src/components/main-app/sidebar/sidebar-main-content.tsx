@@ -24,7 +24,9 @@ interface NavMainProps {
   items: NavMainType[];
 }
 
-export function NavMain({ items }: Readonly<NavMainProps>): JSX.Element {
+export function SidebarMainContent({
+  items,
+}: Readonly<NavMainProps>): JSX.Element {
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>

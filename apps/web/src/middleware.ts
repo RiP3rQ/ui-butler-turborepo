@@ -1,19 +1,18 @@
 import { cookies } from "next/headers";
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import {
   AUTH_COOKIE,
   getAuthCookie,
   REFRESH_COOKIE,
 } from "@/helpers/auth-cookie";
 
-const unauthenticatedRoutes = ["/sign-up", "/sign-in", "/auth/google"];
-
 export async function middleware(request: NextRequest) {
-  const authenticated = !!(await cookies()).get(AUTH_COOKIE)?.value;
+  const authenticated = Boolean((await cookies()).get(AUTH_COOKIE)?.value);
 
   if (authenticated) {
-    // redirect to main page if authenticated
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_MAIN_APP_URL}`);
+    // don't do anything if authenticated
+    return;
   }
 
   if (!authenticated && (await cookies()).get(REFRESH_COOKIE)) {
@@ -34,13 +33,8 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  if (
-    !authenticated &&
-    !unauthenticatedRoutes.some((route) =>
-      request.nextUrl.pathname.startsWith(route),
-    )
-  ) {
-    return Response.redirect(new URL(unauthenticatedRoutes[0], request.url));
+  if (!authenticated) {
+    return Response.redirect(new URL("/sign-in", request.url));
   }
 }
 

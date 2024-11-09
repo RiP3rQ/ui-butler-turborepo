@@ -2,7 +2,9 @@ import localFont from "next/font/local";
 import "@repo/ui/globals.css";
 import ThemeProvider from "@repo/ui/providers/theme-provider";
 import type { Metadata } from "next";
-import { SITE_CONFIG } from "~/config";
+import { SITE_CONFIG } from "@/config";
+import ToastProvider from "@repo/ui/providers/toast-provider";
+import { QueryProvider } from "@/components/query-provider.tsx";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -27,8 +29,17 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-background text-foreground antialiased max-w-full overflow-x-hidden`}
       >
-        <ThemeProvider defaultTheme="dark">{children}</ThemeProvider>
+        <QueryProvider>
+          <ThemeProvider defaultTheme="dark">
+            {children}
+            <ToastProvider />
+          </ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );
 }
+
+// TODO: TESTS E2E
+// TODO: UNIT TESTS
+// TODO: GITHUB OAuth

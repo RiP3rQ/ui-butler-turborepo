@@ -18,8 +18,8 @@ import {
   VariableIcon,
 } from "lucide-react";
 import { VercelLogoIcon } from "@radix-ui/react-icons";
-import { NavMain } from "@repo/ui/components/main-app/sidebar/nav-main";
-import { NavUser } from "@repo/ui/components/main-app/sidebar/nav-user";
+import { SidebarMainContent } from "@repo/ui/components/main-app/sidebar/sidebar-main-content.tsx";
+import { SidebarFooterContent } from "@repo/ui/components/main-app/sidebar/sidebar-footer-content.tsx";
 import {
   Sidebar,
   SidebarContent,
@@ -135,11 +135,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <CustomSidebarHeader />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <SidebarMainContent items={data.navMain} />
         <SavedBundles bundles={data.savedBundles as BundlesType[]} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <SidebarFooterContent user={data.user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
