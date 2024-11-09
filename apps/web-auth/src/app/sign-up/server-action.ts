@@ -5,7 +5,7 @@ import { getAuthCookie } from "../helpers/auth-cookie";
 import { cookies } from "next/headers";
 
 export default async function register(_prevState: any, formData: FormData) {
-  const res = await fetch(`${process.env.API_URL}/auth/register`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(Object.fromEntries(formData)),

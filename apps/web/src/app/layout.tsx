@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "@repo/ui/globals.css";
-import {
-  SidebarProvider,
-  SidebarTrigger,
-} from "@repo/ui/components/ui/sidebar";
+import { SidebarProvider } from "@repo/ui/components/ui/sidebar";
 import { AppSidebar } from "@repo/ui/components/main-app/sidebar/app-sidebar";
 import { cookies } from "next/headers";
 
@@ -39,10 +36,7 @@ export default async function RootLayout({
       >
         <SidebarProvider defaultOpen={defaultOpen}>
           <AppSidebar />
-          <main className="min-h-screen w-full relative pt-8">
-            <SidebarTrigger className="absolute top-0 left-0 z-[999]" />
-            {children}
-          </main>
+          <main className="min-h-screen w-full relative pt-8">{children}</main>
         </SidebarProvider>
       </body>
     </html>

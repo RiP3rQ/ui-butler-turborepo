@@ -18,9 +18,13 @@ import {
   SidebarMenuSubItem,
 } from "@repo/ui/components/ui/sidebar";
 import { Separator } from "@repo/ui/components/ui/separator.tsx";
-import type { NavMainType } from "@repo/ui/components/main-app/sidebar/types.ts";
+import type { NavMainType } from "@repo/ui/types/sidebar.ts";
 
-export function NavMain({ items }: { items: NavMainType[] }): JSX.Element {
+interface NavMainProps {
+  items: NavMainType[];
+}
+
+export function NavMain({ items }: Readonly<NavMainProps>): JSX.Element {
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
@@ -65,6 +69,7 @@ function CollapsibleMenuItem({
               <SidebarMenuSubItem key={subItem.title}>
                 <SidebarMenuSubButton asChild>
                   <Link href={subItem.url}>
+                    <subItem.icon className="size-3" />
                     <span>{subItem.title}</span>
                   </Link>
                 </SidebarMenuSubButton>

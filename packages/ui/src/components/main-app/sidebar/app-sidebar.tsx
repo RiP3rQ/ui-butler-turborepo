@@ -3,9 +3,8 @@
 import * as React from "react";
 import {
   AirplayIcon,
-  BookOpen,
   Bot,
-  CircleMinusIcon,
+  ChartAreaIcon,
   ComponentIcon,
   DollarSignIcon,
   Frame,
@@ -13,10 +12,10 @@ import {
   Map,
   PaperclipIcon,
   PenIcon,
-  SaveIcon,
   Settings,
   Settings2,
   SquareTerminal,
+  VariableIcon,
 } from "lucide-react";
 import { VercelLogoIcon } from "@radix-ui/react-icons";
 import { NavMain } from "@repo/ui/components/main-app/sidebar/nav-main";
@@ -29,8 +28,8 @@ import {
   SidebarRail,
 } from "@repo/ui/components/ui/sidebar";
 import { SavedBundles } from "@repo/ui/components/main-app/sidebar/saved-components-bundles.tsx";
-import type { BundlesType } from "@repo/ui/components/main-app/sidebar/types.ts";
 import { CustomSidebarHeader } from "@repo/ui/components/main-app/sidebar/sidebar-header.tsx";
+import type { BundlesType } from "@repo/ui/types/sidebar.ts";
 
 // This is sample data.
 const data = {
@@ -41,14 +40,20 @@ const data = {
   },
   navMain: [
     {
-      title: "Save new component",
-      url: "/save-new-component",
+      title: "Analytics dashboard",
+      url: "/dashboard",
+      icon: ChartAreaIcon,
+      isActive: true,
+    },
+    {
+      title: "Create new component",
+      url: "/create-new-component",
       icon: ComponentIcon,
       isActive: false,
     },
     {
-      title: "Playground",
-      url: "#",
+      title: "Workflows",
+      url: "/workflows",
       icon: SquareTerminal,
       isActive: false,
       items: [
@@ -56,11 +61,6 @@ const data = {
           title: "History",
           url: "#",
           icon: HistoryIcon,
-        },
-        {
-          title: "Saved",
-          url: "#",
-          icon: SaveIcon,
         },
       ],
     },
@@ -87,7 +87,7 @@ const data = {
       ],
     },
     {
-      title: "Settings & Changelog",
+      title: "Settings & Variables",
       url: "#",
       icon: Settings2,
       items: [
@@ -102,14 +102,9 @@ const data = {
           icon: DollarSignIcon,
         },
         {
-          title: "Limits",
+          title: "Variables",
           url: "#",
-          icon: CircleMinusIcon,
-        },
-        {
-          title: "Changelog",
-          url: "#",
-          icon: BookOpen,
+          icon: VariableIcon,
         },
       ],
     },

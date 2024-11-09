@@ -14,5 +14,6 @@ export interface NavMainType {
   items?: {
     title: string;
     url: string;
+    icon: LucideIcon;
   }[];
 }

@@ -11,6 +11,7 @@ import { users } from '../users/schema/schema';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  // TODO: FIX THIS ROUTE
   @Post('login')
   @UseGuards(LocalAuthGuard)
   async login(
@@ -20,6 +21,7 @@ export class AuthController {
     await this.authService.login(user, response);
   }
 
+  // TODO: FIX THIS ROUTE
   @Post('register')
   async register(
     @Body() body: { email: string; password: string },

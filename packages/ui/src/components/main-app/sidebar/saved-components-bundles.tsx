@@ -18,13 +18,15 @@ import {
   useSidebar,
 } from "@repo/ui/components/ui/sidebar";
 import { Separator } from "@repo/ui/components/ui/separator.tsx";
-import type { BundlesType } from "@repo/ui/components/main-app/sidebar/types.ts";
+import type { BundlesType } from "@repo/ui/types/sidebar.ts";
 
-interface Props {
+interface SavedBundlesProps {
   bundles: BundlesType[];
 }
 
-export function SavedBundles({ bundles }: Readonly<Props>) {
+export function SavedBundles({
+  bundles,
+}: Readonly<SavedBundlesProps>): JSX.Element {
   const { isMobile } = useSidebar();
 
   return (
