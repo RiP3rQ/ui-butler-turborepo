@@ -9,23 +9,31 @@ import { registerFormSchema } from "@/schemas/register-schema.ts";
 export default async function registerUser(
   formData: z.infer<typeof registerFormSchema>,
 ) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(formData),
-  });
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      },
+    );
 
-  console.log("res", res);
-
-  if (!res.ok) {
-    return { error: "Credentials are not valid." };
+    if (!res.ok) {
+      throw new Error("Registration failed");
+    }
+    const cookie = getAuthCookie(res);
+    if (cookie?.accessToken) {
+      (await cookies()).set(cookie.accessToken);
+    }
+    if (cookie?.refreshToken) {
+      (await cookies()).set(cookie.refreshToken);
+    }
+  } catch (error) {
+    console.error(error);
+    const errorMessage =
+      error instanceof Error ? error.message : JSON.stringify(error);
+    throw new Error(errorMessage);
   }
-  const cookie = getAuthCookie(res);
-  if (cookie?.accessToken) {
-    (await cookies()).set(cookie.accessToken);
-  }
-  if (cookie?.refreshToken) {
-    (await cookies()).set(cookie.refreshToken);
-  }
-  redirect("/sign-in");
+  redirect(`${process.env.NEXT_PUBLIC_MAIN_APP_URL}`);
 }

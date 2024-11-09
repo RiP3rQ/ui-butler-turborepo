@@ -12,7 +12,7 @@ import SocialPlatformButton from "@/app/sign-in/_components/social-platform-butt
 import { GithubIcon, GlobeIcon } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import loginUser from "@/actions/loginUser.ts";
+import loginUser from "@/actions/loginUser";
 import { useForm } from "react-hook-form";
 import {
   Form,
@@ -21,7 +21,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form.tsx";
+} from "@/components/ui/form";
 
 type UserAuthFormProps = React.HTMLAttributes<HTMLDivElement>;
 

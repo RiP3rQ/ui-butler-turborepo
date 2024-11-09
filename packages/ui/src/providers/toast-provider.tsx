@@ -1,6 +1,6 @@
 "use client";
 
-import { Toaster } from "@repo/ui/components/ui/sonner.tsx";
+import { Toaster } from "@repo/ui/components/ui/sonner";
 
 function ToastProvider() {
   return <Toaster position="bottom-right" />;

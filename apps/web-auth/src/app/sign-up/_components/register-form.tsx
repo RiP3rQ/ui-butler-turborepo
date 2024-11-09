@@ -48,7 +48,6 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
         error instanceof Error ? error.message : JSON.stringify(error);
       toast.error(errorMessage, {
         id: "register",
-        style: { background: "red" },
       });
     },
   });

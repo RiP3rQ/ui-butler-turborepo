@@ -81,7 +81,6 @@ export class AuthService {
   async register(
     user: { email: string; password: string },
     response: Response,
-    redirect = true,
   ) {
     const expiresAccessToken = new Date();
     expiresAccessToken.setMilliseconds(
@@ -103,12 +102,14 @@ export class AuthService {
         ),
     );
 
+    // TODO: SAME USERNAME ALSO
     const newUser = await this.usersService.createUser(user);
 
     const tokenPayload: TokenPayload = {
       userId: newUser.id.toString(),
       email: user.email,
     };
+
     const accessToken = this.jwtService.sign(tokenPayload, {
       secret: this.configService.getOrThrow('JWT_ACCESS_TOKEN_SECRET'),
       expiresIn: `${this.configService.getOrThrow(
@@ -133,9 +134,7 @@ export class AuthService {
       expires: expiresRefreshToken,
     });
 
-    if (redirect) {
-      response.redirect(this.configService.getOrThrow('AUTH_UI_REDIRECT'));
-    }
+    console.log('response', response);
   }
 
   async verifyUser(email: string, password: string) {
