@@ -6,12 +6,12 @@ import { AuthService } from './auth.service';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { users } from '../users/schema/schema';
+import { GithubAuthGuard } from './guards/github-auth.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  // TODO: FIX THIS ROUTE
   @Post('login')
   @UseGuards(LocalAuthGuard)
   async login(
@@ -21,7 +21,6 @@ export class AuthController {
     await this.authService.login(user, response);
   }
 
-  // TODO: FIX THIS ROUTE
   @Post('register')
   async register(
     @Body() body: { email: string; password: string },
@@ -51,6 +50,19 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
   async googleCallback(
+    @CurrentUser() user: typeof users.$inferSelect,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    await this.authService.login(user, response, true);
+  }
+
+  @Get('github')
+  @UseGuards(GithubAuthGuard)
+  loginGithub() {}
+
+  @Get('github/callback')
+  @UseGuards(GithubAuthGuard)
+  async githubCallback(
     @CurrentUser() user: typeof users.$inferSelect,
     @Res({ passthrough: true }) response: Response,
   ) {
