@@ -11,12 +11,15 @@ import {
 import { Input } from "@repo/ui/components/ui/input";
 import { Separator } from "@repo/ui/components/ui/separator";
 
-interface LoginFormFieldProps {
+interface LoginFormFieldsProps {
   control: Control<z.infer<typeof loginFormSchema>>;
   isDisabled: boolean;
 }
 
-export function LoginFormFields({ control, isDisabled }: LoginFormFieldProps) {
+export function LoginFormFields({
+  control,
+  isDisabled,
+}: Readonly<LoginFormFieldsProps>) {
   return (
     <>
       <FormField
