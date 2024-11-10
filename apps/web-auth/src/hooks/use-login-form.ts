@@ -28,7 +28,7 @@ export function useLoginForm() {
     onError: (error) => {
       console.error(error);
       const errorMessage = getErrorMessage(error);
-      toast.error(errorMessage, { id: "login", style: { background: "red" } });
+      toast.error(errorMessage, { id: "login" });
     },
   });
 

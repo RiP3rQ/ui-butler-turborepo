@@ -116,7 +116,6 @@ describe("useLoginForm", () => {
 
     expect(toast.error).toHaveBeenCalledWith(errorMessage, {
       id: "login",
-      style: { background: "red" },
     });
   });
 
