@@ -1,0 +1,106 @@
+import { AUTH_COOKIE, getAuthCookie, REFRESH_COOKIE } from "./auth-cookie";
+import { jwtDecode } from "jwt-decode";
+
+// Mock `jwtDecode` to return a fixed expiration
+jest.mock("jwt-decode", () => ({
+  jwtDecode: jest.fn(() => ({ exp: 1700000000 })),
+}));
+
+type MockResponse = {
+  headers: {
+    get(name: string): string | null;
+  };
+};
+
+function createMockResponse(headers: Record<string, string>): MockResponse {
+  return {
+    headers: {
+      get(name: string) {
+        return headers[name] || null;
+      },
+    },
+  };
+}
+
+describe("getAuthCookie", () => {
+  const mockAccessToken = "mockAccessToken";
+  const mockRefreshToken = "mockRefreshToken";
+  const mockExpiration = 1700000000;
+
+  it("should return undefined if no Set-Cookie header is present", () => {
+    const response = createMockResponse({});
+
+    const result = getAuthCookie(response as Response);
+    expect(result).toBeUndefined();
+  });
+
+  it("should correctly extract access and refresh tokens from Set-Cookie header", () => {
+    const setCookieHeader = `${AUTH_COOKIE}=${mockAccessToken}; ${REFRESH_COOKIE}=${mockRefreshToken};`;
+    const response = createMockResponse({
+      "Set-Cookie": setCookieHeader,
+    });
+
+    const result = getAuthCookie(response as Response);
+
+    expect(result).toEqual({
+      accessToken: {
+        name: AUTH_COOKIE,
+        value: mockAccessToken,
+        secure: true,
+        httpOnly: true,
+        expires: new Date(mockExpiration * 1000),
+      },
+      refreshToken: {
+        name: REFRESH_COOKIE,
+        value: mockRefreshToken,
+        secure: true,
+        httpOnly: true,
+        expires: new Date(mockExpiration * 1000),
+      },
+    });
+  });
+
+  it("should return undefined for tokens not present in Set-Cookie header", () => {
+    const response = createMockResponse({
+      "Set-Cookie": "SomeOtherCookie=value;",
+    });
+
+    const result = getAuthCookie(response as Response);
+
+    expect(result).toEqual({
+      accessToken: undefined,
+      refreshToken: undefined,
+    });
+  });
+
+  it("should handle missing expiry in decoded token gracefully", () => {
+    // Temporarily change the mock implementation for this test case
+    (jwtDecode as jest.Mock).mockImplementation(() => ({})); // Simulate missing `exp`
+    const setCookieHeader = `${AUTH_COOKIE}=${mockAccessToken}; ${REFRESH_COOKIE}=${mockRefreshToken};`;
+    const response = createMockResponse({
+      "Set-Cookie": setCookieHeader,
+    });
+
+    const result = getAuthCookie(response as Response);
+
+    expect(result).toEqual({
+      accessToken: {
+        name: AUTH_COOKIE,
+        value: mockAccessToken,
+        secure: true,
+        httpOnly: true,
+        expires: undefined, // Adjust to expect undefined due to missing `exp`
+      },
+      refreshToken: {
+        name: REFRESH_COOKIE,
+        value: mockRefreshToken,
+        secure: true,
+        httpOnly: true,
+        expires: undefined, // Adjust to expect undefined due to missing `exp`
+      },
+    });
+
+    // Restore the default implementation if needed
+    (jwtDecode as jest.Mock).mockImplementation(() => ({ exp: 1700000000 }));
+  });
+});

@@ -18,20 +18,26 @@ export const getAuthCookie = (response: Response) => {
     .find((cookieHeader) => cookieHeader.includes(REFRESH_COOKIE))
     ?.split("=")[1];
 
+  const decodeToken = (token: string | undefined) => {
+    if (!token) return undefined;
+    const decoded = jwtDecode(token);
+    return decoded.exp ? new Date(decoded.exp * 1000) : undefined;
+  };
+
   return {
     accessToken: accessToken && {
       name: AUTH_COOKIE,
       value: accessToken,
       secure: true,
       httpOnly: true,
-      expires: new Date(jwtDecode(accessToken).exp! * 1000),
+      expires: decodeToken(accessToken),
     },
     refreshToken: refreshToken && {
       name: REFRESH_COOKIE,
       value: refreshToken,
       secure: true,
       httpOnly: true,
-      expires: new Date(jwtDecode(refreshToken).exp! * 1000),
+      expires: decodeToken(refreshToken),
     },
   };
 };
