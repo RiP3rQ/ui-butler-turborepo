@@ -64,33 +64,6 @@ describe("useLoginForm", () => {
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 
-  const setupAndTriggerError = async (mockedError: unknown) => {
-    (loginUser as jest.Mock).mockRejectedValueOnce(mockedError);
-
-    render(<TestComponent />, { wrapper });
-
-    const emailInput = screen.getByPlaceholderText("email");
-    const passwordInput = screen.getByPlaceholderText("password");
-    const submitButton = screen.getByTestId("submit-button");
-
-    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
-    fireEvent.change(passwordInput, { target: { value: "password123" } });
-
-    fireEvent.click(submitButton);
-
-    await waitFor(() => {
-      expect(console.error).toHaveBeenCalledWith(mockedError);
-      const errorMessage =
-        mockedError instanceof Error
-          ? mockedError.message
-          : JSON.stringify(mockedError);
-      expect(toast.error).toHaveBeenCalledWith(errorMessage, {
-        id: "login",
-        style: { background: "red" },
-      });
-    });
-  };
-
   it("should initialize form with default values", () => {
     const { result } = renderHook(() => useLoginForm(), { wrapper });
 

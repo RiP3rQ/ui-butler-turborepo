@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { useMemo } from "react";
 import { registerFormSchema } from "@/schemas/register-schema.ts";
 import registerUser from "@/actions/registerUser.ts";
+import { getErrorMessage } from "@/lib/get-error-message.ts";
 
 export function useRegisterForm() {
   const form = useForm<z.infer<typeof registerFormSchema>>({
@@ -27,8 +28,8 @@ export function useRegisterForm() {
       toast.success("Registration successful!", { id: "register" });
     },
     onError: (error) => {
-      const errorMessage =
-        error instanceof Error ? error.message : JSON.stringify(error);
+      console.error(error);
+      const errorMessage = getErrorMessage(error);
       toast.error(errorMessage, {
         id: "register",
       });
