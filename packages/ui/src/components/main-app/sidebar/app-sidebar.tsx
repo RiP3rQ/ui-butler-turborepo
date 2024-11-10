@@ -58,6 +58,16 @@ const data = {
       isActive: false,
       items: [
         {
+          title: "Create new workflow",
+          url: "/create-new-workflow",
+          icon: PenIcon,
+        },
+        {
+          title: "Workflows list",
+          url: "/workflows-list",
+          icon: PaperclipIcon,
+        },
+        {
           title: "History",
           url: "#",
           icon: HistoryIcon,

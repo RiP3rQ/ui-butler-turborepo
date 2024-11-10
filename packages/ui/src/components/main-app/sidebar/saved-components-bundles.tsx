@@ -19,6 +19,7 @@ import {
 } from "@repo/ui/components/ui/sidebar";
 import { Separator } from "@repo/ui/components/ui/separator.tsx";
 import type { BundlesType } from "@repo/ui/types/sidebar.ts";
+import { cn } from "@repo/ui/lib/utils.ts";
 
 interface SavedBundlesProps {
   bundles: BundlesType[];
@@ -27,7 +28,7 @@ interface SavedBundlesProps {
 export function SavedBundles({
   bundles,
 }: Readonly<SavedBundlesProps>): JSX.Element {
-  const { isMobile } = useSidebar();
+  const { isMobile, currentRoute } = useSidebar();
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -36,7 +37,14 @@ export function SavedBundles({
       <SidebarMenu>
         {bundles.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
+            <SidebarMenuButton
+              asChild
+              className={cn(
+                "hover:bg-muted-foreground",
+                item.url === currentRoute &&
+                  "bg-muted-foreground hover:bg-muted",
+              )}
+            >
               <a href={item.url}>
                 <item.icon />
                 <span>{item.name}</span>

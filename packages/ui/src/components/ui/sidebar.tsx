@@ -1,10 +1,16 @@
 "use client";
 
 import * as React from "react";
+import { useMemo } from "react";
 import { Slot } from "@radix-ui/react-slot";
 import type { VariantProps } from "class-variance-authority";
 import { cva } from "class-variance-authority";
-import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "lucide-react";
+import {
+  ArrowLeftCircleIcon,
+  ArrowRightCircleIcon,
+  PanelLeft,
+} from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useIsMobile } from "@repo/ui/hooks/use-mobile";
 import { cn } from "@repo/ui/lib/utils";
 import { Button } from "@repo/ui/components/ui/button";
@@ -34,6 +40,7 @@ interface SidebarContext {
   setOpenMobile: (open: boolean) => void;
   isMobile: boolean;
   toggleSidebar: () => void;
+  currentRoute?: string;
 }
 
 const SidebarContext = React.createContext<SidebarContext | null>(null);
@@ -116,8 +123,18 @@ const SidebarProvider = React.forwardRef<
     // This makes it easier to style the sidebar with Tailwind classes.
     const state = open ? "expanded" : "collapsed";
 
+    // Check if current route is active
+    const pathname = usePathname();
+    const currentRoute = useMemo(() => {
+      if (typeof window === "undefined") {
+        return "";
+      }
+      return pathname;
+    }, [pathname]);
+
     const contextValue = React.useMemo<SidebarContext>(
       () => ({
+        currentRoute,
         state,
         open,
         setOpen,
@@ -127,6 +144,7 @@ const SidebarProvider = React.forwardRef<
         toggleSidebar,
       }),
       [
+        currentRoute,
         state,
         open,
         setOpen,
@@ -202,21 +220,25 @@ const Sidebar = React.forwardRef<
 
     if (isMobile) {
       return (
-        <Sheet onOpenChange={setOpenMobile} open={openMobile} {...props}>
-          <SheetContent
-            className="w-[--sidebar-width] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
-            data-mobile="true"
-            data-sidebar="sidebar"
-            side={side}
-            style={
-              {
-                "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
-              } as React.CSSProperties
-            }
-          >
-            <div className="flex h-full w-full flex-col">{children}</div>
-          </SheetContent>
-        </Sheet>
+        <>
+          {/* TODO: MOBILE SIDEBAR FIX */}
+          <SidebarTrigger />
+          <Sheet onOpenChange={setOpenMobile} open={openMobile} {...props}>
+            <SheetContent
+              className="w-[--sidebar-width] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
+              data-mobile="true"
+              data-sidebar="sidebar"
+              side={side}
+              style={
+                {
+                  "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
+                } as React.CSSProperties
+              }
+            >
+              <div className="flex h-full w-full flex-col">{children}</div>
+            </SheetContent>
+          </Sheet>
+        </>
       );
     }
 
@@ -258,7 +280,7 @@ const Sidebar = React.forwardRef<
             className="flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow"
             data-sidebar="sidebar"
           >
-            <SidebarTrigger className="absolute top-1/2 -right-[14px] -translate-y-1/2 z-[998]" />
+            <SidebarTriggerDesktop className="absolute top-1/2 -right-[14px] -translate-y-1/2 z-[998] outline outline-1 outline-muted-foreground" />
             {children}
           </div>
         </div>
@@ -269,6 +291,32 @@ const Sidebar = React.forwardRef<
 Sidebar.displayName = "Sidebar";
 
 const SidebarTrigger = React.forwardRef<
+  React.ElementRef<typeof Button>,
+  React.ComponentProps<typeof Button>
+>(({ className, onClick, ...props }, ref) => {
+  const { toggleSidebar } = useSidebar();
+
+  return (
+    <Button
+      className={cn("h-7 w-7", className)}
+      data-sidebar="trigger"
+      onClick={(event) => {
+        onClick?.(event);
+        toggleSidebar();
+      }}
+      ref={ref}
+      size="icon"
+      variant="ghost"
+      {...props}
+    >
+      <PanelLeft />
+      <span className="sr-only">Toggle Sidebar</span>
+    </Button>
+  );
+});
+SidebarTrigger.displayName = "SidebarTrigger";
+
+const SidebarTriggerDesktop = React.forwardRef<
   React.ElementRef<typeof Button>,
   React.ComponentProps<typeof Button>
 >(({ className, onClick, ...props }, ref) => {
@@ -297,7 +345,7 @@ const SidebarTrigger = React.forwardRef<
     </Button>
   );
 });
-SidebarTrigger.displayName = "SidebarTrigger";
+SidebarTriggerDesktop.displayName = "SidebarTriggerDesktop";
 
 const SidebarRail = React.forwardRef<
   HTMLButtonElement,
@@ -551,14 +599,14 @@ const SidebarMenuButton = React.forwardRef<
   HTMLButtonElement,
   React.ComponentProps<"button"> & {
     asChild?: boolean;
-    isActive?: boolean;
+    currentRoute?: boolean;
     tooltip?: string | React.ComponentProps<typeof TooltipContent>;
   } & VariantProps<typeof sidebarMenuButtonVariants>
 >(
   (
     {
       asChild = false,
-      isActive = false,
+      currentRoute = false,
       variant = "default",
       size = "default",
       tooltip,
@@ -573,7 +621,7 @@ const SidebarMenuButton = React.forwardRef<
     const button = (
       <Comp
         className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
-        data-active={isActive}
+        data-active={currentRoute}
         data-sidebar="menu-button"
         data-size={size}
         ref={ref}
@@ -724,29 +772,34 @@ const SidebarMenuSubButton = React.forwardRef<
   React.ComponentProps<"a"> & {
     asChild?: boolean;
     size?: "sm" | "md";
-    isActive?: boolean;
+    currentRoute?: boolean;
   }
->(({ asChild = false, size = "md", isActive, className, ...props }, ref) => {
-  const Comp = asChild ? Slot : "a";
+>(
+  (
+    { asChild = false, size = "md", currentRoute, className, ...props },
+    ref,
+  ) => {
+    const Comp = asChild ? Slot : "a";
 
-  return (
-    <Comp
-      className={cn(
-        "flex h-7 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 text-sidebar-foreground outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-sidebar-accent-foreground",
-        "data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground",
-        size === "sm" && "text-xs",
-        size === "md" && "text-sm",
-        "group-data-[collapsible=icon]:hidden",
-        className,
-      )}
-      data-active={isActive}
-      data-sidebar="menu-sub-button"
-      data-size={size}
-      ref={ref}
-      {...props}
-    />
-  );
-});
+    return (
+      <Comp
+        className={cn(
+          "flex h-7 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 text-sidebar-foreground outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-sidebar-accent-foreground",
+          "data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground",
+          size === "sm" && "text-xs",
+          size === "md" && "text-sm",
+          "group-data-[collapsible=icon]:hidden",
+          className,
+        )}
+        data-active={currentRoute}
+        data-sidebar="menu-sub-button"
+        data-size={size}
+        ref={ref}
+        {...props}
+      />
+    );
+  },
+);
 SidebarMenuSubButton.displayName = "SidebarMenuSubButton";
 
 export {

@@ -36,7 +36,9 @@ export default async function RootLayout({
       >
         <SidebarProvider defaultOpen={defaultOpen}>
           <AppSidebar />
-          <main className="min-h-screen w-full relative pt-8">{children}</main>
+          <main className="min-h-screen w-full relative pt-8 bg-muted">
+            {children}
+          </main>
         </SidebarProvider>
       </body>
     </html>

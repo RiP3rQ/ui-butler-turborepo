@@ -16,9 +16,11 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from "@repo/ui/components/ui/sidebar";
 import { Separator } from "@repo/ui/components/ui/separator.tsx";
 import type { NavMainType } from "@repo/ui/types/sidebar.ts";
+import { cn } from "@repo/ui/lib/utils.ts";
 
 interface NavMainProps {
   items: NavMainType[];
@@ -50,6 +52,8 @@ function CollapsibleMenuItem({
 }: {
   item: Readonly<NavMainType>;
 }): JSX.Element {
+  const { currentRoute } = useSidebar();
+
   return (
     <Collapsible
       asChild
@@ -59,7 +63,13 @@ function CollapsibleMenuItem({
     >
       <SidebarMenuItem>
         <CollapsibleTrigger asChild>
-          <SidebarMenuButton tooltip={item.title}>
+          <SidebarMenuButton
+            className={cn(
+              "hover:bg-muted-foreground",
+              item.url === currentRoute && "bg-muted-foreground hover:bg-muted",
+            )}
+            tooltip={item.title}
+          >
             {item.icon ? <item.icon /> : null}
             <span>{item.title}</span>
             <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -69,7 +79,14 @@ function CollapsibleMenuItem({
           <SidebarMenuSub>
             {item.items?.map((subItem) => (
               <SidebarMenuSubItem key={subItem.title}>
-                <SidebarMenuSubButton asChild>
+                <SidebarMenuSubButton
+                  asChild
+                  className={cn(
+                    "hover:bg-muted-foreground",
+                    subItem.url === currentRoute &&
+                      "bg-muted-foreground hover:bg-muted",
+                  )}
+                >
                   <Link href={subItem.url}>
                     <subItem.icon className="size-3" />
                     <span>{subItem.title}</span>
@@ -89,10 +106,18 @@ function NonCollapsibleMenuItem({
 }: {
   item: Readonly<NavMainType>;
 }): JSX.Element {
+  const { currentRoute } = useSidebar();
+
   return (
     <SidebarMenuItem>
       <Link href={item.url}>
-        <SidebarMenuButton tooltip={item.title}>
+        <SidebarMenuButton
+          className={cn(
+            "hover:bg-muted-foreground",
+            item.url === currentRoute && "bg-muted-foreground hover:bg-muted",
+          )}
+          tooltip={item.title}
+        >
           {item.icon ? <item.icon /> : null}
           <span>{item.title}</span>
         </SidebarMenuButton>
