@@ -222,14 +222,19 @@ describe("LoginForm", () => {
     it("passes correct props to LoginFormFields", () => {
       render(<LoginForm />);
 
+      // Only check if the component is rendered
       const formFields = screen.getByTestId("login-form-fields");
-      expect(formFields).toHaveAttribute("disabled", "false");
       expect(formFields).toBeInTheDocument();
+
+      // Check if form is enabled by verifying inputs are not disabled
+      const emailInput = screen.getByTestId("email-input");
+      const passwordInput = screen.getByTestId("password-input");
+      expect(emailInput).not.toBeDisabled();
+      expect(passwordInput).not.toBeDisabled();
     });
 
     it("passes correct disabled state to SocialLoginButtons", () => {
       render(<LoginForm />);
-
       expect(screen.getByTestId("social-buttons")).toHaveAttribute(
         "aria-disabled",
         "false",
@@ -246,8 +251,10 @@ describe("LoginForm", () => {
 
       render(<LoginForm />);
 
-      expect(screen.getByTestId("email-input")).toBeDisabled();
-      expect(screen.getByTestId("password-input")).toBeDisabled();
+      const emailInput = screen.getByTestId("email-input");
+      const passwordInput = screen.getByTestId("password-input");
+      expect(emailInput).toBeDisabled();
+      expect(passwordInput).toBeDisabled();
       expect(screen.getByRole("button", { name: /sign in/i })).toBeDisabled();
       expect(screen.getByTestId("social-buttons")).toHaveAttribute(
         "aria-disabled",
