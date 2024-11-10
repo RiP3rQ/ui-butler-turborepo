@@ -1,8 +1,10 @@
-import { getAuthCookie } from "@/lib/auth-cookie.ts";
-import registerUser from "@/actions/registerUser.ts";
+import { getAuthCookie } from "@/lib/auth-cookie";
+import registerUser from "@/actions/registerUser";
 import { redirect } from "next/navigation";
+import { setResponseCookies } from "@/lib/set-cookies";
+import { getErrorMessage } from "@/lib/get-error-message";
 
-// SETUP
+// Mock dependencies
 jest.mock("next/navigation", () => ({
   redirect: jest.fn(),
 }));
@@ -13,13 +15,22 @@ jest.mock("next/headers", () => ({
   })),
 }));
 
-jest.mock("@/lib/auth-cookie.ts", () => ({
+jest.mock("@/lib/auth-cookie", () => ({
   getAuthCookie: jest.fn(),
+}));
+
+jest.mock("@/lib/set-cookies", () => ({
+  setResponseCookies: jest.fn(),
+}));
+
+jest.mock("@/lib/get-error-message", () => ({
+  getErrorMessage: jest
+    .fn()
+    .mockImplementation((error) => error.message || JSON.stringify(error)),
 }));
 
 global.fetch = jest.fn();
 
-// TEST CASES
 describe("registerUser", () => {
   const formData = {
     username: "newuser",
@@ -69,35 +80,11 @@ describe("registerUser", () => {
     );
   });
 
-  // TODO: FIX THIS TEST
-  // it("should set cookies when registration is successful", async () => {
-  //   await registerUser(formData);
-  //
-  //   const cookiesMock = await cookies();
-  //   expect(cookiesMock.set).toHaveBeenCalledTimes(2);
-  //
-  //   expect(cookiesMock.set).toHaveBeenNthCalledWith(
-  //     1,
-  //     apiResponse.accessToken.name,
-  //     apiResponse.accessToken.value,
-  //     {
-  //       secure: true,
-  //       httpOnly: true,
-  //       expires: apiResponse.accessToken.expires,
-  //     },
-  //   );
-  //
-  //   expect(cookiesMock.set).toHaveBeenNthCalledWith(
-  //     2,
-  //     apiResponse.refreshToken.name,
-  //     apiResponse.refreshToken.value,
-  //     {
-  //       secure: true,
-  //       httpOnly: true,
-  //       expires: apiResponse.refreshToken.expires,
-  //     },
-  //   );
-  // });
+  it("should call setResponseCookies with the correct cookies when registration is successful", async () => {
+    await registerUser(formData);
+
+    expect(setResponseCookies).toHaveBeenCalledWith(apiResponse);
+  });
 
   it("should redirect to main app URL when registration is successful", async () => {
     await registerUser(formData);
@@ -119,5 +106,6 @@ describe("registerUser", () => {
 
     await expect(registerUser(formData)).rejects.toThrow(errorMessage);
     expect(console.error).toHaveBeenCalledWith(new Error(errorMessage));
+    expect(getErrorMessage).toHaveBeenCalledWith(new Error(errorMessage));
   });
 });
