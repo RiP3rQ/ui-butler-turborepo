@@ -18,12 +18,6 @@ export const getAuthCookie = (response: Response) => {
     .find((cookieHeader) => cookieHeader.includes(REFRESH_COOKIE))
     ?.split("=")[1];
 
-  const decodeToken = (token: string | undefined) => {
-    if (!token) return undefined;
-    const decoded = jwtDecode(token);
-    return decoded.exp ? new Date(decoded.exp * 1000) : undefined;
-  };
-
   return {
     accessToken: accessToken && {
       name: AUTH_COOKIE,
@@ -41,3 +35,16 @@ export const getAuthCookie = (response: Response) => {
     },
   };
 };
+
+export function decodeToken(token: string | undefined): Date | undefined {
+  if (!token) return undefined;
+
+  try {
+    const decoded = jwtDecode<{ exp?: number }>(token);
+    return typeof decoded.exp === "number" && !isNaN(decoded.exp)
+      ? new Date(decoded.exp * 1000)
+      : undefined;
+  } catch (error) {
+    return undefined;
+  }
+}

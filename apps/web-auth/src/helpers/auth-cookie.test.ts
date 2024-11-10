@@ -1,4 +1,9 @@
-import { AUTH_COOKIE, getAuthCookie, REFRESH_COOKIE } from "./auth-cookie";
+import {
+  AUTH_COOKIE,
+  decodeToken,
+  getAuthCookie,
+  REFRESH_COOKIE,
+} from "./auth-cookie";
 import { jwtDecode } from "jwt-decode";
 
 // Mock `jwtDecode` to return a fixed expiration
@@ -102,5 +107,63 @@ describe("getAuthCookie", () => {
 
     // Restore the default implementation if needed
     (jwtDecode as jest.Mock).mockImplementation(() => ({ exp: 1700000000 }));
+  });
+});
+
+describe("decodeToken", () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should return undefined when token is undefined", () => {
+    const result = decodeToken(undefined);
+    expect(result).toBeUndefined();
+  });
+
+  it("should return undefined when token is an empty string", () => {
+    const result = decodeToken("");
+    expect(result).toBeUndefined();
+  });
+
+  it("should return undefined when decoded token has no exp field", () => {
+    (jwtDecode as jest.Mock).mockImplementation(() => ({})); // Simulate missing exp
+    const result = decodeToken("mockToken");
+    expect(result).toBeUndefined();
+  });
+
+  it("should return the correct Date when decoded token has a valid exp", () => {
+    const mockExp = 1700000000;
+    (jwtDecode as jest.Mock).mockImplementation(() => ({ exp: mockExp })); // Simulate valid exp
+    const expectedDate = new Date(mockExp * 1000);
+    const result = decodeToken("mockToken");
+    expect(result).toEqual(expectedDate);
+  });
+
+  it("should handle invalid exp gracefully", () => {
+    (jwtDecode as jest.Mock).mockImplementation(() => ({ exp: "invalid" })); // Simulate invalid exp
+    const result = decodeToken("mockToken");
+    expect(result).toBeUndefined();
+  });
+
+  it("should handle zero exp in decoded token", () => {
+    (jwtDecode as jest.Mock).mockImplementation(() => ({ exp: 0 })); // Simulate zero exp
+    const result = decodeToken("mockToken");
+    expect(result).toEqual(new Date(0));
+  });
+
+  it("should handle very large exp values correctly", () => {
+    const largeExp = 9999999999;
+    (jwtDecode as jest.Mock).mockImplementation(() => ({ exp: largeExp })); // Simulate large exp
+    const expectedDate = new Date(largeExp * 1000);
+    const result = decodeToken("mockToken");
+    expect(result).toEqual(expectedDate);
+  });
+
+  it("should return undefined when jwtDecode throws an error", () => {
+    (jwtDecode as jest.Mock).mockImplementation(() => {
+      throw new Error("Malformed token");
+    });
+    const result = decodeToken("invalidToken");
+    expect(result).toBeUndefined();
   });
 });

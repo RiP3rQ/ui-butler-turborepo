@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@repo/ui/components/ui/button";
 import { Loader2, LucideIcon } from "lucide-react";
 
 type SocialPlatformButtonProps = {

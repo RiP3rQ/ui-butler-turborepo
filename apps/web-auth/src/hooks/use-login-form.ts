@@ -8,6 +8,7 @@ import { useMutation } from "@tanstack/react-query";
 import loginUser from "@/actions/loginUser.ts";
 import { toast } from "sonner";
 import { useMemo } from "react";
+import { getErrorMessage } from "@/lib/get-error-message.ts";
 
 export function useLoginForm() {
   const form = useForm<z.infer<typeof loginFormSchema>>({
@@ -25,8 +26,8 @@ export function useLoginForm() {
       toast.success("Logged in successfully", { id: "login" });
     },
     onError: (error) => {
-      const errorMessage =
-        error instanceof Error ? error.message : JSON.stringify(error);
+      console.error(error);
+      const errorMessage = getErrorMessage(error);
       toast.error(errorMessage, { id: "login", style: { background: "red" } });
     },
   });
@@ -38,9 +39,9 @@ export function useLoginForm() {
 
   const isSubmitDisabled = useMemo(() => {
     return (
-      !form.formState.isValid &&
-      !!form.getValues("email") &&
-      !!form.getValues("password")
+      !form.formState.isValid ||
+      !form.getValues("email") ||
+      !form.getValues("password")
     );
   }, [form.formState.isValid, form.getValues]);
 
