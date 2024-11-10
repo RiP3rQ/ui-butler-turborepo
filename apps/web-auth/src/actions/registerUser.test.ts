@@ -1,4 +1,4 @@
-import { getAuthCookie } from "@/helpers/auth-cookie";
+import { getAuthCookie } from "@/lib/auth-cookie.ts";
 import registerUser from "@/actions/registerUser.ts";
 import { redirect } from "next/navigation";
 
@@ -13,7 +13,7 @@ jest.mock("next/headers", () => ({
   })),
 }));
 
-jest.mock("@/helpers/auth-cookie", () => ({
+jest.mock("@/lib/auth-cookie.ts", () => ({
   getAuthCookie: jest.fn(),
 }));
 

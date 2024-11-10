@@ -4,7 +4,7 @@ import {
   AUTH_COOKIE,
   getAuthCookie,
   REFRESH_COOKIE,
-} from "@/helpers/auth-cookie";
+} from "@/lib/auth-cookie.ts";
 
 const unauthenticatedRoutes = ["/sign-up", "/sign-in", "/auth/google"];
 

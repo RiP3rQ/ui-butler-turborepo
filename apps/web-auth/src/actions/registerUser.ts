@@ -1,10 +1,11 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { getAuthCookie } from "@/helpers/auth-cookie";
-import { cookies } from "next/headers";
+import { getAuthCookie } from "@/lib/auth-cookie.ts";
 import { z } from "zod";
 import { registerFormSchema } from "@/schemas/register-schema.ts";
+import { getErrorMessage } from "@/lib/get-error-message.ts";
+import { setResponseCookies } from "@/lib/set-cookies.ts";
 
 export default async function registerUser(
   formData: z.infer<typeof registerFormSchema>,
@@ -23,19 +24,10 @@ export default async function registerUser(
       throw new Error("Registration failed");
     }
     const cookie = getAuthCookie(res);
-    const cookieStore = await cookies();
-
-    if (cookie?.accessToken) {
-      cookieStore.set(cookie.accessToken);
-    }
-
-    if (cookie?.refreshToken) {
-      cookieStore.set(cookie.refreshToken);
-    }
+    await setResponseCookies(cookie);
   } catch (error) {
     console.error(error);
-    const errorMessage =
-      error instanceof Error ? error.message : JSON.stringify(error);
+    const errorMessage = getErrorMessage(error);
     throw new Error(errorMessage);
   }
   redirect(`${process.env.NEXT_PUBLIC_MAIN_APP_URL}`);

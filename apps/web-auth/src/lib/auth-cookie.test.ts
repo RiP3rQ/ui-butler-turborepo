@@ -3,7 +3,7 @@ import {
   decodeToken,
   getAuthCookie,
   REFRESH_COOKIE,
-} from "./auth-cookie";
+} from "./auth-cookie.ts";
 import { jwtDecode } from "jwt-decode";
 
 // Mock `jwtDecode` to return a fixed expiration

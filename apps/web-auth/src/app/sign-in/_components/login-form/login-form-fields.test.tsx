@@ -9,22 +9,6 @@ import { LoginFormFields } from "@/app/sign-in/_components/login-form/login-form
 // Define types
 type LoginFormData = z.infer<typeof loginFormSchema>;
 
-type FieldNames = "email" | "password";
-
-const mockControl = {
-  register: jest.fn().mockImplementation((name: FieldNames) => ({
-    name,
-    onChange: jest.fn(),
-    onBlur: jest.fn(),
-    ref: jest.fn(),
-  })),
-  unregister: jest.fn(),
-  getFieldState: jest.fn(),
-  _formValues: {},
-  _formState: {},
-  _options: {},
-} as unknown as Control<LoginFormData>;
-
 // Mock the UI components
 jest.mock("@repo/ui/components/ui/form", () => ({
   FormField: ({ render, name }: any) =>

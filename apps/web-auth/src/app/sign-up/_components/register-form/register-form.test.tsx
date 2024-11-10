@@ -36,13 +36,7 @@ jest.mock("@repo/ui/components/ui/button", () => ({
 jest.mock(
   "@/app/sign-up/_components/register-form/register-form-fields",
   () => ({
-    RegisterFormFields: ({
-      control,
-      isDisabled,
-    }: {
-      control: any;
-      isDisabled: boolean;
-    }) => (
+    RegisterFormFields: ({ isDisabled }: { isDisabled: boolean }) => (
       <div data-testid="register-form-fields" aria-disabled={isDisabled}>
         Form Fields
       </div>
@@ -141,7 +135,7 @@ describe("RegisterForm", () => {
             password: "password123",
             confirmPassword: "password123",
           });
-        } catch (error) {
+        } catch (error: unknown) {
           // Silently catch the error as we expect it
         }
       });

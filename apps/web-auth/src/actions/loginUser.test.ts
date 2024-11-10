@@ -1,7 +1,10 @@
 import loginUser from "./loginUser";
-import { getAuthCookie } from "@/helpers/auth-cookie";
+import { getAuthCookie } from "@/lib/auth-cookie";
 import { redirect } from "next/navigation";
+import { getErrorMessage } from "@/lib/get-error-message";
+import { setResponseCookies } from "@/lib/set-cookies";
 
+// Mock dependencies
 jest.mock("next/navigation", () => ({
   redirect: jest.fn(), // This should capture calls to redirect
 }));
@@ -12,8 +15,18 @@ jest.mock("next/headers", () => ({
   })),
 }));
 
-jest.mock("@/helpers/auth-cookie", () => ({
+jest.mock("@/lib/auth-cookie", () => ({
   getAuthCookie: jest.fn(),
+}));
+
+jest.mock("@/lib/set-cookies", () => ({
+  setResponseCookies: jest.fn(),
+}));
+
+jest.mock("@/lib/get-error-message", () => ({
+  getErrorMessage: jest
+    .fn()
+    .mockImplementation((error) => error.message || JSON.stringify(error)),
 }));
 
 describe("loginUser", () => {
@@ -48,7 +61,7 @@ describe("loginUser", () => {
       json: async () => apiResponse,
     });
 
-    // Ensure getAuthCookie is typed correctly as a Jest mock
+    // Mock the return value of getAuthCookie
     (
       getAuthCookie as jest.MockedFunction<typeof getAuthCookie>
     ).mockReturnValue(apiResponse);
@@ -59,11 +72,7 @@ describe("loginUser", () => {
   });
 
   it("should call fetch with correct arguments", async () => {
-    const loginPromise = loginUser(formData);
-
-    jest.runAllTimers();
-
-    await loginPromise;
+    await loginUser(formData);
 
     expect(global.fetch).toHaveBeenCalledWith(
       `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
@@ -75,48 +84,14 @@ describe("loginUser", () => {
     );
   });
 
-  // TODO: FIX THIS TEST CASE
-  // it("should set cookies correctly when login is successful", async () => {
-  //   const loginPromise = loginUser(formData);
-  //
-  //   jest.runAllTimers();
-  //
-  //   await loginPromise;
-  //
-  //   const cookiesMock = await cookies();
-  //   console.log("Cookies Mock:", cookiesMock); // Log to see the structure
-  //
-  //   const setMock = cookiesMock.set as jest.Mock;
-  //   const setCalls = setMock.mock.calls;
-  //
-  //   expect(setCalls.length).toBe(2);
-  //
-  //   const [accessTokenName, accessTokenValue, accessTokenOptions] = setCalls[0];
-  //   expect(accessTokenName).toBe(apiResponse.accessToken.name);
-  //   expect(accessTokenValue).toBe(apiResponse.accessToken.value);
-  //   expect(accessTokenOptions).toMatchObject({
-  //     secure: true,
-  //     httpOnly: true,
-  //     expires: apiResponse.accessToken.expires,
-  //   });
-  //
-  //   const [refreshTokenName, refreshTokenValue, refreshTokenOptions] =
-  //     setCalls[1];
-  //   expect(refreshTokenName).toBe(apiResponse.refreshToken.name);
-  //   expect(refreshTokenValue).toBe(apiResponse.refreshToken.value);
-  //   expect(refreshTokenOptions).toMatchObject({
-  //     secure: true,
-  //     httpOnly: true,
-  //     expires: apiResponse.refreshToken.expires,
-  //   });
-  // });
+  it("should set cookies using setResponseCookies", async () => {
+    await loginUser(formData);
+
+    expect(setResponseCookies).toHaveBeenCalledWith(apiResponse);
+  });
 
   it("should redirect to main app URL when login is successful", async () => {
-    const loginPromise = loginUser(formData);
-
-    jest.runAllTimers();
-
-    await loginPromise;
+    await loginUser(formData);
 
     expect(redirect).toHaveBeenCalledWith(
       `${process.env.NEXT_PUBLIC_MAIN_APP_URL}`,
@@ -126,22 +101,17 @@ describe("loginUser", () => {
   it("should throw an error when credentials are invalid", async () => {
     global.fetch = jest.fn().mockResolvedValueOnce({ ok: false });
 
-    const loginPromise = loginUser(formData);
-
-    jest.runAllTimers();
-
-    await expect(loginPromise).rejects.toThrow("Credentials are invalid");
+    await expect(loginUser(formData)).rejects.toThrow(
+      "Credentials are invalid",
+    );
   });
 
-  it("should log an error and throw an error for unexpected errors", async () => {
+  it("should log and throw an error for unexpected errors", async () => {
     const errorMessage = "Unexpected error";
     global.fetch = jest.fn().mockRejectedValueOnce(new Error(errorMessage));
 
-    const loginPromise = loginUser(formData);
-
-    jest.runAllTimers();
-
-    await expect(loginPromise).rejects.toThrow(errorMessage);
+    await expect(loginUser(formData)).rejects.toThrow(errorMessage);
     expect(console.error).toHaveBeenCalledWith(new Error(errorMessage));
+    expect(getErrorMessage).toHaveBeenCalledWith(new Error(errorMessage));
   });
 });

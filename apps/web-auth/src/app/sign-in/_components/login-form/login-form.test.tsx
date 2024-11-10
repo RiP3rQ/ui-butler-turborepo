@@ -7,13 +7,7 @@ import { LoginForm } from "@/app/sign-in/_components/login-form/login-form.tsx";
 jest.mock("@/hooks/use-login-form");
 jest.mock("sonner");
 jest.mock("@/app/sign-in/_components/login-form/login-form-fields.tsx", () => ({
-  LoginFormFields: ({
-    control,
-    isDisabled,
-  }: {
-    control: any;
-    isDisabled: boolean;
-  }) => (
+  LoginFormFields: ({ isDisabled }: { isDisabled: boolean }) => (
     <div data-testid="login-form-fields" aria-disabled={isDisabled}>
       <input type="email" data-testid="email-input" disabled={isDisabled} />
       <input
