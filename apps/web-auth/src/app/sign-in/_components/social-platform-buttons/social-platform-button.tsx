@@ -1,6 +1,5 @@
+import { Button } from "@/components/ui/button";
 import { Loader2, LucideIcon } from "lucide-react";
-import { Button } from "@repo/ui/components/ui/button";
-import React from "react";
 
 type SocialPlatformButtonProps = {
   title: string;
@@ -8,6 +7,7 @@ type SocialPlatformButtonProps = {
   isLoading: boolean;
   onClick: () => void;
 };
+
 const SocialPlatformButton = ({
   title,
   icon: Icon,
@@ -20,14 +20,16 @@ const SocialPlatformButton = ({
       type="button"
       disabled={isLoading}
       onClick={onClick}
+      className="variant-outline"
     >
       {isLoading ? (
-        <Loader2 className="mr-2 size-4 animate-spin" />
+        <Loader2 className="mr-2 size-4 animate-spin" data-testid="loader" />
       ) : (
-        <Icon className="mr-2 size-4" />
+        <Icon className="mr-2 size-4" data-testid="icon" />
       )}{" "}
       {title}
     </Button>
   );
 };
+
 export default SocialPlatformButton;

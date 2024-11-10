@@ -7,7 +7,7 @@ import React, { useMemo } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Separator } from "@repo/ui/components/ui/separator";
-import SocialPlatformButton from "@/app/sign-in/_components/social-platform-button.tsx";
+import SocialPlatformButton from "@/app/sign-in/_components/social-platform-buttons/social-platform-button.tsx";
 import { GithubIcon, GlobeIcon } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
