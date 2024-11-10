@@ -23,11 +23,14 @@ export default async function registerUser(
       throw new Error("Registration failed");
     }
     const cookie = getAuthCookie(res);
+    const cookieStore = await cookies();
+
     if (cookie?.accessToken) {
-      (await cookies()).set(cookie.accessToken);
+      cookieStore.set(cookie.accessToken);
     }
+
     if (cookie?.refreshToken) {
-      (await cookies()).set(cookie.refreshToken);
+      cookieStore.set(cookie.refreshToken);
     }
   } catch (error) {
     console.error(error);
