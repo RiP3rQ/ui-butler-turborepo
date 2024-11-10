@@ -10,7 +10,6 @@ export default async function loginUser(
   formData: z.infer<typeof loginFormSchema>,
 ) {
   try {
-    await new Promise((resolve) => setTimeout(resolve, 5000));
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

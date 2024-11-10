@@ -2,6 +2,7 @@ import "@testing-library/jest-dom";
 
 // Extend expect matchers
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace jest {
     interface Matchers<R> {
       toBeInTheDocument(): R;
@@ -37,7 +38,6 @@ Object.defineProperty(window, "location", {
 });
 
 // Set up environment variables
-process.env.NEXT_PUBLIC_API_URL = "http://localhost:3333";
-process.env.NEXT_PUBLIC_MAIN_APP_URL = "http://localhost:3001/dashboard";
-
+process.env.NEXT_PUBLIC_API_URL = "http://test-api.com";
+process.env.NEXT_PUBLIC_MAIN_APP_URL = "http://test-app.com/dashboard";
 export {};
