@@ -41,7 +41,7 @@ export default async function RootLayout({
       >
         <SidebarProvider defaultOpen={defaultOpen}>
           <AppSidebar currentLoggedUser={currentLoggedUser} />
-          <main className="min-h-screen w-full relative pt-8 bg-muted">
+          <main className="min-h-screen h-full w-full relative pt-8 bg-muted">
             {children}
           </main>
         </SidebarProvider>

@@ -7,9 +7,9 @@ import StatsExecutionStatusChartWrapper from "@repo/ui/components/main-app/analy
 import StatsCreditsUsedChartWrapper from "@repo/ui/components/main-app/analytics/stat-chart/stats-credits-used-chart-wrapper";
 import type { Period } from "@repo/types/analytics";
 import { getPeriods } from "@/actions/analytics/get-periods.ts";
-import { testServerAction } from "@/actions/test-actions.ts";
 import { getStatCardsValues } from "@/actions/analytics/get-stat-cards-values.ts";
 import { getWorkflowExecutionStats } from "@/actions/analytics/get-workflow-execution-stats.ts";
+import { getUsedCreditsInPeriod } from "@/actions/analytics/get-used-credits-in-period.ts";
 
 export default async function Home({
   searchParams,
@@ -24,9 +24,9 @@ export default async function Home({
   };
 
   return (
-    <div className="flex flex-1 flex-col h-full gap-2">
+    <div className="flex flex-1 flex-col h-full gap-2 mx-auto max-w-6xl mt-4">
       <div className="flex justify-between">
-        <h1 className="text-3xl font-bold">Home</h1>
+        <h1 className="text-3xl font-bold">Analytics Dashboard</h1>
         <Suspense fallback={<Skeleton className="w-[180px] h-[40px]" />}>
           <PeriodSelectorWrapper
             getPeriodsAction={getPeriods}
@@ -34,7 +34,7 @@ export default async function Home({
           />
         </Suspense>
       </div>
-      <div className="h-full py-6 flex flex-col gap-4">
+      <div className="h-full py-6 flex flex-col space-y-4">
         <Suspense fallback={<StatsCardSkeleton />}>
           <StatsCardsWrapper
             getStatsCardsValuesAction={getStatCardsValues}
@@ -49,7 +49,7 @@ export default async function Home({
         </Suspense>
         <Suspense fallback={<Skeleton className="w-full h-[300px]" />}>
           <StatsCreditsUsedChartWrapper
-            getUsedCreditsInPeriodAction={testServerAction}
+            getUsedCreditsInPeriodAction={getUsedCreditsInPeriod}
             selectedPeriod={period}
           />
         </Suspense>

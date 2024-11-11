@@ -170,4 +170,76 @@ export class AnalyticsService {
 
     return results;
   }
+
+  async getUsedCreditsInPeriod(user: User, month: number, year: number) {
+    const { startDate, endDate } = periodToDateRange({
+      month,
+      year,
+    });
+
+    const executionsPhases = await this.database
+      .select({
+        status: executionPhase.status,
+        startedAt: executionPhase.startedAt,
+        creditsCost: executionPhase.creditsCost,
+      })
+      .from(executionPhase)
+      .where(
+        and(
+          eq(executionPhase.userId, user.id),
+          gte(executionPhase.startedAt, startDate),
+          lte(executionPhase.startedAt, endDate),
+          inArray(executionPhase.status, ['COMPLETED', 'FAILED']), // TODO: PROPER ENUM VALUE
+        ),
+      );
+
+    if (!executionsPhases) {
+      throw new Error('No executions phases found in selected period');
+    }
+
+    const dateFormat = 'yyyy-MM-dd';
+
+    const statsDates = eachDayOfInterval({
+      start: startDate,
+      end: endDate,
+    })
+      .map((date) => format(date, dateFormat))
+      .reduce(
+        (acc, date) => {
+          acc[date] = {
+            successful: 0,
+            failed: 0,
+          };
+          return acc;
+        },
+        {} as Record<
+          string,
+          {
+            successful: number;
+            failed: number;
+          }
+        >,
+      );
+
+    executionsPhases.forEach((phase) => {
+      if (!phase.startedAt) {
+        return;
+      }
+      const date = format(phase.startedAt, dateFormat);
+      if (phase.status === 'COMPLETED') {
+        // TODO: PROPER ENUM VALUE
+        statsDates[date].successful += phase.creditsCost ?? 0;
+      } else if (phase.status === 'FAILED') {
+        // TODO: PROPER ENUM VALUE
+        statsDates[date].failed += phase.creditsCost ?? 0;
+      }
+    });
+
+    const results = Object.entries(statsDates).map(([date, stats]) => ({
+      date,
+      ...stats,
+    }));
+
+    return results;
+  }
 }
