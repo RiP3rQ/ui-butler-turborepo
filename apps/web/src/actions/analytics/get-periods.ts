@@ -25,6 +25,9 @@ export async function getPeriods(): Promise<Period[]> {
         },
       },
     );
+
+    console.log("res", res);
+
     if (!res.ok) {
       throw new Error("Periods not found");
     }

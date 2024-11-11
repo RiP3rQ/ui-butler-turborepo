@@ -1,6 +1,5 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { User } from '../users/types/user';
-import { Response } from 'express';
 import { DATABASE_CONNECTION } from '../database/database-connection';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type { Period } from '@repo/types/analytics';
@@ -15,7 +14,7 @@ export class AnalyticsService {
     private readonly database: NodePgDatabase<DatabaseSchemas>,
   ) {}
 
-  async getPeriods(user: User, response: Response) {
+  async getPeriods(user: User) {
     const yearsData = await this.database
       .select({ minYear: min(workflowExecutions.startedAt) })
       .from(workflowExecutions)

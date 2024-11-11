@@ -7,9 +7,7 @@ import StatsExecutionStatusChartWrapper from "@repo/ui/components/main-app/analy
 import StatsCreditsUsedChartWrapper from "@repo/ui/components/main-app/analytics/stat-chart/stats-credits-used-chart-wrapper";
 import type { Period } from "@repo/types/analytics";
 import { getPeriods } from "@/actions/analytics/get-periods.ts";
-import { getStatCardsValues } from "@/actions/analytics/get-stat-cards-values.ts";
-import { getWorkflowExecutionStats } from "@/actions/analytics/get-workflow-execution-stats.ts";
-import { getUsedCreditsInPeriod } from "@/actions/analytics/get-used-credits-in-period.ts";
+import { testServerAction } from "@/actions/test-actions.ts";
 
 export default async function Home({
   searchParams,
@@ -37,19 +35,19 @@ export default async function Home({
       <div className="h-full py-6 flex flex-col gap-4">
         <Suspense fallback={<StatsCardSkeleton />}>
           <StatsCardsWrapper
-            getStatsCardsValuesAction={getStatCardsValues}
+            getStatsCardsValuesAction={testServerAction}
             selectedPeriod={period}
           />
         </Suspense>
         <Suspense fallback={<Skeleton className="w-full h-[300px]" />}>
           <StatsExecutionStatusChartWrapper
-            getWorkflowExecutionStatsAction={getWorkflowExecutionStats}
+            getWorkflowExecutionStatsAction={testServerAction}
             selectedPeriod={period}
           />
         </Suspense>
         <Suspense fallback={<Skeleton className="w-full h-[300px]" />}>
           <StatsCreditsUsedChartWrapper
-            getUsedCreditsInPeriodAction={getUsedCreditsInPeriod}
+            getUsedCreditsInPeriodAction={testServerAction}
             selectedPeriod={period}
           />
         </Suspense>

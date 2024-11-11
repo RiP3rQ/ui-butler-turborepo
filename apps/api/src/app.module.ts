@@ -8,8 +8,6 @@ import { WorkflowExecutionsModule } from './workflow-executions/workflow-executi
 import { CredentialsModule } from './credentials/credentials.module';
 import { DatabaseModule } from './database/database.module';
 import { HealthController } from './health.controller';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
 import { LoggerModule } from 'nestjs-pino';
 
 @Module({
@@ -43,9 +41,9 @@ import { LoggerModule } from 'nestjs-pino';
     WorkflowsModule,
     WorkflowExecutionsModule,
     CredentialsModule,
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
-    }),
+    // ServeStaticModule.forRoot({
+    //   rootPath: join(__dirname, '..', 'public'),
+    // }),
   ],
   controllers: [HealthController],
   providers: [],
