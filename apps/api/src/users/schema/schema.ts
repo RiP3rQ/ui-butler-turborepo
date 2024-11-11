@@ -17,6 +17,8 @@ export const profile = pgTable('profile', {
   age: integer('age'),
   biography: text('biography'),
   userId: integer('user_id').references(() => users.id),
+  avatar: text('avatar_url'),
+  username: text('username'),
 });
 
 export const profileRelations = relations(profile, ({ one }) => ({

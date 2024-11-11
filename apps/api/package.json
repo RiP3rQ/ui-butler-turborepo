@@ -31,6 +31,7 @@
     "class-validator": "^0.14.1",
     "cookie-parser": "^1.4.7",
     "drizzle-orm": "^0.36.0",
+    "jsonwebtoken": "^9.0.2",
     "passport": "^0.7.0",
     "passport-github2": "^0.1.12",
     "passport-google-oauth20": "^2.0.0",

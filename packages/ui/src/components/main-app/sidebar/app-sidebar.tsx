@@ -30,14 +30,10 @@ import {
 import { SavedBundles } from "@repo/ui/components/main-app/sidebar/saved-components-bundles.tsx";
 import { CustomSidebarHeader } from "@repo/ui/components/main-app/sidebar/sidebar-header.tsx";
 import type { BundlesType } from "@repo/ui/types/sidebar.ts";
+import type { BasicUser } from "@repo/ui/types/users.ts";
 
 // This is sample data.
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
       title: "Analytics dashboard",
@@ -138,7 +134,13 @@ const data = {
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+interface AdditionalAppSidebarProps {
+  currentLoggedUser: BasicUser;
+}
+
+export function AppSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar> & AdditionalAppSidebarProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -149,7 +151,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SavedBundles bundles={data.savedBundles as BundlesType[]} />
       </SidebarContent>
       <SidebarFooter>
-        <SidebarFooterContent user={data.user} />
+        <SidebarFooterContent currentLoggedUser={props.currentLoggedUser} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

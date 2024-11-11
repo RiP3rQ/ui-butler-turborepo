@@ -58,7 +58,9 @@ function CollapsibleMenuItem({
     <Collapsible
       asChild
       className="group/collapsible"
-      defaultOpen={item.isActive}
+      defaultOpen={
+        item.isActive || item.items?.some((i) => i.url === currentRoute)
+      }
       key={item.title}
     >
       <SidebarMenuItem>

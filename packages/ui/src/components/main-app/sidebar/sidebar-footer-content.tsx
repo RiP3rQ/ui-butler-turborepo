@@ -29,16 +29,15 @@ import {
   useSidebar,
 } from "@repo/ui/components/ui/sidebar";
 import { logoutUser } from "@repo/ui/actions/auth/logoutUser.ts";
+import type { BasicUser } from "@repo/ui/types/users.ts";
+
+interface SidebarFooterContentProps {
+  currentLoggedUser: BasicUser;
+}
 
 export function SidebarFooterContent({
-  user,
-}: {
-  user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-}) {
+  currentLoggedUser,
+}: Readonly<SidebarFooterContentProps>) {
   const { isMobile } = useSidebar();
 
   async function handleUserLogout() {
@@ -56,14 +55,21 @@ export function SidebarFooterContent({
               size="lg"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage alt={user.name} src={user.avatar} />
+                <AvatarImage
+                  alt={currentLoggedUser.username}
+                  src={currentLoggedUser.avatar}
+                />
                 <AvatarFallback className="rounded-lg">
-                  {user.name.slice(0, 2)}
+                  {currentLoggedUser.username.slice(0, 2)}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{user.name}</span>
-                <span className="truncate text-xs">{user.email}</span>
+                <span className="truncate font-semibold">
+                  {currentLoggedUser.username}
+                </span>
+                <span className="truncate text-xs">
+                  {currentLoggedUser.email}
+                </span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -77,14 +83,21 @@ export function SidebarFooterContent({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage alt={user.name} src={user.avatar} />
+                  <AvatarImage
+                    alt={currentLoggedUser.username}
+                    src={currentLoggedUser.avatar}
+                  />
                   <AvatarFallback className="rounded-lg">
-                    {user.name.slice(0, 2)}
+                    {currentLoggedUser.username.slice(0, 2)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{user.name}</span>
-                  <span className="truncate text-xs">{user.email}</span>
+                  <span className="truncate font-semibold">
+                    {currentLoggedUser.username}
+                  </span>
+                  <span className="truncate text-xs">
+                    {currentLoggedUser.email}
+                  </span>
                 </div>
               </div>
             </DropdownMenuLabel>

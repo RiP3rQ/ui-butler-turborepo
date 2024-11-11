@@ -4,9 +4,10 @@ import { CreateUserRequest } from './dto/create-user.request';
 import { DATABASE_CONNECTION } from '../database/database-connection';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from './schema/schema';
-import { users } from './schema/schema';
+import { profile, users } from './schema/schema';
 import { and, eq } from 'drizzle-orm';
 import { TokenPayload } from '../auth/token-payload.interface';
+import { User } from './types/user';
 
 type ReceivedData = {
   refreshToken: string;
@@ -83,6 +84,27 @@ export class UsersService {
         and(eq(users.id, Number(query.userId)), eq(users.email, query.email)),
       )
       .returning();
+  }
+
+  async getCurrentUserBasic(user: User) {
+    const userBasicData = await this.database
+      .select()
+      .from(profile)
+      .where(eq(profile.userId, user.id));
+
+    if (!userBasicData) {
+      return {
+        username: undefined,
+        email: user.email,
+        avatar: undefined,
+      };
+    }
+
+    return {
+      username: userBasicData[0].username,
+      email: user.email,
+      avatar: userBasicData[0].avatar,
+    };
   }
 
   async createProfile(profile: typeof schema.profile.$inferInsert) {

@@ -18,6 +18,9 @@ export const getAuthCookie = (response: Response) => {
     .find((cookieHeader) => cookieHeader.includes(REFRESH_COOKIE))
     ?.split("=")[1];
 
+  console.log("accessToken", accessToken);
+  console.log("refreshToken", refreshToken);
+
   return {
     accessToken: accessToken && {
       name: AUTH_COOKIE,

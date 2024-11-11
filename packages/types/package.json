@@ -6,6 +6,10 @@
   "publishConfig": {
     "access": "public"
   },
+  "peerDependencies": {
+    "react": "19.0.0-rc-02c0e824-20241028",
+    "@types/react": "^18"
+  },
   "dependencies": {
     "lucide-react": "^0.454.0"
   }

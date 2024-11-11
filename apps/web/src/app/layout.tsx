@@ -4,6 +4,7 @@ import "@repo/ui/globals.css";
 import { SidebarProvider } from "@repo/ui/components/ui/sidebar";
 import { AppSidebar } from "@repo/ui/components/main-app/sidebar/app-sidebar";
 import { cookies } from "next/headers";
+import getCurrentUser from "@/actions/user/get-current-user.ts";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -29,13 +30,17 @@ export default async function RootLayout({
   const cookieStore = await cookies();
   const defaultOpen = cookieStore.get("sidebar:state")?.value === "true";
 
+  const currentLoggedUser = await getCurrentUser();
+
+  console.log("currentLoggedUser", currentLoggedUser);
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <SidebarProvider defaultOpen={defaultOpen}>
-          <AppSidebar />
+          <AppSidebar currentLoggedUser={currentLoggedUser} />
           <main className="min-h-screen w-full relative pt-8 bg-muted">
             {children}
           </main>

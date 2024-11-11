@@ -40,6 +40,7 @@ export class AuthController {
     @CurrentUser() user: typeof users.$inferSelect,
     @Res({ passthrough: true }) response: Response,
   ) {
+    console.log('refresh token');
     await this.authService.login(user, response);
   }
 
