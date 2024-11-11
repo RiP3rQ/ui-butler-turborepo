@@ -4,6 +4,7 @@ import "@repo/ui/globals.css";
 import { SidebarProvider } from "@repo/ui/components/ui/sidebar";
 import { AppSidebar } from "@repo/ui/components/main-app/sidebar/app-sidebar";
 import { cookies } from "next/headers";
+import ToastProvider from "@repo/ui/providers/toast-provider";
 import getCurrentUser from "@/actions/user/get-current-user.ts";
 
 const geistSans = localFont({
@@ -32,8 +33,6 @@ export default async function RootLayout({
 
   const currentLoggedUser = await getCurrentUser();
 
-  console.log("currentLoggedUser", currentLoggedUser);
-
   return (
     <html lang="en">
       <body
@@ -44,6 +43,7 @@ export default async function RootLayout({
           <main className="min-h-screen h-full w-full relative pt-8 bg-muted">
             {children}
           </main>
+          <ToastProvider />
         </SidebarProvider>
       </body>
     </html>

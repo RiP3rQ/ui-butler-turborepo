@@ -53,3 +53,20 @@ export enum WorkflowExecutionTrigger {
   MANUAL = "MANUAL",
   CRON = "CRON",
 }
+
+export type WorkflowType = {
+  id: number;
+  name: string;
+  userId: number;
+  description: string;
+  definition: string;
+  executionPlan: string;
+  creditsCost: number;
+  status: string;
+  lastRunAt: Date;
+  lastRunId: string;
+  lastRunStatus: string;
+  nextRunAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
+};

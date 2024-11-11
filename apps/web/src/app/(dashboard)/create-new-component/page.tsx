@@ -67,7 +67,7 @@ export default function SaveNewComponentPage(): JSX.Element {
   return (
     <>
       <ActionRunDialog />
-      <div className="flex items-center flex-col pt-10 h-screen">
+      <div className="flex items-center flex-col pt-10 min-h-screen h-full w-full max-w-6xl mx-auto">
         <div className="mb-6 flex items-center justify-center flex-col">
           <Label className="text-2xl font-semibold underline">
             Save new component
