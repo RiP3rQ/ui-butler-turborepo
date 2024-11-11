@@ -5,7 +5,7 @@ import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
-import { users } from '../users/schema/schema';
+import { users } from '../users/schema';
 import { GithubAuthGuard } from './guards/github-auth.guard';
 
 @Controller('auth')

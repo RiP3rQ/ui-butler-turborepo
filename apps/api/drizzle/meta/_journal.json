@@ -15,6 +15,20 @@
       "when": 1731280094708,
       "tag": "0001_opposite_baron_zemo",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1731339668919,
+      "tag": "0002_confused_vargas",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1731341651351,
+      "tag": "0003_skinny_sabra",
+      "breakpoints": true
     }
   ]
 }

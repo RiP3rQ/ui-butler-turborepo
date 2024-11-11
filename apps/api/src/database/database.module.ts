@@ -2,7 +2,11 @@ import { Module } from '@nestjs/common';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { DATABASE_CONNECTION } from './database-connection';
 import { ConfigService } from '@nestjs/config';
-import * as userSchema from '../users/schema/schema';
+import * as userSchema from '../users/schema';
+import * as analyticsSchema from '../analytics/schema';
+import * as credentialsSchema from '../credentials/schema';
+import * as workflowExecutionsSchema from '../workflow-executions/schema';
+import * as workflowsSchema from '../workflows/schema';
 import { Pool } from 'pg';
 
 @Module({
@@ -16,6 +20,10 @@ import { Pool } from 'pg';
         return drizzle(pool, {
           schema: {
             ...userSchema,
+            ...analyticsSchema,
+            ...credentialsSchema,
+            ...workflowExecutionsSchema,
+            ...workflowsSchema,
           },
         });
       },

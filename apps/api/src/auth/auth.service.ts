@@ -5,7 +5,7 @@ import { compare, hash } from 'bcryptjs';
 import { UsersService } from '../users/users.service';
 import { Response } from 'express';
 import { TokenPayload } from './token-payload.interface';
-import { users } from '../users/schema/schema';
+import { User } from '../users/types/user';
 
 @Injectable()
 export class AuthService {
@@ -15,11 +15,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(
-    user: typeof users.$inferSelect,
-    response: Response,
-    redirect = false,
-  ) {
+  async login(user: User, response: Response, redirect = false) {
     const expiresAccessToken = new Date();
     expiresAccessToken.setMilliseconds(
       expiresAccessToken.getTime() +
