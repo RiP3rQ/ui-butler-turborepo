@@ -7,34 +7,25 @@ import {
   DialogTrigger,
 } from "@repo/ui/components/ui/dialog";
 import { Button } from "@repo/ui/components/ui/button";
-import { Layers2Icon, Loader2Icon } from "lucide-react";
+import { Layers2Icon } from "lucide-react";
 import CustomDialogHeader from "@repo/ui/components/main-app/custom-dialog-header";
-import type { UseFormReturn } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@repo/ui/components/ui/form";
-import { Input } from "@repo/ui/components/ui/input";
-import { Textarea } from "@repo/ui/components/ui/textarea";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import type { CreateWorkflowSchemaType } from "@/schemas/workflow";
 import { createWorkflowSchema } from "@/schemas/workflow";
+import { WorkflowCreateForm } from "@/app/(workflows)/workflows-list/_components/forms/workflow-create-form.tsx";
 import { createWorkflowFunction } from "@/actions/workflows/createWorkflow";
 
-interface Props {
+interface CreateWorkflowDialogProps {
   triggerText?: string;
 }
-function CreateWorkflowDialog({ triggerText }: Readonly<Props>) {
+export function CreateWorkflowDialog({
+  triggerText,
+}: Readonly<CreateWorkflowDialogProps>): JSX.Element {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -82,65 +73,12 @@ function CreateWorkflowDialog({ triggerText }: Readonly<Props>) {
           subTitle="Start building your workflow"
           title="Create Workflow"
         />
-        <WorkflowForm form={form} isPending={isPending} onSubmit={onSubmit} />
+        <WorkflowCreateForm
+          form={form}
+          isPending={isPending}
+          onSubmit={onSubmit}
+        />
       </DialogContent>
     </Dialog>
-  );
-}
-export default CreateWorkflowDialog;
-
-function WorkflowForm({
-  form,
-  onSubmit,
-  isPending,
-}: Readonly<{
-  form: UseFormReturn<z.infer<typeof createWorkflowSchema>>;
-  onSubmit: (data: CreateWorkflowSchemaType) => void;
-  isPending: boolean;
-}>) {
-  return (
-    <Form {...form}>
-      <form className="space-y-6 w-full" onSubmit={form.handleSubmit(onSubmit)}>
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="flex gap-1 items-center">
-                Name
-                <p className="text-primary text-xs">(Required)</p>
-              </FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormDescription>
-                Choose a descriptive name for your workflow
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="flex gap-1 items-center">
-                Description
-                <p className="text-muted-foreground text-xs">(optional)</p>
-              </FormLabel>
-              <FormControl>
-                <Textarea {...field} className="resize-none" />
-              </FormControl>
-              <FormDescription>Describe your workflow</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button className="w-full" disabled={isPending} type="submit">
-          {isPending ? <Loader2Icon className="animate-spin" /> : "Proceed"}
-        </Button>
-      </form>
-    </Form>
   );
 }

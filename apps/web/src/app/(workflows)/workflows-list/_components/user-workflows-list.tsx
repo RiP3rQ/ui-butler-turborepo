@@ -1,10 +1,19 @@
+import { AlertCircleIcon, InboxIcon } from "lucide-react";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@repo/ui/components/ui/alert";
+import { WorkflowCard } from "@/app/(workflows)/workflows-list/_components/workflow-card.tsx";
+import { CreateWorkflowDialog } from "@/app/(workflows)/workflows-list/_components/create-workflow-dialog.tsx";
+
 export async function UserWorkflows() {
   const worksflows = await getUserWorkflows();
 
   if (!worksflows) {
     return (
       <Alert variant="destructive">
-        <AlertCircle className="size-4" />
+        <AlertCircleIcon className="size-4" />
         <AlertTitle>Failed to fetch workflows</AlertTitle>
         <AlertDescription>
           Something went wrong while fetching your workflows. Please try again

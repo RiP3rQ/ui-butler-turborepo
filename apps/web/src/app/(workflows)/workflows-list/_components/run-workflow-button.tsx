@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { runWorkflowFunction } from "@/actions/workflow/runWorkflow";
 
 interface RunWorkflowButtonProps {
-  workflowId: string;
+  workflowId: number;
 }
 function RunWorkflowButton({ workflowId }: Readonly<RunWorkflowButtonProps>) {
   const router = useRouter();

@@ -62,11 +62,11 @@ export type WorkflowType = {
   definition: string;
   executionPlan: string;
   creditsCost: number;
-  status: string;
-  lastRunAt: Date;
-  lastRunId: string;
-  lastRunStatus: string;
-  nextRunAt: Date;
+  status: WorkflowStatus;
+  lastRunAt?: Date;
+  lastRunId?: string;
+  lastRunStatus?: string;
+  nextRunAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 };

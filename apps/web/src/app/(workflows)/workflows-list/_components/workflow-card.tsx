@@ -4,19 +4,14 @@ import type { WorkflowType } from "@repo/types/workflow";
 import { WorkflowStatus } from "@repo/types/workflow";
 import { Card, CardContent } from "@repo/ui/components/ui/card";
 import { cn } from "@repo/ui/lib/utils";
-import { FileIcon, MoreVerticalIcon, PlayIcon, TrashIcon } from "lucide-react";
+import { FileIcon, PlayIcon } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@repo/ui/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@repo/ui/components/ui/dropdown-menu";
-import { useState } from "react";
 import { TooltipWrapper } from "@repo/ui/components/main-app/tooltip-wrapper";
+import DuplicateWorkflowDialog from "@/app/(workflows)/workflows-list/_components/duplicate-workflow-dialog.tsx";
+import RunWorkflowButton from "@/app/(workflows)/workflows-list/_components/run-workflow-button.tsx";
+import EditWorkflowButton from "@/app/(workflows)/workflows-list/_components/edit-workflow-button.tsx";
+import LastRunDetails from "@/app/(workflows)/workflows-list/_components/last-run-details.tsx";
+import { WorkflowActionButtons } from "@/app/(workflows)/workflows-list/_components/workflow-action-buttons.tsx";
 
 const STATUS_COLORS = {
   [WorkflowStatus.DRAFT]: "bg-yellow-400 text-yellow-600",
@@ -26,7 +21,9 @@ const STATUS_COLORS = {
 interface WorkflowCardProps {
   workflow: WorkflowType;
 }
-function WorkflowCard({ workflow }: Readonly<WorkflowCardProps>): JSX.Element {
+export function WorkflowCard({
+  workflow,
+}: Readonly<WorkflowCardProps>): JSX.Element {
   const isDraft = workflow.status === "DRAFT";
 
   return (
@@ -62,12 +59,6 @@ function WorkflowCard({ workflow }: Readonly<WorkflowCardProps>): JSX.Element {
               ) : null}
               <DuplicateWorkflowDialog workflowId={workflow.id} />
             </h3>
-            <ScheduleSection
-              creditsCost={workflow.creditsCost}
-              isDraft={isDraft}
-              workflowCron={workflow.cron}
-              workflowId={workflow.id}
-            />
           </div>
         </div>
 
@@ -75,7 +66,7 @@ function WorkflowCard({ workflow }: Readonly<WorkflowCardProps>): JSX.Element {
           {/*  EDIT BUTTON */}
           <RunWorkflowButton workflowId={workflow.id} />
           <EditWorkflowButton workflowId={workflow.id} />
-          <WorkflowActions
+          <WorkflowActionButtons
             workflowId={workflow.id}
             workflowName={workflow.name}
           />
@@ -83,47 +74,5 @@ function WorkflowCard({ workflow }: Readonly<WorkflowCardProps>): JSX.Element {
       </CardContent>
       <LastRunDetails workflow={workflow} />
     </Card>
-  );
-}
-export default WorkflowCard;
-
-function WorkflowActions({
-  workflowName,
-  workflowId,
-}: Readonly<{ workflowName: string; workflowId: string }>) {
-  const [showDeleteDialog, setShowDeleteDialog] = useState<boolean>(false);
-  return (
-    <>
-      <DeleteWorkflowDialog
-        open={showDeleteDialog}
-        setOpen={setShowDeleteDialog}
-        workflowId={workflowId}
-        workflowName={workflowName}
-      />
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button size="sm" variant="outline">
-            <TooltipWrapper content="More actions">
-              <div className="w-full h-full flex items-center justify-start">
-                <MoreVerticalIcon size={18} />
-              </div>
-            </TooltipWrapper>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel className="text-center">Actions</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            className="text-red-500 flex items-center justify-center gap-2"
-            onClick={() => {
-              setShowDeleteDialog(true);
-            }}
-          >
-            <TrashIcon className="size-4" />
-            Delete
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </>
   );
 }

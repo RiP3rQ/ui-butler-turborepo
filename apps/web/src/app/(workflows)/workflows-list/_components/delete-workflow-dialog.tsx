@@ -1,5 +1,8 @@
 "use client";
 
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,25 +12,22 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Input } from "@/components/ui/input";
-import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
+} from "@repo/ui/components/ui/alert-dialog";
+import { Input } from "@repo/ui/components/ui/input";
 import { deleteWorkflowFunction } from "@/actions/workflows/deleteWorkflow";
 
-type Props = {
+interface DeleteWorkflowDialogProps {
   open: boolean;
   setOpen: (open: boolean) => void;
   workflowName: string;
-  workflowId: string;
-};
-const DeleteWorkflowDialog = ({
+  workflowId: number;
+}
+export function DeleteWorkflowDialog({
   open,
   setOpen,
   workflowName,
   workflowId,
-}: Readonly<Props>) => {
+}: Readonly<DeleteWorkflowDialogProps>): JSX.Element {
   const [confirmText, setConfirmText] = useState<string>("");
 
   const { mutate, isPending } = useMutation({
@@ -43,11 +43,11 @@ const DeleteWorkflowDialog = ({
 
   return (
     <AlertDialog
-      open={open}
       onOpenChange={(open) => {
         setConfirmText("");
         setOpen(open);
       }}
+      open={open}
     >
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -59,13 +59,15 @@ const DeleteWorkflowDialog = ({
             its data will be lost.
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <div className={"flex flex-col py-4 gap-2"}>
+        <div className="flex flex-col py-4 gap-2">
           <p>
             If you are sure, enter <b>{workflowName}</b> to confirm:
           </p>
           <Input
+            onChange={(e) => {
+              setConfirmText(e.target.value);
+            }}
             value={confirmText}
-            onChange={(e) => setConfirmText(e.target.value)}
           />
         </div>
         <AlertDialogFooter>
@@ -78,10 +80,8 @@ const DeleteWorkflowDialog = ({
             Cancel
           </AlertDialogCancel>
           <AlertDialogAction
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/70"
             disabled={confirmText !== workflowName || isPending}
-            className={
-              "bg-destructive text-destructive-foreground hover:bg-destructive/70"
-            }
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -98,5 +98,4 @@ const DeleteWorkflowDialog = ({
       </AlertDialogContent>
     </AlertDialog>
   );
-};
-export default DeleteWorkflowDialog;
+}

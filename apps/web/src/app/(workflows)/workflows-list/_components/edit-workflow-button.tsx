@@ -1,17 +1,16 @@
-import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@repo/ui/lib/utils";
+import { buttonVariants } from "@repo/ui/components/ui/button";
 import { ShuffleIcon } from "lucide-react";
 import Link from "next/link";
 
-type EditWorkflowButtonProps = {
-  workflowId: string;
-};
-const EditWorkflowButton = ({
+interface EditWorkflowButtonProps {
+  workflowId: number;
+}
+function EditWorkflowButton({
   workflowId,
-}: Readonly<EditWorkflowButtonProps>) => {
+}: Readonly<EditWorkflowButtonProps>): JSX.Element {
   return (
     <Link
-      href={`/workflow/editor/${workflowId}`}
       className={cn(
         buttonVariants({
           variant: "outline",
@@ -19,10 +18,11 @@ const EditWorkflowButton = ({
         }),
         "flex items-center gap-2",
       )}
+      href={`/workflow/editor/${workflowId}`}
     >
-      <ShuffleIcon className={"size-4"} />
+      <ShuffleIcon className="size-4" />
       Edit
     </Link>
   );
-};
+}
 export default EditWorkflowButton;

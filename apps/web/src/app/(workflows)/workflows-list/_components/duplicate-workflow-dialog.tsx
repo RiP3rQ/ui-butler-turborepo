@@ -1,38 +1,32 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { CopyIcon, Layers2Icon, Loader2Icon } from "lucide-react";
-import CustomDialogHeader from "@/components/custom-dialog-header";
-import { useForm, UseFormReturn } from "react-hook-form";
-import { z } from "zod";
+import { CopyIcon, Layers2Icon } from "lucide-react";
+import { useForm } from "react-hook-form";
+import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import CustomDialogHeader from "@repo/ui/components/main-app/custom-dialog-header";
+import { Button } from "@repo/ui/components/ui/button";
 import {
-  duplicateWorkflowSchema,
-  DuplicateWorkflowSchemaType,
-} from "@/schemas/workflow";
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@repo/ui/components/ui/dialog";
+import { cn } from "@repo/ui/lib/utils";
+import type { DuplicateWorkflowSchemaType } from "@/schemas/workflow";
+import { duplicateWorkflowSchema } from "@/schemas/workflow";
+import { WorkflowDuplicateForm } from "@/app/(workflows)/workflows-list/_components/forms/workflow-duplicate-form.tsx";
 import { duplicateWorkflowFunction } from "@/actions/workflows/duplicateWorkflow";
-import { cn } from "@/lib/utils";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 
-type Props = {
-  workflowId: string;
-};
-const DuplicateWorkflowDialog = ({ workflowId }: Readonly<Props>) => {
+interface DuplicateWorkflowDialogProps {
+  workflowId: number;
+}
+export function DuplicateWorkflowDialog({
+  workflowId,
+}: Readonly<DuplicateWorkflowDialogProps>): JSX.Element {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -70,91 +64,35 @@ const DuplicateWorkflowDialog = ({ workflowId }: Readonly<Props>) => {
 
   return (
     <Dialog
-      open={isOpen}
       onOpenChange={(open) => {
         form.reset();
         setIsOpen(open);
       }}
+      open={isOpen}
     >
       <DialogTrigger asChild>
         <Button
-          variant={"ghost"}
-          size={"icon"}
           className={cn(
             "ml-2 transition-opacity duration-200 opacity-0 group-hover/card:opacity-100",
           )}
+          size="icon"
+          variant="ghost"
         >
-          <CopyIcon className={"size-4 text-muted-foreground cursor-pointer"} />
+          <CopyIcon className="size-4 text-muted-foreground cursor-pointer" />
         </Button>
       </DialogTrigger>
-      <DialogContent className={"px-4"}>
+      <DialogContent className="px-4">
         <CustomDialogHeader
           icon={Layers2Icon}
-          title={"Duplicate Workflow"}
-          subTitle={"Create a copy of the existing workflow"}
+          subTitle="Create a copy of the existing workflow"
+          title="Duplicate Workflow"
         />
-        <WorkflowForm form={form} onSubmit={onSubmit} isPending={isPending} />
+        <WorkflowDuplicateForm
+          form={form}
+          isPending={isPending}
+          onSubmit={onSubmit}
+        />
       </DialogContent>
     </Dialog>
-  );
-};
-export default DuplicateWorkflowDialog;
-
-function WorkflowForm({
-  form,
-  onSubmit,
-  isPending,
-}: Readonly<{
-  form: UseFormReturn<z.infer<typeof duplicateWorkflowSchema>>;
-  onSubmit: (data: DuplicateWorkflowSchemaType) => void;
-  isPending: boolean;
-}>) {
-  return (
-    <Form {...form}>
-      <form
-        className={"space-y-6 w-full"}
-        onSubmit={form.handleSubmit(onSubmit)}
-      >
-        <FormField
-          control={form.control}
-          name={"name"}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className={"flex gap-1 items-center"}>
-                Name
-                <p className={"text-primary text-xs"}>(Required)</p>
-              </FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormDescription>
-                Choose a descriptive name for your workflow
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name={"description"}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className={"flex gap-1 items-center"}>
-                Description
-                <p className={"text-muted-foreground text-xs"}>(optional)</p>
-              </FormLabel>
-              <FormControl>
-                <Textarea {...field} className={"resize-none"} />
-              </FormControl>
-              <FormDescription>Describe your workflow</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button className={"w-full"} type={"submit"} disabled={isPending}>
-          {isPending ? <Loader2Icon className={"animate-spin"} /> : "Duplicate"}
-        </Button>
-      </form>
-    </Form>
   );
 }
