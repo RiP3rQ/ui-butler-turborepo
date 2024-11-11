@@ -9,6 +9,7 @@ import type { Period } from "@repo/types/analytics";
 import { getPeriods } from "@/actions/analytics/get-periods.ts";
 import { testServerAction } from "@/actions/test-actions.ts";
 import { getStatCardsValues } from "@/actions/analytics/get-stat-cards-values.ts";
+import { getWorkflowExecutionStats } from "@/actions/analytics/get-workflow-execution-stats.ts";
 
 export default async function Home({
   searchParams,
@@ -42,7 +43,7 @@ export default async function Home({
         </Suspense>
         <Suspense fallback={<Skeleton className="w-full h-[300px]" />}>
           <StatsExecutionStatusChartWrapper
-            getWorkflowExecutionStatsAction={testServerAction}
+            getWorkflowExecutionStatsAction={getWorkflowExecutionStats}
             selectedPeriod={period}
           />
         </Suspense>

@@ -42,4 +42,22 @@ export class AnalyticsController {
 
     return this.analyticsService.getStatCardsValues(user, month, year);
   }
+
+  @Get('workflow-execution-stats')
+  @UseGuards(JwtAuthGuard)
+  getWorkflowExecutionStats(
+    @QueryParam('month', new ParseIntPipe()) month: number,
+    @QueryParam('year', new ParseIntPipe()) year: number,
+    @CurrentUser() user: User,
+  ) {
+    if (!user) {
+      throw new NotFoundException('Unauthorized');
+    }
+
+    if (!month || !year) {
+      throw new NotFoundException('Invalid query parameters provided');
+    }
+
+    return this.analyticsService.getWorkflowExecutionStats(user, month, year);
+  }
 }

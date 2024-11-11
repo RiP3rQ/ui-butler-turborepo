@@ -11,6 +11,7 @@ import {
 import { and, eq, gte, isNotNull, lte, min } from 'drizzle-orm';
 import { periodToDateRange } from './lib/period-to-date-range';
 import { inArray } from 'drizzle-orm/sql/expressions/conditions';
+import { eachDayOfInterval, format } from 'date-fns';
 
 @Injectable()
 export class AnalyticsService {
@@ -98,5 +99,75 @@ export class AnalyticsService {
     };
 
     return stats;
+  }
+
+  async getWorkflowExecutionStats(user: User, month: number, year: number) {
+    const { startDate, endDate } = periodToDateRange({
+      month,
+      year,
+    });
+
+    const executionsInPeriod = await this.database
+      .select({
+        status: workflowExecutions.status,
+        startedAt: workflowExecutions.startedAt,
+      })
+      .from(workflowExecutions)
+      .where(
+        and(
+          eq(workflowExecutions.userId, user.id),
+          gte(workflowExecutions.startedAt, startDate),
+          lte(workflowExecutions.startedAt, endDate),
+        ),
+      );
+
+    if (!executionsInPeriod) {
+      throw new Error('No executions found in selected period');
+    }
+
+    const dateFormat = 'yyyy-MM-dd';
+
+    const statsDates = eachDayOfInterval({
+      start: startDate,
+      end: endDate,
+    })
+      .map((date) => format(date, dateFormat))
+      .reduce(
+        (acc, date) => {
+          acc[date] = {
+            successful: 0,
+            failed: 0,
+          };
+          return acc;
+        },
+        {} as Record<
+          string,
+          {
+            successful: number;
+            failed: number;
+          }
+        >,
+      );
+
+    executionsInPeriod.forEach((execution) => {
+      if (!execution.startedAt) {
+        return;
+      }
+      const date = format(execution.startedAt, dateFormat);
+      if (execution.status === 'COMPLETED') {
+        // TODO: PROPER ENUM VALUE
+        statsDates[date].successful += 1;
+      } else if (execution.status === 'FAILED') {
+        // TODO: PROPER ENUM VALUE
+        statsDates[date].failed += 1;
+      }
+    });
+
+    const results = Object.entries(statsDates).map(([date, stats]) => ({
+      date,
+      ...stats,
+    }));
+
+    return results;
   }
 }
