@@ -5,8 +5,8 @@ import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
-import { users } from '../users/schema';
 import { GithubAuthGuard } from './guards/github-auth.guard';
+import { User } from '../users/types/user';
 
 @Controller('auth')
 export class AuthController {
@@ -15,7 +15,7 @@ export class AuthController {
   @Post('login')
   @UseGuards(LocalAuthGuard)
   async login(
-    @CurrentUser() user: typeof users.$inferSelect,
+    @CurrentUser() user: User,
     @Res({ passthrough: true }) response: Response,
   ) {
     await this.authService.login(user, response);
@@ -37,7 +37,7 @@ export class AuthController {
   @Post('refresh')
   @UseGuards(JwtRefreshAuthGuard)
   async refreshToken(
-    @CurrentUser() user: typeof users.$inferSelect,
+    @CurrentUser() user: User,
     @Res({ passthrough: true }) response: Response,
   ) {
     console.log('refresh token');
@@ -51,7 +51,7 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
   async googleCallback(
-    @CurrentUser() user: typeof users.$inferSelect,
+    @CurrentUser() user: User,
     @Res({ passthrough: true }) response: Response,
   ) {
     await this.authService.login(user, response, true);
@@ -64,7 +64,7 @@ export class AuthController {
   @Get('github/callback')
   @UseGuards(GithubAuthGuard)
   async githubCallback(
-    @CurrentUser() user: typeof users.$inferSelect,
+    @CurrentUser() user: User,
     @Res({ passthrough: true }) response: Response,
   ) {
     await this.authService.login(user, response, true);

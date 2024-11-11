@@ -1,15 +1,53 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { WorkflowsModule } from './workflows/workflows.module';
 import { WorkflowExecutionsModule } from './workflow-executions/workflow-executions.module';
 import { CredentialsModule } from './credentials/credentials.module';
+import { DatabaseModule } from './database/database.module';
+import { HealthController } from './health.controller';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+import { LoggerModule } from 'nestjs-pino';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }), UsersModule, AuthModule, AnalyticsModule, WorkflowsModule, WorkflowExecutionsModule, CredentialsModule],
-  controllers: [],
+  imports: [
+    LoggerModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => {
+        const isProduction = configService.get('NODE_ENV') === 'production';
+
+        return {
+          pinoHttp: {
+            transport: isProduction
+              ? undefined
+              : {
+                  target: 'pino-pretty',
+                  options: {
+                    singleLine: true,
+                  },
+                },
+            level: isProduction ? 'info' : 'debug',
+          },
+        };
+      },
+      inject: [ConfigService],
+    }),
+    ConfigModule.forRoot({ isGlobal: true }),
+    DatabaseModule,
+    UsersModule,
+    AuthModule,
+    AnalyticsModule,
+    WorkflowsModule,
+    WorkflowExecutionsModule,
+    CredentialsModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+    }),
+  ],
+  controllers: [HealthController],
   providers: [],
 })
 export class AppModule {}

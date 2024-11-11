@@ -1,38 +1,36 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateAnalyticsDto } from './dto/create-analytics.dto';
-import { UpdateAnalyticsDto } from './dto/update-analytics.dto';
 import { User } from '../users/types/user';
 import { Response } from 'express';
 import { DATABASE_CONNECTION } from '../database/database-connection';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres/index';
-import * as schema from '../users/schema';
-import type { Period } from '@repo/types/period';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import type { Period } from '@repo/types/analytics';
+import { DatabaseSchemas } from '../database/merged-schemas';
+import { workflowExecutions } from '../workflow-executions/schema';
+import { eq, min } from 'drizzle-orm';
 
 @Injectable()
 export class AnalyticsService {
   constructor(
     @Inject(DATABASE_CONNECTION)
-    private readonly database: NodePgDatabase<typeof schema>,
+    private readonly database: NodePgDatabase<DatabaseSchemas>,
   ) {}
 
   async getPeriods(user: User, response: Response) {
-    const years = await this.database.workflowExecution.aggregate({
-      where: {
-        userId,
-      },
-      _min: {
-        startedAt: true,
-      },
-    });
+    const yearsData = await this.database
+      .select({ minYear: min(workflowExecutions.startedAt) })
+      .from(workflowExecutions)
+      .where(eq(workflowExecutions.userId, user.id));
 
-    if (!years) {
+    if (!yearsData) {
       throw new NotFoundException('No periods found');
     }
 
+    const years = yearsData[0];
+
     const currentYear = new Date().getFullYear();
 
-    const minYear = years._min.startedAt
-      ? new Date(years._min.startedAt).getFullYear()
+    const minYear = years.minYear
+      ? new Date(years.minYear).getFullYear()
       : currentYear;
 
     const periods: Period[] = [];
@@ -44,25 +42,5 @@ export class AnalyticsService {
     }
 
     return periods;
-  }
-
-  create(createAnalyticsDto: CreateAnalyticsDto) {
-    return 'This action adds a new analytics';
-  }
-
-  findAll() {
-    return `This action returns all analytics`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} analytics`;
-  }
-
-  update(id: number, updateAnalyticsDto: UpdateAnalyticsDto) {
-    return `This action updates a #${id} analytics`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} analytics`;
   }
 }
