@@ -21,8 +21,6 @@ export class UsersService {
   ) {}
 
   async createUser(data: CreateUserRequest) {
-    console.log('data', data);
-
     const newUser = await this.database
       .insert(users)
       .values({

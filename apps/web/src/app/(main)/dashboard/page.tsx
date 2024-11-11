@@ -8,6 +8,7 @@ import StatsCreditsUsedChartWrapper from "@repo/ui/components/main-app/analytics
 import type { Period } from "@repo/types/analytics";
 import { getPeriods } from "@/actions/analytics/get-periods.ts";
 import { testServerAction } from "@/actions/test-actions.ts";
+import { getStatCardsValues } from "@/actions/analytics/get-stat-cards-values.ts";
 
 export default async function Home({
   searchParams,
@@ -35,7 +36,7 @@ export default async function Home({
       <div className="h-full py-6 flex flex-col gap-4">
         <Suspense fallback={<StatsCardSkeleton />}>
           <StatsCardsWrapper
-            getStatsCardsValuesAction={testServerAction}
+            getStatsCardsValuesAction={getStatCardsValues}
             selectedPeriod={period}
           />
         </Suspense>
