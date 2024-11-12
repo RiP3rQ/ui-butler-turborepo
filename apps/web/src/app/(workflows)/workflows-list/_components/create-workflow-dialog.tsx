@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
 import type { CreateWorkflowSchemaType } from "@/schemas/workflow";
 import { createWorkflowSchema } from "@/schemas/workflow";
 import { WorkflowCreateForm } from "@/app/(workflows)/workflows-list/_components/forms/workflow-create-form.tsx";
-import { createWorkflowFunction } from "@/actions/workflows/createWorkflow";
+import { createWorkflow } from "@/actions/workflows/create-workflow";
 
 interface CreateWorkflowDialogProps {
   triggerText?: string;
@@ -35,20 +35,22 @@ export function CreateWorkflowDialog({
   });
 
   const { mutate, isPending } = useMutation({
-    mutationFn: createWorkflowFunction,
+    mutationFn: createWorkflow,
     onSuccess: (res) => {
-      toast.success("Workflow created successfully", { id: "create-workflow" });
+      toast.success("Workflow created successfully", {
+        id: "create-executions",
+      });
       router.push(`/workflow/editor/${res.id}`);
       form.reset();
     },
     onError: () => {
-      toast.error("Failed to create workflow", { id: "create-workflow" });
+      toast.error("Failed to create executions", { id: "create-executions" });
     },
   });
 
   const onSubmit = useCallback(
     (data: CreateWorkflowSchemaType) => {
-      toast.loading("Creating workflow...", { id: "create-workflow" });
+      toast.loading("Creating executions...", { id: "create-executions" });
       mutate(data);
     },
     [mutate],

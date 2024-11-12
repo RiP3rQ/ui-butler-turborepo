@@ -14,7 +14,7 @@ import {
   AlertDialogTitle,
 } from "@repo/ui/components/ui/alert-dialog";
 import { Input } from "@repo/ui/components/ui/input";
-import { deleteWorkflowFunction } from "@/actions/workflows/deleteWorkflow";
+import { deleteWorkflow } from "@/actions/workflows/delete-workflow";
 
 interface DeleteWorkflowDialogProps {
   open: boolean;
@@ -31,13 +31,13 @@ export function DeleteWorkflowDialog({
   const [confirmText, setConfirmText] = useState<string>("");
 
   const { mutate, isPending } = useMutation({
-    mutationFn: deleteWorkflowFunction,
+    mutationFn: deleteWorkflow,
     onSuccess: () => {
       toast.success("Workflow deleted successfully", { id: workflowId });
       setConfirmText("");
     },
     onError: () => {
-      toast.error("Failed to delete workflow", { id: workflowId });
+      toast.error("Failed to delete executions", { id: workflowId });
     },
   });
 
@@ -85,7 +85,7 @@ export function DeleteWorkflowDialog({
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              toast.loading("Deleting workflow...", {
+              toast.loading("Deleting executions...", {
                 id: workflowId,
               });
               mutate(workflowId);

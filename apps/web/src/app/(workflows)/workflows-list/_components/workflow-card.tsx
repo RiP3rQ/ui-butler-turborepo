@@ -7,10 +7,10 @@ import { cn } from "@repo/ui/lib/utils";
 import { FileIcon, PlayIcon } from "lucide-react";
 import Link from "next/link";
 import { TooltipWrapper } from "@repo/ui/components/main-app/tooltip-wrapper";
-import DuplicateWorkflowDialog from "@/app/(workflows)/workflows-list/_components/duplicate-workflow-dialog.tsx";
-import RunWorkflowButton from "@/app/(workflows)/workflows-list/_components/run-workflow-button.tsx";
-import EditWorkflowButton from "@/app/(workflows)/workflows-list/_components/edit-workflow-button.tsx";
-import LastRunDetails from "@/app/(workflows)/workflows-list/_components/last-run-details.tsx";
+import { DuplicateWorkflowDialog } from "@/app/(workflows)/workflows-list/_components/duplicate-workflow-dialog.tsx";
+import { RunWorkflowButton } from "@/app/(workflows)/workflows-list/_components/run-workflow-button.tsx";
+import { EditWorkflowButton } from "@/app/(workflows)/workflows-list/_components/edit-workflow-button.tsx";
+import { LastRunDetails } from "@/app/(workflows)/workflows-list/_components/last-run-details.tsx";
 import { WorkflowActionButtons } from "@/app/(workflows)/workflows-list/_components/workflow-action-buttons.tsx";
 
 const STATUS_COLORS = {

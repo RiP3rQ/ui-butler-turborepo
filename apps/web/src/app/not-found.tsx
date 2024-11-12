@@ -13,7 +13,7 @@ function NotFoundPage() {
         <div className="flex flex-col sm:flex-row justify-center gap-4">
           <Link
             className="flex items-center justify-center px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/80 transition-colors"
-            href="/dashboard"
+            href="/analytics-dashboard"
           >
             <ArrowLeftIcon className="size-4 mr-2" />
             Back to dashboard

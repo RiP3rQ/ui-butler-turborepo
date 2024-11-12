@@ -8,7 +8,7 @@ export const createWorkflowSchema = z.object({
 export type CreateWorkflowSchemaType = z.infer<typeof createWorkflowSchema>;
 
 export const duplicateWorkflowSchema = createWorkflowSchema.extend({
-  workflowId: z.string(),
+  workflowId: z.number(),
 });
 
 export type DuplicateWorkflowSchemaType = z.infer<

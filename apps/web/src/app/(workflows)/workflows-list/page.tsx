@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { UserWorkflowsSkeleton } from "@/app/(workflows)/workflows-list/_components/user-workflows-skeleton.tsx";
 import { UserWorkflows } from "@/app/(workflows)/workflows-list/_components/user-workflows-list.tsx";
-import CreateWorkflowDialog from "@/app/(workflows)/workflows-list/_components/create-workflow-dialog.tsx";
+import { CreateWorkflowDialog } from "@/app/(workflows)/workflows-list/_components/create-workflow-dialog.tsx";
 
 export default function WorkflowsListPage(): JSX.Element {
   return (

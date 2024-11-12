@@ -6,7 +6,7 @@ import Link from "next/link";
 interface EditWorkflowButtonProps {
   workflowId: number;
 }
-function EditWorkflowButton({
+export function EditWorkflowButton({
   workflowId,
 }: Readonly<EditWorkflowButtonProps>): JSX.Element {
   return (
@@ -25,4 +25,3 @@ function EditWorkflowButton({
     </Link>
   );
 }
-export default EditWorkflowButton;

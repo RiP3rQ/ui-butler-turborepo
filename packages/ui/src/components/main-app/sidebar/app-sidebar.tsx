@@ -37,7 +37,7 @@ const data = {
   navMain: [
     {
       title: "Analytics dashboard",
-      url: "/dashboard",
+      url: "/analytics-dashboard",
       icon: ChartAreaIcon,
       isActive: true,
     },

@@ -5,7 +5,7 @@ import { UpdateWorkflowDto } from './dto/update-workflow.dto';
 @Injectable()
 export class WorkflowsService {
   create(createWorkflowDto: CreateWorkflowDto) {
-    return 'This action adds a new workflow';
+    return 'This action adds a new executions';
   }
 
   findAll() {

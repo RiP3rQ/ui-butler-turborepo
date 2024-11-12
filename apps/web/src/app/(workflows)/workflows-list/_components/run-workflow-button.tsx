@@ -5,21 +5,23 @@ import { Loader2Icon, PlayIcon } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { runWorkflowFunction } from "@/actions/workflow/runWorkflow";
+import { runWorkflow } from "@/actions/executions/run-workflow.ts";
 
 interface RunWorkflowButtonProps {
   workflowId: number;
 }
-function RunWorkflowButton({ workflowId }: Readonly<RunWorkflowButtonProps>) {
+export function RunWorkflowButton({
+  workflowId,
+}: Readonly<RunWorkflowButtonProps>) {
   const router = useRouter();
   const { mutate, isPending } = useMutation({
-    mutationFn: runWorkflowFunction,
+    mutationFn: runWorkflow,
     onSuccess: ({ url }) => {
       toast.success("Workflow executed successfully", { id: workflowId });
       router.push(url);
     },
     onError: () => {
-      toast.error("Failed to execute workflow", { id: workflowId });
+      toast.error("Failed to execute executions", { id: workflowId });
     },
   });
 
@@ -27,7 +29,7 @@ function RunWorkflowButton({ workflowId }: Readonly<RunWorkflowButtonProps>) {
     <Button
       className="flex items-center gap-2"
       onClick={() => {
-        toast.loading("Executing workflow...", { id: workflowId });
+        toast.loading("Executing executions...", { id: workflowId });
         mutate({ workflowId });
       }}
       size="sm"
@@ -43,4 +45,3 @@ function RunWorkflowButton({ workflowId }: Readonly<RunWorkflowButtonProps>) {
     </Button>
   );
 }
-export default RunWorkflowButton;

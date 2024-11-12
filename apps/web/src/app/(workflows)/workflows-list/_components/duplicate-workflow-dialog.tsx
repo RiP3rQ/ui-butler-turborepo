@@ -19,7 +19,7 @@ import { cn } from "@repo/ui/lib/utils";
 import type { DuplicateWorkflowSchemaType } from "@/schemas/workflow";
 import { duplicateWorkflowSchema } from "@/schemas/workflow";
 import { WorkflowDuplicateForm } from "@/app/(workflows)/workflows-list/_components/forms/workflow-duplicate-form.tsx";
-import { duplicateWorkflowFunction } from "@/actions/workflows/duplicateWorkflow";
+import { duplicateWorkflow } from "@/actions/workflows/duplicate-workflow";
 
 interface DuplicateWorkflowDialogProps {
   workflowId: number;
@@ -38,24 +38,26 @@ export function DuplicateWorkflowDialog({
   });
 
   const { mutate, isPending } = useMutation({
-    mutationFn: duplicateWorkflowFunction,
+    mutationFn: duplicateWorkflow,
     onSuccess: (res) => {
       toast.success("Workflow duplicated successfully", {
-        id: "duplicate-workflow",
+        id: "duplicate-executions",
       });
       router.push(`/workflow/editor/${res.id}`);
       form.reset();
       setIsOpen((prev) => !prev);
     },
     onError: () => {
-      toast.error("Failed to duplicate workflow", { id: "duplicate-workflow" });
+      toast.error("Failed to duplicate executions", {
+        id: "duplicate-executions",
+      });
     },
   });
 
   const onSubmit = useCallback(
     (data: DuplicateWorkflowSchemaType) => {
-      toast.loading("Duplicating the workflow...", {
-        id: "duplicate-workflow",
+      toast.loading("Duplicating the executions...", {
+        id: "duplicate-executions",
       });
       mutate(data);
     },

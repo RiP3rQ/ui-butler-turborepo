@@ -10,7 +10,7 @@ import {
 import { Button } from "@repo/ui/components/ui/button";
 import { TooltipWrapper } from "@repo/ui/components/main-app/tooltip-wrapper";
 import { MoreVerticalIcon, TrashIcon } from "lucide-react";
-import DeleteWorkflowDialog from "@/app/(workflows)/workflows-list/_components/delete-workflow-dialog.tsx";
+import { DeleteWorkflowDialog } from "@/app/(workflows)/workflows-list/_components/delete-workflow-dialog.tsx";
 
 interface WorkflowActionsProps {
   workflowName: string;
