@@ -1,6 +1,6 @@
-import { LucideIcon } from 'lucide-react';
-import { TaskParam, TaskType } from './task';
-import { AppNode, AppNodeMissingInputs } from './appNode';
+import { LucideIcon } from "lucide-react";
+import { TaskParam, TaskType } from "./task";
+import { AppNode, AppNodeMissingInputs } from "./appNode";
 
 export enum WorkflowStatus {
   DRAFT = "DRAFT",

@@ -1,8 +1,8 @@
 "use client";
-import { CirclePlayIcon, CoinsIcon, WaypointsIcon } from 'lucide-react';
-import type { StatCardsValuesResponse } from '@repo/types/analytics.ts';
-import { Skeleton } from '@repo/ui/components/ui/skeleton.tsx';
-import SingleStatCard from '@repo/ui/components/main-app/analytics/stat-cards/single-stat-card.tsx';
+import { CirclePlayIcon, CoinsIcon, WaypointsIcon } from "lucide-react";
+import type { StatCardsValuesResponse } from "@repo/types/src/analytics";
+import { Skeleton } from "@repo/ui/components/ui/skeleton.tsx";
+import SingleStatCard from "@repo/ui/components/main-app/analytics/stat-cards/single-stat-card.tsx";
 
 interface StatCardsProps {
   data: StatCardsValuesResponse;

@@ -1,8 +1,14 @@
 "use client";
 
-import { useRouter, useSearchParams } from 'next/navigation';
-import type { Period } from '@repo/types/analytics.ts';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/ui/components/ui/select.tsx';
+import { useRouter, useSearchParams } from "next/navigation";
+import type { Period } from "@repo/types/src/analytics";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@repo/ui/components/ui/select.tsx";
 
 const MONTHS_NAMES = [
   "January",

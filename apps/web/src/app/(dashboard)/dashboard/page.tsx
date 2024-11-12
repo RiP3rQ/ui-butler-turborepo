@@ -1,17 +1,15 @@
-import { Suspense } from 'react';
-import { Skeleton } from '@repo/ui/components/ui/skeleton';
-import { PeriodSelectorWrapper } from '@repo/ui/components/main-app/analytics/period-selector-wrapper';
-import { StatsCardSkeleton } from '@repo/ui/components/main-app/analytics/stat-cards/stat-cards';
-import StatsCardsWrapper from '@repo/ui/components/main-app/analytics/stat-cards/stats-cards-wrapper';
-import StatsExecutionStatusChartWrapper
-  from '@repo/ui/components/main-app/analytics/stat-chart/stats-execution-status-chart-wrapper';
-import StatsCreditsUsedChartWrapper
-  from '@repo/ui/components/main-app/analytics/stat-chart/stats-credits-used-chart-wrapper';
-import type { Period } from '@repo/types/analytics.ts';
-import { getPeriods } from '@/actions/analytics/get-periods.ts';
-import { getStatCardsValues } from '@/actions/analytics/get-stat-cards-values.ts';
-import { getWorkflowExecutionStats } from '@/actions/analytics/get-workflow-execution-stats.ts';
-import { getUsedCreditsInPeriod } from '@/actions/analytics/get-used-credits-in-period.ts';
+import { Suspense } from "react";
+import { Skeleton } from "@repo/ui/components/ui/skeleton";
+import { PeriodSelectorWrapper } from "@repo/ui/components/main-app/analytics/period-selector-wrapper";
+import { StatsCardSkeleton } from "@repo/ui/components/main-app/analytics/stat-cards/stat-cards";
+import StatsCardsWrapper from "@repo/ui/components/main-app/analytics/stat-cards/stats-cards-wrapper";
+import StatsExecutionStatusChartWrapper from "@repo/ui/components/main-app/analytics/stat-chart/stats-execution-status-chart-wrapper";
+import StatsCreditsUsedChartWrapper from "@repo/ui/components/main-app/analytics/stat-chart/stats-credits-used-chart-wrapper";
+import type { Period } from "@repo/types/analytics.ts";
+import { getPeriods } from "@/actions/analytics/get-periods.ts";
+import { getStatCardsValues } from "@/actions/analytics/get-stat-cards-values.ts";
+import { getWorkflowExecutionStats } from "@/actions/analytics/get-workflow-execution-stats.ts";
+import { getUsedCreditsInPeriod } from "@/actions/analytics/get-used-credits-in-period.ts";
 
 export default async function Home({
   searchParams,
