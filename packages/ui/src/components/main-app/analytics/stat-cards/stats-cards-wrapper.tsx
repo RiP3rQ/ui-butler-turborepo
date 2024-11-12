@@ -1,5 +1,5 @@
-import type { Period, StatCardsValuesResponse } from "@repo/types/analytics";
-import StatCards from "@repo/ui/components/main-app/analytics/stat-cards/stat-cards.tsx";
+import type { Period, StatCardsValuesResponse } from '@repo/types/analytics.ts';
+import StatCards from '@repo/ui/components/main-app/analytics/stat-cards/stat-cards.tsx';
 
 interface StatsCardsProps {
   selectedPeriod: Period;

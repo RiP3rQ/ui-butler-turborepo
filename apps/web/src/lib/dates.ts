@@ -1,5 +1,5 @@
-import { endOfMonth, intervalToDuration, startOfMonth } from "date-fns";
-import type { Period } from "@repo/types/analytics";
+import { endOfMonth, intervalToDuration, startOfMonth } from 'date-fns';
+import type { Period } from '@repo/types/analytics.ts';
 
 export function dateToDurationString(start?: Date | null, end?: Date | null) {
   if (!start || !end) {

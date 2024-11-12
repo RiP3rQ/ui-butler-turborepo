@@ -1,9 +1,9 @@
 "use server";
 
-import { cookies } from "next/headers";
-import type { WorkflowType } from "@repo/types/workflow";
-import { getErrorMessage } from "@/lib/get-error-message.ts";
-import type { CreateWorkflowSchemaType } from "@/schemas/workflow.ts";
+import { cookies } from 'next/headers';
+import type { WorkflowType } from '@repo/types/workflow.ts';
+import { getErrorMessage } from '@/lib/get-error-message.ts';
+import type { CreateWorkflowSchemaType } from '@/schemas/workflow.ts';
 
 export async function createWorkflow(
   form: CreateWorkflowSchemaType,
@@ -18,6 +18,8 @@ export async function createWorkflow(
       .map((cookie) => `${cookie.name}=${cookie.value}`)
       .join("; ");
 
+    console.log("@ form", form);
+
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/workflows`, {
       method: "POST",
       headers: {
@@ -26,6 +28,8 @@ export async function createWorkflow(
       },
       body: JSON.stringify(form),
     });
+
+    console.log("@@ res", res);
 
     if (!res.ok) {
       throw new Error("Workflows not found");

@@ -1,8 +1,8 @@
-import * as userSchema from '../users/schema';
-import * as analyticsSchema from '../analytics/schema';
-import * as credentialsSchema from '../credentials/schema';
-import * as workflowExecutionsSchema from '../workflow-executions/schema';
-import * as workflowsSchema from '../workflows/schema';
+import * as userSchema from './schemas/users';
+import * as analyticsSchema from './schemas/analytics';
+import * as credentialsSchema from './schemas/credentials';
+import * as workflowExecutionsSchema from './schemas/workflow-executions';
+import * as workflowsSchema from './schemas/workflows';
 
 export const mergedSchemas = {
   ...userSchema,

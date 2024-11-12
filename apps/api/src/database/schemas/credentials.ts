@@ -8,7 +8,7 @@ import {
   timestamp,
   unique,
 } from 'drizzle-orm/pg-core';
-import { users } from '../../users/schema';
+import { users } from './users';
 
 export const userCredentials = pgTable(
   'user_credentials',

@@ -1,11 +1,8 @@
 "use server";
 
-import { cookies } from "next/headers";
-import type {
-  Period,
-  UsedCreditsInPeriodResponse,
-} from "@repo/types/analytics";
-import { getErrorMessage } from "@/lib/get-error-message.ts";
+import { cookies } from 'next/headers';
+import type { Period, UsedCreditsInPeriodResponse } from '@repo/types/analytics.ts';
+import { getErrorMessage } from '@/lib/get-error-message.ts';
 
 export async function getWorkflowExecutionStats(
   selectedPeriod: Period,

@@ -1,5 +1,5 @@
-import type { EditorActionsType } from "@repo/types/code-editor-types";
-import { Button } from "@repo/ui/components/ui/button.tsx";
+import type { EditorActionsType } from '@repo/types/code-editor-types.ts';
+import { Button } from '@repo/ui/components/ui/button.tsx';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "@repo/ui/components/ui/dropdown-menu.tsx";
+} from '@repo/ui/components/ui/dropdown-menu.tsx';
 
 interface RunCodeEditorActionsProps {
   actions: EditorActionsType[];

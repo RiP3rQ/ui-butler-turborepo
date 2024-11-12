@@ -1,5 +1,5 @@
-import { WorkflowTask } from "./workflow";
-import { LogCollector } from "./logCollector";
+import { WorkflowTask } from './workflow';
+import { LogCollector } from './logCollector';
 
 export type Environment = {
   // phases with phaseId as key

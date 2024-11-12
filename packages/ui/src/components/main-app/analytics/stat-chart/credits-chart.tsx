@@ -1,13 +1,13 @@
 "use client";
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
-import type { UsedCreditsInPeriodResponse } from "@repo/types/analytics";
+import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts';
+import type { UsedCreditsInPeriodResponse } from '@repo/types/analytics.ts';
 import {
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-} from "@repo/ui/components/ui/chart";
+} from '@repo/ui/components/ui/chart';
 
 const chartConfig = {
   successful: {

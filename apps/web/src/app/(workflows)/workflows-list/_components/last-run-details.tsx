@@ -1,14 +1,11 @@
-import { format, formatDistanceToNow } from "date-fns";
-import Link from "next/link";
-import { formatInTimeZone } from "date-fns-tz";
-import { ChevronRightIcon, ClockIcon } from "lucide-react";
-import type {
-  WorkflowExecutionStatus,
-  WorkflowType,
-} from "@repo/types/workflow";
-import { WorkflowStatus } from "@repo/types/workflow";
-import { ExecutionStatusIndicator } from "@repo/ui/components/main-app/execution-viewer/execution-status-indicator";
-import { ExecutionStatusLabel } from "@repo/ui/components/main-app/execution-viewer/execution-status-label";
+import { format, formatDistanceToNow } from 'date-fns';
+import Link from 'next/link';
+import { formatInTimeZone } from 'date-fns-tz';
+import { ChevronRightIcon, ClockIcon } from 'lucide-react';
+import type { WorkflowExecutionStatus, WorkflowType } from '@repo/types/workflow.ts';
+import { WorkflowStatus } from '@repo/types/workflow.ts';
+import { ExecutionStatusIndicator } from '@repo/ui/components/main-app/execution-viewer/execution-status-indicator';
+import { ExecutionStatusLabel } from '@repo/ui/components/main-app/execution-viewer/execution-status-label';
 
 interface LastRunDetailsProps {
   workflow: WorkflowType;

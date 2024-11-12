@@ -1,5 +1,5 @@
-import { WorkflowExecutionStatus } from "@repo/types/workflow";
-import { cn } from "@repo/ui/lib/utils";
+import { WorkflowExecutionStatus } from '@repo/types/workflow.ts';
+import { cn } from '@repo/ui/lib/utils';
 
 const indicatorStatusColors: Record<WorkflowExecutionStatus, string> = {
   [WorkflowExecutionStatus.COMPLETED]: "bg-green-500",

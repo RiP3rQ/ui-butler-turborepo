@@ -1,8 +1,5 @@
-import type {
-  Period,
-  UsedCreditsInPeriodResponse,
-} from "@repo/types/analytics";
-import StatsChartWrapper from "@repo/ui/components/main-app/analytics/stat-chart/stats-chart-wrapper.tsx";
+import type { Period, UsedCreditsInPeriodResponse } from '@repo/types/analytics.ts';
+import StatsChartWrapper from '@repo/ui/components/main-app/analytics/stat-chart/stats-chart-wrapper.tsx';
 
 interface StatsExecutionStatusChartWrapperProps {
   selectedPeriod: Period;

@@ -1,10 +1,10 @@
 "use client";
 
-import { Editor } from "@monaco-editor/react";
-import type { EditorActionsType } from "@repo/types/code-editor-types";
-import { cn } from "@repo/ui/lib/utils.ts";
-import { Button } from "@repo/ui/components/ui/button.tsx";
-import { RunCodeEditorActions } from "@repo/ui/components/main-app/code-editor/run-actions-component.tsx";
+import { Editor } from '@monaco-editor/react';
+import type { EditorActionsType } from '@repo/types/code-editor-types.ts';
+import { cn } from '@repo/ui/lib/utils.ts';
+import { Button } from '@repo/ui/components/ui/button.tsx';
+import { RunCodeEditorActions } from '@repo/ui/components/main-app/code-editor/run-actions-component.tsx';
 
 interface CodeEditorProps {
   actions: EditorActionsType[];
