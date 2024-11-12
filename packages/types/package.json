@@ -17,7 +17,13 @@
     "react": "19.0.0-rc-02c0e824-20241028"
   },
   "dependencies": {
+    "@repo/config-tailwindcss": "workspace:*",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
     "@xyflow/react": "^12.3.5",
     "lucide-react": "^0.454.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.6"
   }
 }

@@ -1,7 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
-import type { Period } from "@repo/types/analytics.ts";
+import type { Period } from "@repo/types/src/analytics";
 import { getErrorMessage } from "@/lib/get-error-message.ts";
 
 export async function getPeriods(): Promise<Period[]> {

@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import type {
   Period,
   UsedCreditsInPeriodResponse,
-} from "@repo/types/analytics.ts";
+} from "@repo/types/src/analytics";
 import { getErrorMessage } from "@/lib/get-error-message.ts";
 
 export async function getWorkflowExecutionStats(

@@ -1,7 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
-import type { WorkflowType } from "@repo/types/workflow.ts";
+import type { WorkflowType } from "@repo/types/src/workflow";
 import { getErrorMessage } from "@/lib/get-error-message.ts";
 import type { CreateWorkflowSchemaType } from "@/schemas/workflow.ts";
 

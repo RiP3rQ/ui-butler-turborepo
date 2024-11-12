@@ -9,7 +9,7 @@ import {
   TabletSmartphoneIcon,
   TestTubeDiagonalIcon,
 } from "lucide-react";
-import type { EditorActionsType } from "@repo/types/code-editor-types.ts";
+import type { EditorActionsType } from "@repo/types/src/code-editor-types.ts";
 import { useExecuteRunActionDialogState } from "@repo/ui/state/execute-run-action-state";
 import { ActionRunDialog } from "@repo/ui/components/main-app/code-editor/action-run-dialog";
 

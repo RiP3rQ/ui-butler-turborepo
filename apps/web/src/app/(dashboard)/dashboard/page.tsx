@@ -5,7 +5,7 @@ import { StatsCardSkeleton } from "@repo/ui/components/main-app/analytics/stat-c
 import StatsCardsWrapper from "@repo/ui/components/main-app/analytics/stat-cards/stats-cards-wrapper";
 import StatsExecutionStatusChartWrapper from "@repo/ui/components/main-app/analytics/stat-chart/stats-execution-status-chart-wrapper";
 import StatsCreditsUsedChartWrapper from "@repo/ui/components/main-app/analytics/stat-chart/stats-credits-used-chart-wrapper";
-import type { Period } from "@repo/types/analytics.ts";
+import type { Period } from "@repo/types/src/analytics.ts";
 import { getPeriods } from "@/actions/analytics/get-periods.ts";
 import { getStatCardsValues } from "@/actions/analytics/get-stat-cards-values.ts";
 import { getWorkflowExecutionStats } from "@/actions/analytics/get-workflow-execution-stats.ts";

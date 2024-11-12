@@ -1,4 +1,3 @@
-// interceptors/error-logger.interceptor.ts
 import {
   CallHandler,
   ExecutionContext,

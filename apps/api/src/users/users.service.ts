@@ -73,7 +73,7 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    return await this.database
+    return this.database
       .update(users)
       .set({
         refreshToken: data.refreshToken,

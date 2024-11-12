@@ -9,12 +9,31 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { GithubStrategy } from './strategies/github.strategy';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    forwardRef(() => UsersModule), // Ensure this is correctly imported,
+    forwardRef(() => UsersModule),
     PassportModule,
-    JwtModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => {
+        const secretKey = configService.getOrThrow('JWT_REFRESH_TOKEN_SECRET');
+        const expirationMs = parseInt(
+          configService.getOrThrow('JWT_ACCESS_TOKEN_EXPIRATION_MS'),
+        );
+        const expirationString = `${expirationMs}ms`;
+
+        return {
+          global: true,
+          secret: secretKey,
+          signOptions: {
+            expiresIn: expirationString,
+          },
+        };
+      },
+      inject: [ConfigService],
+    }),
   ],
   controllers: [AuthController],
   providers: [

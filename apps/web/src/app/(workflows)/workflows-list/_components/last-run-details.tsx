@@ -5,8 +5,8 @@ import { ChevronRightIcon, ClockIcon } from "lucide-react";
 import type {
   WorkflowExecutionStatus,
   WorkflowType,
-} from "@repo/types/workflow.ts";
-import { WorkflowStatus } from "@repo/types/workflow.ts";
+} from "@repo/types/src/workflow.ts";
+import { WorkflowStatus } from "@repo/types/src/workflow.ts";
 import { ExecutionStatusIndicator } from "@repo/ui/components/main-app/execution-viewer/execution-status-indicator";
 import { ExecutionStatusLabel } from "@repo/ui/components/main-app/execution-viewer/execution-status-label";
 

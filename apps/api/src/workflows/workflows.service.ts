@@ -7,7 +7,6 @@ import { workflows } from '../database/schemas/workflows';
 import { desc, eq } from 'drizzle-orm';
 import { CreateWorkflowDto } from './dto/create-workflow.dto';
 import type { AppEdge, AppNode } from '@repo/types/src/appNode';
-import { WorkflowStatus } from '@repo/types/src/workflow';
 
 @Injectable()
 export class WorkflowsService {
@@ -47,7 +46,7 @@ export class WorkflowsService {
       description: createWorkflowDto.description,
       userId: user.id,
       definition: JSON.stringify(initalFlow),
-      status: WorkflowStatus.DRAFT,
+      status: 'DRAFT', // TODO: PROPER ENUM FROM TYPES PACKAGE
       createdAt: new Date(),
       updatedAt: new Date(),
     };

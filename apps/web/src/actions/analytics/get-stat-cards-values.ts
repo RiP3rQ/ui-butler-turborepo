@@ -1,6 +1,9 @@
 "use server";
 
-import type { Period, StatCardsValuesResponse } from "@repo/types/analytics.ts";
+import type {
+  Period,
+  StatCardsValuesResponse,
+} from "@repo/types/src/analytics";
 import { cookies } from "next/headers";
 import { getErrorMessage } from "@/lib/get-error-message.ts";
 

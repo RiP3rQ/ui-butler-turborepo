@@ -17,4 +17,6 @@ async function bootstrap() {
   await app.listen(app.get(ConfigService).getOrThrow('PORT'));
 }
 
-bootstrap();
+bootstrap().then(() => {
+  console.log('API is running');
+});

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { CurrentUser } from './current-user.decorator';
-import { Response } from 'express';
+import { Response as ExpressResponse } from 'express';
 import { AuthService } from './auth.service';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
@@ -16,7 +16,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   async login(
     @CurrentUser() user: User,
-    @Res({ passthrough: true }) response: Response,
+    @Res({ passthrough: true }) response: ExpressResponse,
   ) {
     await this.authService.login(user, response);
   }
@@ -24,7 +24,7 @@ export class AuthController {
   @Post('register')
   async register(
     @Body() body: { email: string; password: string },
-    @Res({ passthrough: true }) response: Response,
+    @Res({ passthrough: true }) response: ExpressResponse,
   ) {
     // get user from request body
     const user = {
@@ -38,7 +38,7 @@ export class AuthController {
   @UseGuards(JwtRefreshAuthGuard)
   async refreshToken(
     @CurrentUser() user: User,
-    @Res({ passthrough: true }) response: Response,
+    @Res({ passthrough: true }) response: ExpressResponse,
   ) {
     console.log('refresh token');
     await this.authService.login(user, response);
@@ -52,7 +52,7 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   async googleCallback(
     @CurrentUser() user: User,
-    @Res({ passthrough: true }) response: Response,
+    @Res({ passthrough: true }) response: ExpressResponse,
   ) {
     await this.authService.login(user, response, true);
   }
@@ -65,7 +65,7 @@ export class AuthController {
   @UseGuards(GithubAuthGuard)
   async githubCallback(
     @CurrentUser() user: User,
-    @Res({ passthrough: true }) response: Response,
+    @Res({ passthrough: true }) response: ExpressResponse,
   ) {
     await this.authService.login(user, response, true);
   }
