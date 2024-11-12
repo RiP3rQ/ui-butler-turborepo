@@ -8,7 +8,11 @@ import { ConfigService } from '@nestjs/config';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useLogger(app.get(Logger));
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  app.enableCors({
+    origin: true, // or specify your frontend URL
+    credentials: true,
+  });
   app.use(cookieParser());
   await app.listen(app.get(ConfigService).getOrThrow('PORT'));
 }
