@@ -38,19 +38,19 @@ export function CreateWorkflowDialog({
     mutationFn: createWorkflow,
     onSuccess: (res) => {
       toast.success("Workflow created successfully", {
-        id: "create-executions",
+        id: "create-workflow",
       });
       router.push(`/workflow/editor/${res.id}`);
       form.reset();
     },
     onError: () => {
-      toast.error("Failed to create executions", { id: "create-executions" });
+      toast.error("Failed to create workflow", { id: "create-workflow" });
     },
   });
 
   const onSubmit = useCallback(
     (data: CreateWorkflowSchemaType) => {
-      toast.loading("Creating executions...", { id: "create-executions" });
+      toast.loading("Creating workflow...", { id: "create-workflow" });
       mutate(data);
     },
     [mutate],

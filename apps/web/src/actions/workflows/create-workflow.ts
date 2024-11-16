@@ -18,8 +18,6 @@ export async function createWorkflow(
       .map((cookie) => `${cookie.name}=${cookie.value}`)
       .join("; ");
 
-    console.log("@ form", form);
-
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/workflows`, {
       method: "POST",
       headers: {
@@ -28,8 +26,6 @@ export async function createWorkflow(
       },
       body: JSON.stringify(form),
     });
-
-    console.log("@@ res", res);
 
     if (!res.ok) {
       throw new Error("Workflows not found");
