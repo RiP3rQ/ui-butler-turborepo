@@ -107,7 +107,7 @@ export class AuthService {
   }
 
   async register(
-    user: { email: string; password: string },
+    user: { email: string; password: string; username: string },
     response: ExpressResponse,
   ) {
     const newUser = await this.usersService.createUser(user);

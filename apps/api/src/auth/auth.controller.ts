@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { CurrentUser } from './current-user.decorator';
 import { Response as ExpressResponse } from 'express';
@@ -7,6 +15,7 @@ import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { GithubAuthGuard } from './guards/github-auth.guard';
 import { User } from '../users/types/user';
+import { CreateUserDto } from '../users/dto/create-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -23,14 +32,13 @@ export class AuthController {
 
   @Post('register')
   async register(
-    @Body() body: { email: string; password: string },
+    @Body() user: CreateUserDto,
     @Res({ passthrough: true }) response: ExpressResponse,
   ) {
     // get user from request body
-    const user = {
-      email: body.email,
-      password: body.password,
-    };
+    if (!user) {
+      return new NotFoundException('User not found in request body');
+    }
     await this.authService.register(user, response);
   }
 

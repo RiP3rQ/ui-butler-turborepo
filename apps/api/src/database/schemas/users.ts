@@ -4,7 +4,8 @@ import { integer, pgTable, serial, text } from 'drizzle-orm/pg-core';
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
   email: text('email').unique(),
-  password: text('password'),
+  username: text('username'), // backfill
+  password: text('password').notNull(),
   refreshToken: text('refresh_token'),
 });
 
@@ -18,7 +19,6 @@ export const profile = pgTable('profile', {
   biography: text('biography'),
   userId: integer('user_id').references(() => users.id),
   avatar: text('avatar_url'),
-  username: text('username'),
 });
 
 export const profileRelations = relations(profile, ({ one }) => ({

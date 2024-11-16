@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { Profile, Strategy } from 'passport-github2';
+import { Strategy } from 'passport-github2';
 import { UsersService } from '../../users/users.service';
 
 @Injectable()
@@ -21,21 +21,24 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
   async validate(
     _accessToken: string,
     _refreshToken: string,
-    profile: Profile,
+    profile: {
+      username: string;
+      avatar_url: string;
+      emails: { value: string }[];
+    },
   ) {
-    console.log('profile', profile);
-    // const email = profile.emails?.[0]?.value;
+    const email = profile.emails?.[0]?.value;
 
-    // if (!email) {
-    //   throw new UnauthorizedException('Email not provided by GitHub');
-    // }
+    if (!email) {
+      throw new UnauthorizedException('Email not provided by GitHub');
+    }
+
+    const username = profile.username;
 
     return await this.usersService.getOrCreateUser({
-      email: 'test@gmail.com',
+      email,
       password: '',
-      // githubId: profile.id,
-      // name: profile.displayName || profile.username,
-      // avatar: profile.photos?.[0]?.value,
+      username,
     });
   }
 }

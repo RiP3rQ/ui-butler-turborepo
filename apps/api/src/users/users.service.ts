@@ -1,13 +1,14 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { hash } from 'bcryptjs';
-import { CreateUserRequest } from './dto/create-user.request';
+import { CreateUserDto } from './dto/create-user.dto';
 import { DATABASE_CONNECTION } from '../database/database-connection';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import * as schema from '../database/schemas/users';
 import { profile, users } from '../database/schemas/users';
 import { and, eq } from 'drizzle-orm';
 import { TokenPayload } from '../auth/token-payload.interface';
 import { User } from './types/user';
+import { CreateProfileDto } from './dto/create-profile.dto';
+import { DatabaseSchemas } from '../database/merged-schemas';
 
 type ReceivedData = {
   refreshToken: string;
@@ -17,10 +18,10 @@ type ReceivedData = {
 export class UsersService {
   constructor(
     @Inject(DATABASE_CONNECTION)
-    private readonly database: NodePgDatabase<typeof schema>,
+    private readonly database: NodePgDatabase<DatabaseSchemas>,
   ) {}
 
-  async createUser(data: CreateUserRequest) {
+  async createUser(data: CreateUserDto) {
     const newUser = await this.database
       .insert(users)
       .values({
@@ -37,7 +38,7 @@ export class UsersService {
     });
   }
 
-  async getOrCreateUser(data: CreateUserRequest) {
+  async getOrCreateUser(data: CreateUserDto) {
     const user = await this.database
       .select()
       .from(users)
@@ -76,6 +77,7 @@ export class UsersService {
     return this.database
       .update(users)
       .set({
+        // @ts-ignore // TODO: FIX THIS TYPE PROBLEM
         refreshToken: data.refreshToken,
       })
       .where(
@@ -85,10 +87,10 @@ export class UsersService {
   }
 
   async getCurrentUserBasic(user: User) {
-    const userBasicData = await this.database
+    const [userBasicData] = await this.database
       .select()
-      .from(profile)
-      .where(eq(profile.userId, user.id));
+      .from(users)
+      .where(eq(users.id, user.id));
 
     if (!userBasicData) {
       return {
@@ -99,13 +101,13 @@ export class UsersService {
     }
 
     return {
-      username: userBasicData[0].username,
+      username: userBasicData.username,
       email: user.email,
-      avatar: userBasicData[0].avatar,
+      avatar: 'NOT IMPLEMENTED',
     };
   }
 
-  async createProfile(profile: typeof schema.profile.$inferInsert) {
-    await this.database.insert(schema.profile).values(profile);
+  async createProfile(profileDto: CreateProfileDto) {
+    await this.database.insert(profile).values(profileDto);
   }
 }

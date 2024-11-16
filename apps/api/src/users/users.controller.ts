@@ -7,11 +7,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserRequest } from './dto/create-user.request';
-import { CreateProfileRequest } from './dto/create-profile.request';
+import { CreateProfileDto } from './dto/create-profile.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
 import { User } from './types/user';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -35,12 +35,12 @@ export class UsersController {
   }
 
   @Post('profile')
-  async createProfile(@Body() request: CreateProfileRequest) {
+  async createProfile(@Body() request: CreateProfileDto) {
     return this.usersService.createProfile(request);
   }
 
   @Post()
-  async createUser(@Body() request: CreateUserRequest) {
+  async createUser(@Body() request: CreateUserDto) {
     return this.usersService.createUser(request);
   }
 }

@@ -38,6 +38,13 @@ export class WorkflowsController {
     }
     return this.workflowsService.createWorkflow(user, createWorkflowDto);
   }
+
+  // @Delete(':id')
+  // @LogErrors()
+  // @UseGuards(JwtAuthGuard)
+  // deleteWorkflow(@Param('id') id: string) {
+  //   return this.workflowsService.deleteWorkflow(+id);
+  // }
   //
   // @Get(':id')
   // findOne(@Param('id') id: string) {
@@ -52,8 +59,4 @@ export class WorkflowsController {
   //   return this.workflowsService.update(+id, updateWorkflowDto);
   // }
   //
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.workflowsService.remove(+id);
-  // }
 }
