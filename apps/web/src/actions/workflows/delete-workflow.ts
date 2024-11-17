@@ -10,7 +10,7 @@ export async function deleteWorkflow(
   try {
     // Get existing cookies
     const cookieStore = await cookies();
-    const cookiesToSend = cookieStore.getAll(); // Get all cookies or specific ones as needed
+    const cookiesToSend = cookieStore.getAll(); // Get all cookies or specific ones as neededd
 
     // Convert cookies to a string format suitable for the 'Cookie' header
     const cookieHeader = cookiesToSend
