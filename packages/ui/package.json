@@ -69,6 +69,7 @@
     "@repo/config-tailwindcss": "workspace:*",
     "@repo/eslint-config": "workspace:*",
     "@repo/types": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
     "@types/react": "^18.3.12",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",

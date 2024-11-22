@@ -10,8 +10,8 @@ import { UsersService } from './users.service';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
-import { User } from './types/user';
 import { CreateUserDto } from './dto/create-user.dto';
+import type { User } from '@repo/database/schemas/users';
 
 @Controller('users')
 export class UsersController {

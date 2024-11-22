@@ -1,17 +1,17 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { User } from '../users/types/user';
 import { DATABASE_CONNECTION } from '../database/database-connection';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type { Period } from '@repo/types/src/analytics';
-import { DatabaseSchemas } from '../database/merged-schemas';
-import {
-  executionPhase,
-  workflowExecutions,
-} from '../database/schemas/workflow-executions';
 import { and, eq, gte, isNotNull, lte, min } from 'drizzle-orm';
 import { periodToDateRange } from './lib/period-to-date-range';
 import { inArray } from 'drizzle-orm/sql/expressions/conditions';
 import { eachDayOfInterval, format } from 'date-fns';
+import type { User } from '@repo/database/schemas/users';
+import {
+  executionPhase,
+  workflowExecutions,
+} from '@repo/database/schemas/workflow-executions';
+import { DatabaseSchemas } from '@repo/database/schema';
 
 @Injectable()
 export class AnalyticsService {

@@ -1,22 +1,14 @@
 import { Module } from '@nestjs/common';
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { DATABASE_CONNECTION } from './database-connection';
+import { DATABASE_CONNECTION, DatabaseType } from './database-connection';
 import { ConfigService } from '@nestjs/config';
-
-import { Pool } from 'pg';
-import { mergedSchemas } from './merged-schemas';
+import { database } from '@repo/database';
 
 @Module({
   providers: [
     {
       provide: DATABASE_CONNECTION,
-      useFactory: (configService: ConfigService) => {
-        const pool = new Pool({
-          connectionString: configService.getOrThrow('DATABASE_URL'),
-        });
-        return drizzle(pool, {
-          schema: mergedSchemas,
-        });
+      useFactory: (configService: ConfigService): DatabaseType => {
+        return database;
       },
       inject: [ConfigService],
     },

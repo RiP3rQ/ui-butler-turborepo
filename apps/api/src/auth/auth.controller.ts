@@ -9,13 +9,13 @@ import {
 } from '@nestjs/common';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { CurrentUser } from './current-user.decorator';
-import { Response as ExpressResponse } from 'express';
+import type { Response as ExpressResponse } from 'express';
 import { AuthService } from './auth.service';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { GithubAuthGuard } from './guards/github-auth.guard';
-import { User } from '../users/types/user';
 import { CreateUserDto } from '../users/dto/create-user.dto';
+import type { User } from '@repo/database/schemas/users';
 
 @Controller('auth')
 export class AuthController {

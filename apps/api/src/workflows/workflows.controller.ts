@@ -9,9 +9,9 @@ import {
 import { WorkflowsService } from './workflows.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
-import { User } from '../users/types/user';
 import { CreateWorkflowDto } from './dto/create-workflow.dto';
 import { LogErrors } from '../common/error-handling/log-errors.decorator';
+import type { User } from '@repo/database/schemas/users';
 
 @Controller('workflows')
 export class WorkflowsController {

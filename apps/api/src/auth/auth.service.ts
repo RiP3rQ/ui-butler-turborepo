@@ -3,9 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { compare, hash } from 'bcryptjs';
 import { UsersService } from '../users/users.service';
-import { Response as ExpressResponse } from 'express';
+import type { Response as ExpressResponse } from 'express';
 import { TokenPayload } from './token-payload.interface';
-import { User } from '../users/types/user';
+import type { User } from '@repo/database/schemas/users';
 
 @Injectable()
 export class AuthService {

@@ -7,9 +7,9 @@ import {
 } from '@nestjs/common';
 import { AnalyticsService } from './analytics.service';
 import { CurrentUser } from '../auth/current-user.decorator';
-import { User } from '../users/types/user';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { QueryParam } from './get-query-param.decorator';
+import type { User } from '@repo/database/schemas/users';
 
 @Controller('analytics')
 export class AnalyticsController {

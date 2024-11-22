@@ -20,6 +20,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@neondatabase/serverless':
+        specifier: ^0.10.3
+        version: 0.10.3
       '@nestjs/common':
         specifier: ^10.4.7
         version: 10.4.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -44,6 +47,15 @@ importers:
       '@nestjs/serve-static':
         specifier: ^4.0.2
         version: 4.0.2(@nestjs/common@10.4.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.7)(express@4.21.1)
+      '@repo/database':
+        specifier: workspace:*
+        version: link:../../packages/database
+      '@repo/env':
+        specifier: workspace:*
+        version: link:../../packages/env
+      '@repo/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       bcryptjs:
         specifier: ^2.4.3
         version: 2.4.3
@@ -60,8 +72,8 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0
       drizzle-orm:
-        specifier: ^0.36.1
-        version: 0.36.1(@neondatabase/serverless@0.10.3)(@types/pg@8.11.10)(@types/react@18.3.12)(pg@8.13.1)
+        specifier: ^0.36.3
+        version: 0.36.4(@neondatabase/serverless@0.10.3)(@types/pg@8.11.10)(@types/react@18.3.12)(pg@8.13.1)
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2
@@ -105,9 +117,9 @@ importers:
       '@nestjs/testing':
         specifier: ^10.4.7
         version: 10.4.7(@nestjs/common@10.4.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.7)(@nestjs/platform-express@10.4.7)
-      '@repo/types':
+      '@repo/typescript-config':
         specifier: workspace:*
-        version: link:../../packages/types
+        version: link:../../packages/config-typescript
       '@types/bcryptjs':
         specifier: ^2.4.6
         version: 2.4.6
@@ -738,6 +750,9 @@ importers:
       '@repo/types':
         specifier: workspace:*
         version: link:../types
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../config-typescript
       '@types/react':
         specifier: ^18.3.12
         version: 18.3.12
@@ -4014,98 +4029,6 @@ packages:
   drizzle-kit@0.28.1:
     resolution: {integrity: sha512-JimOV+ystXTWMgZkLHYHf2w3oS28hxiH1FR0dkmJLc7GHzdGJoJAQtQS5DRppnabsRZwE2U1F6CuezVBgmsBBQ==}
     hasBin: true
-
-  drizzle-orm@0.36.1:
-    resolution: {integrity: sha512-F4hbimnMEhyWzDowQB4xEuVJJWXLHZYD7FYwvo8RImY+N7pStGqsbfmT95jDbec1s4qKmQbiuxEDZY90LRrfIw==}
-    peerDependencies:
-      '@aws-sdk/client-rds-data': '>=3'
-      '@cloudflare/workers-types': '>=3'
-      '@electric-sql/pglite': '>=0.2.0'
-      '@libsql/client': '>=0.10.0'
-      '@libsql/client-wasm': '>=0.10.0'
-      '@neondatabase/serverless': '>=0.1'
-      '@op-engineering/op-sqlite': '>=2'
-      '@opentelemetry/api': ^1.4.1
-      '@planetscale/database': '>=1'
-      '@prisma/client': '*'
-      '@tidbcloud/serverless': '*'
-      '@types/better-sqlite3': '*'
-      '@types/pg': '*'
-      '@types/react': '>=18'
-      '@types/sql.js': '*'
-      '@vercel/postgres': '>=0.8.0'
-      '@xata.io/client': '*'
-      better-sqlite3: '>=7'
-      bun-types: '*'
-      expo-sqlite: '>=13.2.0'
-      knex: '*'
-      kysely: '*'
-      mysql2: '>=2'
-      pg: '>=8'
-      postgres: '>=3'
-      prisma: '*'
-      react: '>=18'
-      sql.js: '>=1'
-      sqlite3: '>=5'
-    peerDependenciesMeta:
-      '@aws-sdk/client-rds-data':
-        optional: true
-      '@cloudflare/workers-types':
-        optional: true
-      '@electric-sql/pglite':
-        optional: true
-      '@libsql/client':
-        optional: true
-      '@libsql/client-wasm':
-        optional: true
-      '@neondatabase/serverless':
-        optional: true
-      '@op-engineering/op-sqlite':
-        optional: true
-      '@opentelemetry/api':
-        optional: true
-      '@planetscale/database':
-        optional: true
-      '@prisma/client':
-        optional: true
-      '@tidbcloud/serverless':
-        optional: true
-      '@types/better-sqlite3':
-        optional: true
-      '@types/pg':
-        optional: true
-      '@types/react':
-        optional: true
-      '@types/sql.js':
-        optional: true
-      '@vercel/postgres':
-        optional: true
-      '@xata.io/client':
-        optional: true
-      better-sqlite3:
-        optional: true
-      bun-types:
-        optional: true
-      expo-sqlite:
-        optional: true
-      knex:
-        optional: true
-      kysely:
-        optional: true
-      mysql2:
-        optional: true
-      pg:
-        optional: true
-      postgres:
-        optional: true
-      prisma:
-        optional: true
-      react:
-        optional: true
-      sql.js:
-        optional: true
-      sqlite3:
-        optional: true
 
   drizzle-orm@0.36.4:
     resolution: {integrity: sha512-1OZY3PXD7BR00Gl61UUOFihslDldfH4NFRH2MbP54Yxi0G/PKn4HfO65JYZ7c16DeP3SpM3Aw+VXVG9j6CRSXA==}
@@ -11089,13 +11012,6 @@ snapshots:
       esbuild-register: 3.6.0(esbuild@0.19.12)
     transitivePeerDependencies:
       - supports-color
-
-  drizzle-orm@0.36.1(@neondatabase/serverless@0.10.3)(@types/pg@8.11.10)(@types/react@18.3.12)(pg@8.13.1):
-    optionalDependencies:
-      '@neondatabase/serverless': 0.10.3
-      '@types/pg': 8.11.10
-      '@types/react': 18.3.12
-      pg: 8.13.1
 
   drizzle-orm@0.36.4(@neondatabase/serverless@0.10.3)(@types/pg@8.11.10)(@types/react@18.3.12)(pg@8.13.1):
     optionalDependencies:

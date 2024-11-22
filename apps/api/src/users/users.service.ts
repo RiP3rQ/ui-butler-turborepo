@@ -2,13 +2,12 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { hash } from 'bcryptjs';
 import { CreateUserDto } from './dto/create-user.dto';
 import { DATABASE_CONNECTION } from '../database/database-connection';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { profile, users } from '../database/schemas/users';
 import { and, eq } from 'drizzle-orm';
 import { TokenPayload } from '../auth/token-payload.interface';
-import { User } from './types/user';
 import { CreateProfileDto } from './dto/create-profile.dto';
-import { DatabaseSchemas } from '../database/merged-schemas';
+import { profile, User, users } from '@repo/database/schemas/users';
+import { NeonHttpDatabase } from 'drizzle-orm/neon-http';
+import { DatabaseSchemas } from '@repo/database/schema';
 
 type ReceivedData = {
   refreshToken: string;
@@ -18,7 +17,7 @@ type ReceivedData = {
 export class UsersService {
   constructor(
     @Inject(DATABASE_CONNECTION)
-    private readonly database: NodePgDatabase<DatabaseSchemas>,
+    private readonly database: NeonHttpDatabase<DatabaseSchemas>,
   ) {}
 
   async createUser(data: CreateUserDto) {

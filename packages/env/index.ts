@@ -3,28 +3,22 @@ import { z } from "zod";
 
 const server: Parameters<typeof createEnv>[0]["server"] = {
   DATABASE_URL: z.string().min(1).url(),
-  // RESEND_TOKEN: z.string().min(1).startsWith("re_"),
-  // STRIPE_SECRET_KEY: z.string().min(1).startsWith("sk_"),
-  // STRIPE_WEBHOOK_SECRET: z.string().min(1).startsWith("whsec_"),
-  // BETTERSTACK_API_KEY: z.string().min(1),
-  // BETTERSTACK_URL: z.string().min(1).url(),
-  // ARCJET_KEY: z.string().min(1).startsWith("ajkey_"),
-  // ANALYZE: z.string().optional(),
-  // SVIX_TOKEN: z
-  //   .string()
-  //   .min(1)
-  //   .startsWith("sk_")
-  //   .or(z.string().min(1).startsWith("testsk_")),
-  // LIVEBLOCKS_SECRET: z.string().min(1).startsWith("sk_").optional(),
-  //
-  // // Added by Sentry Integration, Vercel Marketplace
-  // SENTRY_ORG: z.string().min(1).optional(),
-  // SENTRY_PROJECT: z.string().min(1).optional(),
-  //
-  // // Added by Vercel
-  // VERCEL: z.string().optional(),
-  // NEXT_RUNTIME: z.enum(["nodejs", "edge"]).optional(),
-  // FLAGS_SECRET: z.string().min(1),
+  NODE_ENV: z.enum(["development", "production", "test"]),
+  PORT: z.string().min(1),
+  AUTH_UI_REDIRECT_URL: z.string().min(1),
+  // JWT
+  JWT_ACCESS_TOKEN_SECRET: z.string().min(1),
+  JWT_ACCESS_TOKEN_EXPIRATION_MS: z.string().min(1),
+  JWT_REFRESH_TOKEN_SECRET: z.string().min(1),
+  JWT_REFRESH_TOKEN_EXPIRATION_MS: z.string().min(1),
+  // GOOGLE OAUTH
+  GOOGLE_AUTH_CLIENT_ID: z.string().min(1),
+  GOOGLE_AUTH_CLIENT_SECRET: z.string().min(1),
+  GOOGLE_AUTH_REDIRECT_URI: z.string().min(1),
+  // GITHUB OAUTH
+  GITHUB_AUTH_CLIENT_ID: z.string().min(1),
+  GITHUB_AUTH_CLIENT_SECRET: z.string().min(1),
+  GITHUB_AUTH_REDIRECT_URI: z.string().min(1),
 };
 
 const client: Parameters<typeof createEnv>[0]["client"] = {
