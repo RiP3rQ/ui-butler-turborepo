@@ -8,7 +8,7 @@ import {
 } from "@repo/ui/components/ui/dialog";
 import { Button } from "@repo/ui/components/ui/button";
 import { Layers2Icon } from "lucide-react";
-import CustomDialogHeader from "@repo/ui/components/main-app/custom-dialog-header";
+import CustomDialogHeader from "@repo/ui/components/custom-dialog-header";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";

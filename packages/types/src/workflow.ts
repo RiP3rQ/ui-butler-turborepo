@@ -57,16 +57,16 @@ export enum WorkflowExecutionTrigger {
 export type WorkflowType = {
   id: number;
   name: string;
-  userId: number;
-  description: string;
+  userId: number | null;
+  description: string | null;
   definition: string;
-  executionPlan: string;
-  creditsCost: number;
+  executionPlan: string | null;
+  creditsCost: number | null;
   status: WorkflowStatus;
   lastRunAt?: Date;
   lastRunId?: string;
   lastRunStatus?: string;
-  nextRunAt?: Date;
+  nextRunAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 };

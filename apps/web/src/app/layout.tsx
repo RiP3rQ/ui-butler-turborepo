@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "@repo/ui/globals.css";
 import { SidebarProvider } from "@repo/ui/components/ui/sidebar";
-import { AppSidebar } from "@repo/ui/components/main-app/sidebar/app-sidebar";
 import { cookies } from "next/headers";
 import ToastProvider from "@repo/ui/providers/toast-provider";
 import getCurrentUser from "@/actions/user/get-current-user.ts";
 import { QueryProvider } from "@/providers/query-provider.tsx";
+import { AppSidebar } from "@/components/sidebar/app-sidebar.tsx";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",

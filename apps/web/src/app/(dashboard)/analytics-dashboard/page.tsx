@@ -1,15 +1,15 @@
 import { Suspense } from "react";
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
-import { PeriodSelectorWrapper } from "@repo/ui/components/main-app/analytics/period-selector-wrapper";
-import { StatsCardSkeleton } from "@repo/ui/components/main-app/analytics/stat-cards/stat-cards";
-import StatsCardsWrapper from "@repo/ui/components/main-app/analytics/stat-cards/stats-cards-wrapper";
-import StatsExecutionStatusChartWrapper from "@repo/ui/components/main-app/analytics/stat-chart/stats-execution-status-chart-wrapper";
-import StatsCreditsUsedChartWrapper from "@repo/ui/components/main-app/analytics/stat-chart/stats-credits-used-chart-wrapper";
 import type { Period } from "@repo/types/src/analytics.ts";
 import { getPeriods } from "@/actions/analytics/get-periods.ts";
 import { getStatCardsValues } from "@/actions/analytics/get-stat-cards-values.ts";
 import { getWorkflowExecutionStats } from "@/actions/analytics/get-workflow-execution-stats.ts";
 import { getUsedCreditsInPeriod } from "@/actions/analytics/get-used-credits-in-period.ts";
+import { PeriodSelectorWrapper } from "@/components/analytics/period-selector-wrapper.tsx";
+import { StatsCardSkeleton } from "@/components/analytics/stat-cards/stat-cards.tsx";
+import StatsCardsWrapper from "@/components/analytics/stat-cards/stats-cards-wrapper.tsx";
+import StatsExecutionStatusChartWrapper from "@/components/analytics/stat-chart/stats-execution-status-chart-wrapper.tsx";
+import StatsCreditsUsedChartWrapper from "@/components/analytics/stat-chart/stats-credits-used-chart-wrapper.tsx";
 
 export default async function Home({
   searchParams,

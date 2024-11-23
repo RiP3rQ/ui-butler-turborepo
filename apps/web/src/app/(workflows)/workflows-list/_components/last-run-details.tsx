@@ -7,8 +7,8 @@ import type {
   WorkflowType,
 } from "@repo/types/src/workflow.ts";
 import { WorkflowStatus } from "@repo/types/src/workflow.ts";
-import { ExecutionStatusIndicator } from "@repo/ui/components/main-app/execution-viewer/execution-status-indicator";
-import { ExecutionStatusLabel } from "@repo/ui/components/main-app/execution-viewer/execution-status-label";
+import { ExecutionStatusLabel } from "@/components/execution-viewer/execution-status-label.tsx";
+import { ExecutionStatusIndicator } from "@/components/execution-viewer/execution-status-indicator.tsx";
 
 interface LastRunDetailsProps {
   workflow: WorkflowType;

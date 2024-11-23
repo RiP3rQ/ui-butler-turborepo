@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import CustomDialogHeader from "@repo/ui/components/main-app/custom-dialog-header";
+import CustomDialogHeader from "@repo/ui/components/custom-dialog-header";
 import { Button } from "@repo/ui/components/ui/button";
 import {
   Dialog,

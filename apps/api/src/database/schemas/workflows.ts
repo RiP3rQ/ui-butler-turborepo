@@ -45,8 +45,8 @@ export const workflows = pgTable(
     userIdIndex: index('workflows_user_id_idx').on(table.userId),
   }),
 );
-export type WorkflowSelectType = typeof workflows.$inferSelect;
-export type WorkflowInsertType = typeof workflows.$inferInsert;
+export type Workflow = typeof workflows.$inferSelect;
+export type NewWorkflow = typeof workflows.$inferInsert;
 
 export const workflowRelations = relations(workflows, ({ one, many }) => ({
   users: one(users, {

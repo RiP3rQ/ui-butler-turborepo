@@ -8,8 +8,8 @@ import {
   DropdownMenuTrigger,
 } from "@repo/ui/components/ui/dropdown-menu";
 import { Button } from "@repo/ui/components/ui/button";
-import { TooltipWrapper } from "@repo/ui/components/main-app/tooltip-wrapper";
 import { MoreVerticalIcon, TrashIcon } from "lucide-react";
+import TooltipWrapper from "@repo/ui/components/tooltip-wrapper";
 import { DeleteWorkflowDialog } from "@/app/(workflows)/workflows-list/_components/delete-workflow-dialog.tsx";
 
 interface WorkflowActionsProps {

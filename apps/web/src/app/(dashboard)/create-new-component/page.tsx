@@ -1,6 +1,5 @@
 "use client";
 
-import CodeEditor from "@repo/ui/components/main-app/code-editor/editor";
 import { Label } from "@repo/ui/components/ui/label";
 import {
   BookOpenIcon,
@@ -11,7 +10,8 @@ import {
 } from "lucide-react";
 import type { EditorActionsType } from "@repo/types/src/code-editor-types.ts";
 import { useExecuteRunActionDialogState } from "@repo/ui/state/execute-run-action-state";
-import { ActionRunDialog } from "@repo/ui/components/main-app/code-editor/action-run-dialog";
+import { ActionRunDialog } from "@/components/code-editor/action-run-dialog.tsx";
+import CodeEditor from "@/components/code-editor/editor.tsx";
 
 export default function SaveNewComponentPage(): JSX.Element {
   const { updateIsOpen, updateActionTitle, updateActionSubTitle } =
