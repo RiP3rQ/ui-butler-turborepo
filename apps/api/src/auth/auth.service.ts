@@ -5,7 +5,7 @@ import { compare, hash } from 'bcryptjs';
 import { UsersService } from '../users/users.service';
 import type { Response as ExpressResponse } from 'express';
 import { TokenPayload } from './token-payload.interface';
-import type { User } from '@repo/database/schemas/users';
+import type { User } from '../database/schemas/users';
 
 @Injectable()
 export class AuthService {
@@ -86,7 +86,7 @@ export class AuthService {
   async login(user: User, response: ExpressResponse, redirect = false) {
     const tokenPayload: TokenPayload = {
       userId: user.id.toString(),
-      email: user.email,
+      email: user.email ?? '',
     };
 
     const { accessToken, refreshToken } =
@@ -143,7 +143,11 @@ export class AuthService {
   async veryifyUserRefreshToken(refreshToken: string, email: string) {
     try {
       const user = await this.usersService.getUser({ email: email });
-      const authenticated = await compare(refreshToken, user.refreshToken);
+
+      if (!user.refreshToken || !refreshToken) {
+        throw new UnauthorizedException('Invalid refresh token');
+      }
+      const authenticated = compare(refreshToken, user.refreshToken);
       if (!authenticated) {
         throw new UnauthorizedException();
       }

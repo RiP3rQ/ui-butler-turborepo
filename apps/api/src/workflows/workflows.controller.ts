@@ -11,7 +11,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
 import { CreateWorkflowDto } from './dto/create-workflow.dto';
 import { LogErrors } from '../common/error-handling/log-errors.decorator';
-import type { User } from '@repo/database/schemas/users';
+import type { User } from '../database/schemas/users';
 
 @Controller('workflows')
 export class WorkflowsController {

@@ -9,7 +9,7 @@ import { AnalyticsService } from './analytics.service';
 import { CurrentUser } from '../auth/current-user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { QueryParam } from './get-query-param.decorator';
-import type { User } from '@repo/database/schemas/users';
+import type { User } from '../database/schemas/users';
 
 @Controller('analytics')
 export class AnalyticsController {

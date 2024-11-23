@@ -15,7 +15,7 @@ import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { GithubAuthGuard } from './guards/github-auth.guard';
 import { CreateUserDto } from '../users/dto/create-user.dto';
-import type { User } from '@repo/database/schemas/users';
+import type { User } from '../database/schemas/users';
 
 @Controller('auth')
 export class AuthController {

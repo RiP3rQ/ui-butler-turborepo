@@ -6,12 +6,12 @@ import { and, eq, gte, isNotNull, lte, min } from 'drizzle-orm';
 import { periodToDateRange } from './lib/period-to-date-range';
 import { inArray } from 'drizzle-orm/sql/expressions/conditions';
 import { eachDayOfInterval, format } from 'date-fns';
-import type { User } from '@repo/database/schemas/users';
+import { User } from '../database/schemas/users';
+import { DatabaseSchemas } from '../database/merged-schemas';
 import {
   executionPhase,
   workflowExecutions,
-} from '@repo/database/schemas/workflow-executions';
-import { DatabaseSchemas } from '@repo/database/schema';
+} from '../database/schemas/workflow-executions';
 
 @Injectable()
 export class AnalyticsService {
@@ -92,7 +92,7 @@ export class AnalyticsService {
     const stats = {
       workflowExecutions: executionsInPeriod.length,
       creditsConsumed: executionsInPeriod.reduce(
-        (acc, execution) => acc + execution.creditsConsumed,
+        (acc, execution) => acc + (execution.creditsConsumed ?? 0),
         0,
       ),
       phasesExecuted: phasesInPeriod.length,

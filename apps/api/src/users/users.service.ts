@@ -5,9 +5,9 @@ import { DATABASE_CONNECTION } from '../database/database-connection';
 import { and, eq } from 'drizzle-orm';
 import { TokenPayload } from '../auth/token-payload.interface';
 import { CreateProfileDto } from './dto/create-profile.dto';
-import { profile, User, users } from '@repo/database/schemas/users';
 import { NeonHttpDatabase } from 'drizzle-orm/neon-http';
-import { DatabaseSchemas } from '@repo/database/schema';
+import { DatabaseSchemas } from '../database/merged-schemas';
+import { profile, User, users } from '../database/schemas/users';
 
 type ReceivedData = {
   refreshToken: string;

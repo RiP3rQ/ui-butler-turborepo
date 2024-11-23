@@ -47,12 +47,6 @@ importers:
       '@nestjs/serve-static':
         specifier: ^4.0.2
         version: 4.0.2(@nestjs/common@10.4.7(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.7)(express@4.21.1)
-      '@repo/database':
-        specifier: workspace:*
-        version: link:../../packages/database
-      '@repo/env':
-        specifier: workspace:*
-        version: link:../../packages/env
       '@repo/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -560,65 +554,6 @@ importers:
         version: 1.0.7(tailwindcss@3.4.1(ts-node@10.9.2(@types/node@22.9.0)(typescript@5.6.3)))
 
   packages/config-typescript: {}
-
-  packages/database:
-    dependencies:
-      '@neondatabase/serverless':
-        specifier: ^0.10.3
-        version: 0.10.3
-      '@repo/env':
-        specifier: workspace:*
-        version: link:../env
-      drizzle-orm:
-        specifier: ^0.36.3
-        version: 0.36.4(@neondatabase/serverless@0.10.3)(@types/pg@8.11.10)(@types/react@18.3.12)(pg@8.13.1)
-      server-only:
-        specifier: ^0.0.1
-        version: 0.0.1
-      undici:
-        specifier: ^6.21.0
-        version: 6.21.0
-      ws:
-        specifier: ^8.18.0
-        version: 8.18.0(bufferutil@4.0.8)
-    devDependencies:
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../config-typescript
-      '@types/node':
-        specifier: 22.9.0
-        version: 22.9.0
-      '@types/ws':
-        specifier: ^8.5.13
-        version: 8.5.13
-      bufferutil:
-        specifier: ^4.0.8
-        version: 4.0.8
-      drizzle-kit:
-        specifier: ^0.28.1
-        version: 0.28.1
-      typescript:
-        specifier: ^5.6.3
-        version: 5.6.3
-
-  packages/env:
-    dependencies:
-      '@t3-oss/env-nextjs':
-        specifier: ^0.11.1
-        version: 0.11.1(typescript@5.6.3)(zod@3.23.8)
-      zod:
-        specifier: ^3.23.8
-        version: 3.23.8
-    devDependencies:
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../config-typescript
-      '@types/node':
-        specifier: 22.9.0
-        version: 22.9.0
-      typescript:
-        specifier: ^5.6.3
-        version: 5.6.3
 
   packages/types:
     dependencies:
@@ -2579,24 +2514,6 @@ packages:
   '@swc/helpers@0.5.13':
     resolution: {integrity: sha512-UoKGxQ3r5kYI9dALKJapMmuK+1zWM/H17Z1+iwnNmzcJRnfFuevZs375TA5rW31pu4BS4NoSy1fRsexDXfWn5w==}
 
-  '@t3-oss/env-core@0.11.1':
-    resolution: {integrity: sha512-MaxOwEoG1ntCFoKJsS7nqwgcxLW1SJw238AJwfJeaz3P/8GtkxXZsPPolsz1AdYvUTbe3XvqZ/VCdfjt+3zmKw==}
-    peerDependencies:
-      typescript: '>=5.0.0'
-      zod: ^3.0.0
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-
-  '@t3-oss/env-nextjs@0.11.1':
-    resolution: {integrity: sha512-rx2XL9+v6wtOqLNJbD5eD8OezKlQD1BtC0WvvtHwBgK66jnF5+wGqtgkKK4Ygie1LVmoDClths2T4tdFmRvGrQ==}
-    peerDependencies:
-      typescript: '>=5.0.0'
-      zod: ^3.0.0
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-
   '@tanstack/query-core@5.59.20':
     resolution: {integrity: sha512-e8vw0lf7KwfGe1if4uPFhvZRWULqHjFcz3K8AebtieXvnMOz5FSzlZe3mTLlPuUBcydCnBRqYs2YJ5ys68wwLg==}
 
@@ -2877,9 +2794,6 @@ packages:
 
   '@types/validator@13.12.2':
     resolution: {integrity: sha512-6SlHBzUW8Jhf3liqrGGXyTJSIFe4nqlJ5A5KaMZ2l/vbM3Wh3KSybots/wfWVzNLK4D1NZluDlSQIbIEPx6oyA==}
-
-  '@types/ws@8.5.13':
-    resolution: {integrity: sha512-osM/gWBTPKgHV8XkTunnegTRIsvF6owmf5w+JtAfOw472dptdm0dlGv4xCt6GwQRcC2XVOvvRE/0bAoQcL2QkA==}
 
   '@types/yargs-parser@21.0.3':
     resolution: {integrity: sha512-I4q9QU9MQv4oEOz4tAHJtNz1cwuLxn2F3xcc2iV5WdqLPpUnj30aUuxt1mAxYTG+oe8CZMV/+6rU4S4gRDzqtQ==}
@@ -4024,10 +3938,6 @@ packages:
 
   drizzle-kit@0.27.2:
     resolution: {integrity: sha512-F6cFZ1wxa9XzFyeeQsp/0/lIzUbDuQjS8/njpYBDWa+wdWmXuY+Z/X2hHFK/9PGHZkv3c9mER+mVWfKlp/B6Vw==}
-    hasBin: true
-
-  drizzle-kit@0.28.1:
-    resolution: {integrity: sha512-JimOV+ystXTWMgZkLHYHf2w3oS28hxiH1FR0dkmJLc7GHzdGJoJAQtQS5DRppnabsRZwE2U1F6CuezVBgmsBBQ==}
     hasBin: true
 
   drizzle-orm@0.36.4:
@@ -6707,9 +6617,6 @@ packages:
     resolution: {integrity: sha512-VqpjJZKadQB/PEbEwvFdO43Ax5dFBZ2UECszz8bQ7pi7wt//PWe1P6MN7eCnjsatYtBT6EuiClbjSWP2WrIoTw==}
     engines: {node: '>= 0.8.0'}
 
-  server-only@0.0.1:
-    resolution: {integrity: sha512-qepMx2JxAa5jjfzxG79yPPq+8BuFToHd1hm7kI+Z4zAq1ftQiP7HcxMhDDItrbtwVeLg/cY2JnKnrcFkmiswNA==}
-
   set-function-length@1.1.1:
     resolution: {integrity: sha512-VoaqjbBJKiWtg4yRcKBQ7g7wnGnLV3M8oLvVWwOk2PdYY6PEFegR1vezXR0tw6fZGF9csVakIRjrJiy2veSBFQ==}
     engines: {node: '>= 0.4'}
@@ -7323,10 +7230,6 @@ packages:
 
   undici-types@6.19.8:
     resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
-
-  undici@6.21.0:
-    resolution: {integrity: sha512-BUgJXc752Kou3oOIuU1i+yZZypyZRqNPW0vqoMPl8VaoalSfeR0D8/t4iAS3yirs79SSMTxTag+ZC86uswv+Cw==}
-    engines: {node: '>=18.17'}
 
   universalify@0.2.0:
     resolution: {integrity: sha512-CJ1QgKmNg3CwvAv/kOFmtnEN05f0D/cn9QntgNOQlQF9dgvVTHj3t+8JPdjqawCHk7V/KA+fbUqzZ9XWhcqPUg==}
@@ -9353,19 +9256,6 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@t3-oss/env-core@0.11.1(typescript@5.6.3)(zod@3.23.8)':
-    dependencies:
-      zod: 3.23.8
-    optionalDependencies:
-      typescript: 5.6.3
-
-  '@t3-oss/env-nextjs@0.11.1(typescript@5.6.3)(zod@3.23.8)':
-    dependencies:
-      '@t3-oss/env-core': 0.11.1(typescript@5.6.3)(zod@3.23.8)
-      zod: 3.23.8
-    optionalDependencies:
-      typescript: 5.6.3
-
   '@tanstack/query-core@5.59.20': {}
 
   '@tanstack/query-devtools@5.59.20': {}
@@ -9586,6 +9476,7 @@ snapshots:
   '@types/node@22.9.0':
     dependencies:
       undici-types: 6.19.8
+    optional: true
 
   '@types/normalize-package-data@2.4.4': {}
 
@@ -9702,10 +9593,6 @@ snapshots:
   '@types/tough-cookie@4.0.5': {}
 
   '@types/validator@13.12.2': {}
-
-  '@types/ws@8.5.13':
-    dependencies:
-      '@types/node': 20.17.6
 
   '@types/yargs-parser@21.0.3': {}
 
@@ -10467,6 +10354,7 @@ snapshots:
   bufferutil@4.0.8:
     dependencies:
       node-gyp-build: 4.8.4
+    optional: true
 
   builtin-modules@3.3.0: {}
 
@@ -10996,15 +10884,6 @@ snapshots:
   dotenv@16.4.5: {}
 
   drizzle-kit@0.27.2:
-    dependencies:
-      '@drizzle-team/brocli': 0.10.2
-      '@esbuild-kit/esm-loader': 2.6.5
-      esbuild: 0.19.12
-      esbuild-register: 3.6.0(esbuild@0.19.12)
-    transitivePeerDependencies:
-      - supports-color
-
-  drizzle-kit@0.28.1:
     dependencies:
       '@drizzle-team/brocli': 0.10.2
       '@esbuild-kit/esm-loader': 2.6.5
@@ -13228,7 +13107,8 @@ snapshots:
       fetch-blob: 3.2.0
       formdata-polyfill: 4.0.10
 
-  node-gyp-build@4.8.4: {}
+  node-gyp-build@4.8.4:
+    optional: true
 
   node-int64@0.4.0: {}
 
@@ -14173,8 +14053,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  server-only@0.0.1: {}
-
   set-function-length@1.1.1:
     dependencies:
       define-data-property: 1.1.1
@@ -14991,8 +14869,6 @@ snapshots:
       which-boxed-primitive: 1.0.2
 
   undici-types@6.19.8: {}
-
-  undici@6.21.0: {}
 
   universalify@0.2.0: {}
 

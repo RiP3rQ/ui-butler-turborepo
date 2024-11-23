@@ -11,7 +11,7 @@ import { CreateProfileDto } from './dto/create-profile.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
-import type { User } from '@repo/database/schemas/users';
+import type { User } from '../database/schemas/users';
 
 @Controller('users')
 export class UsersController {
@@ -19,7 +19,7 @@ export class UsersController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async getUsers(@CurrentUser() user: User) {
+  async getUsers() {
     return this.usersService.getUsers();
   }
 

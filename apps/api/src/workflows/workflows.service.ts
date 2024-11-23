@@ -4,9 +4,10 @@ import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { desc, eq } from 'drizzle-orm';
 import { CreateWorkflowDto } from './dto/create-workflow.dto';
 import type { AppEdge, AppNode } from '@repo/types/src/appNode';
-import { DatabaseSchemas } from '@repo/database/schema';
-import { workflows } from '@repo/database/schemas/workflows';
-import { User } from '@repo/database/schemas/users';
+
+import { User } from '../database/schemas/users';
+import { DatabaseSchemas } from '../database/merged-schemas';
+import { workflows } from '../database/schemas/workflows';
 
 @Injectable()
 export class WorkflowsService {

@@ -3,9 +3,9 @@ import { IsNotEmpty, IsString } from 'class-validator';
 export class CreateWorkflowDto {
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name: string = '';
 
   @IsString()
   @IsNotEmpty()
-  description: string;
+  description: string = '';
 }
