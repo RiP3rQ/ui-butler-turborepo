@@ -8,3 +8,4 @@ export * from "./task";
 export * from "./users";
 export * from "./workflow";
 export * from "./sidebar";
+export * from "./credentials";

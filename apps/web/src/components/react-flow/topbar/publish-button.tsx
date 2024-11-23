@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { useReactFlow } from "@xyflow/react";
 import { Button } from "@repo/ui/components/ui/button";
 import useWorkflowExecutionPlan from "@/hooks/use-workflow-execution-plan";
-import { publishWorkflowFunction } from "@/actions/workflow/publishWorkflow";
+import { publishWorkflowFunction } from "@/actions/workflows/publish-workflow.ts";
 
 interface PublishButtonProps {
   workflowId: number;

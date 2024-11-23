@@ -21,6 +21,7 @@ import type { WorkflowType } from "@repo/types";
 import NodeComponent from "@/components/react-flow/nodes/node-component.tsx";
 import DeletableEdge from "@/components/react-flow/edges/deletable-edge.tsx";
 import { createFlowNodeFunction } from "@/lib/workflow/createFlowNode.ts";
+import { TaskRegistry } from "@/lib/workflow/task/registery.tsx";
 
 interface FlowEditorProps {
   workflow: WorkflowType;
@@ -54,7 +55,7 @@ function FlowEditor({ workflow }: Readonly<FlowEditorProps>): JSX.Element {
       setEdges(flow.edges || []);
       if (!flow.viewport) return;
       const { x = 0, y = 0, zoom = 1 } = flow.viewport;
-      await setViewport({ x, y, zoom });
+      setViewport({ x, y, zoom }).catch(console.error);
     } catch (e) {
       console.error(e);
     }
@@ -84,6 +85,7 @@ function FlowEditor({ workflow }: Readonly<FlowEditorProps>): JSX.Element {
 
   const onConnect = useCallback(
     (connection: Connection) => {
+      // @ts-expect-error  // TODO: FIX THIS TYPE
       setEdges((edg) => addEdge({ ...connection, animated: true }, edg));
       if (!connection.targetHandle) return;
       // Remove input value if is present on connection

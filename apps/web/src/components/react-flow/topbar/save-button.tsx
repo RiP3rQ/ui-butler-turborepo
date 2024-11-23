@@ -5,7 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Loader2Icon } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
-import { updateWorkflowByIdFunction } from "@/actions/workflow/updateWorkflowById";
+import { updateWorkflowByIdFunction } from "@/actions/workflows/update-workflow-by-id.ts";
 
 interface SaveButtonProps {
   workflowId: number;
@@ -30,7 +30,7 @@ function SaveButton({ workflowId }: Readonly<SaveButtonProps>) {
       onClick={() => {
         const workflowDefinition = JSON.stringify(toObject());
         toast.loading("Updating workflow", { id: "update-workflow" });
-        mutate({ id: workflowId, definition: workflowDefinition });
+        mutate({ workflowId, definition: workflowDefinition });
       }}
       variant="outline"
     >
