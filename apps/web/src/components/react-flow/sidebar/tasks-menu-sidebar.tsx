@@ -6,11 +6,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@repo/ui/components/ui/accordion";
-import type { TaskType } from "@repo/types/src/task";
+import type { TaskType } from "@repo/types";
 import { CoinsIcon } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
 import { Badge } from "@repo/ui/components/ui/badge";
-import { TaskRegistry } from "@/lib/workflow/task/registery.tsx";
+import { TaskRegistry } from "@/lib/workflow/task/registery";
 
 function TasksMenuSidebar(): JSX.Element {
   return (

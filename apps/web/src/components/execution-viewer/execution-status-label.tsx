@@ -1,7 +1,8 @@
-import { WorkflowExecutionStatus } from "@repo/types/src/workflow";
+import type { IWorkflowExecutionStatus } from "@repo/types";
+import { WorkflowExecutionStatus } from "@repo/types";
 import { cn } from "@repo/ui/lib/utils";
 
-const statusLabelColors: Record<WorkflowExecutionStatus, string> = {
+const statusLabelColors: Record<IWorkflowExecutionStatus, string> = {
   [WorkflowExecutionStatus.COMPLETED]: "text-green-500",
   [WorkflowExecutionStatus.FAILED]: "text-red-500",
   [WorkflowExecutionStatus.RUNNING]: "text-yellow-500",
@@ -9,7 +10,7 @@ const statusLabelColors: Record<WorkflowExecutionStatus, string> = {
 };
 
 interface ExecutionStatusLabelProps {
-  status: WorkflowExecutionStatus;
+  status: IWorkflowExecutionStatus;
 }
 export function ExecutionStatusLabel({
   status,

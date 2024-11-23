@@ -1,6 +1,6 @@
 "use client";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
-import type { UsedCreditsInPeriodResponse } from "@repo/types/src/analytics";
+import type { UsedCreditsInPeriodResponse } from "@repo/types";
 import {
   ChartContainer,
   ChartLegend,

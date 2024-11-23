@@ -1,10 +1,10 @@
 import { ReactFlowProvider } from "@xyflow/react";
-import { WorkflowStatus } from "@repo/types/src/workflow";
 import type { WorkflowType } from "@repo/types";
-import Topbar from "@/components/react-flow/topbar/topbar.tsx";
-import TasksMenuSidebar from "@/components/react-flow/sidebar/tasks-menu-sidebar.tsx";
-import FlowEditor from "@/components/react-flow/flow-editor.tsx";
-import { FlowValidationContextProvider } from "@/context/flow-validation-context.tsx";
+import { WorkflowStatus } from "@repo/types";
+import Topbar from "@/components/react-flow/topbar/topbar";
+import TasksMenuSidebar from "@/components/react-flow/sidebar/tasks-menu-sidebar";
+import FlowEditor from "@/components/react-flow/flow-editor";
+import { FlowValidationContextProvider } from "@/context/flow-validation-context";
 
 interface EditorProps {
   workflow: WorkflowType;

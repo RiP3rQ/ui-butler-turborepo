@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@repo/types": "workspace:*",
     "@repo/tasks": "workspace:*",
     "@nestjs/common": "^10.4.7",
     "@nestjs/config": "^3.3.0",
@@ -49,7 +50,6 @@
     "@neondatabase/serverless": "^0.10.3"
   },
   "devDependencies": {
-    "@repo/types": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@nestjs/cli": "^10.4.7",
     "@nestjs/schematics": "^10.2.3",

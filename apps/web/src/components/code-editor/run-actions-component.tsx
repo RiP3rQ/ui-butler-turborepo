@@ -1,4 +1,4 @@
-import type { EditorActionsType } from "@repo/types/dist/code-editor-types.ts";
+import type { EditorActionsType } from "@repo/types";
 import { Button } from "@repo/ui/components/ui/button";
 import {
   DropdownMenu,

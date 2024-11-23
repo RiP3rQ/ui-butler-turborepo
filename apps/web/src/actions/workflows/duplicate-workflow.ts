@@ -1,7 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
-import type { WorkflowType } from "@repo/types/src/workflow";
+import type { WorkflowType } from "@repo/types";
 import { getErrorMessage } from "@/lib/get-error-message";
 import type { DuplicateWorkflowSchemaType } from "@/schemas/workflow";
 

@@ -1,4 +1,4 @@
-import { WorkflowExecutionStatus } from "@repo/types/src/workflow";
+import { WorkflowExecutionStatus } from "@repo/types";
 import { cn } from "@repo/ui/lib/utils";
 
 const indicatorStatusColors: Record<WorkflowExecutionStatus, string> = {

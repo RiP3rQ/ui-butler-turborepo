@@ -19,7 +19,7 @@ import {
   useSidebar,
 } from "@repo/ui/components/ui/sidebar";
 import { Separator } from "@repo/ui/components/ui/separator";
-import type { NavMainType } from "@repo/types/src/sidebar";
+import type { NavMainType } from "@repo/types";
 import { cn } from "@repo/ui/lib/utils";
 
 interface NavMainProps {

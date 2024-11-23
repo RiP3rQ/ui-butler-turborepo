@@ -1,11 +1,8 @@
 "use server";
 
-import type {
-  Period,
-  StatCardsValuesResponse,
-} from "@repo/types/src/analytics";
+import type { Period, StatCardsValuesResponse } from "@repo/types";
 import { cookies } from "next/headers";
-import { getErrorMessage } from "@/lib/get-error-message.ts";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 export async function getStatCardsValues(
   selectedPeriod: Period,

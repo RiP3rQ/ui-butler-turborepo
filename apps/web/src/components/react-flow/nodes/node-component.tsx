@@ -1,6 +1,6 @@
 import { memo } from "react";
 import type { NodeProps } from "@xyflow/react";
-import type { AppNodeData } from "@repo/types/src/appNode";
+import type { AppNodeData } from "@repo/types";
 import { Badge } from "@repo/ui/components/ui/badge";
 import NodeCard from "@/components/react-flow/nodes/node-card";
 import NodeHeader from "@/components/react-flow/nodes/node-header";
@@ -8,7 +8,7 @@ import NodeInputs from "@/components/react-flow/nodes/node-inputs";
 import NodeInput from "@/components/react-flow/nodes/node-input";
 import NodeOutputs from "@/components/react-flow/nodes/node-outputs";
 import NodeOutput from "@/components/react-flow/nodes/node-output";
-import { TaskRegistry } from "@/lib/workflow/task/registery.tsx";
+import { TaskRegistry } from "@/lib/workflow/task/registery";
 
 const DEV_MODE = process.env.NODE_ENV === "development";
 

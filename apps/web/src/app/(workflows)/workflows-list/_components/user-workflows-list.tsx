@@ -4,10 +4,10 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@repo/ui/components/ui/alert";
-import type { WorkflowType } from "@repo/types/src/workflow.ts";
-import { WorkflowCard } from "@/app/(workflows)/workflows-list/_components/workflow-card.tsx";
-import { CreateWorkflowDialog } from "@/app/(workflows)/workflows-list/_components/create-workflow-dialog.tsx";
-import { getUserWorkflows } from "@/actions/workflows/get-workflows.ts";
+import type { WorkflowType } from "@repo/types";
+import { WorkflowCard } from "@/app/(workflows)/workflows-list/_components/workflow-card";
+import { CreateWorkflowDialog } from "@/app/(workflows)/workflows-list/_components/create-workflow-dialog";
+import { getUserWorkflows } from "@/actions/workflows/get-workflows";
 
 export async function UserWorkflows() {
   const worksflows = (await getUserWorkflows()) satisfies WorkflowType[];

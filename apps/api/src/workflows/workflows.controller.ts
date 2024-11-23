@@ -57,8 +57,6 @@ export class WorkflowsController {
     if (!workflowId || !flowDefinition) {
       throw new BadRequestException('Invalid request');
     }
-
-    return this.workflowsService.publishWorkflow(user, publishWorkflowDto);
   }
 
   // @Delete(':id')

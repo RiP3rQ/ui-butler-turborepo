@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import type { Period } from "@repo/types/src/analytics";
+import type { Period } from "@repo/types";
 import {
   Select,
   SelectContent,
@@ -41,8 +41,8 @@ function PeriodSelector({
         console.log(value);
         const [month, year] = value.split("-");
         const params = new URLSearchParams(searchParams);
-        params.set("month", month);
-        params.set("year", year);
+        params.set("month", month!);
+        params.set("year", year!);
         router.push(`?${params.toString()}`);
       }}
       value={`${selectedPeriod.month}-${selectedPeriod.year}`}

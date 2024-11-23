@@ -2,13 +2,10 @@ import { format, formatDistanceToNow } from "date-fns";
 import Link from "next/link";
 import { formatInTimeZone } from "date-fns-tz";
 import { ChevronRightIcon, ClockIcon } from "lucide-react";
-import type {
-  WorkflowExecutionStatus,
-  WorkflowType,
-} from "@repo/types/src/workflow.ts";
-import { WorkflowStatus } from "@repo/types/src/workflow.ts";
-import { ExecutionStatusLabel } from "@/components/execution-viewer/execution-status-label.tsx";
-import { ExecutionStatusIndicator } from "@/components/execution-viewer/execution-status-indicator.tsx";
+import type { IWorkflowExecutionStatus, WorkflowType } from "@repo/types";
+import { WorkflowStatus } from "@repo/types";
+import { ExecutionStatusLabel } from "@/components/execution-viewer/execution-status-label";
+import { ExecutionStatusIndicator } from "@/components/execution-viewer/execution-status-indicator";
 
 interface LastRunDetailsProps {
   workflow: WorkflowType;
@@ -17,6 +14,8 @@ export function LastRunDetails({
   workflow,
 }: Readonly<LastRunDetailsProps>): JSX.Element | null {
   const { lastRunId, lastRunAt, lastRunStatus, nextRunAt, status } = workflow;
+
+  console.log("WorkflowStatus", WorkflowStatus);
 
   if (status === WorkflowStatus.DRAFT) {
     return null;
@@ -38,10 +37,10 @@ export function LastRunDetails({
           >
             <span>Last run:</span>
             <ExecutionStatusIndicator
-              status={lastRunStatus as WorkflowExecutionStatus}
+              status={lastRunStatus as IWorkflowExecutionStatus}
             />
             <ExecutionStatusLabel
-              status={lastRunStatus as WorkflowExecutionStatus}
+              status={lastRunStatus as IWorkflowExecutionStatus}
             />
             <span>{formattedStartedAt}</span>
             <ChevronRightIcon className="size-4 -translate-x-[2px] group-hover:translate-x-0 transition" />

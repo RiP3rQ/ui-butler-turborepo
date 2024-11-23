@@ -1,11 +1,10 @@
-import type { TaskType } from "@repo/types/src/task";
+import type { AppNode, TaskType } from "@repo/types";
 import { CoinsIcon, CopyIcon, GripVerticalIcon, TrashIcon } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
 import { Badge } from "@repo/ui/components/ui/badge";
 import { useReactFlow } from "@xyflow/react";
-import type { AppNode } from "@repo/types/src/appNode";
-import { TaskRegistry } from "@/lib/workflow/task/registery.tsx";
-import { createFlowNodeFunction } from "@/lib/workflow/create-flow-node.ts";
+import { TaskRegistry } from "@/lib/workflow/task/registery";
+import { createFlowNodeFunction } from "@/lib/workflow/create-flow-node";
 
 interface NodeHeaderProps {
   taskType: TaskType;

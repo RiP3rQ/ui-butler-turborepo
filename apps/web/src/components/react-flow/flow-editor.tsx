@@ -14,14 +14,13 @@ import {
 } from "@xyflow/react";
 
 import "@xyflow/react/dist/style.css";
-import { TaskType } from "@repo/types/src/task";
+import type { AppNode, WorkflowType } from "@repo/types";
+import { TaskType } from "@repo/types";
 import { useCallback, useEffect } from "react";
-import type { AppNode } from "@repo/types/src/appNode";
-import type { WorkflowType } from "@repo/types";
 import { createFlowNodeFunction } from "@repo/lib/src/workflow/createFlowNode";
 import { TaskRegistry } from "@repo/lib/src/tasks/registery";
-import NodeComponent from "@/components/react-flow/nodes/node-component.tsx";
-import DeletableEdge from "@/components/react-flow/edges/deletable-edge.tsx";
+import NodeComponent from "@/components/react-flow/nodes/node-component";
+import DeletableEdge from "@/components/react-flow/edges/deletable-edge";
 
 interface FlowEditorProps {
   workflow: WorkflowType;

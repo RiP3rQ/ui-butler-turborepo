@@ -8,10 +8,10 @@ import {
   TabletSmartphoneIcon,
   TestTubeDiagonalIcon,
 } from "lucide-react";
-import type { EditorActionsType } from "@repo/types/src/code-editor-types.ts";
+import type { EditorActionsType } from "@repo/types";
 import { useExecuteRunActionDialogState } from "@repo/ui/state/execute-run-action-state";
-import { ActionRunDialog } from "@/components/code-editor/action-run-dialog.tsx";
-import CodeEditor from "@/components/code-editor/editor.tsx";
+import { ActionRunDialog } from "@/components/code-editor/action-run-dialog";
+import CodeEditor from "@/components/code-editor/editor";
 
 export default function SaveNewComponentPage(): JSX.Element {
   const { updateIsOpen, updateActionTitle, updateActionSubTitle } =

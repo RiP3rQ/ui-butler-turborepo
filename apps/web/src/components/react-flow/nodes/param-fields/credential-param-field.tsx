@@ -1,6 +1,6 @@
 "use client";
 
-import type { ParamProps } from "@repo/types/src/appNode";
+import type { ParamProps } from "@repo/types";
 import { useId } from "react";
 import { Label } from "@repo/ui/components/ui/label";
 import {
@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@repo/ui/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
-import getUserCredentials from "@/actions/credentials/get-user-credentials.ts";
+import getUserCredentials from "@/actions/credentials/get-user-credentials";
 
 function CredentialParamField({
   param,

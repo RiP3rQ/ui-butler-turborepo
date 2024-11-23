@@ -1,5 +1,5 @@
 import { Layers2Icon } from "lucide-react";
-import type { UsedCreditsInPeriodResponse } from "@repo/types/src/analytics";
+import type { UsedCreditsInPeriodResponse } from "@repo/types";
 import {
   Card,
   CardContent,
@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/components/ui/card";
-import StatsChart from "@/components/analytics/stat-chart/stats-chart.tsx";
+import StatsChart from "@/components/analytics/stat-chart/stats-chart";
 
 interface StatsChartWrapperProps {
   data: UsedCreditsInPeriodResponse[];

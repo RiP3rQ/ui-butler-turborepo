@@ -1,11 +1,8 @@
 "use server";
 
 import { cookies } from "next/headers";
-import type {
-  Period,
-  UsedCreditsInPeriodResponse,
-} from "@repo/types/src/analytics";
-import { getErrorMessage } from "@/lib/get-error-message.ts";
+import type { Period, UsedCreditsInPeriodResponse } from "@repo/types";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 export async function getUsedCreditsInPeriod(
   selectedPeriod: Period,

@@ -1,8 +1,8 @@
 "use server";
 
 import { cookies } from "next/headers";
-import type { UserCredentials } from "@repo/types/src/credentials";
-import { getErrorMessage } from "@/lib/get-error-message.ts";
+import type { UserCredentials } from "@repo/types";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 export default async function getUserCredentials(): Promise<UserCredentials[]> {
   try {

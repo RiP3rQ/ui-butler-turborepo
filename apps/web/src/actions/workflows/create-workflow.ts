@@ -1,8 +1,8 @@
 "use server";
 
 import { cookies } from "next/headers";
-import type { WorkflowType } from "@repo/types/src/workflow";
-import { getErrorMessage } from "@/lib/get-error-message.ts";
+import type { WorkflowType } from "@repo/types";
+import { getErrorMessage } from "@/lib/get-error-message";
 import type { CreateWorkflowSchemaType } from "@/schemas/workflow.ts";
 
 export async function createWorkflow(

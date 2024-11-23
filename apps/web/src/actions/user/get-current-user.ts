@@ -1,8 +1,8 @@
 "use server";
 
 import { cookies } from "next/headers";
-import type { BasicUser } from "@repo/types/src/users";
-import { getErrorMessage } from "@/lib/get-error-message.ts";
+import type { BasicUser } from "@repo/types";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 export default async function getCurrentUser(): Promise<BasicUser> {
   try {

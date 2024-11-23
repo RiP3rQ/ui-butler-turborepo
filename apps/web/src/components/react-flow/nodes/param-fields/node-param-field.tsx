@@ -1,7 +1,6 @@
-import type { TaskParam } from "@repo/types/src/task";
-import { TaskParamType } from "@repo/types/src/task";
+import type { AppNode, TaskParam } from "@repo/types";
+import { TaskParamType } from "@repo/types";
 import { useReactFlow } from "@xyflow/react";
-import type { AppNode } from "@repo/types/src/appNode";
 import { useCallback } from "react";
 import StringParamField from "@/components/react-flow/nodes/param-fields/string-param-field";
 import BrowserInstanceParamField from "@/components/react-flow/nodes/param-fields/browser-instance-param-field";

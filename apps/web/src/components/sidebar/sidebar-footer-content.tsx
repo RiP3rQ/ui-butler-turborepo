@@ -29,7 +29,7 @@ import {
   useSidebar,
 } from "@repo/ui/components/ui/sidebar";
 import { logoutUser } from "@repo/ui/actions/auth/logout-user";
-import type { BasicUser } from "@repo/types/src/users";
+import type { BasicUser } from "@repo/types";
 
 interface SidebarFooterContentProps {
   currentLoggedUser: BasicUser;

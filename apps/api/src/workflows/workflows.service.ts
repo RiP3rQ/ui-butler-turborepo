@@ -9,15 +9,12 @@ import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { desc, eq } from 'drizzle-orm';
 import { CreateWorkflowDto } from './dto/create-workflow.dto';
 import type { AppEdge, AppNode } from '@repo/types';
-import { WorkflowExecutionPlan, WorkflowStatus } from '@repo/types';
+import { WorkflowExecutionPlan } from '@repo/types';
 
 import { User } from '../database/schemas/users';
 import { DatabaseSchemas } from '../database/merged-schemas';
 import { workflows } from '../database/schemas/workflows';
 import { PublishWorkflowDto } from './dto/publish-workflow.dto';
-import { Edge } from '@nestjs/core/inspector/interfaces/edge.interface';
-import { parseFlowToExecutionPlan } from '../lib/parse-flow-to-execution-plan';
-import { calculateWorkflowCost } from '../lib/calculate-workflow-cost';
 
 @Injectable()
 export class WorkflowsService {
@@ -85,15 +82,18 @@ export class WorkflowsService {
       throw new NotFoundException('Workflow not found');
     }
 
-    if (workflowData.status !== WorkflowStatus.DRAFT) {
+    // TODO: CHANGE TO WorkflowStatus enum
+    if (workflowData.status !== 'DRAFT') {
       throw new BadRequestException('Workflow is not in draft state');
     }
 
     const flow = JSON.parse(publishWorkflowDto.flowDefinition);
-    const result = parseFlowToExecutionPlan(
-      flow.nodes as AppNode[],
-      flow.edges as Edge[],
-    );
+    // TODO: FIX THIS
+    // const result = parseFlowToExecutionPlan(
+    //   flow.nodes as AppNode[],
+    //   flow.edges as Edge[],
+    // );
+    const result = {} as any;
     if (result.error) {
       throw new Error('Error parsing flow to execution plan');
     }
@@ -102,13 +102,16 @@ export class WorkflowsService {
     }
     const executionPlan: WorkflowExecutionPlan = result.executionPlan;
 
-    const creditsCost = calculateWorkflowCost(flow.nodes as AppNode[]);
+    // TODO: FIX THIS
+    // const creditsCost = calculateWorkflowCost(flow.nodes as AppNode[]);
+    const creditsCost = 0;
 
     // Publish the workflow
     const publishedWorkflow = await this.database
       .update(workflows)
       .set({
-        status: WorkflowStatus.PUBLISHED,
+        //@ts-ignore // TODO: CHANGE TO WorkflowStatus enum
+        status: 'PUBLISHED',
         definition: publishWorkflowDto.flowDefinition,
         executionPlan: JSON.stringify(executionPlan),
         creditsCost,

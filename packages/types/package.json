@@ -9,6 +9,7 @@
   },
   "exports": {
     ".": {
+      "import": "./src/index.ts",
       "types": "./src/index.ts",
       "default": "./disc/index.js"
     }

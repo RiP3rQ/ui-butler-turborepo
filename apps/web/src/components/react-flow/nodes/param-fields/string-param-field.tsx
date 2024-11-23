@@ -4,7 +4,7 @@ import { Label } from "@repo/ui/components/ui/label";
 import { useEffect, useId, useState } from "react";
 import { Input } from "@repo/ui/components/ui/input";
 import { Textarea } from "@repo/ui/components/ui/textarea";
-import type { ParamProps } from "@repo/types/src/appNode";
+import type { ParamProps } from "@repo/types";
 
 function StringParamField({
   param,

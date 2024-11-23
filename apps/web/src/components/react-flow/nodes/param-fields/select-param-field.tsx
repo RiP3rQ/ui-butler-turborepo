@@ -1,6 +1,6 @@
 "use client";
 
-import type { ParamProps } from "@repo/types/src/appNode";
+import type { ParamProps } from "@repo/types";
 import { useId } from "react";
 import { Label } from "@repo/ui/components/ui/label";
 import {

@@ -1,17 +1,17 @@
 "use client";
 
-import type { WorkflowType } from "@repo/types/src/workflow";
-import { WorkflowStatus } from "@repo/types/src/workflow";
+import type { WorkflowType } from "@repo/types";
+import { WorkflowStatus } from "@repo/types";
 import { Card, CardContent } from "@repo/ui/components/ui/card";
 import { cn } from "@repo/ui/lib/utils";
 import { FileIcon, PlayIcon } from "lucide-react";
 import Link from "next/link";
 import TooltipWrapper from "@repo/ui/components/tooltip-wrapper";
-import { DuplicateWorkflowDialog } from "@/app/(workflows)/workflows-list/_components/duplicate-workflow-dialog.tsx";
-import { RunWorkflowButton } from "@/app/(workflows)/workflows-list/_components/run-workflow-button.tsx";
-import { EditWorkflowButton } from "@/app/(workflows)/workflows-list/_components/edit-workflow-button.tsx";
-import { LastRunDetails } from "@/app/(workflows)/workflows-list/_components/last-run-details.tsx";
-import { WorkflowActionButtons } from "@/app/(workflows)/workflows-list/_components/workflow-action-buttons.tsx";
+import { DuplicateWorkflowDialog } from "@/app/(workflows)/workflows-list/_components/duplicate-workflow-dialog";
+import { RunWorkflowButton } from "@/app/(workflows)/workflows-list/_components/run-workflow-button";
+import { EditWorkflowButton } from "@/app/(workflows)/workflows-list/_components/edit-workflow-button";
+import { LastRunDetails } from "@/app/(workflows)/workflows-list/_components/last-run-details";
+import { WorkflowActionButtons } from "@/app/(workflows)/workflows-list/_components/workflow-action-buttons";
 
 const STATUS_COLORS = {
   [WorkflowStatus.DRAFT]: "bg-yellow-400 text-yellow-600",

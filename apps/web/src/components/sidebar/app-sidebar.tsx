@@ -25,12 +25,11 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@repo/ui/components/ui/sidebar";
-import type { BundlesType } from "@repo/types/src/sidebar";
-import type { BasicUser } from "@repo/types/src/users";
-import { SidebarMainContent } from "@/components/sidebar/sidebar-main-content.tsx";
-import { SidebarFooterContent } from "@/components/sidebar/sidebar-footer-content.tsx";
-import { SavedBundles } from "@/components/sidebar/saved-components-bundles.tsx";
-import { CustomSidebarHeader } from "@/components/sidebar/sidebar-header.tsx";
+import type { BasicUser, BundlesType } from "@repo/types";
+import { SidebarMainContent } from "@/components/sidebar/sidebar-main-content";
+import { SidebarFooterContent } from "@/components/sidebar/sidebar-footer-content";
+import { SavedBundles } from "@/components/sidebar/saved-components-bundles";
+import { CustomSidebarHeader } from "@/components/sidebar/sidebar-header";
 
 // This is sample data.
 const data = {

@@ -1,5 +1,5 @@
-import type { Period } from "@repo/types/src/analytics";
-import PeriodSelector from "@/components/analytics/period-selector.tsx";
+import type { Period } from "@repo/types";
+import PeriodSelector from "@/components/analytics/period-selector";
 
 export async function PeriodSelectorWrapper({
   selectedPeriod,
