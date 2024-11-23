@@ -1,13 +1,13 @@
-'use server';
+"use server";
 
-import { cookies } from 'next/headers';
-import type { WorkflowType } from '@repo/types';
-import { getErrorMessage } from '@/lib/get-error-message';
+import { cookies } from "next/headers";
+import type { WorkflowType } from "@repo/types";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 export async function getWorkflowByIdFunction({
-                                                workflowId,
-                                              }: {
-  workflowId: number;
+  workflowId,
+}: {
+  workflowId: string;
 }): Promise<WorkflowType> {
   try {
     // Get existing cookies
@@ -17,21 +17,22 @@ export async function getWorkflowByIdFunction({
     // Convert cookies to a string format suitable for the 'Cookie' header
     const cookieHeader = cookiesToSend
       .map((cookie) => `${cookie.name}=${cookie.value}`)
-      .join('; ');
+      .join("; ");
 
+    // Fetch the workflow by ID
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/workflows?id=${workflowId}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/workflows/get-by-id/${workflowId || ""}`,
       {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Cookie: cookieHeader, // Include cookies in the request
         },
       },
     );
 
     if (!res.ok) {
-      throw new Error('Workflows not found');
+      throw new Error("Workflows not found");
     }
 
     return (await res.json()) as WorkflowType;

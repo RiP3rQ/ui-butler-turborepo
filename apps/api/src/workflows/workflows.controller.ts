@@ -26,6 +26,7 @@ export class WorkflowsController {
   constructor(private readonly workflowsService: WorkflowsService) {}
 
   @Get()
+  @LogErrors()
   @UseGuards(JwtAuthGuard)
   getAllUserWorkflows(@CurrentUser() user: User) {
     if (!user) {
@@ -34,7 +35,7 @@ export class WorkflowsController {
     return this.workflowsService.getAllUserWorkflows(user);
   }
 
-  @Get(':workflowId')
+  @Get('get-by-id/:workflowId')
   @LogErrors()
   @UseGuards(JwtAuthGuard)
   getWorkflowById(
@@ -46,7 +47,7 @@ export class WorkflowsController {
     }
 
     if (!workflowId) {
-      throw new BadRequestException('Invalid request');
+      throw new BadRequestException('Workflow ID is required');
     }
 
     return this.workflowsService.getWorkflowById(user, +workflowId);

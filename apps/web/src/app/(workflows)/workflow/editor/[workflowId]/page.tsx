@@ -1,34 +1,19 @@
-import { redirect } from "next/navigation";
-import React from "react";
-import { toast } from "sonner";
-import Editor from "@/components/react-flow/editor";
-import { getWorkflowByIdFunction } from "@/actions/workflows/get-workflow-by-id";
+import React, { Suspense } from "react";
+import { WorkflowContent } from "@/app/(workflows)/workflow/editor/[workflowId]/_components/page-content";
 
-type Params = Promise<{ workflowId: string }>;
+export type WorkflowPageParams = Promise<{ workflowId: string }>;
 
 const WorkflowPage = async ({
   params,
 }: Readonly<{
-  params: Params;
+  params: WorkflowPageParams;
 }>) => {
   const { workflowId } = await params;
-  // TODO: Implement auth function
-  // const { userId } = await auth();
-  const userId = "123";
 
-  if (!userId) {
-    return redirect("/sign-up");
-  }
-
-  const workflow = await getWorkflowByIdFunction({
-    workflowId: Number(workflowId),
-  });
-
-  if (!workflow) {
-    toast.error("Workflow not found");
-    return redirect("/workflows");
-  }
-
-  return <Editor workflow={workflow} />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <WorkflowContent workflowId={workflowId} />
+    </Suspense>
+  );
 };
 export default WorkflowPage;

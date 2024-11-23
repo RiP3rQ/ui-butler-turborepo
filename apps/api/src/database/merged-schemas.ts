@@ -3,6 +3,7 @@ import * as analyticsSchema from './schemas/analytics';
 import * as credentialsSchema from './schemas/credentials';
 import * as workflowExecutionsSchema from './schemas/workflow-executions';
 import * as workflowsSchema from './schemas/workflows';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 export const mergedSchemas = {
   ...userSchema,
@@ -12,3 +13,4 @@ export const mergedSchemas = {
   ...workflowsSchema,
 };
 export type DatabaseSchemas = typeof mergedSchemas;
+export type DrizzleDatabase = NodePgDatabase<DatabaseSchemas>;

@@ -15,22 +15,19 @@ export const workflows = pgTable(
   'workflows',
   {
     id: serial('id').primaryKey(),
-    userId: integer('user_id').references(() => users.id),
+    userId: integer('user_id')
+      .references(() => users.id)
+      .notNull(),
     name: text('name').notNull(),
     description: text('description'),
-
+    status: text('status').default('DRAFT'),
     definition: text('definition').notNull().default('{}'),
     executionPlan: text('execution_plan'),
     creditsCost: integer('credits_cost').default(0),
-
-    status: text('status').default('DRAFT'),
-
     lastRunAt: timestamp('last_run_at'),
     lastRunId: text('last_run_id'),
     lastRunStatus: text('last_run_status'),
-
     nextRunAt: timestamp('next_run_at'),
-
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at')
       .notNull()
@@ -46,7 +43,17 @@ export const workflows = pgTable(
   }),
 );
 export type Workflow = typeof workflows.$inferSelect;
-export type NewWorkflow = typeof workflows.$inferInsert;
+export type NewWorkflow = {
+  userId: number;
+  name: string;
+  description?: string;
+  definition: string;
+  creditsCost?: number;
+  executionPlan?: string;
+  status?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+};
 
 export const workflowRelations = relations(workflows, ({ one, many }) => ({
   users: one(users, {

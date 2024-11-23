@@ -5,15 +5,20 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { DATABASE_CONNECTION } from '../database/database-connection';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { and, asc, desc, eq } from 'drizzle-orm';
 import { CreateWorkflowDto } from './dto/create-workflow.dto';
-import type { AppEdge, AppNode } from '@repo/types';
-import { WorkflowExecutionPlan } from '@repo/types';
+import {
+  AppEdge,
+  AppNode,
+  ExecutionPhaseStatus,
+  WorkflowExecutionPlan,
+  WorkflowExecutionStatus,
+  WorkflowExecutionTrigger,
+  WorkflowStatus,
+} from '@repo/types';
 
 import { User } from '../database/schemas/users';
-import { DatabaseSchemas } from '../database/merged-schemas';
-import { workflows } from '../database/schemas/workflows';
+import { NewWorkflow, workflows } from '../database/schemas/workflows';
 import { PublishWorkflowDto } from './dto/publish-workflow.dto';
 import { RunWorkflowDto } from './dto/run-workflow.dto';
 import { UpdateWorkflowDto } from './dto/update-workflow.dto';
@@ -23,12 +28,19 @@ import {
   executionPhase,
   workflowExecutions,
 } from '../database/schemas/workflow-executions';
+import {
+  calculateWorkflowCost,
+  parseFlowToExecutionPlan,
+  ServerTaskRegister,
+} from '@repo/tasks';
+import { Edge } from '@nestjs/core/inspector/interfaces/edge.interface';
+import type { DrizzleDatabase } from '../database/merged-schemas';
 
 @Injectable()
 export class WorkflowsService {
   constructor(
     @Inject(DATABASE_CONNECTION)
-    private readonly database: NodePgDatabase<DatabaseSchemas>,
+    private readonly database: DrizzleDatabase,
   ) {}
 
   // GET /workflows
@@ -57,7 +69,7 @@ export class WorkflowsService {
       throw new NotFoundException('Workflow not found');
     }
 
-    return workflowData;
+    return workflowData[0];
   }
 
   // POST /workflows
@@ -76,10 +88,10 @@ export class WorkflowsService {
       description: createWorkflowDto.description,
       userId: user.id,
       definition: JSON.stringify(initalFlow),
-      status: 'DRAFT', // TODO: PROPER ENUM FROM TYPES PACKAGE
+      status: WorkflowStatus.DRAFT,
       createdAt: new Date(),
       updatedAt: new Date(),
-    };
+    } satisfies NewWorkflow;
 
     const [newWorkflow] = await this.database
       .insert(workflows)
@@ -126,16 +138,17 @@ export class WorkflowsService {
       throw new NotFoundException('Workflow not found');
     }
 
+    const newWorkflow = {
+      name: duplicateWorkflowDto.name,
+      userId: user.id,
+      status: WorkflowStatus.DRAFT,
+      definition: sourceWorkflow.definition,
+      description: duplicateWorkflowDto.description,
+    } satisfies NewWorkflow;
+
     const [duplicatedWorkflow] = await this.database
       .insert(workflows)
-      .values({
-        // @ts-ignore // TODO: FIX THIS
-        userId: user.id,
-        status: 'DRAFT', // TODO: PROPER ENUM FROM TYPES PACKAGE
-        definition: sourceWorkflow.definition,
-        name: duplicateWorkflowDto.name,
-        description: duplicateWorkflowDto.description,
-      })
+      .values(newWorkflow)
       .returning();
 
     if (!duplicatedWorkflow) {
@@ -156,18 +169,15 @@ export class WorkflowsService {
       throw new NotFoundException('Workflow not found');
     }
 
-    // TODO: CHANGE TO WorkflowStatus enum
-    if (workflowData.status !== 'DRAFT') {
+    if (workflowData.status !== WorkflowStatus.DRAFT) {
       throw new BadRequestException('Workflow is not in draft state');
     }
 
     const flow = JSON.parse(publishWorkflowDto.flowDefinition);
-    // TODO: FIX THIS
-    // const result = parseFlowToExecutionPlan(
-    //   flow.nodes as AppNode[],
-    //   flow.edges as Edge[],
-    // );
-    const result = {} as any;
+    const result = parseFlowToExecutionPlan(
+      flow.nodes as AppNode[],
+      flow.edges as Edge[],
+    );
     if (result.error) {
       throw new Error('Error parsing flow to execution plan');
     }
@@ -176,20 +186,21 @@ export class WorkflowsService {
     }
     const executionPlan: WorkflowExecutionPlan = result.executionPlan;
 
-    // TODO: FIX THIS
-    // const creditsCost = calculateWorkflowCost(flow.nodes as AppNode[]);
-    const creditsCost = 0;
+    const creditsCost = calculateWorkflowCost(flow.nodes as AppNode[]);
+
+    const publishedWorkflowData = {
+      name: workflowData.name,
+      userId: user.id,
+      status: WorkflowStatus.PUBLISHED,
+      definition: publishWorkflowDto.flowDefinition,
+      executionPlan: JSON.stringify(executionPlan),
+      creditsCost,
+    };
 
     // Publish the workflow
     const publishedWorkflow = await this.database
       .update(workflows)
-      .set({
-        //@ts-ignore // TODO: CHANGE TO WorkflowStatus enum
-        status: 'PUBLISHED',
-        definition: publishWorkflowDto.flowDefinition,
-        executionPlan: JSON.stringify(executionPlan),
-        creditsCost,
-      })
+      .set(publishedWorkflowData)
       .where(eq(workflows.id, publishWorkflowDto.workflowId))
       .returning();
 
@@ -211,20 +222,22 @@ export class WorkflowsService {
       throw new NotFoundException('Workflow not found');
     }
 
-    // TODO: CHANGE TO WorkflowStatus enum
-    if (workflowData.status !== 'PUBLISHED') {
+    if (workflowData.status !== WorkflowStatus.PUBLISHED) {
       throw new BadRequestException('Workflow is not in published state');
     }
+
+    const unpublishedWorkflowData = {
+      name: workflowData.name,
+      userId: user.id,
+      status: WorkflowStatus.DRAFT,
+      executionPlan: null,
+      creditsCost: 0,
+    };
 
     // Unpublish the workflow
     const [unpublishedWorkflow] = await this.database
       .update(workflows)
-      .set({
-        //@ts-ignore // TODO: CHANGE TO WorkflowStatus enum
-        status: 'DRAFT',
-        executionPlan: null,
-        creditsCost: 0,
-      })
+      .set(unpublishedWorkflowData)
       .where(eq(workflows.id, workflowId))
       .returning();
 
@@ -248,8 +261,7 @@ export class WorkflowsService {
 
     let executionPlan: WorkflowExecutionPlan;
     let workflowDefinition = runWorkflowDto.flowDefinition;
-    // TODO: FIX THIS TO USE WorkflowStatus enum
-    if (workflowData.status === 'PUBLISHED') {
+    if (workflowData.status === WorkflowStatus.PUBLISHED) {
       if (!workflowData.executionPlan) {
         throw new BadRequestException(
           'Execution plan is not defined in the published workflow',
@@ -263,9 +275,7 @@ export class WorkflowsService {
         throw new Error('Flow definition is not defined');
       }
       const flow = JSON.parse(runWorkflowDto.flowDefinition);
-      // TODO: FIX THIS
-      // const result = parseFlowToExecutionPlan(flow.nodes, flow.edges);
-      const result = {} as any;
+      const result = parseFlowToExecutionPlan(flow.nodes, flow.edges);
       if (result.error) {
         throw new Error('Error parsing flow to execution plan');
       }
@@ -275,29 +285,30 @@ export class WorkflowsService {
       executionPlan = result.executionPlan;
     }
 
+    const exectionData = {
+      workflowId: runWorkflowDto.workflowId,
+      userId: user.id,
+      status: WorkflowExecutionStatus.RUNNING,
+      startedAt: new Date(),
+      trigger: WorkflowExecutionTrigger.MANUAL,
+      definition: workflowDefinition,
+      phases: executionPlan.flatMap((phase) => {
+        return phase.nodes.flatMap((node) => {
+          return {
+            userId: user.id,
+            status: ExecutionPhaseStatus.CREATED,
+            number: phase.phase,
+            node: JSON.stringify(node),
+            name: ServerTaskRegister[node.data.type].label,
+          };
+        });
+      }),
+    };
+
     // Save the execution plan to the database
     const [execution] = await this.database
-      .insert(workflows)
-      .values({
-        // @ts-ignore // TODO: FIX THIS
-        workflowId: runWorkflowDto.workflowId,
-        userId: user.id,
-        status: 'PENDING', // TODO: PROPER ENUM FROM TYPES PACKAGE
-        startedAt: new Date(),
-        trigger: 'MANUAL', // TODO: PROPER ENUM FROM TYPES PACKAGE
-        definition: workflowDefinition,
-        phases: executionPlan.flatMap((phase) => {
-          return phase.nodes.flatMap((node) => {
-            return {
-              userId: user.id,
-              status: 'CREATED', // TODO: PROPER ENUM FROM TYPES PACKAGE
-              number: phase.phase,
-              node: JSON.stringify(node),
-              name: 'TEST', // TaskRegistry[node.data.type].label,
-            };
-          });
-        }),
-      })
+      .insert(workflowExecutions)
+      .values(exectionData)
       .returning();
 
     if (!execution) {
@@ -331,14 +342,17 @@ export class WorkflowsService {
       throw new BadRequestException('Workflow is not in draft state');
     }
 
+    const updatedData = {
+      name: workflowData.name,
+      userId: user.id,
+      definition: updateWorkflowDto.definition,
+      updatedAt: new Date(),
+    };
+
     // Update the workflow
     const [updatedWorkflow] = await this.database
       .update(workflows)
-      .set({
-        //@ts-ignore // TODO: CHANGE TO WorkflowStatus enum
-        definition: updateWorkflowDto.definition,
-        updatedAt: new Date(),
-      })
+      .set(updatedData)
       .where(
         and(
           eq(workflows.id, updateWorkflowDto.workflowId),
