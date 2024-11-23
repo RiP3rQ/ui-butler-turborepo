@@ -168,4 +168,61 @@ export class WorkflowsController {
     }
     return this.workflowsService.updateWorkflow(user, updateWorkflowDto);
   }
+
+  @Get('historic')
+  @LogErrors()
+  @UseGuards(JwtAuthGuard)
+  getHistoricWorkflowExecutions(
+    @CurrentUser() user: User,
+    @Param('workflowId') workflowId: string,
+  ) {
+    if (!user) {
+      throw new NotFoundException('Unauthorized');
+    }
+
+    if (!workflowId) {
+      throw new BadRequestException('Invalid request');
+    }
+
+    return this.workflowsService.getHistoricWorkflowExecutions(
+      user,
+      +workflowId,
+    );
+  }
+
+  @Get('executions')
+  @LogErrors()
+  @UseGuards(JwtAuthGuard)
+  getWorkflowExecutions(
+    @CurrentUser() user: User,
+    @Param('executionId') executionId: string,
+  ) {
+    if (!user) {
+      throw new NotFoundException('Unauthorized');
+    }
+
+    if (!executionId) {
+      throw new BadRequestException('Invalid request');
+    }
+
+    return this.workflowsService.getWorkflowExecutions(user, +executionId);
+  }
+
+  @Get('phases')
+  @LogErrors()
+  @UseGuards(JwtAuthGuard)
+  getWorkflowPhases(
+    @CurrentUser() user: User,
+    @Param('phaseId') phaseId: string,
+  ) {
+    if (!user) {
+      throw new NotFoundException('Unauthorized');
+    }
+
+    if (!phaseId) {
+      throw new BadRequestException('Invalid request');
+    }
+
+    return this.workflowsService.getWorkflowPhase(user, +phaseId);
+  }
 }

@@ -20,7 +20,7 @@ export async function getWorkflowExecutionWithPhasesDetailsFunction({
       .join("; ");
 
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/workflows/executions?id=${executionId}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/workflows/executions?executionId=${executionId}`,
       {
         method: "GET",
         headers: {

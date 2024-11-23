@@ -1,12 +1,7 @@
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DATABASE_CONNECTION } from '../database/database-connection';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { and, desc, eq } from 'drizzle-orm';
+import { and, asc, desc, eq } from 'drizzle-orm';
 import { CreateWorkflowDto } from './dto/create-workflow.dto';
 import type { AppEdge, AppNode } from '@repo/types';
 import { WorkflowExecutionPlan } from '@repo/types';
@@ -18,6 +13,7 @@ import { PublishWorkflowDto } from './dto/publish-workflow.dto';
 import { RunWorkflowDto } from './dto/run-workflow.dto';
 import { UpdateWorkflowDto } from './dto/update-workflow.dto';
 import { DuplicateWorkflowDto } from './dto/duplicate-workflow.dto';
+import { executionLog, executionPhase, workflowExecutions } from '../database/schemas/workflow-executions';
 
 @Injectable()
 export class WorkflowsService {
@@ -347,5 +343,86 @@ export class WorkflowsService {
     }
 
     return updatedWorkflow;
+  }
+
+  // GET /workflows/historic?workflowId=1
+  async getHistoricWorkflowExecutions(user: User, workflowId: number) {
+    const workflowExecutionsData = await this.database
+      .select()
+      .from(workflowExecutions)
+      .where(and(eq(workflows.id, workflowId), eq(workflows.userId, user.id)))
+      .orderBy(desc(workflowExecutions.createdAt));
+
+    if (!workflowExecutionsData) {
+      throw new NotFoundException('Workflow not found');
+    }
+
+    return workflowExecutionsData;
+  }
+
+  // GET /workflows/phases?executionId=1
+  async getWorkflowExecutions(user: User, executionId: number) {
+    const workflowExecutionsWithPhases = await this.database
+      .select({
+        workflowExecution: workflowExecutions,
+        phases: executionPhase,
+      })
+      .from(workflowExecutions)
+      .leftJoin(executionPhase, eq(workflowExecutions.id, executionPhase.id))
+      .where(
+        and(
+          eq(workflowExecutions.id, executionId),
+          eq(workflowExecutions.userId, user.id),
+        ),
+      )
+      .orderBy(asc(executionPhase.number));
+
+    if (!workflowExecutionsWithPhases) {
+      throw new NotFoundException('Workflow not found');
+    }
+
+    // If you need to transform the result to match Prisma's structure
+    return {
+      ...workflowExecutionsWithPhases[0].workflowExecution,
+      phases: workflowExecutionsWithPhases.map((row) => row.phases),
+    };
+  }
+
+  // GET /workflows/phases?phaseId=1
+  async getWorkflowPhase(user: User, phaseId: number) {
+    const phaseWithLogs = await this.database
+      .select({
+        phase: executionPhase,
+        logs: executionLog,
+      })
+      .from(executionPhase)
+      .leftJoin(
+        workflowExecutions,
+        eq(executionPhase.id, workflowExecutions.id),
+      )
+      .leftJoin(
+        executionLog,
+        eq(executionPhase.id, executionLog.executionPhaseId),
+      )
+      .where(
+        and(
+          eq(executionPhase.id, phaseId),
+          eq(executionPhase.userId, user.id),
+          eq(workflowExecutions.userId, user.id),
+        ),
+      )
+      .orderBy(asc(executionLog.timestamp));
+
+    if (phaseWithLogs.length === 0) {
+      throw new NotFoundException('Workflow phase not found');
+    }
+
+    // Transform the result to match Prisma's structure
+    return {
+      ...phaseWithLogs[0].phase,
+      logs: phaseWithLogs
+        .filter((row) => row.logs !== null)
+        .map((row) => row.logs),
+    };
   }
 }
