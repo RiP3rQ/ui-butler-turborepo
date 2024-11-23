@@ -1,4 +1,3 @@
-import type { Edge } from "@xyflow/react";
 import type {
   AppNode,
   AppNodeMissingInputs,
@@ -7,6 +6,7 @@ import type {
   WorkflowExecutionPlanPhase,
 } from "@repo/types";
 import { FlowToExecutionPlanValidationType } from "@repo/types";
+import type { Edge } from "@xyflow/react";
 import { ClientTaskRegister } from "./register";
 
 interface FlowToExecutionPlanType {
@@ -37,7 +37,7 @@ export function parseFlowToExecutionPlan(
   const invalidInputs = getInvalidInputs(entryPoint, edges, planned);
   if (invalidInputs.length > 0) {
     inputsWithErrors.push({
-      nodeId: entryPoint.id,
+      nodeId: entryPoint.id || "",
       inputs: invalidInputs,
     });
   }
@@ -65,8 +65,8 @@ export function parseFlowToExecutionPlan(
     for (const currentNode of nodes) {
       if (planned.has(currentNode.id)) continue;
 
-      const invalidInputs = getInvalidInputs(currentNode, edges, planned);
-      if (invalidInputs.length > 0) {
+      const invalidInputsInner = getInvalidInputs(currentNode, edges, planned);
+      if (invalidInputsInner.length > 0) {
         const incomers = getIncomers(currentNode, nodes, edges);
         if (incomers.every((incomer) => planned.has(incomer.id))) {
           // If all incoming incomers/edges are planned and there are still invalid inputs
@@ -75,12 +75,12 @@ export function parseFlowToExecutionPlan(
           console.error(
             "Invalid workflow detected",
             currentNode.id,
-            invalidInputs,
+            invalidInputsInner,
           );
           // Save the invalid inputs
           inputsWithErrors.push({
             nodeId: currentNode.id,
-            inputs: invalidInputs,
+            inputs: invalidInputsInner,
           });
         } else {
           // Let's skip this node for now
@@ -119,7 +119,7 @@ function getInvalidInputs(
   const inputs = ClientTaskRegister[node.data.type].inputs;
   for (const input of inputs) {
     const inputValue = node.data.inputs[input.name];
-    const inputValueProvided = inputValue.length > 0;
+    const inputValueProvided = (inputValue?.length ?? 0) > 0;
 
     if (inputValueProvided) {
       // If the input value is provided, then it's valid
@@ -136,9 +136,7 @@ function getInvalidInputs(
     );
 
     const requiredInputProvidedByVisitedOutput =
-      input.required &&
-      inputLinkedByOutput &&
-      planned.has(inputLinkedByOutput.source);
+      input.required && planned.has(inputLinkedByOutput?.source ?? "");
 
     if (requiredInputProvidedByVisitedOutput) {
       // the input is required and we have a valid value for it
@@ -147,10 +145,7 @@ function getInvalidInputs(
     } else if (!input.required) {
       // the input is not required but there is an output linked to it
       // then we need to be sure that the output is planned
-      if (!inputLinkedByOutput) {
-        continue;
-      }
-      if (inputLinkedByOutput && planned.has(inputLinkedByOutput.source)) {
+      if (planned.has(inputLinkedByOutput?.source ?? "")) {
         // the output is providing a value for the input: so the input is valid
         continue;
       }
@@ -180,5 +175,5 @@ function getIncomers(
     }
   });
 
-  return nodes.filter((node) => incomerIds.has(node.id));
+  return nodes.filter((item) => incomerIds.has(item.id));
 }

@@ -2,7 +2,7 @@ import type { AppNode, TaskType } from "@repo/types";
 
 export function createFlowNodeFunction(
   nodeType: TaskType,
-  position?: { x: number; y: number },
+  position: { x: number; y: number } = { x: 0, y: 0 },
 ): AppNode {
   return {
     id: crypto.randomUUID(),
@@ -13,6 +13,6 @@ export function createFlowNodeFunction(
       inputs: {},
       outputs: {},
     },
-    position: position || { x: 0, y: 0 },
+    position,
   };
 }

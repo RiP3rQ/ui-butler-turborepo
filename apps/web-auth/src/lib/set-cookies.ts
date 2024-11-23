@@ -1,4 +1,4 @@
-import { getAuthCookie } from "@/lib/auth-cookie.ts";
+import { getAuthCookie } from "@/lib/auth-cookie";
 import { cookies } from "next/headers";
 
 export async function setResponseCookies(
