@@ -85,7 +85,7 @@ describe("RegisterForm", () => {
     it("renders all form components", () => {
       render(<RegisterForm />);
 
-      expect(screen.getByTestId("register-form-fields")).toBeInTheDocument();
+      expect(screen.getByTestId("registery-form-fields")).toBeInTheDocument();
       expect(screen.getByTestId("submit-button")).toBeInTheDocument();
       expect(screen.getByText(/or continue with/i)).toBeInTheDocument();
       expect(screen.getByTestId("social-buttons")).toBeInTheDocument();
@@ -179,7 +179,7 @@ describe("RegisterForm", () => {
       render(<RegisterForm />);
 
       expect(screen.getByTestId("submit-button")).toHaveAttribute("disabled");
-      expect(screen.getByTestId("register-form-fields")).toHaveAttribute(
+      expect(screen.getByTestId("registery-form-fields")).toHaveAttribute(
         "aria-disabled",
         "true",
       );
@@ -203,7 +203,7 @@ describe("RegisterForm", () => {
       render(<RegisterForm />);
 
       expect(screen.getByTestId("submit-button")).toHaveAttribute("disabled");
-      expect(screen.getByTestId("register-form-fields")).toHaveAttribute(
+      expect(screen.getByTestId("registery-form-fields")).toHaveAttribute(
         "aria-disabled",
         "true",
       );
@@ -234,7 +234,7 @@ describe("RegisterForm", () => {
       render(<RegisterForm />);
 
       expect(screen.getByTestId("submit-button")).toHaveAttribute("disabled");
-      expect(screen.getByTestId("register-form-fields")).toHaveAttribute(
+      expect(screen.getByTestId("registery-form-fields")).toHaveAttribute(
         "aria-disabled",
         "true",
       );

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -12,6 +13,7 @@ import { CurrentUser } from '../auth/current-user.decorator';
 import { CreateWorkflowDto } from './dto/create-workflow.dto';
 import { LogErrors } from '../common/error-handling/log-errors.decorator';
 import type { User } from '../database/schemas/users';
+import { PublishWorkflowDto } from './dto/publish-workflow.dto';
 
 @Controller('workflows')
 export class WorkflowsController {
@@ -37,6 +39,26 @@ export class WorkflowsController {
       throw new NotFoundException('Unauthorized');
     }
     return this.workflowsService.createWorkflow(user, createWorkflowDto);
+  }
+
+  @Post('publish-workflow')
+  @LogErrors()
+  @UseGuards(JwtAuthGuard)
+  publishWorkflow(
+    @CurrentUser() user: User,
+    @Body() publishWorkflowDto: PublishWorkflowDto,
+  ) {
+    if (!user) {
+      throw new NotFoundException('Unauthorized');
+    }
+
+    const { workflowId, flowDefinition } = publishWorkflowDto;
+
+    if (!workflowId || !flowDefinition) {
+      throw new BadRequestException('Invalid request');
+    }
+
+    return this.workflowsService.publishWorkflow(user, publishWorkflowDto);
   }
 
   // @Delete(':id')

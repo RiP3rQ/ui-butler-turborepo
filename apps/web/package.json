@@ -41,6 +41,7 @@
     "@repo/config-tailwindcss": "workspace:*",
     "@repo/eslint-config": "workspace:*",
     "@repo/types": "workspace:*",
+    "@repo/tasks": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@tanstack/react-query-devtools": "^5.59.20",
     "@types/node": "^20.17.6",

@@ -5,7 +5,7 @@ import { Badge } from "@repo/ui/components/ui/badge";
 import { useReactFlow } from "@xyflow/react";
 import type { AppNode } from "@repo/types/src/appNode";
 import { TaskRegistry } from "@/lib/workflow/task/registery.tsx";
-import { createFlowNodeFunction } from "@/lib/workflow/createFlowNode.ts";
+import { createFlowNodeFunction } from "@/lib/workflow/create-flow-node.ts";
 
 interface NodeHeaderProps {
   taskType: TaskType;

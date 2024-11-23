@@ -18,10 +18,10 @@ import { TaskType } from "@repo/types/src/task";
 import { useCallback, useEffect } from "react";
 import type { AppNode } from "@repo/types/src/appNode";
 import type { WorkflowType } from "@repo/types";
+import { createFlowNodeFunction } from "@repo/lib/src/workflow/createFlowNode";
+import { TaskRegistry } from "@repo/lib/src/tasks/registery";
 import NodeComponent from "@/components/react-flow/nodes/node-component.tsx";
 import DeletableEdge from "@/components/react-flow/edges/deletable-edge.tsx";
-import { createFlowNodeFunction } from "@/lib/workflow/createFlowNode.ts";
-import { TaskRegistry } from "@/lib/workflow/task/registery.tsx";
 
 interface FlowEditorProps {
   workflow: WorkflowType;

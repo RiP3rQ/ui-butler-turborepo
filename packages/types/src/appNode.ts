@@ -9,7 +9,11 @@ export interface AppNodeData {
 }
 
 export interface AppNode extends Node {
+  id: string;
   data: AppNodeData;
+  type: string;
+  dragHandle: string;
+  position: { x: number; y: number };
 }
 
 export interface ParamProps {
@@ -25,3 +29,11 @@ export type AppNodeMissingInputs = {
 };
 
 export interface AppEdge extends Edge {}
+
+export type ServerSaveEdge = {
+  id: string;
+  source: string;
+  target: string;
+  sourceHandle?: string;
+  targetHandle?: string;
+};

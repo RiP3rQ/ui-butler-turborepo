@@ -1,5 +1,5 @@
 {
-  "name": "@repo/types",
+  "name": "@repo/tasks",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -20,8 +20,10 @@
     "lucide-react": "^0.454.0"
   },
   "devDependencies": {
+    "@repo/config-tailwindcss": "workspace:*",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@repo/types": "workspace:*",
     "@types/node": "^20.17.6",
     "@types/eslint": "^9.6.1",
     "eslint": "^8.57.1",

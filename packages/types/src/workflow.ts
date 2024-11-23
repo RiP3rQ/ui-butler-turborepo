@@ -7,15 +7,18 @@ export enum WorkflowStatus {
   PUBLISHED = "PUBLISHED",
 }
 
-export type WorkflowTask = {
+export interface BaseWorkflowTask {
   label: string;
-  icon: LucideIcon;
   type: TaskType;
   isEntryPoint?: boolean;
   inputs: TaskParam[];
   outputs: TaskParam[];
   credits: number;
-};
+}
+
+export interface WorkflowTask extends BaseWorkflowTask {
+  icon: (props: LucideIcon) => JSX.Element;
+}
 
 export type WorkflowExecutionPlan = WorkflowExecutionPlanPhase[];
 

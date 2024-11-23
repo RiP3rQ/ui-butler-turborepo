@@ -1,14 +1,8 @@
-import { TaskParamType, TaskType } from "@repo/types/src/task";
-import type { LucideProps } from "lucide-react";
-import { GlobeIcon } from "lucide-react";
-import type { WorkflowTask } from "@repo/types/src/workflow";
+import { BaseWorkflowTask, TaskParamType, TaskType } from "@repo/types";
 
-export const LaunchBrowserTask = {
+export const ServerLaunchBrowserTask: BaseWorkflowTask = {
   type: TaskType.LAUNCH_BROWSER,
   label: "Launch Browser",
-  icon: (props: LucideProps) => (
-    <GlobeIcon className="stroke-pink-400" {...props} />
-  ),
   isEntryPoint: true,
   inputs: [
     {
@@ -26,4 +20,4 @@ export const LaunchBrowserTask = {
     },
   ] as const,
   credits: 5,
-} satisfies WorkflowTask;
+} as const;

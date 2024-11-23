@@ -1,5 +1,4 @@
-import type { TaskType } from "@repo/types/src/task";
-import type { AppNode } from "@repo/types/src/appNode";
+import type { AppNode, TaskType } from '@repo/types';
 
 export function createFlowNodeFunction(
   nodeType: TaskType,
@@ -7,8 +6,8 @@ export function createFlowNodeFunction(
 ): AppNode {
   return {
     id: crypto.randomUUID(),
-    type: "FlowScrapeNode",
-    dragHandle: ".drag-handle",
+    type: 'FlowScrapeNode',
+    dragHandle: '.drag-handle',
     data: {
       type: nodeType,
       inputs: {},
