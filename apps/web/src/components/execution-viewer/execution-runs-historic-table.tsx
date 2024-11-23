@@ -1,14 +1,14 @@
-import { InboxIcon } from 'lucide-react';
-import ExecutionsTable from '@/components/execution-viewer/executions-table';
-import { getHistoricWorkflowExecutions } from '@/actions/workflows/get-historic-workflow-executions';
+import { InboxIcon } from "lucide-react";
+import ExecutionsTable from "@/components/execution-viewer/executions-table";
+import { getHistoricWorkflowExecutions } from "@/actions/workflows/get-historic-workflow-executions";
 
 interface ExecutionRunsHistoricTableProps {
   workflowId: number;
 }
 
 const WorkflowHistoricExecutionsTable = async ({
-                                                 workflowId,
-                                               }: Readonly<ExecutionRunsHistoricTableProps>) => {
+  workflowId,
+}: Readonly<ExecutionRunsHistoricTableProps>) => {
   const historicExecutions = await getHistoricWorkflowExecutions({
     workflowId,
   });

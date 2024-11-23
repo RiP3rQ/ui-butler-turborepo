@@ -1,4 +1,4 @@
-import type { ExecutionPhase } from './phase-execution';
+import type { ExecutionPhase } from "./phase-execution";
 
 export interface WorkflowExecution {
   id: number;

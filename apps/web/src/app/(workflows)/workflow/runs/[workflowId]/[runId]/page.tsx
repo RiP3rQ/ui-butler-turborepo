@@ -1,12 +1,12 @@
-import { Suspense } from 'react';
-import { Loader2Icon } from 'lucide-react';
-import Topbar from '@/components/react-flow/topbar/topbar';
-import ExecutionViewerWrapper from '@/components/execution-viewer/execution-viewer-wrapper';
+import { Suspense } from "react";
+import { Loader2Icon } from "lucide-react";
+import Topbar from "@/components/react-flow/topbar/topbar";
+import ExecutionViewerWrapper from "@/components/execution-viewer/execution-viewer-wrapper";
 
 type Params = Promise<{ workflowId: string; runId: string }>;
 const WorkflowRunPage = async ({
-                                 params,
-                               }: Readonly<{
+  params,
+}: Readonly<{
   params: Params;
 }>) => {
   const { workflowId, runId } = await params;
@@ -20,7 +20,7 @@ const WorkflowRunPage = async ({
       />
       <section className="flex h-full overflow-auto">
         <Suspense fallback={<ExecutionViewerLoader />}>
-          <ExecutionViewerWrapper executionId={runId} />
+          <ExecutionViewerWrapper executionId={Number(runId)} />
         </Suspense>
       </section>
     </div>

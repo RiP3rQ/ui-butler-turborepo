@@ -1,5 +1,5 @@
-import { Separator } from '@repo/ui/components/ui/separator';
-import Icons from '@repo/ui/components/landing-page/icons';
+import { Separator } from "@repo/ui/components/ui/separator";
+import Icons from "@repo/ui/components/landing-page/icons";
 
 interface Props {
   children: React.ReactNode;
