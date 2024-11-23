@@ -1,7 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { getErrorMessage } from "@/lib/get-error-message.ts";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 export async function runWorkflowFunction(form: {
   workflowId: number;

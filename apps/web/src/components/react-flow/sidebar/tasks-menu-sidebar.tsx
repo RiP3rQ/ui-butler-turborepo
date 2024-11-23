@@ -10,7 +10,7 @@ import type { TaskType } from "@repo/types";
 import { CoinsIcon } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
 import { Badge } from "@repo/ui/components/ui/badge";
-import { TaskRegistry } from "@/lib/workflow/task/registery";
+import { ClientTaskRegister } from "@repo/tasks-client";
 
 function TasksMenuSidebar(): JSX.Element {
   return (
@@ -80,7 +80,7 @@ export default TasksMenuSidebar;
 function TaskMenuBtn({
   taskType,
 }: Readonly<{ taskType: TaskType }>): JSX.Element {
-  const task = TaskRegistry[taskType];
+  const task = ClientTaskRegister[taskType];
 
   function ondragstart(e: React.DragEvent, taskTypeOnDrag: TaskType): void {
     e.dataTransfer.setData("application/reactflow", taskTypeOnDrag);

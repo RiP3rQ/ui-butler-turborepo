@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import type { WorkflowType } from "@repo/types";
-import { getErrorMessage } from "@/lib/get-error-message.ts";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 export async function updateWorkflowByIdFunction({
   workflowId,
@@ -21,20 +21,17 @@ export async function updateWorkflowByIdFunction({
       .map((cookie) => `${cookie.name}=${cookie.value}`)
       .join("; ");
 
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/workflows/update-workflow`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Cookie: cookieHeader, // Include cookies in the request
-        },
-        body: JSON.stringify({
-          workflowId,
-          definition,
-        }),
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/workflows`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: cookieHeader, // Include cookies in the request
       },
-    );
+      body: JSON.stringify({
+        workflowId,
+        definition,
+      }),
+    });
 
     if (!res.ok) {
       throw new Error("Workflows not found");

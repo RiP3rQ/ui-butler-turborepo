@@ -4,6 +4,8 @@ import {
   Controller,
   Get,
   NotFoundException,
+  Param,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -14,6 +16,8 @@ import { CreateWorkflowDto } from './dto/create-workflow.dto';
 import { LogErrors } from '../common/error-handling/log-errors.decorator';
 import type { User } from '../database/schemas/users';
 import { PublishWorkflowDto } from './dto/publish-workflow.dto';
+import { RunWorkflowDto } from './dto/run-workflow.dto';
+import { UpdateWorkflowDto } from './dto/update-workflow.dto';
 
 @Controller('workflows')
 export class WorkflowsController {
@@ -57,26 +61,60 @@ export class WorkflowsController {
     if (!workflowId || !flowDefinition) {
       throw new BadRequestException('Invalid request');
     }
+
+    return this.workflowsService.publishWorkflow(user, publishWorkflowDto);
   }
 
-  // @Delete(':id')
-  // @LogErrors()
-  // @UseGuards(JwtAuthGuard)
-  // deleteWorkflow(@Param('id') id: string) {
-  //   return this.workflowsService.deleteWorkflow(+id);
-  // }
-  //
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.workflowsService.findOne(+id);
-  // }
-  //
-  // @Patch(':id')
-  // update(
-  //   @Param('id') id: string,
-  //   @Body() updateWorkflowDto: UpdateWorkflowDto,
-  // ) {
-  //   return this.workflowsService.update(+id, updateWorkflowDto);
-  // }
-  //
+  @Get('unpublish-workflow')
+  @LogErrors()
+  @UseGuards(JwtAuthGuard)
+  unpublishWorkflow(
+    @CurrentUser() user: User,
+    @Param('workflowId') workflowId: string,
+  ) {
+    if (!user) {
+      throw new NotFoundException('Unauthorized');
+    }
+
+    if (!workflowId) {
+      throw new BadRequestException('Invalid request');
+    }
+
+    return this.workflowsService.unpublishWorkflow(user, +workflowId);
+  }
+
+  @Post('run-workflow')
+  @LogErrors()
+  @UseGuards(JwtAuthGuard)
+  runWorkflow(
+    @CurrentUser() user: User,
+    @Body() runWorkflowDto: RunWorkflowDto,
+  ) {
+    if (!user) {
+      throw new NotFoundException('Unauthorized');
+    }
+
+    if (!runWorkflowDto.workflowId) {
+      throw new BadRequestException('Invalid request');
+    }
+
+    return this.workflowsService.runWorkflow(user, runWorkflowDto);
+  }
+
+  @Patch('')
+  @LogErrors()
+  @UseGuards(JwtAuthGuard)
+  updateWorkflow(
+    @CurrentUser() user: User,
+    @Body() updateWorkflowDto: UpdateWorkflowDto,
+  ) {
+    if (!user) {
+      throw new NotFoundException('Unauthorized');
+    }
+
+    if (!updateWorkflowDto.workflowId) {
+      throw new BadRequestException('Invalid request');
+    }
+    return this.workflowsService.updateWorkflow(user, updateWorkflowDto);
+  }
 }

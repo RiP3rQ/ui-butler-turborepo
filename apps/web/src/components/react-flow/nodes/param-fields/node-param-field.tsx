@@ -21,7 +21,7 @@ function NodeParamField({
 
   const node = getNode(nodeId) as AppNode;
 
-  const value = node.data.inputs[param.name];
+  const value = node.data.inputs[param.name] || "";
   const updateNodeParamValue = useCallback(
     (value: string) => {
       updateNodeData(nodeId, {

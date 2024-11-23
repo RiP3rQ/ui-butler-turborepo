@@ -33,7 +33,7 @@ export function WorkflowCard({
           <div
             className={cn(
               "size-10 rounded-full flex items-center justify-center",
-              STATUS_COLORS[workflow.status as WorkflowStatus],
+              STATUS_COLORS[workflow.status],
             )}
           >
             {isDraft ? (

@@ -1,4 +1,4 @@
-import type { LucideIcon } from "lucide-react";
+import type { LucideProps } from "lucide-react";
 import type { TaskParam, TaskType } from "./task";
 import type { AppNode, AppNodeMissingInputs } from "./appNode";
 
@@ -20,7 +20,7 @@ export interface BaseWorkflowTask {
 }
 
 export interface WorkflowTask extends BaseWorkflowTask {
-  icon: (props: LucideIcon) => JSX.Element;
+  icon: (props: LucideProps) => JSX.Element;
 }
 
 export type WorkflowExecutionPlan = WorkflowExecutionPlanPhase[];

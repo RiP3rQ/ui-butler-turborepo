@@ -3,8 +3,7 @@ import { CoinsIcon, CopyIcon, GripVerticalIcon, TrashIcon } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
 import { Badge } from "@repo/ui/components/ui/badge";
 import { useReactFlow } from "@xyflow/react";
-import { TaskRegistry } from "@/lib/workflow/task/registery";
-import { createFlowNodeFunction } from "@/lib/workflow/create-flow-node";
+import { ClientTaskRegister, createFlowNodeFunction } from "@repo/tasks-client";
 
 interface NodeHeaderProps {
   taskType: TaskType;
@@ -14,12 +13,12 @@ function NodeHeader({
   taskType,
   nodeId,
 }: Readonly<NodeHeaderProps>): JSX.Element {
-  const task = TaskRegistry[taskType];
+  const task = ClientTaskRegister[taskType];
   const { deleteElements, getNode, addNodes } = useReactFlow();
 
   return (
     <div className="flex items-center gap-2 p-2">
-      <task.icon size={16} />
+      <task.icon />
       <div className="flex items-center justify-between w-full">
         <p className="text-xs font-bold uppercase text-muted-foreground">
           {task.label}

@@ -219,6 +219,9 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.1.0
         version: 1.1.0(@types/react@18.3.12)(react@19.0.0-rc-02c0e824-20241028)
+      '@repo/tasks-client':
+        specifier: workspace:*
+        version: link:../../packages/tasks-client
       '@repo/types':
         specifier: workspace:*
         version: link:../../packages/types

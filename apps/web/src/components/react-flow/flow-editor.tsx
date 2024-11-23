@@ -17,8 +17,7 @@ import "@xyflow/react/dist/style.css";
 import type { AppNode, WorkflowType } from "@repo/types";
 import { TaskType } from "@repo/types";
 import { useCallback, useEffect } from "react";
-import { createFlowNodeFunction } from "@repo/lib/src/workflow/createFlowNode";
-import { TaskRegistry } from "@repo/lib/src/tasks/registery";
+import { ClientTaskRegister, createFlowNodeFunction } from "@repo/tasks-client";
 import NodeComponent from "@/components/react-flow/nodes/node-component";
 import DeletableEdge from "@/components/react-flow/edges/deletable-edge";
 
@@ -116,8 +115,8 @@ function FlowEditor({ workflow }: Readonly<FlowEditorProps>): JSX.Element {
       }
 
       // actual nodes connections validation
-      const sourceTask = TaskRegistry[sourceNode.data.type];
-      const targetTask = TaskRegistry[targetNode.data.type];
+      const sourceTask = ClientTaskRegister[sourceNode.data.type];
+      const targetTask = ClientTaskRegister[targetNode.data.type];
 
       const output = sourceTask.outputs.find(
         (output) => output.name === connection.sourceHandle,
