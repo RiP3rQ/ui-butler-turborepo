@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DATABASE_CONNECTION } from '../database/database-connection';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { and, desc, eq } from 'drizzle-orm';
@@ -39,6 +34,20 @@ export class WorkflowsService {
     }
 
     return workflowsData;
+  }
+
+  // GET /workflows?workflowId=1
+  async getWorkflowById(user: User, workflowId: number) {
+    const [workflowData] = await this.database
+      .select()
+      .from(workflows)
+      .where(and(eq(workflows.id, workflowId), eq(workflows.userId, user.id)));
+
+    if (!workflowData) {
+      throw new NotFoundException('Workflow not found');
+    }
+
+    return workflowData;
   }
 
   // POST /workflows

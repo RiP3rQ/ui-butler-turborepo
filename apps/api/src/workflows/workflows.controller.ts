@@ -34,6 +34,24 @@ export class WorkflowsController {
     return this.workflowsService.getAllUserWorkflows(user);
   }
 
+  @Get(':workflowId')
+  @LogErrors()
+  @UseGuards(JwtAuthGuard)
+  getWorkflowById(
+    @CurrentUser() user: User,
+    @Param('workflowId') workflowId: string,
+  ) {
+    if (!user) {
+      throw new NotFoundException('Unauthorized');
+    }
+
+    if (!workflowId) {
+      throw new BadRequestException('Invalid request');
+    }
+
+    return this.workflowsService.getWorkflowById(user, +workflowId);
+  }
+
   @Post()
   @LogErrors()
   @UseGuards(JwtAuthGuard)

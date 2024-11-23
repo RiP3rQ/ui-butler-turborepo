@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import type { CreateWorkflowSchemaType } from "@/schemas/workflow";
 import { createWorkflowSchema } from "@/schemas/workflow";
-import { WorkflowCreateForm } from "@/app/(workflows)/workflows-list/_components/forms/workflow-create-form.tsx";
+import { WorkflowCreateForm } from "@/app/(workflows)/workflows-list/_components/forms/workflow-create-form";
 import { createWorkflow } from "@/actions/workflows/create-workflow";
 
 interface CreateWorkflowDialogProps {

@@ -1,13 +1,13 @@
 "use client";
-import { useRouter } from "next/navigation";
-import { ChevronLeftIcon } from "@radix-ui/react-icons";
-import TooltipWrapper from "@repo/ui/components/tooltip-wrapper";
-import { Button } from "@repo/ui/components/ui/button";
-import NavigationTabs from "@/components/react-flow/topbar/navigation-tabs.tsx";
-import ExecuteButton from "@/components/react-flow/topbar/execute-button.tsx";
-import UnpublishButton from "@/components/react-flow/topbar/unpublish-button.tsx";
-import SaveButton from "@/components/react-flow/topbar/save-button.tsx";
-import PublishButton from "@/components/react-flow/topbar/publish-button.tsx";
+import { useRouter } from 'next/navigation';
+import { ChevronLeftIcon } from '@radix-ui/react-icons';
+import TooltipWrapper from '@repo/ui/components/tooltip-wrapper';
+import { Button } from '@repo/ui/components/ui/button';
+import NavigationTabs from '@/components/react-flow/topbar/navigation-tabs';
+import ExecuteButton from '@/components/react-flow/topbar/execute-button';
+import UnpublishButton from '@/components/react-flow/topbar/unpublish-button';
+import SaveButton from '@/components/react-flow/topbar/save-button';
+import PublishButton from '@/components/react-flow/topbar/publish-button';
 
 interface TopbarProps {
   title: string;
