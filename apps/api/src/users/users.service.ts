@@ -32,7 +32,7 @@ export class UsersService {
   }
 
   async getUsers() {
-    return await this.database.query.users.findMany({
+    return this.database.query.users.findMany({
       with: { profile: true },
     });
   }

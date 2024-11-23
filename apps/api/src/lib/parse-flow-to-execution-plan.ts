@@ -7,7 +7,7 @@ import {
   WorkflowExecutionPlanError,
   WorkflowExecutionPlanPhase,
 } from '@repo/types';
-import { ServerTaskRegistery } from '@repo/tasks';
+import { ServerTaskRegister } from '@repo/tasks';
 
 type FlowToExecutionPlanType = {
   executionPlan?: WorkflowExecutionPlan;
@@ -19,7 +19,7 @@ export function parseFlowToExecutionPlan(
   edges: ServerSaveEdge[],
 ): FlowToExecutionPlanType {
   const entryPoint = nodes.find(
-    (node) => ServerTaskRegistery[node.data.type]?.isEntryPoint,
+    (node) => ServerTaskRegister[node.data.type]?.isEntryPoint,
   );
 
   if (!entryPoint) {
@@ -104,7 +104,7 @@ function getInvalidInputs(
   planned: Set<string>,
 ): string[] {
   const invalidInputs: string[] = [];
-  const taskConfig = ServerTaskRegistery[node.data.type];
+  const taskConfig = ServerTaskRegister[node.data.type];
 
   if (!taskConfig) {
     return ['INVALID_TASK_TYPE'];
@@ -112,7 +112,7 @@ function getInvalidInputs(
 
   for (const input of taskConfig.inputs) {
     const inputValue = node.data.inputs[input.name];
-    const inputValueProvided = inputValue?.length > 0;
+    const inputValueProvided = (inputValue?.length ?? 0) > 0;
 
     if (inputValueProvided) {
       continue;

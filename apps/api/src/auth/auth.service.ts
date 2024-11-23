@@ -113,7 +113,7 @@ export class AuthService {
     const newUser = await this.usersService.createUser(user);
 
     const tokenPayload: TokenPayload = {
-      userId: newUser.id.toString(),
+      userId: newUser?.id.toString() ?? '',
       email: user.email,
     };
 
@@ -129,7 +129,7 @@ export class AuthService {
       const user = await this.usersService.getUser({
         email,
       });
-      const authenticated = await compare(password, user.password);
+      const authenticated = await compare(password, user?.password ?? '');
       if (!authenticated) {
         throw new UnauthorizedException();
       }
@@ -144,7 +144,7 @@ export class AuthService {
     try {
       const user = await this.usersService.getUser({ email: email });
 
-      if (!user.refreshToken || !refreshToken) {
+      if (!user?.refreshToken || !refreshToken) {
         throw new UnauthorizedException('Invalid refresh token');
       }
       const authenticated = compare(refreshToken, user.refreshToken);

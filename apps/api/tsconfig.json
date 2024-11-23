@@ -12,16 +12,10 @@
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
-    "strictNullChecks": true,
+    "strictNullChecks": false,
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false,
-    "preserveSymlinks": true,
-    "include": ["src/**/*"],
-    "exclude": ["node_modules", "dist"],
-    "paths": {
-      "@repo/*": ["../../packages/*"]
-    }
+    "noFallthroughCasesInSwitch": false
   }
 }

@@ -28,7 +28,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
     },
   ) {
     return this.usersService.getOrCreateUser({
-      email: profile.emails[0]?.value,
+      email: profile.emails[0]?.value || '',
       password: '',
       username: profile.displayName,
     });

@@ -1,10 +1,10 @@
 import type { TaskType, WorkflowTask } from "@repo/types";
-import { LaunchBrowserTask } from "../tasks/client/lauch-browser";
+import { LaunchBrowserTask } from "./tasks/lauch-browser";
 
 type ClientRegistry = {
   [Key in TaskType]: WorkflowTask & { type: Key };
 };
 
-export const ClientTaskRegistery: ClientRegistry = {
+export const ClientTaskRegister: ClientRegistry = {
   LAUNCH_BROWSER: LaunchBrowserTask,
 };

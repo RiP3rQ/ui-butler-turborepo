@@ -616,6 +616,49 @@ importers:
         specifier: ^5.6.3
         version: 5.6.3
 
+  packages/tasks-client:
+    dependencies:
+      '@types/react':
+        specifier: ^18
+        version: 18.3.12
+      '@xyflow/react':
+        specifier: ^12.3.5
+        version: 12.3.5(@types/react@18.3.12)(react-dom@19.0.0-rc-02c0e824-20241028(react@19.0.0-rc-02c0e824-20241028))(react@19.0.0-rc-02c0e824-20241028)
+      lucide-react:
+        specifier: ^0.454.0
+        version: 0.454.0(react@19.0.0-rc-02c0e824-20241028)
+      react:
+        specifier: 19.0.0-rc-02c0e824-20241028
+        version: 19.0.0-rc-02c0e824-20241028
+    devDependencies:
+      '@repo/config-tailwindcss':
+        specifier: workspace:*
+        version: link:../config-tailwindcss
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../config-eslint
+      '@repo/tasks':
+        specifier: workspace:*
+        version: link:../tasks
+      '@repo/types':
+        specifier: workspace:*
+        version: link:../types
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../config-typescript
+      '@types/eslint':
+        specifier: ^9.6.1
+        version: 9.6.1
+      '@types/node':
+        specifier: ^20.17.6
+        version: 20.17.6
+      eslint:
+        specifier: ^8.57.1
+        version: 8.57.1
+      typescript:
+        specifier: ^5.6.3
+        version: 5.6.3
+
   packages/types:
     dependencies:
       '@types/react':

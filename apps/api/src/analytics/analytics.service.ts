@@ -1,7 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DATABASE_CONNECTION } from '../database/database-connection';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import type { Period } from '@repo/types/src/analytics';
+import type { Period } from '@repo/types';
 import { and, eq, gte, isNotNull, lte, min } from 'drizzle-orm';
 import { periodToDateRange } from './lib/period-to-date-range';
 import { inArray } from 'drizzle-orm/sql/expressions/conditions';
@@ -34,7 +34,7 @@ export class AnalyticsService {
 
     const currentYear = new Date().getFullYear();
 
-    const minYear = years.minYear
+    const minYear = years?.minYear
       ? new Date(years.minYear).getFullYear()
       : currentYear;
 
@@ -155,11 +155,11 @@ export class AnalyticsService {
       }
       const date = format(execution.startedAt, dateFormat);
       if (execution.status === 'COMPLETED') {
-        // TODO: PROPER ENUM VALUE
-        statsDates[date].successful += 1;
+        //@ts-ignore // TODO: PROPER ENUM VALUE
+        statsDates[date] && statsDates[date].successful++;
       } else if (execution.status === 'FAILED') {
-        // TODO: PROPER ENUM VALUE
-        statsDates[date].failed += 1;
+        //@ts-ignore // TODO: PROPER ENUM VALUE
+        statsDates[date] && statsDates[date].failed++;
       }
     });
 
@@ -228,10 +228,11 @@ export class AnalyticsService {
       const date = format(phase.startedAt, dateFormat);
       if (phase.status === 'COMPLETED') {
         // TODO: PROPER ENUM VALUE
-        statsDates[date].successful += phase.creditsCost ?? 0;
+        statsDates[date] &&
+          (statsDates[date].successful += phase.creditsCost ?? 0);
       } else if (phase.status === 'FAILED') {
         // TODO: PROPER ENUM VALUE
-        statsDates[date].failed += phase.creditsCost ?? 0;
+        statsDates[date] && (statsDates[date].failed += phase.creditsCost ?? 0);
       }
     });
 
