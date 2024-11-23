@@ -16,7 +16,7 @@ import { Loader2Icon } from "lucide-react";
 import type {
   duplicateWorkflowSchema,
   DuplicateWorkflowSchemaType,
-} from "@/schemas/workflow.ts";
+} from "@/schemas/workflow";
 
 interface WorkflowDuplicateFormProps {
   form: UseFormReturn<z.infer<typeof duplicateWorkflowSchema>>;

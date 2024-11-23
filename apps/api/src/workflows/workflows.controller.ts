@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Param,
@@ -18,6 +19,7 @@ import type { User } from '../database/schemas/users';
 import { PublishWorkflowDto } from './dto/publish-workflow.dto';
 import { RunWorkflowDto } from './dto/run-workflow.dto';
 import { UpdateWorkflowDto } from './dto/update-workflow.dto';
+import { DuplicateWorkflowDto } from './dto/duplicate-workflow.dto';
 
 @Controller('workflows')
 export class WorkflowsController {
@@ -43,6 +45,37 @@ export class WorkflowsController {
       throw new NotFoundException('Unauthorized');
     }
     return this.workflowsService.createWorkflow(user, createWorkflowDto);
+  }
+
+  @Delete()
+  @LogErrors()
+  @UseGuards(JwtAuthGuard)
+  deleteWorkflow(
+    @CurrentUser() user: User,
+    @Param('workflowId') workflowId: string,
+  ) {
+    if (!user) {
+      throw new NotFoundException('Unauthorized');
+    }
+    return this.workflowsService.deleteWorkflow(user, +workflowId);
+  }
+
+  @Post('duplicate-workflow')
+  @LogErrors()
+  @UseGuards(JwtAuthGuard)
+  duplicateWorkflow(
+    @CurrentUser() user: User,
+    @Body() duplicateWorkflowDto: DuplicateWorkflowDto,
+  ) {
+    if (!user) {
+      throw new NotFoundException('Unauthorized');
+    }
+
+    if (!duplicateWorkflowDto.workflowId) {
+      throw new BadRequestException('Invalid request');
+    }
+
+    return this.workflowsService.duplicateWorkflow(user, duplicateWorkflowDto);
   }
 
   @Post('publish-workflow')

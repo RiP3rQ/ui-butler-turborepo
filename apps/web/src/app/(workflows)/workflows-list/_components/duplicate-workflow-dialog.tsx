@@ -18,7 +18,7 @@ import {
 import { cn } from "@repo/ui/lib/utils";
 import type { DuplicateWorkflowSchemaType } from "@/schemas/workflow";
 import { duplicateWorkflowSchema } from "@/schemas/workflow";
-import { WorkflowDuplicateForm } from "@/app/(workflows)/workflows-list/_components/forms/workflow-duplicate-form.tsx";
+import { WorkflowDuplicateForm } from "@/app/(workflows)/workflows-list/_components/forms/workflow-duplicate-form";
 import { duplicateWorkflow } from "@/actions/workflows/duplicate-workflow";
 
 interface DuplicateWorkflowDialogProps {

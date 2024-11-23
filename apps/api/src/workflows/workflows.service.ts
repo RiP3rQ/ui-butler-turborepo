@@ -17,6 +17,7 @@ import { workflows } from '../database/schemas/workflows';
 import { PublishWorkflowDto } from './dto/publish-workflow.dto';
 import { RunWorkflowDto } from './dto/run-workflow.dto';
 import { UpdateWorkflowDto } from './dto/update-workflow.dto';
+import { DuplicateWorkflowDto } from './dto/duplicate-workflow.dto';
 
 @Injectable()
 export class WorkflowsService {
@@ -71,6 +72,58 @@ export class WorkflowsService {
     }
 
     return newWorkflow;
+  }
+
+  // Delete /workflows
+  async deleteWorkflow(user: User, workflowId: number) {
+    const [deletedWorkflow] = await this.database
+      .delete(workflows)
+      .where(and(eq(workflows.id, workflowId), eq(workflows.userId, user.id)))
+      .returning();
+
+    if (!deletedWorkflow) {
+      throw new NotFoundException('Workflow not found');
+    }
+
+    return deletedWorkflow;
+  }
+
+  // POST /workflows/duplicate-workflow
+  async duplicateWorkflow(
+    user: User,
+    duplicateWorkflowDto: DuplicateWorkflowDto,
+  ) {
+    const [sourceWorkflow] = await this.database
+      .select()
+      .from(workflows)
+      .where(
+        and(
+          eq(workflows.id, duplicateWorkflowDto.workflowId),
+          eq(workflows.userId, user.id),
+        ),
+      );
+
+    if (!sourceWorkflow) {
+      throw new NotFoundException('Workflow not found');
+    }
+
+    const [duplicatedWorkflow] = await this.database
+      .insert(workflows)
+      .values({
+        // @ts-ignore // TODO: FIX THIS
+        userId: user.id,
+        status: 'DRAFT', // TODO: PROPER ENUM FROM TYPES PACKAGE
+        definition: sourceWorkflow.definition,
+        name: duplicateWorkflowDto.name,
+        description: duplicateWorkflowDto.description,
+      })
+      .returning();
+
+    if (!duplicatedWorkflow) {
+      throw new NotFoundException('Workflow not duplicated');
+    }
+
+    return duplicatedWorkflow;
   }
 
   // POST /workflows/publish-workflow
