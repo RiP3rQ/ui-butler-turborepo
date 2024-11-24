@@ -36,6 +36,13 @@
       "when": 1731448560987,
       "tag": "0004_faulty_slipstream",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1732446032456,
+      "tag": "0005_petite_golden_guardian",
+      "breakpoints": true
     }
   ]
 }
