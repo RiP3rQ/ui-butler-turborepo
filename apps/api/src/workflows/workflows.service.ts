@@ -37,12 +37,14 @@ import {
 } from '@repo/tasks';
 import { Edge } from '@nestjs/core/inspector/interfaces/edge.interface';
 import type { DrizzleDatabase } from '../database/merged-schemas';
+import { WorkflowExecutionsService } from '../workflow-executions/workflow-executions.service';
 
 @Injectable()
 export class WorkflowsService {
   constructor(
     @Inject(DATABASE_CONNECTION)
     private readonly database: DrizzleDatabase,
+    private readonly workflowExecutionsService: WorkflowExecutionsService,
   ) {}
 
   // GET /workflows
@@ -269,7 +271,12 @@ export class WorkflowsService {
     const [workflowData] = await this.database
       .select()
       .from(workflows)
-      .where(eq(workflows.id, runWorkflowDto.workflowId));
+      .where(
+        and(
+          eq(workflows.id, runWorkflowDto.workflowId),
+          eq(workflows.userId, user.id),
+        ),
+      );
 
     if (!workflowData) {
       throw new NotFoundException('Workflow not found');
@@ -332,10 +339,8 @@ export class WorkflowsService {
     }
 
     // TODO: FIX RevaliatePath while rendering the page error
-
     // !IMPORTANT: Execute the workflow without await to not block the response
-    // TODO: FIX THIS
-    // executeWorkflowFunction(execution.id);
+    this.workflowExecutionsService.executeWorkflow(execution.id);
 
     return {
       url: `/workflow/runs/${runWorkflowDto.workflowId}/${execution.id}`,

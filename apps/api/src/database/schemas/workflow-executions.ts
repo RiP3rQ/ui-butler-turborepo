@@ -36,12 +36,19 @@ export const workflowExecutions = pgTable(
   }),
 );
 
+export const WorkflowExecution = typeof workflowExecutions.$inferSelect;
+export type NewWorkflowExecution = typeof workflowExecutions.$inferInsert;
+
 export const workflowExecutionRelations = relations(
   workflowExecutions,
   ({ one, many }) => ({
     users: one(users, {
       fields: [workflowExecutions.userId],
       references: [users.id],
+    }),
+    workflow: one(workflows, {
+      fields: [workflowExecutions.workflowId],
+      references: [workflows.id],
     }),
     executionPhases: many(executionPhase),
   }),
@@ -82,7 +89,10 @@ export const executionPhase = pgTable(
 export const executionPhaseRelations = relations(
   executionPhase,
   ({ one, many }) => ({
-    workflowExecution: one(workflowExecutions),
+    workflowExecution: one(workflowExecutions, {
+      fields: [executionPhase.workflowExecutionId],
+      references: [workflowExecutions.id],
+    }),
     executionLogs: many(executionLog),
   }),
 );

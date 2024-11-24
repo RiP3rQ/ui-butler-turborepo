@@ -11,7 +11,7 @@ export interface ExecutionPhase {
   node: string;
   inputs: string;
   outputs: string;
-  logs: ExecutionLog[];
+  logs?: ExecutionLog[];
 }
 
 export interface ExecutionLog {

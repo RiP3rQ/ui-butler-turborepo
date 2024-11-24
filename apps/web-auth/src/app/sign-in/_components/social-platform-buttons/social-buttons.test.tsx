@@ -1,7 +1,7 @@
 // SocialLoginButtons.test.tsx
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { SocialLoginButtons } from "@/app/sign-in/_components/social-platform-buttons/social-buttons.tsx";
+import { SocialLoginButtons } from "@/app/sign-in/_components/social-platform-buttons/social-buttons";
 import { LucideIcon } from "lucide-react";
 
 // Mock the SocialPlatformButton component

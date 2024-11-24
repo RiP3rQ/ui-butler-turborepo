@@ -42,7 +42,7 @@ export function parseFlowToExecutionPlan(
     });
   }
 
-  // First phase-executors is always the entry point
+  // First phase-phase-executors is always the entry point
   const executionPlan: WorkflowExecutionPlan = [
     {
       phase: 1,
@@ -61,7 +61,7 @@ export function parseFlowToExecutionPlan(
       phase,
       nodes: [],
     };
-    // visit all nodes that are connected to the previous phase-executors
+    // visit all nodes that are connected to the previous phase-phase-executors
     for (const currentNode of nodes) {
       if (planned.has(currentNode.id)) continue;
 

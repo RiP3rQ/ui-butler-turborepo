@@ -1,4 +1,4 @@
-import { WorkflowTask } from "./workflow";
+import { BaseWorkflowTask } from "./workflow";
 import { LogCollector } from "./logCollector";
 
 export type Environment = {
@@ -10,11 +10,15 @@ export type Environment = {
       outputs: Record<string, string>;
     }
   >;
+  code: string;
 };
 
-export type ExecutionEnvironment<T extends WorkflowTask> = {
+export type ExecutionEnvironment<T extends BaseWorkflowTask> = {
   getInput(name: T["inputs"][number]["name"]): string;
   setOutput(name: T["outputs"][number]["name"], value: string): void;
+
+  getCode(): string;
+  setCode(code: string): void;
 
   log: LogCollector;
 };

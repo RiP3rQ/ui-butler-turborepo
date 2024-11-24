@@ -50,12 +50,12 @@ function ExecutionViewer({ initialData }: Readonly<ExecutionViewerProps>) {
 
   const isRunning = query.data.status === WorkflowExecutionStatus.RUNNING;
 
-  // currently running phase-executors
+  // currently running phase-phase-executors
   useEffect(() => {
-    // While running we auto-select the currently running phase-executors in sidebar
+    // While running we auto-select the currently running phase-phase-executors in sidebar
     const allPhases = query.data.phases ?? [];
     if (isRunning) {
-      // Select the last executed phase-executors
+      // Select the last executed phase-phase-executors
       const phaseToSelect = [...allPhases].sort((a, b) =>
         (a.startedAt ?? new Date()) > (b.startedAt ?? new Date()) ? -1 : 1,
       )[0];

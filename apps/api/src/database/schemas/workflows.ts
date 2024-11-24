@@ -54,6 +54,19 @@ export type NewWorkflow = {
   createdAt?: Date;
   updatedAt?: Date;
 };
+export type WorkflowUpdate = {
+  name?: string;
+  description?: string;
+  definition?: string;
+  creditsCost?: number;
+  executionPlan?: string;
+  status?: string;
+  lastRunAt?: Date;
+  lastRunId?: string;
+  lastRunStatus?: string;
+  nextRunAt?: Date;
+  updatedAt?: Date;
+};
 
 export const workflowRelations = relations(workflows, ({ one, many }) => ({
   users: one(users, {
