@@ -15,8 +15,6 @@ export function LastRunDetails({
 }: Readonly<LastRunDetailsProps>): JSX.Element | null {
   const { lastRunId, lastRunAt, lastRunStatus, nextRunAt, status } = workflow;
 
-  console.log("WorkflowStatus", WorkflowStatus);
-
   if (status === WorkflowStatus.DRAFT) {
     return null;
   }

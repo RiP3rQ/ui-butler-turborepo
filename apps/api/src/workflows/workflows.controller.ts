@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { WorkflowsService } from './workflows.service';
@@ -46,7 +47,7 @@ export class WorkflowsController {
       throw new NotFoundException('Unauthorized');
     }
 
-    if (!workflowId) {
+    if (!workflowId || isNaN(+workflowId)) {
       throw new BadRequestException('Workflow ID is required');
     }
 
@@ -175,12 +176,11 @@ export class WorkflowsController {
   @UseGuards(JwtAuthGuard)
   getHistoricWorkflowExecutions(
     @CurrentUser() user: User,
-    @Param('workflowId') workflowId: string,
+    @Query('workflowId') workflowId: string,
   ) {
     if (!user) {
       throw new NotFoundException('Unauthorized');
     }
-
     if (!workflowId) {
       throw new BadRequestException('Invalid request');
     }

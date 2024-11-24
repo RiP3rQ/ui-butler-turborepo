@@ -3,15 +3,16 @@ import ExecutionsTable from "@/components/execution-viewer/executions-table";
 import { getHistoricWorkflowExecutions } from "@/actions/workflows/get-historic-workflow-executions";
 
 interface ExecutionRunsHistoricTableProps {
-  workflowId: number;
+  workflowId: string;
 }
 
 const WorkflowHistoricExecutionsTable = async ({
   workflowId,
 }: Readonly<ExecutionRunsHistoricTableProps>) => {
   const historicExecutions = await getHistoricWorkflowExecutions({
-    workflowId,
+    workflowId: Number(workflowId),
   });
+
   if (!historicExecutions) {
     return <div>Could not find any historic executions</div>;
   }
@@ -24,7 +25,7 @@ const WorkflowHistoricExecutionsTable = async ({
     <div className="container py-6 w-full">
       <ExecutionsTable
         initialData={historicExecutions}
-        workflowId={workflowId}
+        workflowId={Number(workflowId)}
       />
     </div>
   );

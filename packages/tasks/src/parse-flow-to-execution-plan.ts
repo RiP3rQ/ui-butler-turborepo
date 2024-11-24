@@ -112,7 +112,7 @@ function getInvalidInputs(
 
   for (const input of taskConfig.inputs) {
     const inputValue = node.data.inputs[input.name];
-    const inputValueProvided = (inputValue.length ?? 0) > 0;
+    const inputValueProvided = (inputValue?.length ?? 0) > 0;
 
     if (inputValueProvided) {
       continue;

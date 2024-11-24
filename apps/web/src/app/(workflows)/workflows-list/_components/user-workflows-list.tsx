@@ -10,9 +10,9 @@ import { CreateWorkflowDialog } from "@/app/(workflows)/workflows-list/_componen
 import { getUserWorkflows } from "@/actions/workflows/get-workflows";
 
 export async function UserWorkflows() {
-  const worksflows = (await getUserWorkflows()) satisfies WorkflowType[];
+  const workflows = (await getUserWorkflows()) satisfies WorkflowType[];
 
-  if (!worksflows) {
+  if (!workflows) {
     return (
       <Alert variant="destructive">
         <AlertCircleIcon className="size-4" />
@@ -25,7 +25,7 @@ export async function UserWorkflows() {
     );
   }
 
-  if (worksflows.length === 0) {
+  if (workflows.length === 0) {
     return (
       <div className="flex flex-col gap-4 h-full items-center justify-center">
         <div className="rounded-full bg-accent size-20 flex items-center justify-center">
@@ -44,7 +44,7 @@ export async function UserWorkflows() {
 
   return (
     <div className="grid grid-cols-1 gap-4">
-      {worksflows.map((workflow) => (
+      {workflows.map((workflow) => (
         <WorkflowCard key={workflow.id} workflow={workflow} />
       ))}
     </div>

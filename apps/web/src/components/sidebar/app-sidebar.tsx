@@ -140,8 +140,9 @@ interface AdditionalAppSidebarProps {
 export function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar> & AdditionalAppSidebarProps) {
+  const { currentLoggedUser, ...slicedProps } = props;
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="icon" {...slicedProps}>
       <SidebarHeader>
         <CustomSidebarHeader />
       </SidebarHeader>
@@ -150,7 +151,7 @@ export function AppSidebar({
         <SavedBundles bundles={data.savedBundles as BundlesType[]} />
       </SidebarContent>
       <SidebarFooter>
-        <SidebarFooterContent currentLoggedUser={props.currentLoggedUser} />
+        <SidebarFooterContent currentLoggedUser={currentLoggedUser} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

@@ -10,7 +10,7 @@ const ExecutionHistoricDataForWorkflowPage = async ({
 }: Readonly<{
   params: Params;
 }>) => {
-  const { workflowId } = await params;
+  const workflowId = (await params).workflowId;
 
   return (
     <div className="h-full w-full overflow-auto">

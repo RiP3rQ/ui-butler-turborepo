@@ -1,19 +1,33 @@
-import React, { Suspense } from "react";
-import { WorkflowContent } from "@/app/(workflows)/workflow/editor/[workflowId]/_components/page-content";
+import React from "react";
+import { redirect } from "next/navigation";
+import Editor from "@/components/react-flow/editor";
+import { getWorkflowByIdFunction } from "@/actions/workflows/get-workflow-by-id";
 
-export type WorkflowPageParams = Promise<{ workflowId: string }>;
+type WorkflowPageParams = Promise<{ workflowId: string }>;
 
-const WorkflowPage = async ({
+export default async function WorkflowPage({
   params,
-}: Readonly<{
+}: {
   params: WorkflowPageParams;
-}>) => {
-  const { workflowId } = await params;
+}): Promise<JSX.Element> {
+  const workflowId = (await params).workflowId;
 
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <WorkflowContent workflowId={workflowId} />
-    </Suspense>
-  );
-};
-export default WorkflowPage;
+  if (!workflowId) {
+    return redirect("/workflows");
+  }
+
+  try {
+    const workflow = await getWorkflowByIdFunction({
+      workflowId,
+    });
+
+    if (!workflow) {
+      redirect("/workflows-list");
+    }
+
+    return <Editor workflow={workflow} />;
+  } catch (error) {
+    console.error("Error loading workflow:", error);
+    redirect("/workflows-list");
+  }
+}

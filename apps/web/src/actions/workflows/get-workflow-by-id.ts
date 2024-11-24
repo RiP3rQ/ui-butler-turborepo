@@ -1,4 +1,4 @@
-"use server";
+import "server-only";
 
 import { cookies } from "next/headers";
 import type { WorkflowType } from "@repo/types";
@@ -34,8 +34,8 @@ export async function getWorkflowByIdFunction({
     if (!res.ok) {
       throw new Error("Workflows not found");
     }
-
-    return (await res.json()) as WorkflowType;
+    const data = await res.json();
+    return data as WorkflowType;
   } catch (error) {
     console.error(error);
     const errorMessage = getErrorMessage(error);

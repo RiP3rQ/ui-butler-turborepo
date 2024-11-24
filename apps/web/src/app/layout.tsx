@@ -4,9 +4,9 @@ import "@repo/ui/globals.css";
 import { SidebarProvider } from "@repo/ui/components/ui/sidebar";
 import { cookies } from "next/headers";
 import ToastProvider from "@repo/ui/providers/toast-provider";
-import getCurrentUser from "@/actions/user/get-current-user.ts";
-import { QueryProvider } from "@/providers/query-provider.tsx";
-import { AppSidebar } from "@/components/sidebar/app-sidebar.tsx";
+import getCurrentUser from "@/actions/user/get-current-user";
+import { QueryProvider } from "@/providers/query-provider";
+import { AppSidebar } from "@/components/sidebar/app-sidebar";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -42,7 +42,7 @@ export default async function RootLayout({
         <QueryProvider>
           <SidebarProvider defaultOpen={defaultOpen}>
             <AppSidebar currentLoggedUser={currentLoggedUser} />
-            <main className="min-h-screen h-full w-full relative pt-8 bg-muted">
+            <main className="min-h-screen h-full w-full relative bg-muted">
               {children}
             </main>
             <ToastProvider />

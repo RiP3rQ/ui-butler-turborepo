@@ -1,6 +1,5 @@
 import { ReactFlowProvider } from "@xyflow/react";
-import type { WorkflowType } from "@repo/types";
-import { WorkflowStatus } from "@repo/types";
+import { WorkflowStatus, WorkflowType } from "@repo/types";
 import Topbar from "@/components/react-flow/topbar/topbar";
 import TasksMenuSidebar from "@/components/react-flow/sidebar/tasks-menu-sidebar";
 import FlowEditor from "@/components/react-flow/flow-editor";
@@ -9,7 +8,12 @@ import { FlowValidationContextProvider } from "@/context/flow-validation-context
 interface EditorProps {
   workflow: WorkflowType;
 }
-function Editor({ workflow }: Readonly<EditorProps>) {
+
+async function Editor({
+  workflow,
+}: Readonly<EditorProps>): Promise<JSX.Element> {
+  console.log("Workflow ID:", workflow.id);
+
   return (
     <FlowValidationContextProvider>
       <ReactFlowProvider>

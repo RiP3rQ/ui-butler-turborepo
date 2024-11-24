@@ -69,7 +69,7 @@ export class WorkflowsService {
       throw new NotFoundException('Workflow not found');
     }
 
-    return workflowData[0];
+    return workflowData;
   }
 
   // POST /workflows
@@ -373,7 +373,12 @@ export class WorkflowsService {
     const workflowExecutionsData = await this.database
       .select()
       .from(workflowExecutions)
-      .where(and(eq(workflows.id, workflowId), eq(workflows.userId, user.id)))
+      .where(
+        and(
+          eq(workflowExecutions.workflowId, workflowId),
+          eq(workflowExecutions.userId, user.id),
+        ),
+      )
       .orderBy(desc(workflowExecutions.createdAt));
 
     if (!workflowExecutionsData) {

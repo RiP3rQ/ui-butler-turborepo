@@ -19,6 +19,8 @@ export async function getHistoricWorkflowExecutions({
       .map((cookie) => `${cookie.name}=${cookie.value}`)
       .join("; ");
 
+    console.log("Workflow ID:", workflowId);
+
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/workflows/historic?workflowId=${workflowId}`,
       {
