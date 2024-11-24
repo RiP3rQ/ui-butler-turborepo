@@ -11,6 +11,7 @@ import {
   AppEdge,
   AppNode,
   ExecutionPhaseStatus,
+  TaskType,
   WorkflowExecutionPlan,
   WorkflowExecutionStatus,
   WorkflowExecutionTrigger,
@@ -30,6 +31,7 @@ import {
 } from '../database/schemas/workflow-executions';
 import {
   calculateWorkflowCost,
+  createFlowNodeFunction,
   parseFlowToExecutionPlan,
   ServerTaskRegister,
 } from '@repo/tasks';
@@ -75,7 +77,7 @@ export class WorkflowsService {
   // POST /workflows
   async createWorkflow(user: User, createWorkflowDto: CreateWorkflowDto) {
     // Workflow initial state
-    const initalFlow: {
+    const initialFlow: {
       nodes: AppNode[];
       edges: AppEdge[];
     } = {
@@ -83,11 +85,14 @@ export class WorkflowsService {
       edges: [],
     };
 
+    // Add browser to the workflow as the first node
+    initialFlow.nodes.push(createFlowNodeFunction(TaskType.LAUNCH_BROWSER));
+
     const newWorkflowData = {
       name: createWorkflowDto.name,
       description: createWorkflowDto.description,
       userId: user.id,
-      definition: JSON.stringify(initalFlow),
+      definition: JSON.stringify(initialFlow),
       status: WorkflowStatus.DRAFT,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -163,7 +168,12 @@ export class WorkflowsService {
     const [workflowData] = await this.database
       .select()
       .from(workflows)
-      .where(eq(workflows.id, publishWorkflowDto.workflowId));
+      .where(
+        and(
+          eq(workflows.id, publishWorkflowDto.workflowId),
+          eq(workflows.userId, user.id),
+        ),
+      );
 
     if (!workflowData) {
       throw new NotFoundException('Workflow not found');
@@ -195,13 +205,19 @@ export class WorkflowsService {
       definition: publishWorkflowDto.flowDefinition,
       executionPlan: JSON.stringify(executionPlan),
       creditsCost,
+      updatedAt: new Date(),
     };
 
     // Publish the workflow
     const publishedWorkflow = await this.database
       .update(workflows)
       .set(publishedWorkflowData)
-      .where(eq(workflows.id, publishWorkflowDto.workflowId))
+      .where(
+        and(
+          eq(workflows.id, publishWorkflowDto.workflowId),
+          eq(workflows.userId, user.id),
+        ),
+      )
       .returning();
 
     if (!publishedWorkflow) {
