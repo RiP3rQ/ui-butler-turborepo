@@ -18,8 +18,6 @@ export const getAuthCookie = (response: Response) => {
     .find((cookieHeader) => cookieHeader.includes(REFRESH_COOKIE))
     ?.split("=")[1];
 
-  // TODO: FIX REFRESH TOKEN EXPIRATION
-
   return {
     accessToken: accessToken && {
       name: AUTH_COOKIE,

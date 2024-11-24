@@ -96,6 +96,7 @@ describe("registerUser", () => {
 
   it("should throw an error when registration fails", async () => {
     (global.fetch as jest.Mock).mockResolvedValueOnce({ ok: false });
+    console.error = jest.fn();
 
     await expect(registerUser(formData)).rejects.toThrow("Registration failed");
   });
@@ -103,6 +104,7 @@ describe("registerUser", () => {
   it("should log an error and throw an error for unexpected errors", async () => {
     const errorMessage = "Unexpected error";
     (global.fetch as jest.Mock).mockRejectedValueOnce(new Error(errorMessage));
+    console.error = jest.fn();
 
     await expect(registerUser(formData)).rejects.toThrow(errorMessage);
     expect(console.error).toHaveBeenCalledWith(new Error(errorMessage));

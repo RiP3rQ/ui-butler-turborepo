@@ -100,6 +100,7 @@ describe("loginUser", () => {
 
   it("should throw an error when credentials are invalid", async () => {
     global.fetch = jest.fn().mockResolvedValueOnce({ ok: false });
+    console.error = jest.fn(); // Mock console.error
 
     await expect(loginUser(formData)).rejects.toThrow(
       "Credentials are invalid",
@@ -109,6 +110,7 @@ describe("loginUser", () => {
   it("should log and throw an error for unexpected errors", async () => {
     const errorMessage = "Unexpected error";
     global.fetch = jest.fn().mockRejectedValueOnce(new Error(errorMessage));
+    console.error = jest.fn(); // Mock console.error
 
     await expect(loginUser(formData)).rejects.toThrow(errorMessage);
     expect(console.error).toHaveBeenCalledWith(new Error(errorMessage));
