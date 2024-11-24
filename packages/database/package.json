@@ -1,0 +1,22 @@
+{
+  "name": "@repo/database",
+  "version": "0.0.0",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.3",
+    "drizzle-orm": "^0.36.4",
+    "@repo/env": "workspace:*",
+    "server-only": "^0.0.1",
+    "undici": "^6.21.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "22.9.0",
+    "@types/ws": "^8.5.13",
+    "bufferutil": "^4.0.8",
+    "drizzle-kit": "^0.28.1",
+    "typescript": "^5.7.2"
+  }
+}
