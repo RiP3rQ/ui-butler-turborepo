@@ -1,11 +1,11 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { getAuthCookie } from "@/lib/auth-cookie.ts";
+import { getAuthCookie } from "@/lib/auth-cookie";
 import { z } from "zod";
-import { loginFormSchema } from "@/schemas/login-schema.ts";
-import { getErrorMessage } from "@/lib/get-error-message.ts";
-import { setResponseCookies } from "@/lib/set-cookies.ts";
+import { loginFormSchema } from "@/schemas/login-schema";
+import { getErrorMessage } from "@/lib/get-error-message";
+import { setResponseCookies } from "@/lib/set-cookies";
 
 export default async function loginUser(
   formData: z.infer<typeof loginFormSchema>,

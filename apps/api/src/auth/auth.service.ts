@@ -16,12 +16,21 @@ export class AuthService {
   ) {}
 
   private async generateTokens(payload: TokenPayload) {
+    const accessTokenExpiration = parseInt(
+      this.configService.getOrThrow('JWT_ACCESS_TOKEN_EXPIRATION_MS'),
+    );
+    const refreshTokenExpiration = parseInt(
+      this.configService.getOrThrow('JWT_REFRESH_TOKEN_EXPIRATION_MS'),
+    );
+
     const accessTokenOptions: JwtSignOptions = {
       secret: this.configService.getOrThrow('JWT_ACCESS_TOKEN_SECRET'),
+      expiresIn: Math.floor(accessTokenExpiration / 1000), // Convert MS to seconds
     };
 
     const refreshTokenOptions: JwtSignOptions = {
       secret: this.configService.getOrThrow('JWT_REFRESH_TOKEN_SECRET'),
+      expiresIn: Math.floor(refreshTokenExpiration / 1000), // Convert MS to seconds
     };
 
     const accessToken = this.jwtService.sign(
