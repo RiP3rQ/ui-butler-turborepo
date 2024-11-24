@@ -1,12 +1,15 @@
 import { endOfMonth, intervalToDuration, startOfMonth } from "date-fns";
 import type { Period } from "@repo/types";
 
-export function dateToDurationString(start?: Date | null, end?: Date | null) {
+export function dateToDurationString(
+  start?: string | null,
+  end?: string | null,
+) {
   if (!start || !end) {
     return null;
   }
 
-  const timeElapsed = end.getTime() - start.getTime();
+  const timeElapsed = new Date(end).getTime() - new Date(start).getTime();
   if (timeElapsed < 1000) {
     // Less than a second
     return `${timeElapsed}ms`;

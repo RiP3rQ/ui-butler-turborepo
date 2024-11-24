@@ -308,43 +308,61 @@ export class WorkflowsService {
       executionPlan = result.executionPlan;
     }
 
-    const exectionData = {
+    const executionData = {
       workflowId: runWorkflowDto.workflowId,
       userId: user.id,
       status: WorkflowExecutionStatus.RUNNING,
       startedAt: new Date(),
       trigger: WorkflowExecutionTrigger.MANUAL,
       definition: workflowDefinition,
-      phases: executionPlan.flatMap((phase) => {
-        return phase.nodes.flatMap((node) => {
-          return {
+    };
+
+    return await this.database.transaction(async (tx) => {
+      try {
+        // Save the execution plan to the database
+        const [execution] = await tx
+          .insert(workflowExecutions)
+          .values(executionData)
+          .returning();
+
+        if (!execution) {
+          throw new Error('Error creating execution');
+        }
+
+        const phasesData = executionPlan.flatMap((phase) =>
+          phase.nodes.map((node) => ({
+            workflowExecutionId: execution.id, // Reference to the parent execution
             userId: user.id,
             status: ExecutionPhaseStatus.CREATED,
             number: phase.phase,
             node: JSON.stringify(node),
             name: ServerTaskRegister[node.data.type].label,
-          };
-        });
-      }),
-    };
+          })),
+        );
 
-    // Save the execution plan to the database
-    const [execution] = await this.database
-      .insert(workflowExecutions)
-      .values(exectionData)
-      .returning();
+        // Save the phases to the database
+        if (phasesData.length > 0) {
+          const phases = await tx
+            .insert(executionPhase)
+            .values(phasesData)
+            .returning();
 
-    if (!execution) {
-      throw new Error('Error creating execution');
-    }
+          if (!phases) {
+            throw new Error('Error creating phases');
+          }
+        }
 
-    // TODO: FIX RevaliatePath while rendering the page error
-    // !IMPORTANT: Execute the workflow without await to not block the response
-    this.workflowExecutionsService.executeWorkflow(execution.id);
+        // Execute the workflow without await to not block the response
+        this.workflowExecutionsService.executeWorkflow(execution.id);
 
-    return {
-      url: `/workflow/runs/${runWorkflowDto.workflowId}/${execution.id}`,
-    };
+        return {
+          url: `/workflow/runs/${runWorkflowDto.workflowId}/${execution.id}`,
+        };
+      } catch (e) {
+        console.log('Error', e);
+        tx.rollback();
+      }
+    });
   }
 
   // PATCH /workflows
@@ -417,7 +435,10 @@ export class WorkflowsService {
         phases: executionPhase,
       })
       .from(workflowExecutions)
-      .leftJoin(executionPhase, eq(workflowExecutions.id, executionPhase.id))
+      .leftJoin(
+        executionPhase,
+        eq(workflowExecutions.id, executionPhase.workflowExecutionId),
+      )
       .where(
         and(
           eq(workflowExecutions.id, executionId),
@@ -429,6 +450,11 @@ export class WorkflowsService {
     if (!workflowExecutionsWithPhases) {
       throw new NotFoundException('Workflow not found');
     }
+
+    console.log(
+      '@@ workflowExecutionsWithPhases',
+      workflowExecutionsWithPhases,
+    );
 
     // If you need to transform the result to match Prisma's structure
     return {

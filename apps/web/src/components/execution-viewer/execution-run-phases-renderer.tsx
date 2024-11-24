@@ -28,7 +28,7 @@ function ExecutionRunPhasesRenderer({
             }
             setSelectedPhase(selectedPhase === phase.id ? null : phase.id);
           }}
-          variant={selectedPhase === phase.id ? "default" : "ghost"}
+          variant={selectedPhase === phase?.id ? "default" : "ghost"}
         >
           <div className="flex items-center gap-2">
             <Badge variant="outline">{index + 1}</Badge>

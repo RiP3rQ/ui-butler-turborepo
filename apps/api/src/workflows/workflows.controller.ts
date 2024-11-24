@@ -147,6 +147,8 @@ export class WorkflowsController {
       throw new NotFoundException('Unauthorized');
     }
 
+    console.log('runWorkflowDto', runWorkflowDto);
+
     if (!runWorkflowDto.workflowId) {
       throw new BadRequestException('Invalid request');
     }
@@ -196,7 +198,7 @@ export class WorkflowsController {
   @UseGuards(JwtAuthGuard)
   getWorkflowExecutions(
     @CurrentUser() user: User,
-    @Param('executionId') executionId: string,
+    @Query('executionId') executionId: string,
   ) {
     if (!user) {
       throw new NotFoundException('Unauthorized');
@@ -214,7 +216,7 @@ export class WorkflowsController {
   @UseGuards(JwtAuthGuard)
   getWorkflowPhases(
     @CurrentUser() user: User,
-    @Param('phaseId') phaseId: string,
+    @Query('phaseId') phaseId: string,
   ) {
     if (!user) {
       throw new NotFoundException('Unauthorized');

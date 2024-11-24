@@ -1,4 +1,4 @@
-import { relations, sql } from 'drizzle-orm';
+import { relations } from 'drizzle-orm';
 import {
   index,
   integer,
@@ -29,10 +29,7 @@ export const workflows = pgTable(
     lastRunStatus: text('last_run_status'),
     nextRunAt: timestamp('next_run_at'),
     createdAt: timestamp('created_at').notNull().defaultNow(),
-    updatedAt: timestamp('updated_at')
-      .notNull()
-      .defaultNow()
-      .$onUpdate(() => sql`now()`),
+    updatedAt: timestamp('updated_at').notNull().defaultNow(),
   },
   (table) => ({
     userIdNameUnique: unique('workflows_user_id_name_unique').on(

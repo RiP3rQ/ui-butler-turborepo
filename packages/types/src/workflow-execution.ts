@@ -22,7 +22,7 @@ export interface WorkflowExecutionWithPhases {
   workflowId: number;
   trigger: string;
   creditsConsumed: number;
-  startedAt: Date;
-  completedAt: Date;
+  startedAt: string;
+  completedAt: string;
   phases: ExecutionPhase[];
 }

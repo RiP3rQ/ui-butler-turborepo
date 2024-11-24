@@ -3,7 +3,7 @@ export interface ExecutionPhase {
   id: number;
   name: string;
   userId: number;
-  creditsCost: number;
+  creditsCost: number | null;
   status: string;
   startedAt: Date;
   completedAt: Date;

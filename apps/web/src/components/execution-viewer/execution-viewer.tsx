@@ -48,6 +48,8 @@ function ExecutionViewer({ initialData }: Readonly<ExecutionViewerProps>) {
       q.state.data?.status === WorkflowExecutionStatus.RUNNING ? 1000 : false,
   });
 
+  console.log(query.data);
+
   const isRunning = query.data.status === WorkflowExecutionStatus.RUNNING;
 
   // currently running phase-phase-executors
@@ -80,7 +82,7 @@ function ExecutionViewer({ initialData }: Readonly<ExecutionViewerProps>) {
     query.data.completedAt,
   );
 
-  const creaditsConsumed = getPhasesTotalCost(query.data.phases || []);
+  const creditsConsumed = getPhasesTotalCost(query.data.phases || []);
 
   return (
     <div className="flex w-full h-full">
@@ -125,7 +127,7 @@ function ExecutionViewer({ initialData }: Readonly<ExecutionViewerProps>) {
           <ExecutionLabel
             icon={CoinsIcon}
             label="Credits"
-            value={<CountUpWrapper value={creaditsConsumed} />}
+            value={<CountUpWrapper value={creditsConsumed} />}
           />
         </div>
         <Separator />
@@ -173,8 +175,8 @@ function ExecutionViewer({ initialData }: Readonly<ExecutionViewerProps>) {
                 </div>
                 <span>
                   {dateToDurationString(
-                    phaseDetails.data.startedAt,
-                    phaseDetails.data.completedAt,
+                    new Date(phaseDetails.data.startedAt).toISOString(),
+                    new Date(phaseDetails.data.completedAt).toISOString(),
                   ) || "-"}
                 </span>
               </Badge>
