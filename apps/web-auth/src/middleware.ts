@@ -1,10 +1,6 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import {
-  AUTH_COOKIE,
-  getAuthCookie,
-  REFRESH_COOKIE,
-} from "@/lib/auth-cookie.ts";
+import { AUTH_COOKIE, getAuthCookie, REFRESH_COOKIE } from "@/lib/auth-cookie";
 
 const unauthenticatedRoutes = ["/sign-up", "/sign-in", "/auth/google"];
 
@@ -40,7 +36,7 @@ export async function middleware(request: NextRequest) {
       request.nextUrl.pathname.startsWith(route),
     )
   ) {
-    return Response.redirect(new URL(unauthenticatedRoutes[0], request.url));
+    return Response.redirect(new URL(unauthenticatedRoutes[0]!, request.url));
   }
 }
 
