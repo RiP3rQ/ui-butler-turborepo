@@ -38,10 +38,15 @@ module.exports = {
         extensions: [".mjs", ".js", ".jsx", ".ts", ".tsx"],
       },
     },
+    next: {
+      rootDir: ["apps/*/"],
+    },
   },
   ignorePatterns: ["node_modules/", "dist/"],
   // add rules configurations here
   rules: {
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/dot-notation": "off",
     "import/no-default-export": "off",
   },
 };

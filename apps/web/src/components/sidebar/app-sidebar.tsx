@@ -35,10 +35,16 @@ import { CustomSidebarHeader } from "@/components/sidebar/sidebar-header";
 const data = {
   navMain: [
     {
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: AirplayIcon,
+      isActive: false,
+    },
+    {
       title: "Analytics dashboard",
       url: "/analytics-dashboard",
       icon: ChartAreaIcon,
-      isActive: true,
+      isActive: false,
     },
     {
       title: "Create new component",

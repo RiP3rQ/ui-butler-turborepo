@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/components/ui/card";
-import CountUpWrapper from "@/components/credits/count-up-wrapper.tsx";
+import CountUpWrapper from "@/components/credits/count-up-wrapper";
 
 interface SingleStatCardProps {
   title: string;
