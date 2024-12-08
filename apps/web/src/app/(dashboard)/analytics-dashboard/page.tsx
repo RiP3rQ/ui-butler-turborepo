@@ -15,7 +15,7 @@ export default async function AnalyticsPage({
   searchParams,
 }: {
   searchParams: Promise<{ month?: string; year?: string }>;
-}) {
+}): Promise<JSX.Element> {
   const currentDate = new Date();
   const { month, year } = await searchParams;
   const period: Period = {
