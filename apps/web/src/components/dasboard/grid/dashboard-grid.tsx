@@ -7,6 +7,9 @@ import {
   AvatarImage,
 } from "@repo/ui/components/ui/avatar";
 import { Button } from "@repo/ui/components/ui/button";
+import { useShallow } from "zustand/react/shallow";
+import { NewProjectDialog } from "@/components/dialogs/new-project-dialog";
+import { useModalsStateStore } from "@/store/modals-store";
 
 interface DashboardGridProps {
   data: DashboardGridValuesResponse[];
@@ -15,6 +18,10 @@ interface DashboardGridProps {
 export function DashboardGrid({
   data,
 }: Readonly<DashboardGridProps>): JSX.Element {
+  const { createNewProjectModal } = useModalsStateStore(
+    useShallow((state) => state),
+  );
+
   return (
     <div className="w-full h-full mx-1 space-y-4">
       <div className="flex justify-between items-center ">
@@ -24,16 +31,19 @@ export function DashboardGrid({
             (your top 10 projects)
           </span>
         </h2>
-        <Button
-          variant="default"
-          size="default"
-          onClick={() => {
-            // TODO: OPEN CREATE PROJECT MODAL
-            console.log("Clicked");
-          }}
-        >
-          Add new project
-        </Button>
+        <NewProjectDialog
+          dialogTrigger={
+            <Button
+              variant="default"
+              size="default"
+              onClick={() => {
+                createNewProjectModal.setIsOpen(true);
+              }}
+            >
+              Add new project
+            </Button>
+          }
+        />
       </div>
 
       <div className="grid gap-3 lg:gap-8 grid-cols-3 lg:grid-cols-5 min-h-[120px]">

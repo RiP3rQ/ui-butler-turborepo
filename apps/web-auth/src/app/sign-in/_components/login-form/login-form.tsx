@@ -1,11 +1,11 @@
 "use client";
 
 import { Form } from "@repo/ui/components/ui/form";
-import { LoginFormFields } from "@/app/sign-in/_components/login-form/login-form-fields.tsx";
+import { LoginFormFields } from "@/app/sign-in/_components/login-form/login-form-fields";
 import { cn } from "@repo/ui/lib/utils";
 import { Button } from "@repo/ui/components/ui/button";
-import { SocialLoginButtons } from "@/app/sign-in/_components/social-platform-buttons/social-buttons.tsx";
-import { useLoginForm } from "@/hooks/use-login-form.ts";
+import { SocialLoginButtons } from "@/app/sign-in/_components/social-platform-buttons/social-buttons";
+import { useLoginForm } from "@/hooks/use-login-form";
 
 export function LoginForm({
   className,
