@@ -93,6 +93,7 @@ export class UsersService {
 
     if (!userBasicData) {
       return {
+        id: user.id,
         username: undefined,
         email: user.email,
         avatar: undefined,
@@ -100,6 +101,7 @@ export class UsersService {
     }
 
     return {
+      id: user.id,
       username: userBasicData.username,
       email: user.email,
       avatar: 'NOT IMPLEMENTED',
