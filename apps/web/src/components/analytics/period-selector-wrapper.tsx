@@ -7,7 +7,7 @@ export async function PeriodSelectorWrapper({
 }: {
   selectedPeriod: Period;
   getPeriodsAction: () => Promise<Period[]>;
-}) {
+}): Promise<JSX.Element> {
   const periods = await getPeriodsAction();
   return <PeriodSelector periods={periods} selectedPeriod={selectedPeriod} />;
 }

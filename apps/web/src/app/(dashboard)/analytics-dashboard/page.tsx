@@ -11,11 +11,11 @@ import StatsCardsWrapper from "@/components/analytics/stat-cards/stats-cards-wra
 import StatsExecutionStatusChartWrapper from "@/components/analytics/stat-chart/stats-execution-status-chart-wrapper";
 import StatsCreditsUsedChartWrapper from "@/components/analytics/stat-chart/stats-credits-used-chart-wrapper";
 
-export default async function Home({
+export default async function AnalyticsPage({
   searchParams,
 }: {
   searchParams: Promise<{ month?: string; year?: string }>;
-}) {
+}): Promise<JSX.Element> {
   const currentDate = new Date();
   const { month, year } = await searchParams;
   const period: Period = {
@@ -28,6 +28,7 @@ export default async function Home({
       <div className="flex justify-between">
         <h1 className="text-3xl font-bold">Analytics Dashboard</h1>
         <Suspense fallback={<Skeleton className="w-[180px] h-[40px]" />}>
+          {/* @ts-expect-error Server Component */}
           <PeriodSelectorWrapper
             getPeriodsAction={getPeriods}
             selectedPeriod={period}
@@ -36,18 +37,21 @@ export default async function Home({
       </div>
       <div className="h-full py-6 flex flex-col space-y-4">
         <Suspense fallback={<StatsCardSkeleton />}>
+          {/* @ts-expect-error Server Component */}
           <StatsCardsWrapper
             getStatsCardsValuesAction={getStatCardsValues}
             selectedPeriod={period}
           />
         </Suspense>
         <Suspense fallback={<Skeleton className="w-full h-[300px]" />}>
+          {/* @ts-expect-error Server Component */}
           <StatsExecutionStatusChartWrapper
             getWorkflowExecutionStatsAction={getWorkflowExecutionStats}
             selectedPeriod={period}
           />
         </Suspense>
         <Suspense fallback={<Skeleton className="w-full h-[300px]" />}>
+          {/* @ts-expect-error Server Component */}
           <StatsCreditsUsedChartWrapper
             getUsedCreditsInPeriodAction={getUsedCreditsInPeriod}
             selectedPeriod={period}

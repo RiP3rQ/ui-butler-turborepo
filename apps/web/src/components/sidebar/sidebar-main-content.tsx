@@ -109,6 +109,7 @@ function NonCollapsibleMenuItem({
   item: Readonly<NavMainType>;
 }): JSX.Element {
   const { currentRoute } = useSidebar();
+  // TODO: SEARCHPARAMS -> get 1 level deep item from the url
 
   return (
     <SidebarMenuItem>

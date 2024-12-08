@@ -11,3 +11,4 @@ export * from "./sidebar";
 export * from "./credentials";
 export * from "./phase-execution";
 export * from "./workflow-execution";
+export * from "./dashboard";
