@@ -8,6 +8,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@repo/ui/components/ui/dropdown-menu";
+import { ChevronDownIcon } from "lucide-react";
 
 interface RunCodeEditorActionsProps {
   actions: EditorActionsType[];
@@ -25,6 +26,7 @@ export function RunCodeEditorActions({
             type="button"
           >
             Run action
+            <ChevronDownIcon className="size-4" />
           </Button>
         </div>
       </DropdownMenuTrigger>

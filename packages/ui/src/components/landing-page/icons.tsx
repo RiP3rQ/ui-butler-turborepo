@@ -1,4 +1,5 @@
 import type { LucideProps } from "lucide-react";
+import { FC } from "react";
 
 type IconType = Record<string, FC<LucideProps>>;
 

@@ -4,11 +4,9 @@ import "@repo/ui/globals.css";
 import { SidebarProvider } from "@repo/ui/components/ui/sidebar";
 import { cookies } from "next/headers";
 import ToastProvider from "@repo/ui/providers/toast-provider";
-import getCurrentUser from "@/actions/user/get-current-user";
 import { QueryProvider } from "@/providers/query-provider";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { DialogsComponentsProvider } from "@/providers/dialogs-provider";
-import { getUserProjects } from "@/actions/projects/get-user-projects";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -31,14 +29,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [cookieStore, currentLoggedUser] = await Promise.all([
-    cookies(),
-    getCurrentUser(),
-  ]);
+  const cookieStore = await cookies();
   const defaultOpen = cookieStore.get("sidebar:state")?.value === "true";
-
-  const currentUserId = Number(currentLoggedUser.id);
-  const userProjects = await getUserProjects(currentUserId);
 
   return (
     <html lang="en">
@@ -47,10 +39,7 @@ export default async function RootLayout({
       >
         <QueryProvider>
           <SidebarProvider defaultOpen={defaultOpen}>
-            <AppSidebar
-              currentLoggedUser={currentLoggedUser}
-              userProjects={userProjects}
-            />
+            <AppSidebar />
             <main className="min-h-screen h-full w-full relative bg-muted">
               {children}
             </main>

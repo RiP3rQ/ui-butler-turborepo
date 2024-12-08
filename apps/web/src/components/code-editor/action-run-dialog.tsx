@@ -13,7 +13,7 @@ import {
 } from "@repo/ui/components/ui/dialog";
 import { Input } from "@repo/ui/components/ui/input";
 import { Label } from "@repo/ui/components/ui/label";
-import { useExecuteRunActionDialogState } from "@repo/ui/state/execute-run-action-state";
+import { useExecuteRunActionDialogState } from "@/store/execute-run-action-state";
 
 export function ActionRunDialog(): JSX.Element {
   const {
