@@ -1,6 +1,6 @@
 import { Control } from "react-hook-form";
 import { z } from "zod";
-import { loginFormSchema } from "@/schemas/login-schema.ts";
+import { loginFormSchema } from "@/schemas/login-schema";
 import {
   FormControl,
   FormField,
