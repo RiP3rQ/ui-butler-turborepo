@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { type ProjectType } from "@repo/types";
 import { getErrorMessage } from "@/lib/get-error-message";
 
-export async function getUserProjects(userId: number): Promise<ProjectType[]> {
+export async function getUserProjects(userId?: number): Promise<ProjectType[]> {
   // TODO: DELETE THIS MOCK RETURN
   return [
     {

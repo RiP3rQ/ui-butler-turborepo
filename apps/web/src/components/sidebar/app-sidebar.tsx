@@ -25,7 +25,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@repo/ui/components/ui/sidebar";
-import type { BasicUser, BundlesType, ProjectType } from "@repo/types";
+import type { BundlesType } from "@repo/types";
 import { SidebarMainContent } from "@/components/sidebar/sidebar-main-content";
 import { SidebarFooterContent } from "@/components/sidebar/sidebar-footer-content";
 import { SavedBundles } from "@/components/sidebar/saved-components-bundles";
@@ -139,15 +139,8 @@ const data = {
   ],
 };
 
-interface AdditionalAppSidebarProps {
-  currentLoggedUser: BasicUser;
-  userProjects: ProjectType[];
-}
-
-export function AppSidebar({
-  ...props
-}: React.ComponentProps<typeof Sidebar> & AdditionalAppSidebarProps) {
-  const { currentLoggedUser, ...slicedProps } = props;
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { ...slicedProps } = props;
   return (
     <Sidebar collapsible="icon" {...slicedProps}>
       <SidebarHeader>
@@ -158,7 +151,7 @@ export function AppSidebar({
         <SavedBundles bundles={data.savedBundles as BundlesType[]} />
       </SidebarContent>
       <SidebarFooter>
-        <SidebarFooterContent currentLoggedUser={currentLoggedUser} />
+        <SidebarFooterContent />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
