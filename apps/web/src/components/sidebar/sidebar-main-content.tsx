@@ -34,13 +34,11 @@ export function SidebarMainContent({
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <Separator />
       <SidebarMenu>
-        {items.map((item, index) => {
+        {items.map((item) => {
           if (item.items && item.items.length > 0) {
-            return <CollapsibleMenuItem item={item} key={item.title + index} />;
+            return <CollapsibleMenuItem item={item} key={item.title} />;
           }
-          return (
-            <NonCollapsibleMenuItem item={item} key={item.title + index} />
-          );
+          return <NonCollapsibleMenuItem item={item} key={item.title} />;
         })}
       </SidebarMenu>
     </SidebarGroup>
@@ -59,7 +57,7 @@ function CollapsibleMenuItem({
       asChild
       className="group/collapsible"
       defaultOpen={
-        item.isActive || item.items?.some((i) => i.url === currentRoute)
+        item.isActive ?? item.items?.some((i) => i.url === currentRoute)
       }
       key={item.title}
     >
@@ -90,7 +88,15 @@ function CollapsibleMenuItem({
                   )}
                 >
                   <Link href={subItem.url}>
-                    <subItem.icon className="size-3" />
+                    {subItem.icon ? <subItem.icon className="size-3" /> : null}
+                    {subItem.color ? (
+                      <div
+                        className="size-3 rounded-full bg-primary"
+                        style={{
+                          backgroundColor: subItem.color ?? "transparent",
+                        }}
+                      />
+                    ) : null}
                     <span>{subItem.title}</span>
                   </Link>
                 </SidebarMenuSubButton>

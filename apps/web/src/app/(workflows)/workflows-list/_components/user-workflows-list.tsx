@@ -4,13 +4,12 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@repo/ui/components/ui/alert";
-import type { WorkflowType } from "@repo/types";
 import { WorkflowCard } from "@/app/(workflows)/workflows-list/_components/workflow-card";
 import { CreateWorkflowDialog } from "@/app/(workflows)/workflows-list/_components/create-workflow-dialog";
 import { getUserWorkflows } from "@/actions/workflows/get-workflows";
 
 export async function UserWorkflows() {
-  const workflows = (await getUserWorkflows()) satisfies WorkflowType[];
+  const workflows = await getUserWorkflows();
 
   if (!workflows) {
     return (
