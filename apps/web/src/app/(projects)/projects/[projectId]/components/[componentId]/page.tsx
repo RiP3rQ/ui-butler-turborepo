@@ -28,24 +28,23 @@ export default async function SingleComponentPage({
     componentId,
   });
 
-  console.log(componentsData);
-
   return (
     <div className="flex flex-col items-center min-h-[calc(100vh-200px)] w-full max-w-full px-8 py-4">
       <Card className="w-full h-full">
         <CardHeader>
           <CardTitle>
             <div className="w-full flex items-center justify-between">
-              <Label className="underline font-semibold text-2xl">
+              <Label className="underline font-semibold text-4xl">
                 {componentsData.title}
               </Label>
-              <Label className="text-muted-foreground text-xs">
+              <Label className="text-muted-foreground text-xl">
+                <span className="text-sm underline">Project:</span>{" "}
                 {componentsData.projectName}
               </Label>
             </div>
           </CardTitle>
           <CardDescription>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center justify-between w-full space-x-4">
               <div>
                 Created at:{" "}
                 <span>

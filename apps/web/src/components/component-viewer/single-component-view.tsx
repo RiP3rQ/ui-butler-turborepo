@@ -14,107 +14,99 @@ interface SingleComponentViewProps {
   componentsData: SingleComponentApiResponseType;
 }
 
+const ACCORDION_ITEMS = [
+  {
+    id: "code-preview",
+    value: "item-1",
+    title: "Code + Preview",
+    content: (code: string) => <CodeEditorWithPreview codeValue={code} />,
+    checkImplemented: () => true, // Always enabled
+  },
+  {
+    id: "typescript-docs",
+    value: "item-2",
+    title: "Typescript Docs",
+    content: () => null, // Placeholder for TypeScript docs viewer
+    checkImplemented: (data: SingleComponentApiResponseType) =>
+      data.hasTypescriptDocs,
+  },
+  {
+    id: "unit-tests",
+    value: "item-3",
+    title: "Unit tests",
+    content: () => null, // Placeholder for unit tests viewer
+    checkImplemented: (data: SingleComponentApiResponseType) =>
+      data.wasUnitTested,
+  },
+  {
+    id: "e2e-tests",
+    value: "item-4",
+    title: "E2E tests",
+    content: () => null, // Placeholder for E2E tests viewer
+    checkImplemented: (data: SingleComponentApiResponseType) =>
+      data.wasE2ETested,
+  },
+  {
+    id: "storybook",
+    value: "item-5",
+    title: "Storybook",
+    content: () => null, // Placeholder for Storybook viewer
+    checkImplemented: (data: SingleComponentApiResponseType) =>
+      data.hasStorybook,
+  },
+] as const;
+
 export function SingleComponentView({
   componentsData,
 }: Readonly<SingleComponentViewProps>): JSX.Element {
-  // check with options are implemented
-  const implementedOptions = {
-    hasTypescriptDocs: componentsData.hasTypescriptDocs,
-    wasUnitTested: componentsData.wasUnitTested,
-    wasE2ETested: componentsData.wasE2ETested,
-    hasStorybook: componentsData.hasStorybook,
-  };
-
   return (
-    // set the default value based on implemented options
-    <Accordion type="multiple" className="w-full" defaultValue={["item-1"]}>
-      <AccordionItem value="item-1">
-        <AccordionTrigger>Code + Preview</AccordionTrigger>
-        <AccordionContent>
-          <CodeEditorWithPreview codeValue={componentsData.code} />
-        </AccordionContent>
-      </AccordionItem>
-      <AccordionItem
-        value="item-2"
-        disabled={!componentsData.hasTypescriptDocs}
-      >
-        <AccordionTrigger>
-          <div className="flex items-center justify-between space-x-4 w-full mr-3">
-            Typescript Docs
-            <NotImplementedBadge
-              booleanValue={!componentsData.hasTypescriptDocs}
-            />
-          </div>
-        </AccordionTrigger>
-        <AccordionContent>
-          {/*<ComponentTypeScriptDescriptionViewer*/}
-          {/*  hasTypescriptDocs={componentsData.hasTypescriptDocs}*/}
-          {/*  typescriptDocsCode={componentsData.typescriptDocsCode}*/}
-          {/*/>*/}
-        </AccordionContent>
-      </AccordionItem>
-      <AccordionItem value="item-3" disabled={!componentsData.wasUnitTested}>
-        <AccordionTrigger>
-          <div className="flex items-center justify-between space-x-4 w-full mr-3">
-            Unit tests
-            <NotImplementedBadge
-              booleanValue={!componentsData.hasTypescriptDocs}
-            />
-          </div>
-        </AccordionTrigger>
-        <AccordionContent>
-          {/*<ComponentUnitTestsViewer*/}
-          {/*  wasUnitTested={componentsData.wasUnitTested}*/}
-          {/*  unitTestCode={componentsData.unitTestsCode}*/}
-          {/*/>*/}
-        </AccordionContent>
-      </AccordionItem>
-      <AccordionItem value="item-4" disabled={!componentsData.wasE2ETested}>
-        <AccordionTrigger>
-          <div className="flex items-center justify-between space-x-4 w-full mr-3">
-            E2E tests
-            <NotImplementedBadge
-              booleanValue={!componentsData.hasTypescriptDocs}
-            />
-          </div>
-        </AccordionTrigger>
-        <AccordionContent>
-          {/*<ComponentE2ETestsViewer*/}
-          {/*  wasE2ETested={componentsData.wasE2ETested}*/}
-          {/*  e2eTestCode={componentsData.e2eTestsCode}*/}
-          {/*/>*/}
-        </AccordionContent>
-      </AccordionItem>
-      <AccordionItem value="item-5" disabled={!componentsData.hasStorybook}>
-        <AccordionTrigger>
-          <div className="flex items-center justify-between space-x-4 w-full mr-3">
-            Storybook
-            <NotImplementedBadge
-              booleanValue={!componentsData.hasTypescriptDocs}
-            />
-          </div>
-        </AccordionTrigger>
-        <AccordionContent>
-          {/*<ComponentStorybookViewer*/}
-          {/*  hasStorybook={componentsData.hasStorybook}*/}
-          {/*  storybookCode={componentsData.storybookCode}*/}
-          {/*/>*/}
-        </AccordionContent>
-      </AccordionItem>
+    <Accordion
+      type="multiple"
+      className="w-full space-y-2"
+      defaultValue={["item-1"]}
+    >
+      {ACCORDION_ITEMS.map(
+        ({ id, value, title, content, checkImplemented }) => {
+          const isImplemented = checkImplemented(componentsData);
+
+          return (
+            <AccordionItem
+              key={id}
+              value={value}
+              disabled={!isImplemented}
+              className="border rounded-lg shadow-sm hover:shadow-md transition-shadow"
+            >
+              <AccordionTrigger className="px-4">
+                <div className="flex items-center justify-between w-full gap-4">
+                  <span className="font-medium">{title}</span>
+                  {!isImplemented && <NotImplementedBadge />}
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pb-4">
+                {content(componentsData.code)}
+              </AccordionContent>
+            </AccordionItem>
+          );
+        },
+      )}
     </Accordion>
   );
 }
 
-function NotImplementedBadge({
-  booleanValue,
-}: Readonly<{
-  booleanValue: boolean;
-}>): JSX.Element | null {
-  if (!booleanValue) {
-    return null;
-  }
+function NotImplementedBadge(): JSX.Element {
   return (
-    <Badge className="bg-amber-500 text-white hover:bg-amber-700 cursor-not-allowed">
+    <Badge
+      className="
+        bg-amber-500 text-white
+        hover:bg-amber-700
+        cursor-not-allowed
+        transition-colors
+        px-3 py-1
+        text-xs font-medium
+        rounded-full
+        mr-3
+      "
+    >
       Not implemented yet
     </Badge>
   );
