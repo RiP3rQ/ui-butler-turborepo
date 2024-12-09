@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useMemo } from "react";
 import {
   AirplayIcon,
   Bot,
@@ -25,7 +26,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@repo/ui/components/ui/sidebar";
-import type { BundlesType } from "@repo/types";
+import type { BundlesType, ProjectType } from "@repo/types";
 import { SidebarMainContent } from "@/components/sidebar/sidebar-main-content";
 import { SidebarFooterContent } from "@/components/sidebar/sidebar-footer-content";
 import { SavedBundles } from "@/components/sidebar/saved-components-bundles";
@@ -79,23 +80,7 @@ const data = {
       title: "Projects",
       url: "#",
       icon: Bot,
-      items: [
-        {
-          title: "Test Project",
-          url: "#",
-          icon: PenIcon,
-        },
-        {
-          title: "Test Project 2",
-          url: "#",
-          icon: PaperclipIcon,
-        },
-        {
-          title: "Test Project 3",
-          url: "#",
-          icon: AirplayIcon,
-        },
-      ],
+      items: [],
     },
     {
       title: "Settings & Variables",
@@ -122,32 +107,57 @@ const data = {
   ],
   savedBundles: [
     {
-      name: "Shadcn _components",
+      name: "Dummy Data 1",
       url: "#",
       icon: Frame,
     },
     {
-      name: "Vercel _components",
+      name: "Dummy Data 2",
       url: "#",
       icon: VercelLogoIcon,
     },
     {
-      name: "Black&White _components",
+      name: "Dummy Data 3",
       url: "#",
       icon: Map,
     },
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { ...slicedProps } = props;
+interface AdditionalAppSidebarProps {
+  userProjects: ProjectType[];
+}
+
+export function AppSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar> & AdditionalAppSidebarProps) {
+  const { userProjects, ...slicedProps } = props;
+
+  const mainContentData = useMemo(() => {
+    const filteredNavMain = data.navMain.filter(
+      (item) => item.title !== "Projects",
+    );
+    const projectsItem = {
+      title: "Projects",
+      url: "#",
+      icon: Bot,
+      items: userProjects.map((project) => ({
+        title: project.title,
+        url: `/projects/${String(project.id)}`,
+        color: project.color,
+      })),
+    };
+    filteredNavMain.splice(3, 0, projectsItem);
+    return filteredNavMain;
+  }, [userProjects]);
+
   return (
     <Sidebar collapsible="icon" {...slicedProps}>
       <SidebarHeader>
         <CustomSidebarHeader />
       </SidebarHeader>
       <SidebarContent>
-        <SidebarMainContent items={data.navMain} />
+        <SidebarMainContent items={mainContentData} />
         <SavedBundles bundles={data.savedBundles as BundlesType[]} />
       </SidebarContent>
       <SidebarFooter>

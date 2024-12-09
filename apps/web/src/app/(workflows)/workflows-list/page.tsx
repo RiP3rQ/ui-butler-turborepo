@@ -13,9 +13,9 @@ export default function WorkflowsListPage(): JSX.Element {
         </div>
         <CreateWorkflowDialog />
       </div>
-
       <div className="w-full py-6">
         <Suspense fallback={<UserWorkflowsSkeleton />}>
+          {/* @ts-expect-error Server Component */}
           <UserWorkflows />
         </Suspense>
       </div>

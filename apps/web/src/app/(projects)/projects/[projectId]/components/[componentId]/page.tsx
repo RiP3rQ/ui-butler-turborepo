@@ -28,6 +28,10 @@ export default async function SingleComponentPage({
     componentId,
   });
 
+  if (!componentsData) {
+    return <div>Component not found</div>;
+  }
+
   return (
     <div className="flex flex-col items-center min-h-[calc(100vh-200px)] w-full max-w-full px-8 py-4">
       <Card className="w-full h-full">
