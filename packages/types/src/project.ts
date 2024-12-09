@@ -1,3 +1,5 @@
+import { ComponentType } from "./components";
+
 export interface ProjectType {
   id: number;
   title: string;
@@ -7,4 +9,8 @@ export interface ProjectType {
   updatedAt: Date;
   userId: number;
   numberOfComponents?: number;
+}
+
+export interface ProjectDetailsType extends ProjectType {
+  components: ComponentType[];
 }

@@ -4,7 +4,9 @@ import type { DrizzleDatabase } from '../database/merged-schemas';
 import { User } from '../database/schemas/users';
 import { CreateProjectDto } from './dto/create-new-project.dto';
 import { NewProject, projects } from '../database/schemas/projects';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
+import { ProjectDetailsType } from '@repo/types';
+import { components } from '../database/schemas/components';
 
 @Injectable()
 export class ProjectsService {
@@ -25,6 +27,37 @@ export class ProjectsService {
     }
 
     return userProjects;
+  }
+
+  // GET /projects/:projectId
+  async getProjectDetails(user: User, projectId: number) {
+    const [projectDetails, componentsForProject] = await Promise.all([
+      this.database
+        .select()
+        .from(projects)
+        .where(and(eq(projects.userId, user.id), eq(projects.id, projectId)))
+        .then((rows) => rows[0]),
+
+      this.database
+        .select()
+        .from(components)
+        .where(
+          and(
+            eq(components.userId, user.id),
+            eq(components.projectId, projectId),
+          ),
+        ),
+    ]);
+
+    if (!projectDetails) {
+      throw new NotFoundException('Project not found');
+    }
+
+    return {
+      ...projectDetails,
+      numberOfComponents: componentsForProject.length,
+      components: componentsForProject,
+    } satisfies ProjectDetailsType;
   }
 
   // POST /workflows
