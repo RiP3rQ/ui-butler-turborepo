@@ -43,6 +43,13 @@
       "when": 1732446032456,
       "tag": "0005_petite_golden_guardian",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1733750415572,
+      "tag": "0006_smooth_micromax",
+      "breakpoints": true
     }
   ]
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { type DashboardGridValuesResponse } from "@repo/types";
+import { type ProjectType } from "@repo/types";
 import {
   Avatar,
   AvatarFallback,
@@ -12,7 +12,7 @@ import { NewProjectDialog } from "@/components/dialogs/new-project-dialog";
 import { useModalsStateStore } from "@/store/modals-store";
 
 interface DashboardGridProps {
-  data: DashboardGridValuesResponse[];
+  data: ProjectType[];
 }
 
 export function DashboardGrid({
@@ -55,11 +55,13 @@ export function DashboardGrid({
           >
             <Avatar>
               <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-              <AvatarFallback>{item.iconId}</AvatarFallback>
+              <AvatarFallback>{item.title}</AvatarFallback>
             </Avatar>
-            <h3 className="text-xl font-semibold">{item.name}</h3>
+            <h3 className="text-xl font-semibold">{item.title}</h3>
             <p className="text-sm font-light">
-              {item.numberOfComponents} components
+              {item.numberOfComponents
+                ? `${item.numberOfComponents} components`
+                : "0"}
             </p>
           </div>
         ))}

@@ -6,4 +6,5 @@ export interface ProjectType {
   createdAt: Date;
   updatedAt: Date;
   userId: number;
+  numberOfComponents?: number;
 }
