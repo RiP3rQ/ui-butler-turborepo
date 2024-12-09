@@ -13,3 +13,4 @@ export * from "./phase-execution";
 export * from "./workflow-execution";
 export * from "./dashboard";
 export * from "./project";
+export * from "./components";
