@@ -34,9 +34,7 @@ import { Skeleton } from "@repo/ui/components/ui/skeleton";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { RunCodeEditorActions } from "@/components/code-editor/run-actions-component";
-import CodeEditor from "@/components/code-editor/editor";
 import { CODE_ACTIONS } from "@/constants/code-actions";
-import { CodePreview } from "@/components/code-editor/preview";
 import {
   createComponentSchema,
   type CreateComponentSchemaType,
@@ -44,6 +42,7 @@ import {
 import { getUserProjects } from "@/actions/projects/get-user-projects";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { createNewComponentFunction } from "@/actions/components/create-new-component";
+import { CodeEditorWithPreview } from "@/components/code-editor/code-editor-with-preview";
 
 export default function SaveNewComponentPage(): JSX.Element {
   const router = useRouter();
@@ -170,19 +169,10 @@ export default function SaveNewComponentPage(): JSX.Element {
                       <p className="text-primary text-xs">(Required)</p>
                     </FormLabel>
                     <FormControl>
-                      <div className="w-full h-full grid grid-cols-5 gap-3">
-                        <div className="w-full h-[600px] col-span-3">
-                          <CodeEditor
-                            codeValue={field.value}
-                            setCodeValue={(value) => {
-                              field.onChange(value);
-                            }}
-                          />
-                        </div>
-                        <div className="h-full w-full col-span-2">
-                          <CodePreview code={field.value} />
-                        </div>
-                      </div>
+                      <CodeEditorWithPreview
+                        codeValue={field.value}
+                        setCodeValue={field.onChange}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

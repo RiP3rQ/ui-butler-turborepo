@@ -1,7 +1,10 @@
 import {
+  BadRequestException,
   Body,
   Controller,
+  Get,
   NotFoundException,
+  Param,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -15,6 +18,29 @@ import { CreateComponentDto } from './dto/create-new-component.dto';
 @Controller('components')
 export class ComponentsController {
   constructor(private readonly componentsService: ComponentsService) {}
+
+  @Get('/:projectId/:componentId')
+  @LogErrors()
+  @UseGuards(JwtAuthGuard)
+  getComponent(
+    @CurrentUser() user: User,
+    @Param('projectId') projectId: string,
+    @Param('componentId') componentId: string,
+  ) {
+    if (!user) {
+      throw new NotFoundException('Unauthorized');
+    }
+
+    if (!projectId || !componentId) {
+      throw new BadRequestException('Invalid project or component ID');
+    }
+
+    return this.componentsService.getSingleComponent(
+      user,
+      Number(projectId),
+      Number(componentId),
+    );
+  }
 
   @Post()
   @LogErrors()
