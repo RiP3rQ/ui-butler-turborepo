@@ -12,9 +12,14 @@ export const createComponentSchema = z.object({
   projectId: z.string().min(1, {
     message: "Project is required",
   }),
-  code: z.string().min(1, {
-    message: "Code is required",
-  }),
+  code: z
+    .string()
+    .min(1, {
+      message: "Code is required",
+    })
+    .max(9999, {
+      message: "Code should be less than 10000 characters",
+    }),
 });
 
 export type CreateComponentSchemaType = z.infer<typeof createComponentSchema>;

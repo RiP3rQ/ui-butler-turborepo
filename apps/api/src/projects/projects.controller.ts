@@ -20,7 +20,7 @@ export class ProjectsController {
   @Get('/')
   @LogErrors()
   @UseGuards(JwtAuthGuard)
-  getWorkflowById(@CurrentUser() user: User) {
+  getProjectsByUserId(@CurrentUser() user: User) {
     if (!user) {
       throw new NotFoundException('Unauthorized');
     }
@@ -31,7 +31,7 @@ export class ProjectsController {
   @Post()
   @LogErrors()
   @UseGuards(JwtAuthGuard)
-  createWorkflow(
+  createProject(
     @CurrentUser() user: User,
     @Body() createProjectDto: CreateProjectDto,
   ) {

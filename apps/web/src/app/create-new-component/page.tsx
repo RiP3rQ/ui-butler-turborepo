@@ -22,7 +22,7 @@ import {
 import { Input } from "@repo/ui/components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   Select,
   SelectContent,
@@ -31,6 +31,8 @@ import {
   SelectValue,
 } from "@repo/ui/components/ui/select";
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import { RunCodeEditorActions } from "@/components/code-editor/run-actions-component";
 import CodeEditor from "@/components/code-editor/editor";
 import { CODE_ACTIONS } from "@/constants/code-actions";
@@ -40,14 +42,31 @@ import {
   type CreateComponentSchemaType,
 } from "@/schemas/component";
 import { getUserProjects } from "@/actions/projects/get-user-projects";
-import { useCurrentUser } from "@/hooks/use-current-user";
+import { getErrorMessage } from "@/lib/get-error-message";
+import { createNewComponentFunction } from "@/actions/components/create-new-component";
 
 export default function SaveNewComponentPage(): JSX.Element {
-  const { user } = useCurrentUser();
+  const router = useRouter();
   const { data, isLoading } = useQuery({
     queryKey: ["projects"],
     queryFn: async () => {
-      return await getUserProjects(user?.id);
+      return await getUserProjects();
+    },
+  });
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: createNewComponentFunction,
+    onSuccess: (res) => {
+      form.reset();
+      router.push(`/projects/${res.projectId}/components/${res.id}`);
+      toast.success("Created new component successfully!", {
+        id: "new-component",
+      });
+    },
+    onError: (error: unknown) => {
+      console.error(error);
+      const errorMessage = getErrorMessage(error);
+      toast.error(errorMessage, { id: "new-component" });
     },
   });
 
@@ -60,9 +79,8 @@ export default function SaveNewComponentPage(): JSX.Element {
     },
   });
 
-  const handleSaveAction = async (values: CreateComponentSchemaType) => {
-    // Do something with the code
-    console.log("Code submitted");
+  const handleSaveAction = (values: CreateComponentSchemaType) => {
+    mutate(values);
   };
 
   return (
@@ -171,10 +189,12 @@ export default function SaveNewComponentPage(): JSX.Element {
                 )}
               />
               <CardFooter className="flex items-center justify-end space-x-3">
+                {/* TODO: ADD proper disable */}
                 <RunCodeEditorActions actions={CODE_ACTIONS} />
                 <Button
                   className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500"
                   type="submit"
+                  disabled={isPending} //TODO: Add proper validation
                 >
                   Save
                   <SaveIcon className="size-4" />
