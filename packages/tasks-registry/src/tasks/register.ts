@@ -6,6 +6,8 @@ import { CreateUnitTestsTask } from "./create-unit-tests";
 import { CreateE2ETestsTask } from "./create-e2e-tests";
 import { CreateMDXDocsTask } from "./create-mdx-docs";
 import { CreateTypeScriptDocsTask } from "./create-ts-docs";
+import { ApproveChangesTask } from "./approve-changes";
+import { SaveGeneratedCodesTask } from "./save-generated-codes";
 
 type ClientRegistry = {
   [Key in TaskType]: WorkflowTask & { type: Key };
@@ -22,4 +24,7 @@ export const ClientTaskRegister: ClientRegistry = {
   // DOCS
   [TaskType.CREATE_TYPESCRIPT_DOCUMENTATION]: CreateTypeScriptDocsTask,
   [TaskType.CREATE_MDX_DOCUMENTATION]: CreateMDXDocsTask,
+  // STOPPERS
+  [TaskType.SAVE_GENERATED_CODES]: SaveGeneratedCodesTask,
+  [TaskType.APPROVE_CHANGES]: ApproveChangesTask,
 };

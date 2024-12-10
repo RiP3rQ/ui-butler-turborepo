@@ -6,6 +6,8 @@ import { ServerCreateUnitTestsTask } from "./server-create-unit-tests";
 import { ServerCreateE2ETestsTask } from "./server-create-e2e-tests";
 import { ServerCreateMDXDocsTask } from "./server-create-mdx-docs";
 import { ServerCreateTypeScriptDocsTask } from "./server-create-ts-docs";
+import { ServerSaveGeneratedCodesTask } from "./server-save-generated-codes";
+import { ServerApproveChangesTask } from "./server-approve-changes";
 
 type ServerRegistry = {
   [Key in TaskType]: BaseWorkflowTask & { type: Key };
@@ -22,4 +24,7 @@ export const ServerTaskRegister: ServerRegistry = {
   // DOCS
   [TaskType.CREATE_TYPESCRIPT_DOCUMENTATION]: ServerCreateTypeScriptDocsTask,
   [TaskType.CREATE_MDX_DOCUMENTATION]: ServerCreateMDXDocsTask,
+  // STOPPERS
+  [TaskType.SAVE_GENERATED_CODES]: ServerSaveGeneratedCodesTask,
+  [TaskType.APPROVE_CHANGES]: ServerApproveChangesTask,
 };

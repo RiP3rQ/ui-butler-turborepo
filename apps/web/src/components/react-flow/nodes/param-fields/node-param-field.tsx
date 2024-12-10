@@ -4,6 +4,8 @@ import { useReactFlow } from "@xyflow/react";
 import { useCallback } from "react";
 import StringParamField from "@/components/react-flow/nodes/param-fields/string-param-field";
 import CredentialParamField from "@/components/react-flow/nodes/param-fields/credential-param-field";
+import SelectParamField from "@/components/react-flow/nodes/param-fields/select-param-field";
+import CodeInstanceParamField from "@/components/react-flow/nodes/param-fields/code-instance-param-field";
 
 interface NodeParamFieldProps {
   param: TaskParam;
@@ -36,6 +38,24 @@ function NodeParamField({
     case TaskParamType.STRING:
       return (
         <StringParamField
+          disabled={disabled}
+          param={param}
+          updateNodeParamValue={updateNodeParamValue}
+          value={value}
+        />
+      );
+    case TaskParamType.CODE_INSTANCE:
+      return (
+        <CodeInstanceParamField
+          disabled={disabled}
+          param={param}
+          updateNodeParamValue={updateNodeParamValue}
+          value=""
+        />
+      );
+    case TaskParamType.SELECT:
+      return (
+        <SelectParamField
           disabled={disabled}
           param={param}
           updateNodeParamValue={updateNodeParamValue}

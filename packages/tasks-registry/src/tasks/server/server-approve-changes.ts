@@ -1,8 +1,8 @@
 import { BaseWorkflowTask, TaskParamType, TaskType } from "@repo/types";
 
-export const ServerOptimizeCodeTask = {
-  type: TaskType.OPTIMIZE_CODE,
-  label: "Optimize Code",
+export const ServerApproveChangesTask = {
+  type: TaskType.APPROVE_CHANGES,
+  label: "Stop the workflow and approve/reject the changes",
   isEntryPoint: false,
   inputs: [
     {
@@ -17,7 +17,7 @@ export const ServerOptimizeCodeTask = {
       type: TaskParamType.CODE_INSTANCE,
     },
   ] as const,
-  credits: 2,
+  credits: 0,
 } satisfies BaseWorkflowTask;
 
-export type ServerOptimizeCodeTaskType = typeof ServerOptimizeCodeTask;
+export type ServerApproveChangesTaskType = typeof ServerApproveChangesTask;
