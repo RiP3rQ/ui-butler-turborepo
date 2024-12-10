@@ -2,7 +2,7 @@ import { memo } from "react";
 import type { NodeProps } from "@xyflow/react";
 import type { AppNodeData } from "@repo/types";
 import { Badge } from "@repo/ui/components/ui/badge";
-import { ClientTaskRegister } from "@repo/tasks-client";
+import { ClientTaskRegister } from "@repo/tasks-registry";
 import NodeCard from "@/components/react-flow/nodes/node-card";
 import NodeHeader from "@/components/react-flow/nodes/node-header";
 import NodeInputs from "@/components/react-flow/nodes/node-inputs";

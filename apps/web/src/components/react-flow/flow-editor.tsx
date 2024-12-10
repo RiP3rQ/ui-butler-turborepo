@@ -14,10 +14,17 @@ import {
 } from "@xyflow/react";
 
 import "@xyflow/react/dist/style.css";
-import type { AppNode, WorkflowType } from "@repo/types";
-import { TaskType } from "@repo/types";
+import {
+  type AppNode,
+  type FlowType,
+  TaskType,
+  type WorkflowType,
+} from "@repo/types";
 import { useCallback, useEffect } from "react";
-import { ClientTaskRegister, createFlowNodeFunction } from "@repo/tasks-client";
+import {
+  ClientTaskRegister,
+  createFlowNodeFunction,
+} from "@repo/tasks-registry";
 import NodeComponent from "@/components/react-flow/nodes/node-component";
 import DeletableEdge from "@/components/react-flow/edges/deletable-edge";
 
@@ -47,7 +54,8 @@ function FlowEditor({ workflow }: Readonly<FlowEditorProps>): JSX.Element {
 
   useEffect(() => {
     try {
-      const flow = JSON.parse(workflow.definition);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const flow = JSON.parse(workflow.definition) as FlowType;
       if (!flow) return;
       setNodes(flow.nodes || []);
       setEdges(flow.edges || []);

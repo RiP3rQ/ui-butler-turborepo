@@ -34,7 +34,7 @@ import {
   createFlowNodeFunction,
   parseFlowToExecutionPlan,
   ServerTaskRegister,
-} from '@repo/tasks';
+} from '@repo/tasks-registry';
 import { Edge } from '@nestjs/core/inspector/interfaces/edge.interface';
 import type { DrizzleDatabase } from '../database/merged-schemas';
 import { WorkflowExecutionsService } from '../workflow-executions/workflow-executions.service';

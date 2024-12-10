@@ -1,6 +1,7 @@
 import type { LucideProps } from "lucide-react";
 import type { TaskParam, TaskType } from "./task";
-import type { AppNode, AppNodeMissingInputs } from "./appNode";
+import type { AppEdge, AppNode, AppNodeMissingInputs } from "./appNode";
+import { Viewport } from "@xyflow/react";
 
 export const WorkflowStatus = {
   DRAFT: "DRAFT",
@@ -86,4 +87,10 @@ export interface WorkflowType {
   nextRunAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface FlowType {
+  nodes: AppNode[];
+  edges: AppEdge[];
+  viewport: Viewport;
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@repo/tasks",
+  "name": "@repo/tasks-registry",
   "version": "0.0.0",
   "private": true,
   "scripts": {

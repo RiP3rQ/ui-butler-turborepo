@@ -3,7 +3,7 @@ import { BaseWorkflowTask, TaskParamType, TaskType } from "@repo/types";
 export const ServerSetCodeContextTask = {
   type: TaskType.SET_CODE_CONTEXT,
   label: "Set Code Context",
-  isEntryPoint: true,
+  isEntryPoint: true as boolean,
   inputs: [
     {
       name: "Code",
@@ -21,3 +21,5 @@ export const ServerSetCodeContextTask = {
   ] as const,
   credits: 0,
 } satisfies BaseWorkflowTask;
+
+export type ServerSetCodeContextTaskType = typeof ServerSetCodeContextTask;

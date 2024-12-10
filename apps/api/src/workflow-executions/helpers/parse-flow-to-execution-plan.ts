@@ -5,9 +5,9 @@ import type {
   WorkflowExecutionPlan,
   WorkflowExecutionPlanError,
   WorkflowExecutionPlanPhase,
-} from "@repo/types";
-import { FlowToExecutionPlanValidationType } from "@repo/types";
-import { ServerTaskRegister } from "./tasks/register";
+} from '@repo/types';
+import { FlowToExecutionPlanValidationType } from '@repo/types';
+import { ServerTaskRegister } from '@repo/tasks-registry';
 
 interface FlowToExecutionPlanType {
   executionPlan?: WorkflowExecutionPlan;
@@ -107,7 +107,7 @@ function getInvalidInputs(
   const taskConfig = ServerTaskRegister[node.data.type];
 
   if (!taskConfig) {
-    return ["INVALID_TASK_TYPE"];
+    return ['INVALID_TASK_TYPE'];
   }
 
   for (const input of taskConfig.inputs) {

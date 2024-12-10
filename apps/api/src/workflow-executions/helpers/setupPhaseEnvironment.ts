@@ -1,4 +1,4 @@
-import { ServerTaskRegister } from '@repo/tasks';
+import { ServerTaskRegister } from '@repo/tasks-registry';
 import {
   AppNode,
   Environment,

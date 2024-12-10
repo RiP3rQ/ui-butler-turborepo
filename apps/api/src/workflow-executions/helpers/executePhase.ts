@@ -6,7 +6,7 @@ import {
   LogCollector,
 } from '@repo/types';
 import { createExecutionEnvironment } from './createExecutionEnvironment';
-import { ExecutorRegistry } from '@repo/tasks';
+import { ExecutorRegistry } from '../executors/executor';
 
 export async function executePhase(
   phase: ExecutionPhase,

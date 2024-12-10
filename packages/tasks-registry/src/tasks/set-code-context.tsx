@@ -1,7 +1,7 @@
 import type { LucideProps } from "lucide-react";
 import { GlobeIcon } from "lucide-react";
-import { ServerSetCodeContextTask } from "@repo/tasks";
-import type { WorkflowTask } from "@repo/types";
+import { WorkflowTask } from "@repo/types";
+import { ServerSetCodeContextTask } from "./server/server-set-code-context";
 
 export const SetCodeContextTask: WorkflowTask = {
   ...ServerSetCodeContextTask,

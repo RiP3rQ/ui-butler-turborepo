@@ -10,7 +10,7 @@ import type { TaskType } from "@repo/types";
 import { CoinsIcon } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
 import { Badge } from "@repo/ui/components/ui/badge";
-import { ClientTaskRegister } from "@repo/tasks-client";
+import { ClientTaskRegister } from "@repo/tasks-registry";
 
 function TasksMenuSidebar(): JSX.Element {
   return (
