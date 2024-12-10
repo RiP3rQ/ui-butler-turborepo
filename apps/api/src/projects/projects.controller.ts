@@ -1,8 +1,12 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
+  HttpStatus,
   NotFoundException,
+  Param,
+  ParseIntPipe,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -26,6 +30,28 @@ export class ProjectsController {
     }
 
     return this.projectsService.getProjectsByUserId(user);
+  }
+
+  @Get(':projectId')
+  @LogErrors()
+  @UseGuards(JwtAuthGuard)
+  getProjectDetails(
+    @CurrentUser() user: User,
+    @Param(
+      'projectId',
+      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND }),
+    )
+    projectId: number,
+  ) {
+    if (!user) {
+      throw new NotFoundException('Unauthorized');
+    }
+
+    if (!projectId) {
+      throw new BadRequestException('Project ID is required');
+    }
+
+    return this.projectsService.getProjectDetails(user, projectId);
   }
 
   @Post()

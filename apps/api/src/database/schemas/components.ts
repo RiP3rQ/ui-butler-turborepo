@@ -1,4 +1,11 @@
-import { integer, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  integer,
+  pgTable,
+  serial,
+  text,
+  timestamp,
+} from 'drizzle-orm/pg-core';
 import { users } from './users';
 import { relations } from 'drizzle-orm';
 import { projects } from './projects';
@@ -13,6 +20,7 @@ export const components = pgTable('components', {
     .references(() => projects.id)
     .notNull(),
   code: text('code').notNull(),
+  isFavorite: boolean('is_favorite').default(false),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });

@@ -14,6 +14,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
 import type { User } from '../database/schemas/users';
 import { CreateComponentDto } from './dto/create-new-component.dto';
+import { FavoriteComponentDto } from './dto/favorite-component.dto';
 
 @Controller('components')
 export class ComponentsController {
@@ -53,5 +54,19 @@ export class ComponentsController {
       throw new NotFoundException('Unauthorized');
     }
     return this.componentsService.createComponent(user, createComponentDto);
+  }
+
+  @Post('/favorite')
+  @LogErrors()
+  @UseGuards(JwtAuthGuard)
+  favoriteComponent(
+    @CurrentUser() user: User,
+    @Body() favoriteComponentDto: FavoriteComponentDto,
+  ) {
+    if (!user) {
+      throw new NotFoundException('Unauthorized');
+    }
+
+    return this.componentsService.favoriteComponent(user, favoriteComponentDto);
   }
 }

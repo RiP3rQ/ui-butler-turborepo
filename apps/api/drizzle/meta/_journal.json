@@ -57,6 +57,13 @@
       "when": 1733758168148,
       "tag": "0007_magical_jetstream",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1733776868528,
+      "tag": "0008_purple_thunderbird",
+      "breakpoints": true
     }
   ]
 }
