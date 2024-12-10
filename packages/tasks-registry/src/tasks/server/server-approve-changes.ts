@@ -2,7 +2,7 @@ import { BaseWorkflowTask, TaskParamType, TaskType } from "@repo/types";
 
 export const ServerApproveChangesTask = {
   type: TaskType.APPROVE_CHANGES,
-  label: "Stop the workflow and approve/reject the changes",
+  label: "Approve/reject the changes",
   isEntryPoint: false,
   inputs: [
     {

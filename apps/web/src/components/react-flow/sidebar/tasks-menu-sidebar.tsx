@@ -45,6 +45,13 @@ function TasksMenuSidebar(): JSX.Element {
             <TaskMenuBtn taskType={TaskType.CREATE_MDX_DOCUMENTATION} />
           </AccordionContent>
         </AccordionItem>
+        <AccordionItem value="stoppers">
+          <AccordionTrigger className="font-bold">Stoppers</AccordionTrigger>
+          <AccordionContent className="flex flex-col gap-1">
+            <TaskMenuBtn taskType={TaskType.APPROVE_CHANGES} />
+            <TaskMenuBtn taskType={TaskType.SAVE_GENERATED_CODES} />
+          </AccordionContent>
+        </AccordionItem>
       </Accordion>
     </aside>
   );

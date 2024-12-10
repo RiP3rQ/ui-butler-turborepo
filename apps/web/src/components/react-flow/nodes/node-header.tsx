@@ -37,8 +37,8 @@ function NodeHeader({
             <>
               <Button
                 className="cursor-pointer text-red-500 hover:text-red-600"
-                onClick={() => {
-                  deleteElements({
+                onClick={async () => {
+                  await deleteElements({
                     nodes: [
                       {
                         id: nodeId,
