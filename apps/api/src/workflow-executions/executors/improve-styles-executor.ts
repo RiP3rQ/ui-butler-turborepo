@@ -10,6 +10,7 @@ export async function improveStylesExecutor(
       environment.log.ERROR('Code context is empty');
       throw new Error('Code context is empty');
     }
+
     environment.log.INFO('Fetched code context successfully');
     environment.setCode(codeContext);
     environment.log.SUCCESS('Code context set successfully');
