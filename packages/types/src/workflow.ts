@@ -14,8 +14,8 @@ export interface BaseWorkflowTask {
   label: string;
   type: TaskType;
   isEntryPoint?: boolean;
-  inputs: TaskParam[];
-  outputs: TaskParam[];
+  inputs: Readonly<TaskParam[]>;
+  outputs: Readonly<TaskParam[]>;
   credits: number;
 }
 
@@ -66,7 +66,6 @@ export type IExecutionPhaseStatus =
 
 export const WorkflowExecutionTrigger = {
   MANUAL: "MANUAL",
-  CRON: "CRON",
 } as const;
 
 export type IWorkflowExecutionTrigger =

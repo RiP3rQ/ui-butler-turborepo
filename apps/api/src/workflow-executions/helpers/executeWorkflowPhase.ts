@@ -23,7 +23,7 @@ export async function executeWorkflowPhase(
   userId: number,
 ) {
   if (!phase) {
-    throw new Error('Execution phase-phase-executors not found');
+    throw new Error('Execution phase-executors not found');
   }
 
   const logCollector = createLogCollector();
@@ -32,7 +32,7 @@ export async function executeWorkflowPhase(
   const node = JSON.parse(phase.node) as AppNode;
   setupPhaseEnvironment(node, environment, edges);
 
-  // Update phase-phase-executors status
+  // Update phase-executors status
   const updatedPhaseData = {
     status: WorkflowExecutionStatus.RUNNING,
     startedAt,
@@ -47,7 +47,7 @@ export async function executeWorkflowPhase(
     .returning();
 
   if (!updatedPhase) {
-    throw new Error('Failed to update phase-phase-executors');
+    throw new Error('Failed to update phase-executors');
   }
 
   // Decrement user balance
@@ -65,7 +65,7 @@ export async function executeWorkflowPhase(
     success = await executePhase(phase, node, environment, logCollector);
   }
 
-  // Finalize phase-phase-executors
+  // Finalize phase-executors
   const outputs = environment.phases[node.id].outputs;
   await finalizeExecutionPhase(
     database,

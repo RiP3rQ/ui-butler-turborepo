@@ -1,5 +1,5 @@
 import { ExecutionEnvironment, TaskType, WorkflowTask } from "@repo/types";
-import { launchBrowserExecutor } from "./phase-executors/launch-browser-executor";
+import { setCodeContextExecutor } from "./set-code-context-executor";
 
 type ExecutorFunctionType<T extends WorkflowTask> = (
   environment: ExecutionEnvironment<T>,
@@ -10,5 +10,5 @@ type RegistryType = {
 };
 
 export const ExecutorRegistry: RegistryType = {
-  LAUNCH_BROWSER: launchBrowserExecutor,
+  SET_CODE_CONTEXT: setCodeContextExecutor,
 };

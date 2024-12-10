@@ -7,7 +7,7 @@ import type {
 } from "@repo/types";
 import { FlowToExecutionPlanValidationType } from "@repo/types";
 import type { Edge } from "@xyflow/react";
-import { ClientTaskRegister } from "./register";
+import { ClientTaskRegister } from "./tasks/register";
 
 interface FlowToExecutionPlanType {
   executionPlan?: WorkflowExecutionPlan;
@@ -42,7 +42,7 @@ export function parseFlowToExecutionPlan(
     });
   }
 
-  // First phase-phase-executors is always the entry point
+  // First phase-executors is always the entry point
   const executionPlan: WorkflowExecutionPlan = [
     {
       phase: 1,
@@ -61,7 +61,7 @@ export function parseFlowToExecutionPlan(
       phase,
       nodes: [],
     };
-    // visit all nodes that are connected to the previous phase-phase-executors
+    // visit all nodes that are connected to the previous phase-executors
     for (const currentNode of nodes) {
       if (planned.has(currentNode.id)) continue;
 

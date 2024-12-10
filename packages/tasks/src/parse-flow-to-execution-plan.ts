@@ -7,7 +7,7 @@ import type {
   WorkflowExecutionPlanPhase,
 } from "@repo/types";
 import { FlowToExecutionPlanValidationType } from "@repo/types";
-import { ServerTaskRegister } from "./register";
+import { ServerTaskRegister } from "./tasks/register";
 
 interface FlowToExecutionPlanType {
   executionPlan?: WorkflowExecutionPlan;

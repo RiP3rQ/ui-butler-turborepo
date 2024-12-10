@@ -40,7 +40,7 @@ const fitViewOptions = {
 
 function FlowEditor({ workflow }: Readonly<FlowEditorProps>): JSX.Element {
   const [nodes, setNodes, onNodesChange] = useNodesState<AppNode>([
-    createFlowNodeFunction(TaskType.LAUNCH_BROWSER),
+    createFlowNodeFunction(TaskType.SET_CODE_CONTEXT),
   ]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const { setViewport, screenToFlowPosition, updateNodeData } = useReactFlow();
@@ -163,7 +163,7 @@ function FlowEditor({ workflow }: Readonly<FlowEditorProps>): JSX.Element {
         onNodesChange={onNodesChange}
         edgeTypes={edgeType}
         // makes flow less fluid by snapping to grid
-        snapToGrid={true}
+        snapToGrid
         onDrop={onDrop}
         // connect nodes with edges
         onConnect={onConnect}

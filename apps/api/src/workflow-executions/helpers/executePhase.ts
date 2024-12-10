@@ -15,7 +15,7 @@ export async function executePhase(
   logCollector: LogCollector,
 ): Promise<boolean> {
   if (!phase || !node) {
-    throw new Error('Execution phase-phase-executors or node not found');
+    throw new Error('Execution phase-executors or node not found');
   }
 
   const runFn = ExecutorRegistry[node.data.type];

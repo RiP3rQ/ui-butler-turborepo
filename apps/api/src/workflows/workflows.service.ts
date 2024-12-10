@@ -87,8 +87,8 @@ export class WorkflowsService {
       edges: [],
     };
 
-    // Add browser to the workflow as the first node
-    initialFlow.nodes.push(createFlowNodeFunction(TaskType.LAUNCH_BROWSER));
+    // Add code to the workflow as the first node
+    initialFlow.nodes.push(createFlowNodeFunction(TaskType.SET_CODE_CONTEXT));
 
     const newWorkflowData = {
       name: createWorkflowDto.name,

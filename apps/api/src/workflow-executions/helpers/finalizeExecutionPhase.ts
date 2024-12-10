@@ -30,7 +30,7 @@ export async function finalizeExecutionPhase(
     creditsCost: creditsConsumed,
   };
 
-  // Finalize the phase-phase-executors with the updated status
+  // Finalize the phase-executors with the updated status
   await database.transaction(async (tx) => {
     try {
       // Update the phase status
