@@ -5,8 +5,12 @@ import { User } from '../database/schemas/users';
 import { CreateComponentDto } from './dto/create-new-component.dto';
 import { components, NewComponent } from '../database/schemas/components';
 import { and, eq } from 'drizzle-orm';
-import { SingleComponentApiResponseType } from '@repo/types';
+import {
+  type ComponentType,
+  SingleComponentApiResponseType,
+} from '@repo/types';
 import { projects } from '../database/schemas/projects';
+import { FavoriteComponentDto } from './dto/favorite-component.dto';
 
 @Injectable()
 export class ComponentsService {
@@ -72,5 +76,36 @@ export class ComponentsService {
     }
 
     return newComponent;
+  }
+
+  // POST /components/favorite
+  async favoriteComponent(
+    user: User,
+    favoriteComponentDto: FavoriteComponentDto,
+  ) {
+    const { projectId, componentId, favoriteValue } = favoriteComponentDto;
+
+    const updatedComponent = {
+      isFavorite: favoriteValue,
+      updatedAt: new Date(),
+    } as Partial<NewComponent>;
+
+    const [component] = await this.database
+      .update(components)
+      .set(updatedComponent)
+      .where(
+        and(
+          eq(components.projectId, projectId),
+          eq(components.id, componentId),
+          eq(components.userId, user.id),
+        ),
+      )
+      .returning();
+
+    if (!component) {
+      throw new NotFoundException('Component not found');
+    }
+
+    return component satisfies ComponentType;
   }
 }
