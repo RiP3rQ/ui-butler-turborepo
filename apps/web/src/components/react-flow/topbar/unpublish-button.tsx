@@ -3,16 +3,17 @@ import { Button } from "@repo/ui/components/ui/button";
 import { DownloadCloudIcon } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { useReactFlow } from "@xyflow/react";
-import useWorkflowExecutionPlan from "@/hooks/use-workflow-execution-plan.tsx";
-import { unpublishWorkflowFunction } from "@/actions/workflows/unpublish-workflow.ts";
+import useWorkflowExecutionPlan from "@/hooks/use-workflow-execution-plan";
+import { unpublishWorkflowFunction } from "@/actions/workflows/unpublish-workflow";
 
 interface UnpublishButtonProps {
   workflowId: number;
 }
-function UnpublishButton({ workflowId }: Readonly<UnpublishButtonProps>) {
+
+function UnpublishButton({
+  workflowId,
+}: Readonly<UnpublishButtonProps>): JSX.Element {
   const generate = useWorkflowExecutionPlan();
-  const { toObject } = useReactFlow();
 
   const { mutate, isPending } = useMutation({
     mutationFn: unpublishWorkflowFunction,

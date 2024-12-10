@@ -1,4 +1,4 @@
-import { ServerTaskRegister } from '@repo/tasks';
+import { ServerTaskRegister } from '@repo/tasks-registry';
 import {
   AppNode,
   Environment,
@@ -22,8 +22,8 @@ export function setupPhaseEnvironment(
 
   const inputsDefinition = ServerTaskRegister[node.data.type].inputs;
   for (const input of inputsDefinition) {
-    // if type is BROWSER_INSTANCE, skip
-    if (input.type === TaskParamType.BROWSER_INSTANCE) {
+    // if type is CODE_INSTANCE, skip
+    if (input.type === TaskParamType.CODE_INSTANCE) {
       continue;
     }
     const inputValue = node.data.inputs[input.name];

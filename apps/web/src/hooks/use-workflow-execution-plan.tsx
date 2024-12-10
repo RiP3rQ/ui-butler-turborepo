@@ -2,7 +2,7 @@ import { useReactFlow } from "@xyflow/react";
 import { useCallback } from "react";
 import type { AppNode, WorkflowExecutionPlanError } from "@repo/types";
 import { toast } from "sonner";
-import { parseFlowToExecutionPlan } from "@repo/tasks-client";
+import { parseFlowToExecutionPlan } from "@repo/tasks-registry";
 import useFlowValidation from "@/hooks/use-flow-validation";
 
 const useWorkflowExecutionPlan = () => {

@@ -3,7 +3,10 @@ import { CoinsIcon, CopyIcon, GripVerticalIcon, TrashIcon } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
 import { Badge } from "@repo/ui/components/ui/badge";
 import { useReactFlow } from "@xyflow/react";
-import { ClientTaskRegister, createFlowNodeFunction } from "@repo/tasks-client";
+import {
+  ClientTaskRegister,
+  createFlowNodeFunction,
+} from "@repo/tasks-registry";
 
 interface NodeHeaderProps {
   taskType: TaskType;
@@ -34,8 +37,8 @@ function NodeHeader({
             <>
               <Button
                 className="cursor-pointer text-red-500 hover:text-red-600"
-                onClick={() => {
-                  deleteElements({
+                onClick={async () => {
+                  await deleteElements({
                     nodes: [
                       {
                         id: nodeId,

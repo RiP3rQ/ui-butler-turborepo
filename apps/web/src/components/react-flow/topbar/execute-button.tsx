@@ -5,13 +5,16 @@ import { toast } from "sonner";
 import { useReactFlow } from "@xyflow/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@repo/ui/components/ui/button";
-import useWorkflowExecutionPlan from "@/hooks/use-workflow-execution-plan.tsx";
-import { runWorkflowFunction } from "@/actions/workflows/run-workflow.ts";
+import useWorkflowExecutionPlan from "@/hooks/use-workflow-execution-plan";
+import { runWorkflowFunction } from "@/actions/workflows/run-workflow";
 
 interface ExecuteButtonProps {
   workflowId: number;
 }
-function ExecuteButton({ workflowId }: Readonly<ExecuteButtonProps>) {
+
+function ExecuteButton({
+  workflowId,
+}: Readonly<ExecuteButtonProps>): JSX.Element {
   const router = useRouter();
   const generate = useWorkflowExecutionPlan();
   const { toObject } = useReactFlow();

@@ -6,7 +6,7 @@ import {
   LogCollector,
 } from '@repo/types';
 import { createExecutionEnvironment } from './createExecutionEnvironment';
-import { ExecutorRegistry } from '@repo/tasks';
+import { ExecutorRegistry } from '../executors/executor';
 
 export async function executePhase(
   phase: ExecutionPhase,
@@ -15,7 +15,7 @@ export async function executePhase(
   logCollector: LogCollector,
 ): Promise<boolean> {
   if (!phase || !node) {
-    throw new Error('Execution phase-phase-executors or node not found');
+    throw new Error('Execution phase-executors or node not found');
   }
 
   const runFn = ExecutorRegistry[node.data.type];

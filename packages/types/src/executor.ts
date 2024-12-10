@@ -1,7 +1,9 @@
 import { BaseWorkflowTask } from "./workflow";
 import { LogCollector } from "./logCollector";
+import { TaskParam } from "./task";
 
 export type Environment = {
+  code?: string;
   // phases with phaseId as key
   phases: Record<
     string,
@@ -10,14 +12,16 @@ export type Environment = {
       outputs: Record<string, string>;
     }
   >;
-  code: string;
 };
 
-export type ExecutionEnvironment<T extends BaseWorkflowTask> = {
-  getInput(name: T["inputs"][number]["name"]): string;
-  setOutput(name: T["outputs"][number]["name"], value: string): void;
+export type InputOutputNames<T extends readonly TaskParam[]> =
+  T[number]["name"];
 
-  getCode(): string;
+export type ExecutionEnvironment<T extends BaseWorkflowTask> = {
+  getInput(name: InputOutputNames<T["inputs"]>): string;
+  setOutput(name: InputOutputNames<T["outputs"]>, value: string): void;
+
+  getCode(): string | undefined;
   setCode(code: string): void;
 
   log: LogCollector;

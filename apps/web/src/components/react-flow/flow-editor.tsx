@@ -14,10 +14,18 @@ import {
 } from "@xyflow/react";
 
 import "@xyflow/react/dist/style.css";
-import type { AppNode, WorkflowType } from "@repo/types";
-import { TaskType } from "@repo/types";
+import {
+  type AppEdge,
+  type AppNode,
+  type FlowType,
+  TaskType,
+  type WorkflowType,
+} from "@repo/types";
 import { useCallback, useEffect } from "react";
-import { ClientTaskRegister, createFlowNodeFunction } from "@repo/tasks-client";
+import {
+  ClientTaskRegister,
+  createFlowNodeFunction,
+} from "@repo/tasks-registry";
 import NodeComponent from "@/components/react-flow/nodes/node-component";
 import DeletableEdge from "@/components/react-flow/edges/deletable-edge";
 
@@ -40,14 +48,14 @@ const fitViewOptions = {
 
 function FlowEditor({ workflow }: Readonly<FlowEditorProps>): JSX.Element {
   const [nodes, setNodes, onNodesChange] = useNodesState<AppNode>([
-    createFlowNodeFunction(TaskType.LAUNCH_BROWSER),
+    createFlowNodeFunction(TaskType.SET_CODE_CONTEXT),
   ]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<AppEdge>([]);
   const { setViewport, screenToFlowPosition, updateNodeData } = useReactFlow();
 
   useEffect(() => {
     try {
-      const flow = JSON.parse(workflow.definition);
+      const flow = JSON.parse(workflow.definition) as FlowType;
       if (!flow) return;
       setNodes(flow.nodes || []);
       setEdges(flow.edges || []);
@@ -163,7 +171,7 @@ function FlowEditor({ workflow }: Readonly<FlowEditorProps>): JSX.Element {
         onNodesChange={onNodesChange}
         edgeTypes={edgeType}
         // makes flow less fluid by snapping to grid
-        snapToGrid={true}
+        snapToGrid
         onDrop={onDrop}
         // connect nodes with edges
         onConnect={onConnect}

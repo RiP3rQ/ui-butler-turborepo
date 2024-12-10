@@ -1,6 +1,7 @@
 import type { LucideProps } from "lucide-react";
 import type { TaskParam, TaskType } from "./task";
-import type { AppNode, AppNodeMissingInputs } from "./appNode";
+import type { AppEdge, AppNode, AppNodeMissingInputs } from "./appNode";
+import { Viewport } from "@xyflow/react";
 
 export const WorkflowStatus = {
   DRAFT: "DRAFT",
@@ -14,8 +15,8 @@ export interface BaseWorkflowTask {
   label: string;
   type: TaskType;
   isEntryPoint?: boolean;
-  inputs: TaskParam[];
-  outputs: TaskParam[];
+  inputs: Readonly<TaskParam[]>;
+  outputs: Readonly<TaskParam[]>;
   credits: number;
 }
 
@@ -66,7 +67,6 @@ export type IExecutionPhaseStatus =
 
 export const WorkflowExecutionTrigger = {
   MANUAL: "MANUAL",
-  CRON: "CRON",
 } as const;
 
 export type IWorkflowExecutionTrigger =
@@ -87,4 +87,10 @@ export interface WorkflowType {
   nextRunAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface FlowType {
+  nodes: AppNode[];
+  edges: AppEdge[];
+  viewport: Viewport;
 }

@@ -11,7 +11,7 @@ export async function initializeWorkflowPhasesStatuses(
     return;
   }
 
-  // Set status of all phase-phase-executors to PENDING because we are not executing them yet
+  // Set status of all phase-executors to PENDING because we are not executing them yet
   const results = await database
     .update(workflowExecutions)
     .set({

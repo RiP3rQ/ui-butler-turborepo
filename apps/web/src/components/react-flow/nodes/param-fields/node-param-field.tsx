@@ -3,9 +3,9 @@ import { TaskParamType } from "@repo/types";
 import { useReactFlow } from "@xyflow/react";
 import { useCallback } from "react";
 import StringParamField from "@/components/react-flow/nodes/param-fields/string-param-field";
-import BrowserInstanceParamField from "@/components/react-flow/nodes/param-fields/browser-instance-param-field";
-import SelectParamField from "@/components/react-flow/nodes/param-fields/select-param-field";
 import CredentialParamField from "@/components/react-flow/nodes/param-fields/credential-param-field";
+import SelectParamField from "@/components/react-flow/nodes/param-fields/select-param-field";
+import CodeInstanceParamField from "@/components/react-flow/nodes/param-fields/code-instance-param-field";
 
 interface NodeParamFieldProps {
   param: TaskParam;
@@ -16,18 +16,18 @@ function NodeParamField({
   param,
   nodeId,
   disabled = false,
-}: Readonly<NodeParamFieldProps>) {
+}: Readonly<NodeParamFieldProps>): JSX.Element {
   const { updateNodeData, getNode } = useReactFlow();
 
   const node = getNode(nodeId) as AppNode;
 
-  const value = node.data.inputs[param.name] || "";
+  const value = node.data.inputs[param.name] ?? "";
   const updateNodeParamValue = useCallback(
-    (value: string) => {
+    (val: string) => {
       updateNodeData(nodeId, {
         inputs: {
           ...node.data.inputs,
-          [param.name]: value,
+          [param.name]: val,
         },
       });
     },
@@ -44,9 +44,9 @@ function NodeParamField({
           value={value}
         />
       );
-    case TaskParamType.BROWSER_INSTANCE:
+    case TaskParamType.CODE_INSTANCE:
       return (
-        <BrowserInstanceParamField
+        <CodeInstanceParamField
           disabled={disabled}
           param={param}
           updateNodeParamValue={updateNodeParamValue}
