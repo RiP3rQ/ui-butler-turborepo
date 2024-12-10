@@ -61,8 +61,6 @@ function TaskMenuBtn({
     e.dataTransfer.effectAllowed = "move";
   }
 
-  console.log("task", task);
-
   return (
     <Button
       className="flex items-center justify-between gap-2 border w-full"

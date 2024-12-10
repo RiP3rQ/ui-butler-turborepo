@@ -20,4 +20,4 @@ export const ServerImproveStylesTask = {
   credits: 1,
 } satisfies BaseWorkflowTask;
 
-export type ServerImproveStylesTask = typeof ServerImproveStylesTask;
+export type ServerImproveStylesTaskType = typeof ServerImproveStylesTask;

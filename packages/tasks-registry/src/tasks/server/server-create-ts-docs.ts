@@ -20,5 +20,5 @@ export const ServerCreateTypeScriptDocsTask = {
   credits: 1,
 } satisfies BaseWorkflowTask;
 
-export type ServerCreateTypeScriptDocsTask =
+export type ServerCreateTypeScriptDocsTaskType =
   typeof ServerCreateTypeScriptDocsTask;

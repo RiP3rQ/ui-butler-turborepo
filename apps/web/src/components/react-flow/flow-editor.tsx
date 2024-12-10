@@ -15,6 +15,7 @@ import {
 
 import "@xyflow/react/dist/style.css";
 import {
+  type AppEdge,
   type AppNode,
   type FlowType,
   TaskType,
@@ -49,12 +50,11 @@ function FlowEditor({ workflow }: Readonly<FlowEditorProps>): JSX.Element {
   const [nodes, setNodes, onNodesChange] = useNodesState<AppNode>([
     createFlowNodeFunction(TaskType.SET_CODE_CONTEXT),
   ]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<AppEdge>([]);
   const { setViewport, screenToFlowPosition, updateNodeData } = useReactFlow();
 
   useEffect(() => {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const flow = JSON.parse(workflow.definition) as FlowType;
       if (!flow) return;
       setNodes(flow.nodes || []);

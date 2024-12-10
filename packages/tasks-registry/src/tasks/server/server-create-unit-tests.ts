@@ -20,4 +20,4 @@ export const ServerCreateUnitTestsTask = {
   credits: 3,
 } satisfies BaseWorkflowTask;
 
-export type ServerCreateUnitTestsTask = typeof ServerCreateUnitTestsTask;
+export type ServerCreateUnitTestsTaskType = typeof ServerCreateUnitTestsTask;

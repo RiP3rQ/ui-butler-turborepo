@@ -20,4 +20,4 @@ export const ServerOptimizeCodeTask = {
   credits: 2,
 } satisfies BaseWorkflowTask;
 
-export type ServerOptimizeCodeTask = typeof ServerOptimizeCodeTask;
+export type ServerOptimizeCodeTaskType = typeof ServerOptimizeCodeTask;

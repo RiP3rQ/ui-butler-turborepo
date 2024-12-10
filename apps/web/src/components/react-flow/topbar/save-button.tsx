@@ -5,17 +5,18 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Loader2Icon } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
-import { updateWorkflowByIdFunction } from "@/actions/workflows/update-workflow-by-id.ts";
+import { updateWorkflowByIdFunction } from "@/actions/workflows/update-workflow-by-id";
 
 interface SaveButtonProps {
   workflowId: number;
 }
-function SaveButton({ workflowId }: Readonly<SaveButtonProps>) {
+
+function SaveButton({ workflowId }: Readonly<SaveButtonProps>): JSX.Element {
   const { toObject } = useReactFlow();
 
   const { mutate, isPending } = useMutation({
     mutationFn: updateWorkflowByIdFunction,
-    onSuccess: (res) => {
+    onSuccess: () => {
       toast.success("Workflow updated successfully", { id: "update-workflow" });
     },
     onError: () => {
