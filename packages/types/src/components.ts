@@ -4,6 +4,7 @@ export interface ComponentType {
   title: string;
   projectId: number;
   code: string;
+  isFavorite: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

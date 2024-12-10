@@ -9,8 +9,8 @@ import {
 import { Label } from "@repo/ui/components/ui/label";
 import moment from "moment/moment";
 import { toast } from "sonner";
-import { SingleComponentView } from "@/components/component-viewer/single-component-view";
 import { getProjectsDetailsFunction } from "@/actions/projects/get-project-details";
+import { MultipleComponentsView } from "@/components/component-viewer/multiple-component-view";
 
 type Params = Promise<{ projectId: string }>;
 export default async function SingleProjectPage({
@@ -40,10 +40,15 @@ export default async function SingleProjectPage({
           <CardTitle>
             <div className="w-full flex justify-center flex-col">
               <div className="flex items-center justify-between">
-                <Label className="font-semibold text-4xl">
-                  <span className="underline">{componentsData.title}</span>{" "}
+                <Label className="font-semibold text-4xl flex items-center justify-center">
+                  <div
+                    className="size-7 rounded-full mr-2"
+                    style={{
+                      backgroundColor: componentsData.color,
+                    }}
+                  />
+                  {componentsData.title}
                 </Label>
-                star
               </div>
               <Label className="text-muted-foreground text-xl">
                 <span className="text-sm">{componentsData.description}</span>
@@ -68,7 +73,7 @@ export default async function SingleProjectPage({
           </CardDescription>
         </CardHeader>
         <CardContent className="h-fit w-full">
-          <SingleComponentView componentsData={componentsData} />
+          <MultipleComponentsView components={componentsData.components} />
         </CardContent>
       </Card>
     </div>
