@@ -7,7 +7,9 @@ export const ServerSetCodeContextTask = {
   inputs: [
     {
       name: "Code",
-      type: TaskParamType.CODE_INSTANCE,
+      type: TaskParamType.STRING,
+      helperText: `eq. <div>hello world</div>`,
+      required: true,
       hideHandle: true,
     },
   ] as const,

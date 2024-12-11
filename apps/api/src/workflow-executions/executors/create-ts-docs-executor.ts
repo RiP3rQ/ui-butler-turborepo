@@ -5,7 +5,7 @@ export async function createTsDocsExecutor(
   environment: ExecutionEnvironment<ServerCreateTypeScriptDocsTaskType>,
 ): Promise<boolean> {
   try {
-    const codeContext = environment.getInput('Code');
+    const codeContext = environment.getCode();
     if (!codeContext) {
       environment.log.ERROR('Code context is empty');
       throw new Error('Code context is empty');

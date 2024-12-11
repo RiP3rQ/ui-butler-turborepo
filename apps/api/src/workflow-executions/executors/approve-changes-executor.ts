@@ -5,14 +5,17 @@ export async function approveChangesExecutor(
   environment: ExecutionEnvironment<ServerApproveChangesTaskType>,
 ): Promise<boolean> {
   try {
-    const codeContext = environment.getInput('Code');
+    const codeContext = environment.getCode();
     if (!codeContext) {
       environment.log.ERROR('Code context is empty');
       throw new Error('Code context is empty');
     }
-    environment.log.INFO('Fetched code context successfully');
+
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+
+    environment.log.INFO('Approving changes...');
     environment.setCode(codeContext);
-    environment.log.SUCCESS('Code context set successfully');
+    environment.log.SUCCESS('Changes approved successfully');
     return true;
   } catch (e) {
     const errorMesage = e instanceof Error ? e.message : JSON.stringify(e);

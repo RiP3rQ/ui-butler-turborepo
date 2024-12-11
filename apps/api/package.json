@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@ai-sdk/google": "^1.0.8",
     "@ai-sdk/openai": "^1.0.8",
     "@neondatabase/serverless": "^0.10.4",
     "@nestjs/common": "^10.4.13",

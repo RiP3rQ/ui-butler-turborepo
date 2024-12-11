@@ -10,9 +10,9 @@ export async function decrementUserCredits(
   logCollector: LogCollector,
 ): Promise<boolean> {
   try {
-    if (!userId || !credits) {
-      console.error('Invalid userId or credits');
-      logCollector.ERROR('Invalid userId or credits');
+    if (!userId || typeof credits !== 'number') {
+      console.error('Invalid userId or credits provided');
+      logCollector.ERROR('Invalid userId or credits provided');
       return false;
     }
 
