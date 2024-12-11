@@ -26,6 +26,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@ai-sdk/google':
+        specifier: ^1.0.8
+        version: 1.0.8(zod@3.23.8)
       '@ai-sdk/openai':
         specifier: ^1.0.8
         version: 1.0.8(zod@3.23.8)
@@ -600,6 +603,43 @@ importers:
 
   packages/config-typescript: {}
 
+  packages/prompts:
+    dependencies:
+      '@types/react':
+        specifier: ^18
+        version: 18.3.14
+      lucide-react:
+        specifier: ^0.454.0
+        version: 0.454.0(react@19.0.0-rc-02c0e824-20241028)
+      react:
+        specifier: 19.0.0-rc-02c0e824-20241028
+        version: 19.0.0-rc-02c0e824-20241028
+    devDependencies:
+      '@repo/config-tailwindcss':
+        specifier: workspace:*
+        version: link:../config-tailwindcss
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../config-eslint
+      '@repo/types':
+        specifier: workspace:*
+        version: link:../types
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../config-typescript
+      '@types/eslint':
+        specifier: ^9.6.1
+        version: 9.6.1
+      '@types/node':
+        specifier: ^22.10.1
+        version: 22.10.1
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.1
+      typescript:
+        specifier: ^5.7.2
+        version: 5.7.2
+
   packages/tasks-registry:
     dependencies:
       '@types/react':
@@ -829,6 +869,12 @@ packages:
 
   '@adobe/css-tools@4.4.1':
     resolution: {integrity: sha512-12WGKBQzjUAI4ayyF4IAtfw2QR/IDoqk6jTddXDhtYTJF9ASmoE1zst7cVtP0aL/F1jUJL5r+JxKXKEgHNbEUQ==}
+
+  '@ai-sdk/google@1.0.8':
+    resolution: {integrity: sha512-zYI6N29HMccoBZlxRo78iMdzia8xaEIsk4K2pzM0zUZh+6phK+35zroJs3mSU46jkqFyIHoCovm+Nm5bBIRdHQ==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.0.0
 
   '@ai-sdk/openai@1.0.8':
     resolution: {integrity: sha512-wcTHM9qgRWGYVO3WxPSTN/RwnZ9R5/17xyo61iUCCSCZaAuJyh6fKddO0/oamwDp3BG7g+4wbfAyuTo32H+fHw==}
@@ -7764,6 +7810,12 @@ packages:
 snapshots:
 
   '@adobe/css-tools@4.4.1': {}
+
+  '@ai-sdk/google@1.0.8(zod@3.23.8)':
+    dependencies:
+      '@ai-sdk/provider': 1.0.2
+      '@ai-sdk/provider-utils': 2.0.4(zod@3.23.8)
+      zod: 3.23.8
 
   '@ai-sdk/openai@1.0.8(zod@3.23.8)':
     dependencies:

@@ -12,7 +12,7 @@ import { setupPhaseEnvironment } from './setupPhaseEnvironment';
 import { executePhase } from './executePhase';
 import { finalizeExecutionPhase } from './finalizeExecutionPhase';
 import { DrizzleDatabase } from '../../database/merged-schemas';
-import { workflowExecutions } from '../../database/schemas/workflow-executions';
+import { executionPhase } from '../../database/schemas/workflow-executions';
 import { eq } from 'drizzle-orm';
 
 export async function executeWorkflowPhase(
@@ -41,9 +41,9 @@ export async function executeWorkflowPhase(
   };
 
   const [updatedPhase] = await database
-    .update(workflowExecutions)
+    .update(executionPhase)
     .set(updatedPhaseData)
-    .where(eq(workflowExecutions.id, phase.id))
+    .where(eq(executionPhase.id, phase.id))
     .returning();
 
   if (!updatedPhase) {

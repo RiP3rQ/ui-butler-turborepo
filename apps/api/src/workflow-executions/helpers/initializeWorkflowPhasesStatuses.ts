@@ -1,6 +1,6 @@
 import { ExecutionPhase, ExecutionPhaseStatus } from '@repo/types';
 import { DrizzleDatabase } from '../../database/merged-schemas';
-import { workflowExecutions } from '../../database/schemas/workflow-executions';
+import { executionPhase } from '../../database/schemas/workflow-executions';
 import { inArray } from 'drizzle-orm/sql/expressions/conditions';
 
 export async function initializeWorkflowPhasesStatuses(
@@ -13,13 +13,13 @@ export async function initializeWorkflowPhasesStatuses(
 
   // Set status of all phase-executors to PENDING because we are not executing them yet
   const results = await database
-    .update(workflowExecutions)
+    .update(executionPhase)
     .set({
       status: ExecutionPhaseStatus.PENDING,
     })
     .where(
       inArray(
-        workflowExecutions.id,
+        executionPhase.id,
         phases.map((phase) => phase.id),
       ),
     )

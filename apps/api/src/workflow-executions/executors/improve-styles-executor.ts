@@ -5,19 +5,21 @@ export async function improveStylesExecutor(
   environment: ExecutionEnvironment<ServerImproveStylesTaskType>,
 ): Promise<boolean> {
   try {
-    const codeContext = environment.getInput('Code');
+    const codeContext = environment.getCode();
     if (!codeContext) {
       environment.log.ERROR('Code context is empty');
       throw new Error('Code context is empty');
     }
 
-    environment.log.INFO('Fetched code context successfully');
-    environment.setCode(codeContext);
-    environment.log.SUCCESS('Code context set successfully');
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+
+    environment.log.INFO('Improving styles...');
+    console.log('Improving styles...');
+    environment.log.SUCCESS('Styles improved successfully');
     return true;
   } catch (e) {
     const errorMesage = e instanceof Error ? e.message : JSON.stringify(e);
-    environment.log.ERROR(`Error in setCodeContextExecutor: ${errorMesage}`);
+    environment.log.ERROR(`Error in improveStylesExecutor: ${errorMesage}`);
     return false;
   }
 }

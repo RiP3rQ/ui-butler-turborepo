@@ -5,7 +5,7 @@ export async function createMdxDocsExecutor(
   environment: ExecutionEnvironment<ServerCreateMDXDocsTaskType>,
 ): Promise<boolean> {
   try {
-    const codeContext = environment.getInput('Code');
+    const codeContext = environment.getCode();
     if (!codeContext) {
       environment.log.ERROR('Code context is empty');
       throw new Error('Code context is empty');

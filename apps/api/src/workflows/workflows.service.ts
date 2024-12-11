@@ -451,10 +451,10 @@ export class WorkflowsService {
       throw new NotFoundException('Workflow not found');
     }
 
-    console.log(
-      '@@ workflowExecutionsWithPhases',
-      workflowExecutionsWithPhases,
-    );
+    // console.log(
+    //   '@@ workflowExecutionsWithPhases',
+    //   workflowExecutionsWithPhases,
+    // );
 
     // If you need to transform the result to match Prisma's structure
     return {
@@ -473,20 +473,18 @@ export class WorkflowsService {
       .from(executionPhase)
       .leftJoin(
         workflowExecutions,
-        eq(executionPhase.id, workflowExecutions.id),
+        eq(executionPhase.workflowExecutionId, workflowExecutions.id),
       )
       .leftJoin(
         executionLog,
         eq(executionPhase.id, executionLog.executionPhaseId),
       )
       .where(
-        and(
-          eq(executionPhase.id, phaseId),
-          eq(executionPhase.userId, user.id),
-          eq(workflowExecutions.userId, user.id),
-        ),
+        and(eq(executionPhase.id, phaseId), eq(executionPhase.userId, user.id)),
       )
       .orderBy(asc(executionLog.timestamp));
+
+    console.log('phaseId', phaseId);
 
     if (phaseWithLogs.length === 0) {
       throw new NotFoundException('Workflow phase not found');

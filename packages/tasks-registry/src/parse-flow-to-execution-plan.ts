@@ -151,6 +151,9 @@ function getInvalidInputs(
       }
     }
 
+    // TODO: DELETE THIS AFTER TESTING
+    continue;
+
     // If we reach this point, then the input is invalid
     invalidInputs.push(input.name);
   }

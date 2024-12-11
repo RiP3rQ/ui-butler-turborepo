@@ -2,7 +2,7 @@ import { ExecutionPhaseStatus, LogCollector } from '@repo/types';
 import { DrizzleDatabase } from '../../database/merged-schemas';
 import {
   executionLog,
-  workflowExecutions,
+  executionPhase,
 } from '../../database/schemas/workflow-executions';
 import { eq } from 'drizzle-orm';
 import { NotFoundException } from '@nestjs/common';
@@ -35,9 +35,9 @@ export async function finalizeExecutionPhase(
     try {
       // Update the phase status
       const [updatedPhase] = await tx
-        .update(workflowExecutions)
+        .update(executionPhase)
         .set(workflowExecutionData)
-        .where(eq(workflowExecutions.id, phaseId))
+        .where(eq(executionPhase.id, phaseId))
         .returning();
 
       if (!updatedPhase) {

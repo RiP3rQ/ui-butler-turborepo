@@ -1,6 +1,8 @@
-import { createOpenAI } from '@ai-sdk/openai';
+import { createGoogleGenerativeAI } from '@ai-sdk/google';
 
-export const openAIProvider = createOpenAI({
-  // ...
-  baseURL: 'http://localhost:1234/v1',
+const google = createGoogleGenerativeAI({
+  // custom settings
+  apiKey: process.env.GOOGLE_API_KEY,
 });
+
+const GEMINI_MODEL = google('gemini-1.5-pro-latest');

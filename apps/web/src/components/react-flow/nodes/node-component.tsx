@@ -16,8 +16,17 @@ const NodeComponent = memo(function NodeComponent(props: Readonly<NodeProps>) {
   const nodeData = props.data as AppNodeData;
   const task = ClientTaskRegister[nodeData.type];
 
+  console.log("task", task);
+
   return (
-    <NodeCard isSelected={Boolean(props.selected)} nodeId={props.id}>
+    <NodeCard
+      isSelected={Boolean(props.selected)}
+      nodeId={props.id}
+      isEntryPoint={task.isEntryPoint}
+    >
+      {task.isEntryPoint ? (
+        <Badge className="bg-green-500 rounded-sm">Entry Point</Badge>
+      ) : null}
       {DEV_MODE ? <Badge>{props.id}</Badge> : null}
       <NodeHeader nodeId={props.id} taskType={nodeData.type} />
       <NodeInputs>
