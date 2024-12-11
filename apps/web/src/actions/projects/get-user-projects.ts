@@ -24,7 +24,7 @@ export async function getUserProjects(): Promise<ProjectType[]> {
     });
 
     if (!res.ok) {
-      throw new Error("Failed to create new project");
+      throw new Error("Failed to get user projects");
     }
 
     return (await res.json()) as ProjectType[];
