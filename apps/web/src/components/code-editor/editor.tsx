@@ -19,7 +19,7 @@ function CodeEditor({
     <div className={cn(`w-full h-full`, className)}>
       <Editor
         defaultValue='// Add your code here and then click "Save" or "Run action"'
-        language="TypeScript"
+        language="typescript"
         theme="vs-dark"
         value={codeValue}
         onChange={(value) => {
