@@ -62,7 +62,13 @@ export async function executeWorkflowPhase(
 
   if (success) {
     // Actual execution
-    success = await executePhase(phase, node, environment, logCollector);
+    success = await executePhase(
+      database,
+      phase,
+      node,
+      environment,
+      logCollector,
+    );
   }
 
   // Finalize phase-executors
