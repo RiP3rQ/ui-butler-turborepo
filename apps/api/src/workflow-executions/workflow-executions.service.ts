@@ -5,10 +5,10 @@ import { eq } from 'drizzle-orm';
 import { workflowExecutions } from '../database/schemas/workflow-executions';
 import { Edge } from '@nestjs/core/inspector/interfaces/edge.interface';
 import { Environment } from '@repo/types';
-import { initializeWorkflowExecution } from './helpers/initializeWorkflowExecution';
-import { initializeWorkflowPhasesStatuses } from './helpers/initializeWorkflowPhasesStatuses';
-import { executeWorkflowPhase } from './helpers/executeWorkflowPhase';
-import { initializeFinalizeExecution } from './helpers/initializeFinalizeExecution';
+import { initializeWorkflowExecution } from './helpers/initialize-workflow-execution';
+import { initializeWorkflowPhasesStatuses } from './helpers/initialize-workflow-phases-statuses';
+import { executeWorkflowPhase } from './helpers/execute-workflow-phase';
+import { initializeFinalizeExecution } from './helpers/initialize-finalize-execution';
 
 @Injectable()
 export class WorkflowExecutionsService {

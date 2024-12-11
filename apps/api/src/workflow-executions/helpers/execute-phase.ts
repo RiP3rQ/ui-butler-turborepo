@@ -5,7 +5,7 @@ import {
   ExecutionPhase,
   LogCollector,
 } from '@repo/types';
-import { createExecutionEnvironment } from './createExecutionEnvironment';
+import { createExecutionEnvironment } from './create-execution-environment';
 import { ExecutorRegistry } from '../executors/executor';
 
 export async function executePhase(
