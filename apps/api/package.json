@@ -20,6 +20,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@repo/tasks-registry": "workspace:*",
+    "@repo/types": "workspace:*",
+    "@repo/prompts": "workspace:*",
     "@ai-sdk/google": "^1.0.8",
     "@ai-sdk/openai": "^1.0.8",
     "@neondatabase/serverless": "^0.10.4",
@@ -31,8 +34,6 @@
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.4.13",
     "@nestjs/serve-static": "^4.0.2",
-    "@repo/tasks-registry": "workspace:*",
-    "@repo/types": "workspace:*",
     "ai": "^4.0.14",
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.5.1",

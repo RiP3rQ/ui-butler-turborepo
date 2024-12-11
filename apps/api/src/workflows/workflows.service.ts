@@ -484,8 +484,6 @@ export class WorkflowsService {
       )
       .orderBy(asc(executionLog.timestamp));
 
-    console.log('phaseId', phaseId);
-
     if (phaseWithLogs.length === 0) {
       throw new NotFoundException('Workflow phase not found');
     }
