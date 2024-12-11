@@ -30,6 +30,32 @@ import { ComponentsModule } from './components/components.module';
                   },
                 },
             level: isProduction ? 'info' : 'debug',
+            serializers: {
+              req: (req) => ({
+                id: req.id,
+                method: req.method,
+                url: req.url,
+                query: req.query,
+              }),
+              res: (res) => ({
+                statusCode: res.statusCode,
+              }),
+            },
+            redact: {
+              paths: [
+                'req.headers.cookie',
+                'req.headers.authorization',
+                'req.headers["Authentication"]',
+                'req.headers["Refresh"]',
+              ],
+              remove: true,
+            },
+            // Fixed version with proper typing
+            customProps: (req, res: any) => ({
+              responseTime: res.responseTime
+                ? `${res.responseTime}`
+                : undefined,
+            }),
           },
         };
       },

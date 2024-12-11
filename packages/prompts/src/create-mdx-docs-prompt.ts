@@ -1,4 +1,4 @@
-export const CreateMdxDocsPrompt = `Create MDX documentation for the ComponentName 
+export const CreateMdxDocsPrompt = `Create MDX documentation for the 
 component. Include an introduction that describes the component's purpose and 
 key features. Provide usage examples with embedded code snippets and visual 
 previews. Document all props, methods, and events with clear explanations. Highlight 

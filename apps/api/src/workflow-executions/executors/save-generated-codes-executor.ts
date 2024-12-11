@@ -1,8 +1,10 @@
 import { ExecutionEnvironment } from '@repo/types';
 import { ServerSaveGeneratedCodesTaskType } from '@repo/tasks-registry';
+import { DrizzleDatabase } from '../../database/merged-schemas';
 
 export async function saveGeneratedCodesExecutor(
   environment: ExecutionEnvironment<ServerSaveGeneratedCodesTaskType>,
+  database: DrizzleDatabase,
 ): Promise<boolean> {
   try {
     const codeContext = environment.getCode();

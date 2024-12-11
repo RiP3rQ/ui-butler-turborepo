@@ -7,10 +7,10 @@ import {
 } from '@repo/types';
 import { ServerTaskRegister } from '@repo/tasks-registry';
 import { createLogCollector } from './create-workflow-log-collector';
-import { decrementUserCredits } from './decrementUserCredits';
-import { setupPhaseEnvironment } from './setupPhaseEnvironment';
-import { executePhase } from './executePhase';
-import { finalizeExecutionPhase } from './finalizeExecutionPhase';
+import { decrementUserCredits } from './decrement-user-credits';
+import { setupPhaseEnvironment } from './setup-phase-environment';
+import { executePhase } from './execute-phase';
+import { finalizeExecutionPhase } from './finalize-execution-phase';
 import { DrizzleDatabase } from '../../database/merged-schemas';
 import { executionPhase } from '../../database/schemas/workflow-executions';
 import { eq } from 'drizzle-orm';
@@ -62,7 +62,13 @@ export async function executeWorkflowPhase(
 
   if (success) {
     // Actual execution
-    success = await executePhase(phase, node, environment, logCollector);
+    success = await executePhase(
+      database,
+      phase,
+      node,
+      environment,
+      logCollector,
+    );
   }
 
   // Finalize phase-executors

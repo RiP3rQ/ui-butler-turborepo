@@ -5,10 +5,12 @@ import {
   ExecutionPhase,
   LogCollector,
 } from '@repo/types';
-import { createExecutionEnvironment } from './createExecutionEnvironment';
+import { createExecutionEnvironment } from './create-execution-environment';
 import { ExecutorRegistry } from '../executors/executor';
+import { DrizzleDatabase } from '../../database/merged-schemas';
 
 export async function executePhase(
+  database: DrizzleDatabase,
   phase: ExecutionPhase,
   node: AppNode,
   environment: Environment,
@@ -25,8 +27,9 @@ export async function executePhase(
   }
 
   // Get values ONLY FOR THIS PHASE from the environment
+  // TODO: FIX THIS TYPE
   const executionEnvironment: ExecutionEnvironment<any> =
     createExecutionEnvironment(node, environment, logCollector);
 
-  return await runFn(executionEnvironment);
+  return await runFn(executionEnvironment, database);
 }
