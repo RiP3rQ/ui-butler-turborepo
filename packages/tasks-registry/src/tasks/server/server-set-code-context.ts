@@ -6,7 +6,7 @@ export const ServerSetCodeContextTask = {
   isEntryPoint: true as boolean,
   inputs: [
     {
-      name: "YOUR SAVED COMPONENT'S CODE...",
+      name: "Code",
       type: TaskParamType.CODE_INSTANCE,
       hideHandle: true,
     },

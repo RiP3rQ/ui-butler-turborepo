@@ -8,11 +8,13 @@ interface NodeCardProps {
   nodeId: string;
   children: React.ReactNode;
   isSelected: boolean;
+  isEntryPoint?: boolean;
 }
 function NodeCard({
   nodeId,
   children,
   isSelected = false,
+  isEntryPoint = false,
 }: Readonly<NodeCardProps>): JSX.Element {
   const { getNode, setCenter } = useReactFlow();
   const { invalidInputs } = useFlowValidation();
@@ -52,6 +54,7 @@ function NodeCard({
       className={cn(
         "rounded-md cursor-pointer bg-background border-2 border-separate w-[420px] text-xs gap-1 flex-col",
         isSelected && "border-primary",
+        isEntryPoint && "border-2 border-green-500",
         hasInvalidInputs && "border-2 border-destructive",
       )}
       onDoubleClick={doubleClickHandler}
