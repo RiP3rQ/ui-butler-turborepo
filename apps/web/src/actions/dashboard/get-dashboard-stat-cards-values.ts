@@ -5,13 +5,6 @@ import { cookies } from "next/headers";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 export async function getDashboardStatCardsValues(): Promise<DashboardStatCardsValuesResponse> {
-  // TODO: DELETE THIS MOCKED RESPONSE
-  return {
-    currentActiveProjects: 10,
-    numberOfCreatedComponents: 90,
-    favoritesComponents: 5,
-  };
-
   try {
     // Get existing cookies
     const cookieStore = await cookies();
@@ -23,7 +16,7 @@ export async function getDashboardStatCardsValues(): Promise<DashboardStatCardsV
       .join("; ");
 
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/dashboard/stat-cards-values`,
+      `${process.env.NEXT_PUBLIC_API_URL}/analytics/dashboard-stat-cards-values`,
       {
         method: "GET",
         headers: {

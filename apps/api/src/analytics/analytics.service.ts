@@ -1,8 +1,12 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DATABASE_CONNECTION } from '../database/database-connection';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import type { Period } from '@repo/types';
-import { and, eq, gte, isNotNull, lte, min } from 'drizzle-orm';
+import type {
+  DashboardStatCardsValuesResponse,
+  DashboardTableFavoritedContentResponse,
+  Period,
+} from '@repo/types';
+import { and, eq, gte, isNotNull, lte, min, sql } from 'drizzle-orm';
 import { periodToDateRange } from './lib/period-to-date-range';
 import { inArray } from 'drizzle-orm/sql/expressions/conditions';
 import { eachDayOfInterval, format } from 'date-fns';
@@ -12,6 +16,8 @@ import {
   executionPhase,
   workflowExecutions,
 } from '../database/schemas/workflow-executions';
+import { projects } from '../database/schemas/projects';
+import { components } from '../database/schemas/components';
 
 @Injectable()
 export class AnalyticsService {
@@ -20,6 +26,7 @@ export class AnalyticsService {
     private readonly database: NodePgDatabase<DatabaseSchemas>,
   ) {}
 
+  // GET /analytics/periods
   async getPeriods(user: User) {
     const yearsData = await this.database
       .select({ minYear: min(workflowExecutions.startedAt) })
@@ -49,6 +56,7 @@ export class AnalyticsService {
     return periods;
   }
 
+  // GET /analytics/stat-cards-values
   async getStatCardsValues(user: User, month: number, year: number) {
     const { startDate, endDate } = periodToDateRange({
       month,
@@ -101,6 +109,7 @@ export class AnalyticsService {
     return stats;
   }
 
+  // GET /analytics/workflow-execution-stats
   async getWorkflowExecutionStats(user: User, month: number, year: number) {
     const { startDate, endDate } = periodToDateRange({
       month,
@@ -171,6 +180,7 @@ export class AnalyticsService {
     return results;
   }
 
+  // GET /analytics/used-credits-in-period
   async getUsedCreditsInPeriod(user: User, month: number, year: number) {
     const { startDate, endDate } = periodToDateRange({
       month,
@@ -242,5 +252,62 @@ export class AnalyticsService {
     }));
 
     return results;
+  }
+
+  // GET /analytics/dashboard-stat-cards-values
+  async getDashboardStatCardsValues(user: User) {
+    const [data] = await this.database
+      .select({
+        currentActiveProjects: sql<number>`count(distinct
+        ${projects.id}
+        )`,
+        numberOfCreatedComponents: sql<number>`count(
+        ${components.id}
+        )`,
+        favoritesComponents: sql<number>`count(case when
+        ${components.isFavorite}
+        =
+        true
+        then
+        1
+        end
+        )`,
+      })
+      .from(projects)
+      .innerJoin(components, eq(projects.id, components.projectId))
+      .where(eq(projects.userId, user.id));
+
+    return {
+      currentActiveProjects: data.currentActiveProjects ?? 0,
+      numberOfCreatedComponents: data.numberOfCreatedComponents ?? 0,
+      favoritesComponents: data.favoritesComponents ?? 0,
+    } satisfies DashboardStatCardsValuesResponse;
+  }
+
+  // GET /analytics/favorited-table-content
+  async getFavoritedTableContent(user: User) {
+    const favoritedComponents = await this.database
+      .select({
+        id: components.id,
+        name: components.title,
+        projectName: projects.title,
+        createdAt: components.createdAt,
+        updatedAt: components.updatedAt,
+      })
+      .from(components)
+      .innerJoin(projects, eq(components.projectId, projects.id))
+      .where(
+        and(eq(components.userId, user.id), eq(components.isFavorite, true)),
+      );
+
+    const mappedFavoritedComponents = favoritedComponents.map((component) => ({
+      id: component.id,
+      name: component.name,
+      projectName: component.projectName,
+      createdAt: new Date(component.createdAt).toISOString(),
+      updatedAt: new Date(component.updatedAt).toISOString(),
+    }));
+
+    return mappedFavoritedComponents satisfies DashboardTableFavoritedContentResponse[];
   }
 }

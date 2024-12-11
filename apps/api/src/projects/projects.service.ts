@@ -4,8 +4,8 @@ import type { DrizzleDatabase } from '../database/merged-schemas';
 import { User } from '../database/schemas/users';
 import { CreateProjectDto } from './dto/create-new-project.dto';
 import { NewProject, projects } from '../database/schemas/projects';
-import { and, eq } from 'drizzle-orm';
-import { ProjectDetailsType } from '@repo/types';
+import { and, eq, sql } from 'drizzle-orm';
+import { ProjectDetailsType, type ProjectType } from '@repo/types';
 import { components } from '../database/schemas/components';
 
 @Injectable()
@@ -18,15 +18,28 @@ export class ProjectsService {
   // Get /projects
   async getProjectsByUserId(user: User) {
     const userProjects = await this.database
-      .select()
+      .select({
+        id: projects.id,
+        title: projects.title,
+        description: projects.description,
+        color: projects.color,
+        createdAt: projects.createdAt,
+        updatedAt: projects.updatedAt,
+        userId: projects.userId,
+        numberOfComponents: sql<number>`COUNT(
+        ${components.id}
+        )`,
+      })
       .from(projects)
-      .where(eq(projects.userId, user.id));
+      .leftJoin(components, eq(components.projectId, projects.id))
+      .where(eq(projects.userId, user.id))
+      .groupBy(projects.id);
 
     if (!userProjects) {
       throw new NotFoundException('Projects not found');
     }
 
-    return userProjects;
+    return userProjects satisfies ProjectType[];
   }
 
   // GET /projects/:projectId
