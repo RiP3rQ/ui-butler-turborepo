@@ -2,7 +2,7 @@ import { ShieldOffIcon } from "lucide-react";
 import { Card } from "@repo/ui/components/ui/card";
 import { CredentialCard } from "@/components/credentials/credential-card";
 import { CreateCredentialDialog } from "@/components/credentials/create-credential-dialog";
-import getUserCredentials from "@/actions/credentials/get-user-credentials";
+import { getUserCredentials } from "@/actions/credentials/get-user-credentials";
 
 export async function UserCredendials(): Promise<JSX.Element> {
   const credentials = await getUserCredentials();

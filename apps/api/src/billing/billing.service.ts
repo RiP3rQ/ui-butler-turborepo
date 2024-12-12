@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DATABASE_CONNECTION } from '../database/database-connection';
 import { User } from '../database/schemas/users';
-import { DrizzleDatabase } from '../database/merged-schemas';
+import type { DrizzleDatabase } from '../database/merged-schemas';
 
 @Injectable()
 export class BillingService {

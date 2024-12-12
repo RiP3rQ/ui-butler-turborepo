@@ -1,9 +1,10 @@
 "use client";
 import { CoinsIcon } from "lucide-react";
+import { type UserBasicCredits } from "@repo/types";
 import CountUpWrapper from "@/components/credits/count-up-wrapper";
 
 interface BalanceCardContentProps {
-  userBalance: number;
+  userBalance: UserBasicCredits;
 }
 
 export function BalanceCardContent({
@@ -16,7 +17,7 @@ export function BalanceCardContent({
           Available Credits
         </h3>
         <p className="text-4xl font-bold text-primary">
-          <CountUpWrapper value={userBalance} />
+          <CountUpWrapper value={userBalance.credits} />
         </p>
       </div>
 

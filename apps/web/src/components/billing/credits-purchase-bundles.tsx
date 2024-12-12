@@ -82,7 +82,7 @@ export function CreditsPurchaseBundles(): JSX.Element {
               toast.loading("Purchasing credits...", {
                 id: "purchase-credits",
               });
-              mutate(selectedPack);
+              mutate({ packId: selectedPack });
             }
           }}
         >

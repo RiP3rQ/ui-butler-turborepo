@@ -8,7 +8,7 @@ interface DeleteCredentialFunctionProps {
   id: string;
 }
 
-export default async function deleteCredentialFunction({
+export async function deleteCredentialFunction({
   id,
 }: Readonly<DeleteCredentialFunctionProps>): Promise<UserCredentials> {
   try {

@@ -94,7 +94,7 @@ export function DeleteCredentialDialog({
               toast.loading("Deleting credential...", {
                 id: credentialId,
               });
-              mutate(credentialId);
+              mutate({ id: credentialId });
               setOpen(false);
             }}
           >
