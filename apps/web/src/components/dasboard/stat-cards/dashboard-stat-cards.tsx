@@ -5,13 +5,24 @@ import {
   MessageCircleHeartIcon,
 } from "lucide-react";
 import type { DashboardStatCardsValuesResponse } from "@repo/types";
+import { useQuery } from "@tanstack/react-query";
 import SingleStatCard from "@/components/analytics/stat-cards/single-stat-card";
+import { getDashboardStatCardsValues } from "@/actions/dashboard/get-dashboard-stat-cards-values";
 
 interface StatCardsProps {
-  data: DashboardStatCardsValuesResponse;
+  initialData: DashboardStatCardsValuesResponse;
 }
 
-function DashboardStatCards({ data }: Readonly<StatCardsProps>): JSX.Element {
+function DashboardStatCards({
+  initialData,
+}: Readonly<StatCardsProps>): JSX.Element {
+  const { data } = useQuery({
+    queryKey: ["dashboard-stat-cards"],
+    queryFn: getDashboardStatCardsValues,
+    initialData,
+    staleTime: 60000,
+  });
+
   return (
     <div className="grid gap-3 lg:gap-8 lg:grid-cols-3 min-h-[120px]">
       <SingleStatCard

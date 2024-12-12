@@ -13,6 +13,7 @@ export function useCurrentUser(): {
     queryFn: async () => {
       return await getCurrentUser();
     },
+    staleTime: 60000,
   });
 
   return { user: data, isLoading };

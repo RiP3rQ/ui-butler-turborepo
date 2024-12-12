@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
@@ -20,6 +20,7 @@ export function useNewProjectForm(): {
   handleSubmit: (values: CreateNewProjectSchemaType) => Promise<void>;
   isSubmitDisabled: boolean;
 } {
+  const queryClient = useQueryClient();
   const { createNewProjectModal } = useModalsStateStore(
     useShallow((state) => state),
   );
@@ -34,9 +35,16 @@ export function useNewProjectForm(): {
 
   const { mutate, isPending } = useMutation({
     mutationFn: createNewProjectFunction,
-    onSuccess: () => {
+    onSuccess: async () => {
       form.reset();
       createNewProjectModal.setIsOpen(false);
+      await queryClient.invalidateQueries({
+        queryKey: [
+          "user-projects",
+          "dashboard-stat-cards",
+          "dashboard-favorited-components",
+        ],
+      });
       toast.success("Created new project successfully!", { id: "new-project" });
     },
     onError: (error) => {
@@ -47,8 +55,14 @@ export function useNewProjectForm(): {
   });
 
   const handleSubmit = async (values: CreateNewProjectSchemaType) => {
-    toast.loading("Creating new project...", { id: "new-project" });
-    mutate(values);
+    try {
+      toast.loading("Creating new project...", { id: "new-project" });
+      mutate(values);
+    } catch (e) {
+      console.error(e);
+      const errorMessage = getErrorMessage(e);
+      toast.error(errorMessage, { id: "new-project" });
+    }
   };
 
   const isSubmitDisabled = useMemo(() => {

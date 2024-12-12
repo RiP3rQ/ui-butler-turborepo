@@ -3,5 +3,5 @@ import { DashboardFavoritedTable } from "@/components/dasboard/table/dashboard-f
 
 export async function DashboardFavoritedTableWrapper(): Promise<JSX.Element> {
   const data = await getDashboardTableFavoritedContent();
-  return <DashboardFavoritedTable data={data} />;
+  return <DashboardFavoritedTable initialData={data} />;
 }

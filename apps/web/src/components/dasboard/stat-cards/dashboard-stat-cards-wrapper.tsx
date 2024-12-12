@@ -3,7 +3,7 @@ import DashboardStatCards from "@/components/dasboard/stat-cards/dashboard-stat-
 
 async function DashboardStatsCardsWrapper(): Promise<JSX.Element> {
   const data = await getDashboardStatCardsValues();
-  return <DashboardStatCards data={data} />;
+  return <DashboardStatCards initialData={data} />;
 }
 
 export default DashboardStatsCardsWrapper;

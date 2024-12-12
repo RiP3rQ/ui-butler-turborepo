@@ -7,14 +7,8 @@ import {
   Bot,
   ChartAreaIcon,
   ComponentIcon,
-  DollarSignIcon,
   Frame,
-  HistoryIcon,
   Map,
-  PaperclipIcon,
-  PenIcon,
-  Settings,
-  Settings2,
   SquareTerminal,
   VariableIcon,
 } from "lucide-react";
@@ -55,26 +49,10 @@ const data = {
     },
     {
       title: "Workflows",
-      url: "/workflows",
+      url: "/workflows-list",
       icon: SquareTerminal,
       isActive: false,
-      items: [
-        {
-          title: "Create new workflow",
-          url: "/create-new-workflow",
-          icon: PenIcon,
-        },
-        {
-          title: "Workflows list",
-          url: "/workflows-list",
-          icon: PaperclipIcon,
-        },
-        {
-          title: "History",
-          url: "#",
-          icon: HistoryIcon,
-        },
-      ],
+      items: [],
     },
     {
       title: "Projects",
@@ -83,26 +61,10 @@ const data = {
       items: [],
     },
     {
-      title: "Settings & Variables",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-          icon: Settings,
-        },
-        {
-          title: "Billing",
-          url: "#",
-          icon: DollarSignIcon,
-        },
-        {
-          title: "Variables",
-          url: "#",
-          icon: VariableIcon,
-        },
-      ],
+      title: "Credentials",
+      url: "/credentials",
+      icon: VariableIcon,
+      items: [],
     },
   ],
   savedBundles: [
