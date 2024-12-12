@@ -274,7 +274,7 @@ export class AnalyticsService {
         )`,
       })
       .from(projects)
-      .innerJoin(components, eq(projects.id, components.projectId))
+      .leftJoin(components, eq(projects.id, components.projectId))
       .where(eq(projects.userId, user.id));
 
     return {
@@ -295,7 +295,7 @@ export class AnalyticsService {
         updatedAt: components.updatedAt,
       })
       .from(components)
-      .innerJoin(projects, eq(components.projectId, projects.id))
+      .leftJoin(projects, eq(components.projectId, projects.id))
       .where(
         and(eq(components.userId, user.id), eq(components.isFavorite, true)),
       );

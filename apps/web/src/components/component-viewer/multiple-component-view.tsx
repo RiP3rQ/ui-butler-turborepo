@@ -5,37 +5,60 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@repo/ui/components/ui/accordion";
-import { type ComponentType } from "@repo/types";
+import { type ComponentType, type ProjectDetailsType } from "@repo/types";
 import moment from "moment";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Button } from "@repo/ui/components/ui/button";
 import { NavigationIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import CodeEditor from "@/components/code-editor/editor";
 import { FavoriteButton } from "@/components/components/favorite-button";
 import { favoriteComponentFunction } from "@/actions/components/favorite-component";
 
 interface MultipleComponentsViewProps {
+  queryKey: string;
   components: ComponentType[];
 }
 
 export function MultipleComponentsView({
+  queryKey,
   components,
 }: Readonly<MultipleComponentsViewProps>): JSX.Element {
   const router = useRouter();
-  const { mutate, isPending } = useMutation({
+  const queryClient = useQueryClient();
+  const [mutatingComponentId, setMutatingComponentId] = useState<number | null>(
+    null,
+  );
+
+  const { mutate } = useMutation({
     mutationFn: favoriteComponentFunction,
-    onSuccess: (res) => {
-      // queryClient.invalidateQueries("components"); TODO: INVALIDATE QUERY
+    onMutate: async (newFavoritedComponent) => {
+      setMutatingComponentId(newFavoritedComponent.componentId);
+      await queryClient.cancelQueries({ queryKey: [queryKey] });
+      const previousProjectDetails = queryClient.getQueryData([queryKey]);
+      queryClient.setQueryData([queryKey], (old: ProjectDetailsType) => ({
+        ...old,
+        components: old.components.map((component) =>
+          component.id === newFavoritedComponent.componentId
+            ? { ...component, isFavorite: newFavoritedComponent.favoriteValue }
+            : component,
+        ),
+      }));
+      return { previousProjectDetails };
+    },
+    onSuccess: () => {
       toast.success("Successfully added to favorites", {
         id: "favorite-component",
       });
+      setMutatingComponentId(null);
     },
     onError: () => {
       toast.error("Failed to add to favorites", {
         id: "favorite-component",
       });
+      setMutatingComponentId(null);
     },
   });
 
@@ -70,7 +93,7 @@ export function MultipleComponentsView({
             {/* FAVORITE BUTTON*/}
             <div className="absolute top-1 right-8">
               <FavoriteButton
-                isPending={isPending}
+                isPending={mutatingComponentId === component.id}
                 isFavorite={Boolean(component.isFavorite)}
                 favoriteHandler={() => {
                   mutate({

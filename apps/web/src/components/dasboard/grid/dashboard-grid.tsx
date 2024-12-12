@@ -8,19 +8,27 @@ import {
 } from "@repo/ui/components/ui/avatar";
 import { Button } from "@repo/ui/components/ui/button";
 import { useShallow } from "zustand/react/shallow";
+import { useQuery } from "@tanstack/react-query";
 import { NewProjectDialog } from "@/components/dialogs/new-project-dialog";
 import { useModalsStateStore } from "@/store/modals-store";
+import { getUserProjects } from "@/actions/projects/get-user-projects";
 
 interface DashboardGridProps {
-  data: ProjectType[];
+  initialData: ProjectType[];
 }
 
 export function DashboardGrid({
-  data,
+  initialData,
 }: Readonly<DashboardGridProps>): JSX.Element {
   const { createNewProjectModal } = useModalsStateStore(
     useShallow((state) => state),
   );
+
+  const { data } = useQuery({
+    queryKey: ["user-projects"],
+    queryFn: getUserProjects,
+    initialData,
+  });
 
   return (
     <div className="w-full h-full mx-1 space-y-4">

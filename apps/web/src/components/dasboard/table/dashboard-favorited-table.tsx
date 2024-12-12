@@ -4,16 +4,24 @@ import { type DashboardTableFavoritedContentResponse } from "@repo/types";
 import { DataTable } from "@repo/ui/components/table/data-table";
 import { Button } from "@repo/ui/components/ui/button";
 import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import { columns } from "@/components/dasboard/table/columns";
+import { getDashboardTableFavoritedContent } from "@/actions/dashboard/get-dashboard-table-favorited-content";
 
 interface DashboardFavoritedTableProps {
-  data: DashboardTableFavoritedContentResponse[];
+  initialData: DashboardTableFavoritedContentResponse[];
 }
 
 export function DashboardFavoritedTable({
-  data,
+  initialData,
 }: Readonly<DashboardFavoritedTableProps>): JSX.Element {
   const router = useRouter();
+
+  const { data } = useQuery({
+    queryKey: ["dashboard-favorited-components"],
+    queryFn: getDashboardTableFavoritedContent,
+    initialData,
+  });
 
   return (
     <div className="w-full h-full mx-1 space-y-4">
