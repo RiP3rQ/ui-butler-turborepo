@@ -10,10 +10,7 @@ export function useCurrentUser(): {
 } {
   const { data, isLoading } = useQuery({
     queryKey: ["user"],
-    queryFn: async () => {
-      return await getCurrentUser();
-    },
-    staleTime: 60000,
+    queryFn: getCurrentUser,
   });
 
   return { user: data, isLoading };

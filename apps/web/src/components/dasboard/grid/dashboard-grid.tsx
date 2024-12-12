@@ -28,7 +28,6 @@ export function DashboardGrid({
     queryKey: ["user-projects"],
     queryFn: getUserProjects,
     initialData,
-    staleTime: 60000,
   });
 
   return (

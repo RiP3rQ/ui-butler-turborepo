@@ -21,7 +21,6 @@ export function DashboardFavoritedTable({
     queryKey: ["dashboard-favorited-components"],
     queryFn: getDashboardTableFavoritedContent,
     initialData,
-    staleTime: 60000,
   });
 
   return (

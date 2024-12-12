@@ -35,16 +35,15 @@ export function useNewProjectForm(): {
 
   const { mutate, isPending } = useMutation({
     mutationFn: createNewProjectFunction,
-    onSuccess: async () => {
+    onSuccess: () => {
       form.reset();
       createNewProjectModal.setIsOpen(false);
-      await queryClient.invalidateQueries({
-        queryKey: [
-          "user-projects",
-          "dashboard-stat-cards",
-          "dashboard-favorited-components",
-        ],
-      });
+      // @ts-expect-error Reason: queryClient has no types
+      void queryClient.invalidateQueries("user-projects");
+      // @ts-expect-error Reason: queryClient has no types
+      void queryClient.invalidateQueries("dashboard-stat-cards");
+      // @ts-expect-error Reason: queryClient has no types
+      void queryClient.invalidateQueries("dashboard-favorited-components");
       toast.success("Created new project successfully!", { id: "new-project" });
     },
     onError: (error) => {

@@ -20,7 +20,6 @@ function DashboardStatCards({
     queryKey: ["dashboard-stat-cards"],
     queryFn: getDashboardStatCardsValues,
     initialData,
-    staleTime: 60000,
   });
 
   return (
