@@ -1,10 +1,16 @@
 "use server";
 
+import { type BalancePackId, type UserBasicCredits } from "@repo/types";
 import { cookies } from "next/headers";
-import type { UserCredentials } from "@repo/types";
 import { getErrorMessage } from "@/lib/get-error-message";
 
-export async function getUserCredentials(): Promise<UserCredentials[]> {
+interface PurchaseCreditsProps {
+  packId: BalancePackId;
+}
+
+export async function purchaseCredits({
+  packId,
+}: Readonly<PurchaseCreditsProps>): Promise<UserBasicCredits> {
   try {
     // Get existing cookies
     const cookieStore = await cookies();
@@ -15,18 +21,21 @@ export async function getUserCredentials(): Promise<UserCredentials[]> {
       .map((cookie) => `${cookie.name}=${cookie.value}`)
       .join("; ");
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/credentials`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: cookieHeader, // Include cookies in the request
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/billing/purchase-pack?packId=${packId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: cookieHeader, // Include cookies in the request
+        },
       },
-    });
+    );
     if (!res.ok) {
-      throw new Error("User not found");
+      throw new Error("User or Pack not found");
     }
 
-    return (await res.json()) as UserCredentials[];
+    return (await res.json()) as UserBasicCredits;
   } catch (error) {
     console.error(error);
     const errorMessage = getErrorMessage(error);

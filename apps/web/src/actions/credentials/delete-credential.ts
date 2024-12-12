@@ -1,10 +1,16 @@
 "use server";
 
-import { cookies } from "next/headers";
 import type { UserCredentials } from "@repo/types";
+import { cookies } from "next/headers";
 import { getErrorMessage } from "@/lib/get-error-message";
 
-export async function getUserCredentials(): Promise<UserCredentials[]> {
+interface DeleteCredentialFunctionProps {
+  id: number;
+}
+
+export async function deleteCredentialFunction({
+  id,
+}: Readonly<DeleteCredentialFunctionProps>): Promise<UserCredentials> {
   try {
     // Get existing cookies
     const cookieStore = await cookies();
@@ -15,18 +21,21 @@ export async function getUserCredentials(): Promise<UserCredentials[]> {
       .map((cookie) => `${cookie.name}=${cookie.value}`)
       .join("; ");
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/credentials`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: cookieHeader, // Include cookies in the request
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/credentials?id=${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: cookieHeader, // Include cookies in the request
+        },
       },
-    });
+    );
     if (!res.ok) {
       throw new Error("User not found");
     }
 
-    return (await res.json()) as UserCredentials[];
+    return (await res.json()) as UserCredentials;
   } catch (error) {
     console.error(error);
     const errorMessage = getErrorMessage(error);

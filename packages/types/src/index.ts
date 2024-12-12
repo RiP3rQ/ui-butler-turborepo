@@ -14,3 +14,4 @@ export * from "./workflow-execution";
 export * from "./dashboard";
 export * from "./project";
 export * from "./components";
+export * from "./credits";

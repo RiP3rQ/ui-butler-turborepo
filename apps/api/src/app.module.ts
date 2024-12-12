@@ -11,6 +11,7 @@ import { HealthController } from './health.controller';
 import { LoggerModule } from 'nestjs-pino';
 import { ProjectsModule } from './projects/projects.module';
 import { ComponentsModule } from './components/components.module';
+import { BillingModule } from './billing/billing.module';
 
 @Module({
   imports: [
@@ -71,6 +72,7 @@ import { ComponentsModule } from './components/components.module';
     CredentialsModule,
     ProjectsModule,
     ComponentsModule,
+    BillingModule,
     // ServeStaticModule.forRoot({
     //   rootPath: join(__dirname, '..', 'public'),
     // }),
