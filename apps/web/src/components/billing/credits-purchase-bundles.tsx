@@ -16,7 +16,7 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { type BalancePackId, CreditPacks } from "@repo/types";
-import { purchaseCredits } from "@/actions/billing/purchaseCredits";
+import { purchaseCredits } from "@/actions/billing/purchase-credits";
 
 export function CreditsPurchaseBundles(): JSX.Element {
   const [selectedPack, setSelectedPack] = useState<BalancePackId | null>();

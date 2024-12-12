@@ -1,5 +1,5 @@
 import { Card, CardContent, CardFooter } from "@repo/ui/components/ui/card";
-import { getAvailableCredits } from "@/actions/billing/getAvailableCredits";
+import { getAvailableCredits } from "@/actions/billing/get-available-credits";
 import { BalanceCardContent } from "@/components/billing/balance-card-content";
 
 export async function BalanceCard(): Promise<JSX.Element> {
