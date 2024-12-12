@@ -1,52 +1,50 @@
 import {
   Controller,
-  Delete,
   Get,
   NotFoundException,
-  Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { CredentialsService } from './credentials.service';
+import { BillingService } from './billing.service';
 import { LogErrors } from '../common/error-handling/log-errors.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
 import type { User } from '../database/schemas/users';
 
-@Controller('credentials')
-export class CredentialsController {
-  constructor(private readonly credentialsService: CredentialsService) {}
+@Controller('billing')
+export class BillingController {
+  constructor(private readonly billingService: BillingService) {}
 
-  // GET /credentials
-  @Get()
+  // GET /billing/user-setup
+  @Get('/user-setup')
   @LogErrors()
   @UseGuards(JwtAuthGuard)
-  getUserCredentials(@CurrentUser() user: User) {
+  setupUser(@CurrentUser() user: User) {
     if (!user) {
       throw new NotFoundException('Unauthorized');
     }
-    return this.credentialsService.getUserCredentials(user);
+    return this.billingService.setupUser(user);
   }
 
-  // POST /credentials
-  @Post()
+  // GET /billing/purchase-pack?packId=${packId}
+  @Get('/purchase-pack')
   @LogErrors()
   @UseGuards(JwtAuthGuard)
-  createCredential(@CurrentUser() user: User) {
+  purchasePack(@CurrentUser() user: User, @Query('packId') packId: string) {
     if (!user) {
       throw new NotFoundException('Unauthorized');
     }
-    return this.credentialsService.createCredential(user);
+    return this.billingService.purchasePack(user, Number(packId));
   }
 
-  // DELETE /credentials?id=${id}
-  @Delete()
+  // GET /billing/credits
+  @Get('/credits')
   @LogErrors()
   @UseGuards(JwtAuthGuard)
-  deleteCredential(@CurrentUser() user: User, @Query('id') id: string) {
+  getUserCredits(@CurrentUser() user: User) {
     if (!user) {
       throw new NotFoundException('Unauthorized');
     }
-    return this.credentialsService.deleteCredential(user, Number(id));
+    return this.billingService.getUserCredits(user);
   }
 }

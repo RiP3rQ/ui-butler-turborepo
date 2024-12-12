@@ -16,7 +16,7 @@ export async function getAvailableCredits(): Promise<UserBasicCredits> {
       .join("; ");
 
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/billing/credits}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/billing/credits`,
       {
         method: "GET",
         headers: {
