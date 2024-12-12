@@ -1,4 +1,4 @@
 export interface UserBasicCredits {
-  userId: string;
+  userId: number;
   credits: number;
 }

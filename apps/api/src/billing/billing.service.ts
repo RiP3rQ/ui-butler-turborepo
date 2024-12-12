@@ -1,7 +1,14 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DATABASE_CONNECTION } from '../database/database-connection';
 import { User } from '../database/schemas/users';
 import type { DrizzleDatabase } from '../database/merged-schemas';
+import { userBalance } from '../database/schemas/billing';
+import { eq, sql } from 'drizzle-orm';
+import {
+  BalancePackId,
+  getCreditPackById,
+  UserBasicCredits,
+} from '@repo/types';
 
 @Injectable()
 export class BillingService {
@@ -11,11 +18,64 @@ export class BillingService {
   ) {}
 
   // GET /billing/user-setup
-  async setupUser(user: User) {}
+  async setupUser(user: User) {
+    const [balance] = await this.database
+      .insert(userBalance)
+      .values({
+        userId: user.id,
+        balance: 0,
+      })
+      .returning();
+
+    if (!balance) {
+      throw new NotFoundException('User balance not found');
+    }
+
+    // return nothing as the user balance is set up
+  }
 
   // GET /billing/purchase-pack?packId=${packId}
-  async purchasePack(user: User, packId: number) {}
+  async purchasePack(user: User, packId: string) {
+    const selectedPack = getCreditPackById(packId as BalancePackId);
+
+    if (!selectedPack) {
+      throw new NotFoundException('Pack not found');
+    }
+
+    const [credits] = await this.database
+      .update(userBalance)
+      .set({
+        balance: sql`${userBalance.balance}
+        +
+        ${selectedPack.credits}`,
+      })
+      .where(eq(userBalance.id, user.id))
+      .returning();
+
+    if (!credits) {
+      throw new NotFoundException('Credits not found');
+    }
+
+    return {
+      credits: credits.balance,
+      userId: user.id,
+    } satisfies UserBasicCredits;
+  }
 
   // GET /billing/credits
-  async getUserCredits(user: User) {}
+  async getUserCredits(user: User) {
+    const [credits] = await this.database
+      .select()
+      .from(userBalance)
+      .where(eq(userBalance.id, user.id));
+
+    if (!credits) {
+      throw new NotFoundException('Credits not found');
+    }
+
+    return {
+      credits: credits.balance,
+      userId: user.id,
+    } satisfies UserBasicCredits;
+  }
 }

@@ -34,7 +34,7 @@ export class BillingController {
     if (!user) {
       throw new NotFoundException('Unauthorized');
     }
-    return this.billingService.purchasePack(user, Number(packId));
+    return this.billingService.purchasePack(user, packId);
   }
 
   // GET /billing/credits
