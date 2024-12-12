@@ -12,7 +12,7 @@ export async function BalanceCard(): Promise<JSX.Element> {
       }
     >
       <CardContent className="p-6 relative items-center">
-        <BalanceCardContent userBalance={userBalance} />
+        <BalanceCardContent initialData={userBalance} />
       </CardContent>
       <CardFooter className="text-muted-foreground text-sm">
         When your credit balance reaches zero, your workflows will stop working
@@ -20,5 +20,3 @@ export async function BalanceCard(): Promise<JSX.Element> {
     </Card>
   );
 }
-
-export default BalanceCard;

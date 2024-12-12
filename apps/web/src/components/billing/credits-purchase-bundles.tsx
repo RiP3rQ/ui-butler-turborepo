@@ -13,12 +13,13 @@ import { Label } from "@repo/ui/components/ui/label";
 import { Button } from "@repo/ui/components/ui/button";
 import { CreditCardIcon } from "lucide-react";
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { type BalancePackId, CreditPacks } from "@repo/types";
 import { purchaseCredits } from "@/actions/billing/purchase-credits";
 
 export function CreditsPurchaseBundles(): JSX.Element {
+  const queryClient = useQueryClient();
   const [selectedPack, setSelectedPack] = useState<BalancePackId | null>();
 
   const { mutate, isPending } = useMutation({
@@ -27,6 +28,8 @@ export function CreditsPurchaseBundles(): JSX.Element {
       toast.success("Credits purchased successfully", {
         id: "purchase-credits",
       });
+      // @ts-expect-error Reason: queryClient has no types
+      void queryClient.invalidateQueries("user-balance");
     },
     onError: () => {
       toast.error("Failed to purchase credits", {

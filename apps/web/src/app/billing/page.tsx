@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
-import BalanceCard from "@/components/billing/balance-card";
 import { CreditsPurchaseBundles } from "@/components/billing/credits-purchase-bundles";
+import { BalanceCard } from "@/components/billing/balance-card";
 
 function BillingPage() {
   return (

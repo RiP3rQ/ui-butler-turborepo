@@ -1,15 +1,23 @@
 "use client";
 import { CoinsIcon } from "lucide-react";
 import { type UserBasicCredits } from "@repo/types";
+import { useQuery } from "@tanstack/react-query";
 import CountUpWrapper from "@/components/credits/count-up-wrapper";
+import { getAvailableCredits } from "@/actions/billing/get-available-credits";
 
 interface BalanceCardContentProps {
-  userBalance: UserBasicCredits;
+  initialData: UserBasicCredits;
 }
 
 export function BalanceCardContent({
-  userBalance,
+  initialData,
 }: Readonly<BalanceCardContentProps>): JSX.Element {
+  const { data } = useQuery({
+    queryKey: ["user-balance"],
+    queryFn: getAvailableCredits,
+    initialData,
+  });
+
   return (
     <div className="flex justify-between items-center">
       <div>
@@ -17,7 +25,7 @@ export function BalanceCardContent({
           Available Credits
         </h3>
         <p className="text-4xl font-bold text-primary">
-          <CountUpWrapper value={userBalance.credits} />
+          <CountUpWrapper value={data.credits} />
         </p>
       </div>
 
