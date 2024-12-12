@@ -1,6 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DATABASE_CONNECTION } from '../database/database-connection';
 import type { DrizzleDatabase } from '../database/merged-schemas';
+import { User } from '../database/schemas/users';
+import {
+  NewUserCredential,
+  userCredentials,
+} from '../database/schemas/credentials';
+import { and, desc, eq } from 'drizzle-orm';
+import type { UserCredentials } from '@repo/types';
+import { CreateCredentialDto } from './dto/create-credential.dto';
+import { symmetricEncrypt } from '../common/encryption/symmetric-encryption';
 
 @Injectable()
 export class CredentialsService {
@@ -11,39 +20,64 @@ export class CredentialsService {
 
   // GET /credentials
   async getUserCredentials(user: User) {
-    const userCredentials = await this.database
+    const userCredentialsData = await this.database
       .select()
-      .from(credentials)
-      .where(eq(credentials.userId, user.id));
+      .from(userCredentials)
+      .where(eq(userCredentials.userId, user.id))
+      .orderBy(desc(userCredentials.name));
 
     if (!userCredentials) {
       throw new NotFoundException('Credentials not found');
     }
 
-    return userCredentials satisfies CredentialType[];
+    const encryptedCredentials = userCredentialsData.map((credential) => ({
+      ...credential,
+      value: symmetricEncrypt(credential.value),
+    }));
+
+    return encryptedCredentials satisfies UserCredentials[];
   }
 
   // POST /credentials
-  async createCredential(user: User) {
-    const newCredential = await this.database
-      .insert({
-        userId: user.id,
-        credential: 'New Credential',
-      })
-      .into(credentials)
-      .then((rows) => rows[0]);
+  async createCredential(user: User, createCredentialDto: CreateCredentialDto) {
+    // Encrypt value
+    const encryptedCredentailValue = symmetricEncrypt(
+      createCredentialDto.value,
+    );
 
-    return newCredential;
+    const newCredentialData = {
+      name: createCredentialDto.name,
+      value: encryptedCredentailValue,
+      userId: user.id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as NewUserCredential;
+
+    const [newCredential] = await this.database
+      .insert(userCredentials)
+      .values(newCredentialData)
+      .returning();
+
+    if (!newCredential) {
+      throw new NotFoundException('Credential not created');
+    }
+
+    return newCredential satisfies UserCredentials;
   }
 
   // DELETE /credentials?id=${id}
   async deleteCredential(user: User, id: number) {
-    const deletedCredential = await this.database
-      .delete()
-      .from(credentials)
-      .where(and(eq(credentials.userId, user.id), eq(credentials.id, id)))
-      .then((rows) => rows[0]);
+    const [deletedCredential] = await this.database
+      .delete(userCredentials)
+      .where(
+        and(eq(userCredentials.userId, user.id), eq(userCredentials.id, id)),
+      )
+      .returning();
 
-    return deletedCredential;
+    if (!deletedCredential) {
+      throw new NotFoundException('Credential not found');
+    }
+
+    return deletedCredential satisfies UserCredentials;
   }
 }

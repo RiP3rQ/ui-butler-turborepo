@@ -1,6 +1,6 @@
 export interface UserCredentials {
-  userId: string;
-  id: string;
+  userId: number;
+  id: number;
   name: string;
   value: string;
   createdAt: Date;

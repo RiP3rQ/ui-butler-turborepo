@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -12,6 +13,7 @@ import { LogErrors } from '../common/error-handling/log-errors.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
 import type { User } from '../database/schemas/users';
+import { CreateCredentialDto } from './dto/create-credential.dto';
 
 @Controller('credentials')
 export class CredentialsController {
@@ -32,11 +34,14 @@ export class CredentialsController {
   @Post()
   @LogErrors()
   @UseGuards(JwtAuthGuard)
-  createCredential(@CurrentUser() user: User) {
+  createCredential(
+    @CurrentUser() user: User,
+    @Body() createCredentialDto: CreateCredentialDto,
+  ) {
     if (!user) {
       throw new NotFoundException('Unauthorized');
     }
-    return this.credentialsService.createCredential(user);
+    return this.credentialsService.createCredential(user, createCredentialDto);
   }
 
   // DELETE /credentials?id=${id}
