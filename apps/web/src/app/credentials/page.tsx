@@ -8,8 +8,11 @@ import { Suspense } from "react";
 import { CreateCredentialDialog } from "@/components/credentials/create-credential-dialog";
 import { UserCredendials } from "@/components/credentials/user-credentials";
 import { UserWorkflowsSkeleton } from "@/app/(workflows)/workflows-list/_components/user-workflows-skeleton";
+import { getUserCredentials } from "@/actions/credentials/get-user-credentials";
 
-export default function CredentialsPage() {
+export default async function CredentialsPage() {
+  const credentials = await getUserCredentials();
+
   return (
     <div className="flex flex-1 flex-col h-full">
       <div className="flex justify-between">
@@ -31,7 +34,7 @@ export default function CredentialsPage() {
         </Alert>
         <Suspense fallback={<UserWorkflowsSkeleton />}>
           {/* @ts-expect-error Server Component */}
-          <UserCredendials />
+          <UserCredendials initialData={credentials} />
         </Suspense>
       </div>
     </div>

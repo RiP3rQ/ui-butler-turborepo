@@ -1,17 +1,26 @@
+"use client";
 import { ShieldOffIcon } from "lucide-react";
 import { Card } from "@repo/ui/components/ui/card";
+import { useQuery } from "@tanstack/react-query";
+import { type UserCredentials } from "@repo/types";
 import { CredentialCard } from "@/components/credentials/credential-card";
 import { CreateCredentialDialog } from "@/components/credentials/create-credential-dialog";
 import { getUserCredentials } from "@/actions/credentials/get-user-credentials";
 
-export async function UserCredendials(): Promise<JSX.Element> {
-  const credentials = await getUserCredentials();
+interface UserCredentialsProps {
+  initialData: UserCredentials[];
+}
 
-  if (!credentials) {
-    return <div>Something went wrong</div>;
-  }
+export function UserCredendials({
+  initialData,
+}: Readonly<UserCredentialsProps>): JSX.Element {
+  const { data } = useQuery({
+    queryKey: ["user-credentials"],
+    queryFn: getUserCredentials,
+    initialData,
+  });
 
-  if (credentials.length === 0) {
+  if (data.length === 0) {
     return (
       <Card>
         <div className="w-full p-4">
@@ -34,7 +43,7 @@ export async function UserCredendials(): Promise<JSX.Element> {
 
   return (
     <div className="flex gap-2 flex-wrap">
-      {credentials.map((credential) => (
+      {data.map((credential) => (
         <CredentialCard key={credential.id} credential={credential} />
       ))}
     </div>

@@ -15,7 +15,7 @@ import {
   FormMessage,
 } from "@repo/ui/components/ui/form";
 import { Input } from "@repo/ui/components/ui/input";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Textarea } from "@repo/ui/components/ui/textarea";
 import {
@@ -38,6 +38,7 @@ interface CreateCredentialDialogProps {
 export function CreateCredentialDialog({
   triggerText,
 }: Readonly<CreateCredentialDialogProps>): JSX.Element {
+  const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof createCredentialSchema>>({
@@ -53,6 +54,8 @@ export function CreateCredentialDialog({
       });
       form.reset();
       setIsOpen(false);
+      // @ts-expect-error Reason: queryClient has no types
+      void queryClient.invalidateQueries("user-credentials");
     },
     onError: () => {
       toast.error("Failed to create credential", { id: "create-credential" });

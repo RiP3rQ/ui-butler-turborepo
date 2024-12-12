@@ -13,7 +13,7 @@ import {
 } from "@repo/ui/components/ui/alert-dialog";
 import { Input } from "@repo/ui/components/ui/input";
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Button } from "@repo/ui/components/ui/button";
 import { XIcon } from "lucide-react";
@@ -28,6 +28,7 @@ export function DeleteCredentialDialog({
   name,
   credentialId,
 }: Readonly<DeleteCredentialDialogProps>): JSX.Element {
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState<boolean>(false);
   const [confirmText, setConfirmText] = useState<string>("");
 
@@ -36,6 +37,8 @@ export function DeleteCredentialDialog({
     onSuccess: () => {
       toast.success("Credential deleted successfully", { id: credentialId });
       setConfirmText("");
+      // @ts-expect-error Reason: queryClient has no types
+      void queryClient.invalidateQueries("user-credentials");
     },
     onError: () => {
       toast.error("Failed to delete credential", { id: credentialId });

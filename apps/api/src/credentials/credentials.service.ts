@@ -10,7 +10,6 @@ import { and, desc, eq } from 'drizzle-orm';
 import type { UserCredentials } from '@repo/types';
 import { CreateCredentialDto } from './dto/create-credential.dto';
 import { symmetricEncrypt } from '../common/encryption/symmetric-encryption';
-import { symmetricDecrypt } from '../common/encryption/symmetric-decryption';
 
 @Injectable()
 export class CredentialsService {
@@ -22,21 +21,22 @@ export class CredentialsService {
   // GET /credentials
   async getUserCredentials(user: User) {
     const userCredentialsData = await this.database
-      .select()
+      .select({
+        id: userCredentials.id,
+        name: userCredentials.name,
+        userId: userCredentials.userId,
+        createdAt: userCredentials.createdAt,
+        updatedAt: userCredentials.updatedAt,
+      })
       .from(userCredentials)
       .where(eq(userCredentials.userId, user.id))
       .orderBy(desc(userCredentials.name));
 
-    if (!userCredentials) {
+    if (!userCredentialsData) {
       throw new NotFoundException('Credentials not found');
     }
 
-    const encryptedCredentials = userCredentialsData.map((credential) => ({
-      ...credential,
-      value: symmetricDecrypt(credential.value),
-    }));
-
-    return encryptedCredentials satisfies UserCredentials[];
+    return userCredentialsData satisfies UserCredentials[];
   }
 
   // POST /credentials
@@ -63,6 +63,9 @@ export class CredentialsService {
       throw new NotFoundException('Credential not created');
     }
 
+    // Remove the value from the returned credential
+    delete newCredential.value;
+
     return newCredential satisfies UserCredentials;
   }
 
@@ -78,6 +81,9 @@ export class CredentialsService {
     if (!deletedCredential) {
       throw new NotFoundException('Credential not found');
     }
+
+    // Remove the value from the returned credential
+    delete deletedCredential.value;
 
     return deletedCredential satisfies UserCredentials;
   }
