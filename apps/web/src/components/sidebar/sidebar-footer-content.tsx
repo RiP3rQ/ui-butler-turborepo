@@ -30,9 +30,11 @@ import {
 } from "@repo/ui/components/ui/sidebar";
 import { logoutUser } from "@repo/ui/actions/auth/logout-user";
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
+import { useRouter } from "next/navigation";
 import { useCurrentUser } from "@/hooks/use-current-user";
 
 export function SidebarFooterContent(): JSX.Element {
+  const router = useRouter();
   const { isMobile } = useSidebar();
   const { user, isLoading } = useCurrentUser();
 
@@ -102,7 +104,11 @@ export function SidebarFooterContent(): JSX.Element {
                 <BadgeCheck />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  router.push("/billing");
+                }}
+              >
                 <CreditCard />
                 Billing
               </DropdownMenuItem>

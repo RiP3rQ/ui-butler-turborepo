@@ -2,7 +2,7 @@ import { LockKeyholeIcon } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Card } from "@repo/ui/components/ui/card";
 import { type UserCredentials } from "@repo/types";
-import DeleteCredentialDialog from "@/components/credentials/delete-credential-dialog";
+import { DeleteCredentialDialog } from "@/components/credentials/delete-credential-dialog";
 
 interface CredentialCardProps {
   credential: UserCredentials;

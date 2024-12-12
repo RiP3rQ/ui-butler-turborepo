@@ -10,6 +10,7 @@ import { and, desc, eq } from 'drizzle-orm';
 import type { UserCredentials } from '@repo/types';
 import { CreateCredentialDto } from './dto/create-credential.dto';
 import { symmetricEncrypt } from '../common/encryption/symmetric-encryption';
+import { symmetricDecrypt } from '../common/encryption/symmetric-decryption';
 
 @Injectable()
 export class CredentialsService {
@@ -32,7 +33,7 @@ export class CredentialsService {
 
     const encryptedCredentials = userCredentialsData.map((credential) => ({
       ...credential,
-      value: symmetricEncrypt(credential.value),
+      value: symmetricDecrypt(credential.value),
     }));
 
     return encryptedCredentials satisfies UserCredentials[];

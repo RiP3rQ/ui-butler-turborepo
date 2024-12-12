@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 interface DeleteCredentialFunctionProps {
-  id: string;
+  id: number;
 }
 
 export async function deleteCredentialFunction({

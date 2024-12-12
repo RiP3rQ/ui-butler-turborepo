@@ -21,7 +21,7 @@ import { deleteCredentialFunction } from "@/actions/credentials/delete-credentia
 
 interface DeleteCredentialDialogProps {
   name: string;
-  credentialId: string;
+  credentialId: number;
 }
 
 export function DeleteCredentialDialog({
