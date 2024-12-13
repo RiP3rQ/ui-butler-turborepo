@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@repo/ui/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
-import getUserCredentials from "@/actions/credentials/get-user-credentials";
+import { getUserCredentials } from "@/actions/credentials/get-user-credentials";
 
 function CredentialParamField({
   param,
@@ -23,7 +23,7 @@ function CredentialParamField({
   const id = useId();
   const query = useQuery({
     queryKey: ["credentials-for-user"],
-    queryFn: () => getUserCredentials(),
+    queryFn: getUserCredentials,
     refetchInterval: 10000,
   });
 
@@ -34,8 +34,8 @@ function CredentialParamField({
         {param.required ? <span className="text-red-500">{" *"}</span> : null}
       </Label>
       <Select
-        onValueChange={(value) => {
-          updateNodeParamValue(value);
+        onValueChange={(selectedValue) => {
+          updateNodeParamValue(selectedValue);
         }}
         value={value}
       >
@@ -46,7 +46,7 @@ function CredentialParamField({
           <SelectGroup>
             <SelectLabel>Credentials</SelectLabel>
             {query.data?.map((credential) => (
-              <SelectItem key={credential.id} value={credential.id}>
+              <SelectItem key={credential.id} value={String(credential.id)}>
                 {credential.name}
               </SelectItem>
             ))}

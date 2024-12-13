@@ -9,7 +9,9 @@ export default function LoadingPage(): JSX.Element {
       <Separator className="max-w-xs" />
       <div className="flex items-center justify-center gap-2">
         <Loader2Icon size={16} className="animate-spin stroke-primary" />
-        <p className="text-muted-foreground">Setting up your account...</p>
+        <p className="text-muted-foreground text-2xl">
+          Setting up your account...
+        </p>
       </div>
     </div>
   );

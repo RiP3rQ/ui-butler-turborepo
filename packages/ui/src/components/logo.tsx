@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { cn } from "@repo/ui/lib/utils";
-import { SquareDashedMousePointerIcon } from "lucide-react";
+import Icons from "@repo/ui/components/landing-page/icons";
 
 type Props = {
   fontSize?: string;
@@ -15,25 +15,18 @@ const Logo = ({ fontSize = "2xl", iconSize = 20 }: Readonly<Props>) => {
         fontSize,
       )}
     >
-      <div
-        className={
-          "rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 p-2"
-        }
-      >
-        <SquareDashedMousePointerIcon
-          size={iconSize}
-          className={"stroke-white"}
-        />
+      <div className={"p-2"}>
+        <Icons.logo size={iconSize} />
       </div>
       <div>
         <span
           className={
-            "bg-gradient-to-r from-emerald-500 to-emerald-600 bg-clip-text text-transparent"
+            "bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent"
           }
         >
-          Scrappy
+          UI
         </span>
-        <span className={"text-stone-700 dark:text-stone-200"}>Buddy</span>
+        <span className={"text-stone-700 dark:text-stone-200"}>-Butler</span>
       </div>
     </Link>
   );
