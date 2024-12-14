@@ -31,5 +31,9 @@ export async function executePhase(
   const executionEnvironment: ExecutionEnvironment<any> =
     createExecutionEnvironment(node, environment, logCollector);
 
-  return await runFn(executionEnvironment, database);
+  return await runFn(
+    executionEnvironment,
+    database,
+    environment.workflowExecutionId,
+  );
 }

@@ -4,7 +4,7 @@ import type { DrizzleDatabase } from '../database/merged-schemas';
 import { eq } from 'drizzle-orm';
 import { workflowExecutions } from '../database/schemas/workflow-executions';
 import { Edge } from '@nestjs/core/inspector/interfaces/edge.interface';
-import { Environment } from '@repo/types';
+import { Environment, WorkflowExecutionStatus } from '@repo/types';
 import { initializeWorkflowExecution } from './helpers/initialize-workflow-execution';
 import { initializeWorkflowPhasesStatuses } from './helpers/initialize-workflow-phases-statuses';
 import { executeWorkflowPhase } from './helpers/execute-workflow-phase';
@@ -34,7 +34,11 @@ export class WorkflowExecutionsService {
     }
 
     const edges = (JSON.parse(execution.definition)?.edges ?? []) as Edge[];
-    const environment: Environment = { phases: {}, code: '' };
+    const environment: Environment = {
+      phases: {},
+      code: '',
+      workflowExecutionId: workflowExecutionId,
+    };
 
     // INIT WORKFLOW EXECUTION
     await initializeWorkflowExecution(
@@ -63,25 +67,55 @@ export class WorkflowExecutionsService {
         edges,
         execution.userId,
       );
+
       if (!phaseExecution.success) {
+        // Check if execution is waiting for approval
+        const currentExecution =
+          await this.database.query.workflowExecutions.findFirst({
+            where: eq(workflowExecutions.id, workflowExecutionId),
+          });
+
+        if (
+          currentExecution?.status ===
+          WorkflowExecutionStatus.WAITING_FOR_APPROVAL
+        ) {
+          // Don't mark as failed, just return
+          console.log('Workflow paused, waiting for approval');
+          return;
+        }
+
         executionFailed = true;
         break;
       }
-      // Summing of credits consumed
+
       creditsConsumed += phaseExecution.creditsConsumed;
     }
 
-    // Finalize execution
-    await initializeFinalizeExecution(
-      this.database,
-      workflowExecutionId,
-      execution.workflowId,
-      executionFailed,
-      creditsConsumed,
-    );
+    // Only finalize if not waiting for approval
+    const currentExecution =
+      await this.database.query.workflowExecutions.findFirst({
+        where: eq(workflowExecutions.id, workflowExecutionId),
+      });
+
+    if (
+      currentExecution?.status !== WorkflowExecutionStatus.WAITING_FOR_APPROVAL
+    ) {
+      await initializeFinalizeExecution(
+        this.database,
+        workflowExecutionId,
+        execution.workflowId,
+        executionFailed,
+        creditsConsumed,
+      );
+    }
 
     console.log(
-      `Workflow execution completed for workflowId: ${execution.workflowId}`,
+      `Workflow execution ${
+        currentExecution?.status ===
+        WorkflowExecutionStatus.WAITING_FOR_APPROVAL
+          ? 'paused'
+          : 'completed'
+      } for workflowId: ${execution.workflowId}`,
     );
   }
 }
