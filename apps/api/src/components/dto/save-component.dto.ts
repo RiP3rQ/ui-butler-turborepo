@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class CreateComponentDto {
+export class SaveComponentDto {
   @IsString()
   @IsNotEmpty()
   title: string = '';

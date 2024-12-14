@@ -35,14 +35,14 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { RunCodeEditorActions } from "@/components/code-editor/run-actions-component";
 import { CODE_ACTIONS } from "@/constants/code-actions";
-import {
-  createComponentSchema,
-  type CreateComponentSchemaType,
-} from "@/schemas/component";
 import { getUserProjects } from "@/actions/projects/get-user-projects";
 import { getErrorMessage } from "@/lib/get-error-message";
-import { createNewComponentFunction } from "@/actions/components/create-new-component";
 import { CodeEditorWithPreview } from "@/components/code-editor/code-editor-with-preview";
+import { saveComponentFunction } from "@/actions/components/save-component";
+import {
+  saveComponentSchema,
+  type SaveComponentSchemaType,
+} from "@/schemas/component";
 
 export default function SaveNewComponentPage(): JSX.Element {
   const router = useRouter();
@@ -54,7 +54,7 @@ export default function SaveNewComponentPage(): JSX.Element {
   });
 
   const { mutate, isPending } = useMutation({
-    mutationFn: createNewComponentFunction,
+    mutationFn: saveComponentFunction,
     onSuccess: (res) => {
       form.reset();
       router.push(`/projects/${res.projectId}/components/${res.id}`);
@@ -69,8 +69,8 @@ export default function SaveNewComponentPage(): JSX.Element {
     },
   });
 
-  const form = useForm<CreateComponentSchemaType>({
-    resolver: zodResolver(createComponentSchema),
+  const form = useForm<SaveComponentSchemaType>({
+    resolver: zodResolver(saveComponentSchema),
     defaultValues: {
       title: "",
       projectId: "",
@@ -78,7 +78,7 @@ export default function SaveNewComponentPage(): JSX.Element {
     },
   });
 
-  const handleSaveAction = (values: CreateComponentSchemaType) => {
+  const handleSaveAction = (values: SaveComponentSchemaType) => {
     mutate(values);
   };
 
@@ -86,10 +86,10 @@ export default function SaveNewComponentPage(): JSX.Element {
     <div className="flex flex-col items-center min-h-[calc(100vh-200px)] w-full max-w-full px-8 py-4">
       <Card className="w-full h-full">
         <CardHeader>
-          <CardTitle>Create new component</CardTitle>
+          <CardTitle>Save component</CardTitle>
           <CardDescription>
             Using the code editor below, you can write your component code and
-            then choose to save it or run an action.
+            then choose to save it and run an action.
           </CardDescription>
         </CardHeader>
         <CardContent className="h-fit ">

@@ -2,7 +2,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DATABASE_CONNECTION } from '../database/database-connection';
 import type { DrizzleDatabase } from '../database/merged-schemas';
 import { User } from '../database/schemas/users';
-import { CreateComponentDto } from './dto/create-new-component.dto';
+import { SaveComponentDto } from './dto/save-component.dto';
 import { components, NewComponent } from '../database/schemas/components';
 import { and, eq } from 'drizzle-orm';
 import {
@@ -56,12 +56,12 @@ export class ComponentsService {
   }
 
   // POST /components
-  async createComponent(user: User, createComponentDto: CreateComponentDto) {
+  async saveComponent(user: User, saveComponentDto: SaveComponentDto) {
     const newComponentData = {
-      title: createComponentDto.title,
+      title: saveComponentDto.title,
       userId: user.id,
-      code: createComponentDto.code,
-      projectId: Number(createComponentDto.projectId),
+      code: saveComponentDto.code,
+      projectId: Number(saveComponentDto.projectId),
       createdAt: new Date(),
       updatedAt: new Date(),
     } as NewComponent;

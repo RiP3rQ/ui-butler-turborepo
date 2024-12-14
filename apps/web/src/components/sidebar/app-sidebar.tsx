@@ -42,8 +42,8 @@ const data = {
       isActive: false,
     },
     {
-      title: "Create new component",
-      url: "/create-new-component",
+      title: "Save component",
+      url: "/save-component",
       icon: ComponentIcon,
       isActive: false,
     },

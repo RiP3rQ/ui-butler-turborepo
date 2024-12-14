@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const createComponentSchema = z.object({
+export const saveComponentSchema = z.object({
   title: z
     .string()
     .min(1, {
@@ -22,4 +22,4 @@ export const createComponentSchema = z.object({
     }),
 });
 
-export type CreateComponentSchemaType = z.infer<typeof createComponentSchema>;
+export type SaveComponentSchemaType = z.infer<typeof saveComponentSchema>;

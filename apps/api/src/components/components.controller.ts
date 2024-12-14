@@ -13,7 +13,7 @@ import { LogErrors } from '../common/error-handling/log-errors.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
 import type { User } from '../database/schemas/users';
-import { CreateComponentDto } from './dto/create-new-component.dto';
+import { SaveComponentDto } from './dto/save-component.dto';
 import { FavoriteComponentDto } from './dto/favorite-component.dto';
 
 @Controller('components')
@@ -46,14 +46,14 @@ export class ComponentsController {
   @Post()
   @LogErrors()
   @UseGuards(JwtAuthGuard)
-  createComponent(
+  saveComponent(
     @CurrentUser() user: User,
-    @Body() createComponentDto: CreateComponentDto,
+    @Body() saveComponentDto: SaveComponentDto,
   ) {
     if (!user) {
       throw new NotFoundException('Unauthorized');
     }
-    return this.componentsService.createComponent(user, createComponentDto);
+    return this.componentsService.saveComponent(user, saveComponentDto);
   }
 
   @Post('/favorite')

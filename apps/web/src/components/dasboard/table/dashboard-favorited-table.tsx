@@ -31,10 +31,10 @@ export function DashboardFavoritedTable({
           variant="default"
           size="default"
           onClick={() => {
-            router.push("/create-new-component");
+            router.push("/save-component");
           }}
         >
-          Create new component
+          Save component
         </Button>
       </div>
       <DataTable
