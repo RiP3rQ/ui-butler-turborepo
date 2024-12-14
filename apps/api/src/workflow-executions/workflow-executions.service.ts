@@ -83,9 +83,5 @@ export class WorkflowExecutionsService {
     console.log(
       `Workflow execution completed for workflowId: ${execution.workflowId}`,
     );
-
-    console.log('Revalidating paths');
-    // revalidatePath('/workflows');
-    // revalidatePath('/workflows/runs');
   }
 }
