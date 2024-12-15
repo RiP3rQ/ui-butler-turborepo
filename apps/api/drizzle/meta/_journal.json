@@ -64,6 +64,13 @@
       "when": 1733776868528,
       "tag": "0008_purple_thunderbird",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1734281177661,
+      "tag": "0009_loose_paibok",
+      "breakpoints": true
     }
   ]
 }
