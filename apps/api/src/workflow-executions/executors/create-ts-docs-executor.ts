@@ -15,6 +15,8 @@ export async function createTsDocsExecutor(
       throw new Error('Code context is empty');
     }
 
+    console.log('codeContext', codeContext);
+
     environment.log.INFO('Generating typescript docs...');
 
     const { object } = await generateObject({

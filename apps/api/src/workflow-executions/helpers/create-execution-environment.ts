@@ -23,6 +23,13 @@ export function createExecutionEnvironment(
       environment.code = code;
     },
 
+    getTemp(name: string): string {
+      return environment.phases[node.id]?.temp[name] || '';
+    },
+    setTemp(name: string, value: string): void {
+      environment.phases[node.id].temp[name] = value;
+    },
+
     getCode: () => environment.code,
     setCode: (code: string) => {
       environment.code = code;

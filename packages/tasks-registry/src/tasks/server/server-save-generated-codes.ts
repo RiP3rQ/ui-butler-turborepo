@@ -2,7 +2,7 @@ import { BaseWorkflowTask, TaskParamType, TaskType } from "@repo/types";
 
 export const ServerSaveGeneratedCodesTask = {
   type: TaskType.SAVE_GENERATED_CODES,
-  label: "Save Generated Codes",
+  label: "Save Generated Outputs",
   isEntryPoint: false,
   inputs: [
     {
@@ -23,6 +23,11 @@ export const ServerSaveGeneratedCodesTask = {
     {
       name: "MDX Docs",
       type: TaskParamType.MDX,
+      required: false,
+    },
+    {
+      name: "Typescript Docs",
+      type: TaskParamType.TS_DOCS,
       required: false,
     },
   ] as const,

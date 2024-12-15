@@ -19,8 +19,15 @@ export const components = pgTable('components', {
   projectId: integer('project_id')
     .references(() => projects.id)
     .notNull(),
+
   code: text('code').notNull(),
+  e2eTests: text('e2e_tests'),
+  unitTests: text('unit_tests'),
+  mdxDocs: text('mdx_docs'),
+  tsDocs: text('ts_docs'),
+
   isFavorite: boolean('is_favorite').default(false),
+
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });

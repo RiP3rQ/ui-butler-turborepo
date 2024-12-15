@@ -16,6 +16,7 @@ export function setupPhaseEnvironment(
   }
 
   environment.phases[node.id] = {
+    temp: {},
     inputs: {},
     outputs: {},
   };
