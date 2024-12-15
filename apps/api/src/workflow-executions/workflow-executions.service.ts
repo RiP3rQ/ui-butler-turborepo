@@ -80,9 +80,6 @@ export class WorkflowExecutionsService {
       throw new Error('No pending phase found');
     }
 
-    // Parse the current phase inputs to get the original code
-    const inputs = JSON.parse(currentPhase.inputs || '{}');
-
     // Get the remaining phases
     const currentPhaseIndex = execution.executionPhases.indexOf(currentPhase);
     const remainingPhases = execution.executionPhases

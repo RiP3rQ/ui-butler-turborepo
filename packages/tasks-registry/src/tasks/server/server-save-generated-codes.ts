@@ -8,11 +8,21 @@ export const ServerSaveGeneratedCodesTask = {
     {
       name: "Code",
       type: TaskParamType.CODE_INSTANCE,
+      required: true,
+    },
+    {
+      name: "Unit Tests",
+      type: TaskParamType.UNIT_TESTS,
       required: false,
     },
     {
-      name: "Tests",
-      type: TaskParamType.STRING,
+      name: "E2E Tests",
+      type: TaskParamType.E2E_TESTS,
+      required: false,
+    },
+    {
+      name: "MDX Docs",
+      type: TaskParamType.MDX,
       required: false,
     },
   ] as const,

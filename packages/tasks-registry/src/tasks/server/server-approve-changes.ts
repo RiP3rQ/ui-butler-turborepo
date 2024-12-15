@@ -13,6 +13,12 @@ export const ServerApproveChangesTask = {
   ] as const,
   outputs: [
     {
+      name: "Code",
+      type: TaskParamType.CODE_INSTANCE,
+    },
+  ] as const,
+  temp: [
+    {
       name: "Original code",
       type: TaskParamType.CODE_INSTANCE,
     },

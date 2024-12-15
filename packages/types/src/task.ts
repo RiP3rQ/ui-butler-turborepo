@@ -19,6 +19,9 @@ export enum TaskParamType {
   CODE_INSTANCE = "CODE_INSTANCE",
   SELECT = "SELECT",
   CREDENTIAL = "CREDENTIAL",
+  E2E_TESTS = "E2E_TESTS",
+  UNIT_TESTS = "UNIT_TESTS",
+  MDX = "MDX",
 }
 
 export interface TaskParam {

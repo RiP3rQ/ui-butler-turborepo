@@ -14,7 +14,7 @@ export const ServerCreateE2ETestsTask = {
   outputs: [
     {
       name: "E2E Tests",
-      type: TaskParamType.STRING,
+      type: TaskParamType.E2E_TESTS,
     },
   ] as const,
   credits: 3,
