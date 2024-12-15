@@ -13,6 +13,7 @@ import { DrizzleDatabase } from '../../database/merged-schemas';
 type ExecutorFunctionType<T extends BaseWorkflowTask> = (
   environment: ExecutionEnvironment<T>,
   database: DrizzleDatabase,
+  workflowExecutionId: number,
 ) => Promise<boolean>;
 
 type RegistryType = {

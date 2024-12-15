@@ -16,6 +16,13 @@ export function createExecutionEnvironment(
       environment.phases[node.id].outputs[name] = value;
     },
 
+    getStartingCode(): string {
+      return environment.code;
+    },
+    setStartingCode(code: string): void {
+      environment.code = code;
+    },
+
     getCode: () => environment.code,
     setCode: (code: string) => {
       environment.code = code;

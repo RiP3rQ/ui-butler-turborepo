@@ -1,14 +1,21 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DATABASE_CONNECTION } from '../database/database-connection';
 import type { DrizzleDatabase } from '../database/merged-schemas';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { workflowExecutions } from '../database/schemas/workflow-executions';
 import { Edge } from '@nestjs/core/inspector/interfaces/edge.interface';
-import { Environment } from '@repo/types';
+import {
+  ApproveChangesRequest,
+  Environment,
+  ExecutionPhaseStatus,
+  IWorkflowExecutionStatus,
+  WorkflowExecutionStatus,
+} from '@repo/types';
 import { initializeWorkflowExecution } from './helpers/initialize-workflow-execution';
 import { initializeWorkflowPhasesStatuses } from './helpers/initialize-workflow-phases-statuses';
-import { executeWorkflowPhase } from './helpers/execute-workflow-phase';
-import { initializeFinalizeExecution } from './helpers/initialize-finalize-execution';
+import { User } from '../database/schemas/users';
+import { ApproveChangesDto } from './dto/approve-changes.dto';
+import { executeWorkflowPhases } from './helpers/execute-workflow-phases';
 
 @Injectable()
 export class WorkflowExecutionsService {
@@ -17,6 +24,122 @@ export class WorkflowExecutionsService {
     private readonly database: DrizzleDatabase,
   ) {}
 
+  // GET /workflow-executions/:executionId/pending-changes
+  async getPendingChanges(user: User, executionId: number) {
+    const execution = await this.database.query.workflowExecutions.findFirst({
+      where: and(
+        eq(workflowExecutions.id, executionId),
+        eq(workflowExecutions.userId, user.id),
+      ),
+      with: {
+        executionPhases: true,
+      },
+    });
+
+    if (!execution) {
+      throw new NotFoundException('Execution not found');
+    }
+
+    const pendingPhase = execution.executionPhases.find(
+      (phase) => phase.status === ExecutionPhaseStatus.FAILED, // TODO: CHANGE THIS TO PROPER TYPE
+    );
+
+    const parsedOutputs = JSON.parse(pendingPhase?.outputs || '{}');
+
+    return {
+      pendingApproval: parsedOutputs,
+      status: execution.status as IWorkflowExecutionStatus,
+    } satisfies ApproveChangesRequest;
+  }
+
+  // POST /workflow-executions/:executionId/approve
+  async approveChanges(
+    user: User,
+    executionId: number,
+    body: ApproveChangesDto,
+  ) {
+    // Get the current execution with all necessary data
+    const execution = await this.database.query.workflowExecutions.findFirst({
+      where: eq(workflowExecutions.id, executionId),
+      with: {
+        workflow: true,
+        executionPhases: true,
+      },
+    });
+
+    if (!execution) {
+      throw new NotFoundException('Execution not found');
+    }
+
+    // Find the current pending phase that requested approval
+    const currentPhase = execution.executionPhases.find(
+      (phase) => phase.status === ExecutionPhaseStatus.FAILED, // TODO: CHANGE THIS TO PROPER TYPE
+    );
+
+    if (!currentPhase) {
+      throw new Error('No pending phase found');
+    }
+
+    // Parse the current phase inputs to get the original code
+    const inputs = JSON.parse(currentPhase.inputs || '{}');
+
+    // Get the remaining phases
+    const currentPhaseIndex = execution.executionPhases.indexOf(currentPhase);
+    const remainingPhases = execution.executionPhases
+      .slice(currentPhaseIndex)
+      .filter((phase) => phase.status === ExecutionPhaseStatus.PENDING);
+
+    // Parse edges from the execution definition
+    const edges = (JSON.parse(execution.definition)?.edges ?? []) as Edge[];
+
+    // Parse the current phase outputs to get the pending code
+    const outputs = JSON.parse(currentPhase.outputs || '{}');
+    const originalCode = outputs?.['Original code'] ?? '';
+    const pendingCode = outputs?.['Pending code'] ?? '';
+
+    // Create environment with the appropriate code context
+    const environment: Environment = {
+      phases: {},
+      // If not approved, use original code, if approved use the modified code
+      code:
+        body.decision === 'approve'
+          ? (pendingCode ?? originalCode)
+          : originalCode,
+      workflowExecutionId: executionId,
+    };
+
+    console.log('Environment', environment);
+    console.log('Current phase', currentPhase);
+    console.log('remainingPhases', remainingPhases);
+
+    // Update execution status to RUNNING
+    await this.database
+      .update(workflowExecutions)
+      .set({
+        status: WorkflowExecutionStatus.RUNNING,
+      })
+      .where(eq(workflowExecutions.id, executionId));
+
+    // Continue execution with remaining phases
+    await executeWorkflowPhases(
+      this.database,
+      environment,
+      executionId,
+      remainingPhases,
+      edges,
+      execution,
+    );
+
+    return {
+      message:
+        body.decision === 'approve'
+          ? 'Changes approved, workflow execution resumed'
+          : 'Changes rejected, continuing with original code',
+      status: WorkflowExecutionStatus.RUNNING,
+    };
+  }
+
+  // EXECUTE WORKFLOW ----------------------------------------------------------
   async executeWorkflow(workflowExecutionId: number, nextRunAt?: Date) {
     // execute workflow
     console.log('executing workflow', workflowExecutionId);
@@ -34,7 +157,11 @@ export class WorkflowExecutionsService {
     }
 
     const edges = (JSON.parse(execution.definition)?.edges ?? []) as Edge[];
-    const environment: Environment = { phases: {}, code: '' };
+    const environment: Environment = {
+      phases: {},
+      code: '',
+      workflowExecutionId: workflowExecutionId,
+    };
 
     // INIT WORKFLOW EXECUTION
     await initializeWorkflowExecution(
@@ -49,43 +176,22 @@ export class WorkflowExecutionsService {
       execution.executionPhases,
     );
 
-    // VALUES NEEDED TO FINALIZE EXECUTION OF WORKFLOW
-    let executionFailed: boolean = false;
-    let creditsConsumed: number = 0;
-
-    // MAP THROUGH PHASES AND EXECUTE THEM
-    for (const phase of execution.executionPhases) {
-      // EXECUTE PHASE with failure handling
-      const phaseExecution = await executeWorkflowPhase(
-        this.database,
-        phase,
-        environment,
-        edges,
-        execution.userId,
-      );
-      if (!phaseExecution.success) {
-        executionFailed = true;
-        break;
-      }
-      // Summing of credits consumed
-      creditsConsumed += phaseExecution.creditsConsumed;
-    }
-
-    // Finalize execution
-    await initializeFinalizeExecution(
+    // EXECUTE PHASES
+    await executeWorkflowPhases(
       this.database,
+      environment,
       workflowExecutionId,
-      execution.workflowId,
-      executionFailed,
-      creditsConsumed,
+      execution.executionPhases,
+      edges,
+      execution,
     );
 
     console.log(
-      `Workflow execution completed for workflowId: ${execution.workflowId}`,
+      `Workflow execution ${
+        execution?.status === WorkflowExecutionStatus.WAITING_FOR_APPROVAL
+          ? 'paused'
+          : 'completed'
+      } for workflowId: ${execution.workflowId}`,
     );
-
-    console.log('Revalidating paths');
-    // revalidatePath('/workflows');
-    // revalidatePath('/workflows/runs');
   }
 }

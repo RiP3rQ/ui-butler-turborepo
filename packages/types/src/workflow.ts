@@ -49,6 +49,7 @@ export const WorkflowExecutionStatus = {
   RUNNING: "RUNNING",
   FAILED: "FAILED",
   COMPLETED: "COMPLETED",
+  WAITING_FOR_APPROVAL: "WAITING_FOR_APPROVAL",
 } as const;
 
 export type IWorkflowExecutionStatus =

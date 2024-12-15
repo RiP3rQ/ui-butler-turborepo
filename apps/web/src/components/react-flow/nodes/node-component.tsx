@@ -16,8 +16,6 @@ const NodeComponent = memo(function NodeComponent(props: Readonly<NodeProps>) {
   const nodeData = props.data as AppNodeData;
   const task = ClientTaskRegister[nodeData.type];
 
-  console.log("task", task);
-
   return (
     <NodeCard
       isSelected={Boolean(props.selected)}

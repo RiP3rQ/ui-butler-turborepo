@@ -39,6 +39,7 @@ export async function improveStylesExecutor(
     }
 
     environment.setCode(object.improvedCode.code);
+    environment.setOutput('Code', object.improvedCode.code);
     environment.log.SUCCESS('Styles improved successfully');
     return true;
   } catch (e) {

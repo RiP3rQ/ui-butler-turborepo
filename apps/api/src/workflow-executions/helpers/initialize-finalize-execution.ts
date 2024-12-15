@@ -1,7 +1,7 @@
 import { WorkflowExecutionStatus } from '@repo/types';
 import { DrizzleDatabase } from '../../database/merged-schemas';
 import { workflowExecutions } from '../../database/schemas/workflow-executions';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, ne } from 'drizzle-orm';
 import { workflows, WorkflowUpdate } from '../../database/schemas/workflows';
 import {
   InternalServerErrorException,
@@ -17,6 +17,18 @@ export async function initializeFinalizeExecution(
 ) {
   if (!executionId || !workflowId) {
     throw new Error('Execution ID and Workflow ID are required');
+  }
+
+  // First, check if the execution is in WAITING_FOR_APPROVAL status
+  const currentExecution = await database.query.workflowExecutions.findFirst({
+    where: eq(workflowExecutions.id, executionId),
+  });
+
+  if (
+    currentExecution?.status === WorkflowExecutionStatus.WAITING_FOR_APPROVAL
+  ) {
+    // If waiting for approval, don't update the status
+    return;
   }
 
   const finalStatus = executionFailed
@@ -41,7 +53,16 @@ export async function initializeFinalizeExecution(
         tx
           .update(workflowExecutions)
           .set(workflowExecutionData)
-          .where(eq(workflowExecutions.id, executionId))
+          .where(
+            and(
+              eq(workflowExecutions.id, executionId),
+              // Only update if not in WAITING_FOR_APPROVAL status
+              ne(
+                workflowExecutions.status,
+                WorkflowExecutionStatus.WAITING_FOR_APPROVAL,
+              ),
+            ),
+          )
           .returning(),
         // Update workflow status
         tx

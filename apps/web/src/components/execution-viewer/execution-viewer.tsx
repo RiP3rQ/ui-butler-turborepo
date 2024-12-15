@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Separator } from "@repo/ui/components/ui/separator";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Badge } from "@repo/ui/components/ui/badge";
 import ExecutionRunPhasesRenderer from "@/components/execution-viewer/execution-run-phases-renderer";
 import ExecutionRunPhasesHeader from "@/components/execution-viewer/execution-run-phases-header";
@@ -25,6 +25,8 @@ import CountUpWrapper from "@/components/credits/count-up-wrapper";
 import { dateToDurationString } from "@/lib/dates";
 import { getPhasesTotalCost } from "@/lib/get-phases-total-cost";
 import { getWorkflowPhaseDetailsFunction } from "@/actions/workflows/get-workflow-phase-details";
+import { getPendingChanges } from "@/actions/executions/get-pending-changes";
+import { ApproveChangesDialog } from "@/components/dialogs/approve-changes-dialog";
 
 export type ExecutionData = Awaited<
   ReturnType<typeof getWorkflowExecutionWithPhasesDetailsFunction>
@@ -45,10 +47,26 @@ function ExecutionViewer({ initialData }: Readonly<ExecutionViewerProps>) {
         executionId: initialData.id,
       }),
     refetchInterval: (q) =>
-      q.state.data?.status === WorkflowExecutionStatus.RUNNING ? 1000 : false,
+      q.state.data?.status === WorkflowExecutionStatus.FAILED ||
+      q.state.data?.status === WorkflowExecutionStatus.COMPLETED
+        ? false
+        : 1000,
   });
 
-  console.log(query.data);
+  const pendingChangesQuery = useQuery({
+    queryKey: ["pendingChanges", query.data.id],
+    enabled: query.data.status === WorkflowExecutionStatus.WAITING_FOR_APPROVAL,
+    refetchInterval: (q) =>
+      q.state.data?.status === WorkflowExecutionStatus.RUNNING ? 1000 : false,
+    queryFn: () => getPendingChanges({ executionId: query.data.id }),
+  });
+
+  const shouldOpenApproveChangesModal = useMemo(() => {
+    return Boolean(
+      query.data.status === WorkflowExecutionStatus.WAITING_FOR_APPROVAL &&
+        pendingChangesQuery.data?.pendingApproval,
+    );
+  }, [query.data.status, pendingChangesQuery.data?.pendingApproval]);
 
   const isRunning = query.data.status === WorkflowExecutionStatus.RUNNING;
 
@@ -86,6 +104,11 @@ function ExecutionViewer({ initialData }: Readonly<ExecutionViewerProps>) {
 
   return (
     <div className="flex w-full h-full">
+      <ApproveChangesDialog
+        executionId={query.data.id}
+        open={shouldOpenApproveChangesModal}
+        data={pendingChangesQuery.data?.pendingApproval}
+      />
       <aside className="w-[440px] min-w-[440px] max-w-[440px] border-r-2 border-separate flex flex-grow flex-col overflow-hidden">
         <div className="py-4 px-2">
           <ExecutionLabel

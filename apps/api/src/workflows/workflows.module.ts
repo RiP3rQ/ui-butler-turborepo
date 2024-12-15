@@ -9,5 +9,6 @@ import { WorkflowExecutionsModule } from '../workflow-executions/workflow-execut
   imports: [DatabaseModule, WorkflowExecutionsModule],
   controllers: [WorkflowsController],
   providers: [WorkflowsService, JwtAuthGuard],
+  exports: [WorkflowsService],
 })
 export class WorkflowsModule {}

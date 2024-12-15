@@ -47,7 +47,7 @@ export function setupPhaseEnvironment(
     }
 
     const outputValue =
-      environment.phases[connectedEdge.source].outputs[
+      environment.phases[connectedEdge.source]?.outputs[
         connectedEdge.sourceHandle
       ];
     if (!outputValue) {
