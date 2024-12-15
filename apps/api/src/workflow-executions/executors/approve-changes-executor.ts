@@ -15,10 +15,17 @@ export async function approveChangesExecutor(
       throw new Error('Code context is empty');
     }
 
+    const originalCodeContext = environment.getStartingCode();
+    if (!originalCodeContext) {
+      environment.log.ERROR('Original code context is empty');
+      throw new Error('Original code context is empty');
+    }
+
     environment.log.INFO('Waiting for user approval...');
 
     // Store the current code state
-    environment.setOutput('Code', codeContext);
+    environment.setOutput('Original code', originalCodeContext);
+    environment.setOutput('Pending code', codeContext);
 
     // Pause the workflow execution
     await pauseResumeWorkflowExecution(workflowExecutionId, database);

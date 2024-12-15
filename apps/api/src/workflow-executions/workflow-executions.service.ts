@@ -5,8 +5,10 @@ import { and, eq } from 'drizzle-orm';
 import { workflowExecutions } from '../database/schemas/workflow-executions';
 import { Edge } from '@nestjs/core/inspector/interfaces/edge.interface';
 import {
+  ApproveChangesRequest,
   Environment,
   ExecutionPhaseStatus,
+  IWorkflowExecutionStatus,
   WorkflowExecutionStatus,
 } from '@repo/types';
 import { initializeWorkflowExecution } from './helpers/initialize-workflow-execution';
@@ -39,13 +41,15 @@ export class WorkflowExecutionsService {
     }
 
     const pendingPhase = execution.executionPhases.find(
-      (phase) => phase.status === ExecutionPhaseStatus.PENDING,
+      (phase) => phase.status === ExecutionPhaseStatus.FAILED, // TODO: CHANGE THIS TO PROPER TYPE
     );
 
+    const parsedOutputs = JSON.parse(pendingPhase?.outputs || '{}');
+
     return {
-      pendingCode: pendingPhase?.outputs ?? {},
-      status: execution.status,
-    };
+      pendingApproval: parsedOutputs,
+      status: execution.status as IWorkflowExecutionStatus,
+    } satisfies ApproveChangesRequest;
   }
 
   // POST /workflow-executions/:executionId/approve
