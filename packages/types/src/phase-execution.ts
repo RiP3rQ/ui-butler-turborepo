@@ -1,3 +1,5 @@
+import { IWorkflowExecutionStatus } from "./workflow";
+
 export interface ExecutionPhase {
   number: number;
   id: number;
@@ -20,4 +22,12 @@ export interface ExecutionLog {
   logLevel: string;
   message: string;
   timestamp: Date;
+}
+
+export interface ApproveChangesRequest {
+  status: IWorkflowExecutionStatus;
+  pendingApproval: {
+    "Original code": string;
+    "Pending code": string;
+  };
 }

@@ -12,6 +12,7 @@ export async function setCodeContextExecutor(
     }
     environment.log.INFO('Fetched code context successfully');
     environment.setCode(codeContext);
+    environment.setStartingCode(codeContext);
     environment.log.SUCCESS('Code context set successfully');
     return true;
   } catch (e) {

@@ -4,6 +4,7 @@ import {
   ExecutionEnvironment,
   ExecutionPhase,
   LogCollector,
+  WorkflowExecutionStatus,
 } from '@repo/types';
 import { createExecutionEnvironment } from './create-execution-environment';
 import { ExecutorRegistry } from '../executors/executor';
@@ -15,7 +16,7 @@ export async function executePhase(
   node: AppNode,
   environment: Environment,
   logCollector: LogCollector,
-): Promise<boolean> {
+): Promise<boolean | typeof WorkflowExecutionStatus.WAITING_FOR_APPROVAL> {
   if (!phase || !node) {
     throw new Error('Execution phase-executors or node not found');
   }
@@ -31,5 +32,9 @@ export async function executePhase(
   const executionEnvironment: ExecutionEnvironment<any> =
     createExecutionEnvironment(node, environment, logCollector);
 
-  return await runFn(executionEnvironment, database);
+  return await runFn(
+    executionEnvironment,
+    database,
+    environment.workflowExecutionId,
+  );
 }

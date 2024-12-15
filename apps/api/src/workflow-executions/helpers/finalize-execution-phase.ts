@@ -1,4 +1,8 @@
-import { ExecutionPhaseStatus, LogCollector } from '@repo/types';
+import {
+  ExecutionPhaseStatus,
+  LogCollector,
+  WorkflowExecutionStatus,
+} from '@repo/types';
 import { DrizzleDatabase } from '../../database/merged-schemas';
 import {
   executionLog,
@@ -10,8 +14,9 @@ import { NotFoundException } from '@nestjs/common';
 export async function finalizeExecutionPhase(
   database: DrizzleDatabase,
   phaseId: number,
-  success: boolean,
+  success: boolean | typeof WorkflowExecutionStatus.WAITING_FOR_APPROVAL,
   outputs: Record<string, string>,
+  tempValues: Record<string, string>,
   logCollector: LogCollector,
   creditsConsumed: number,
 ) {
@@ -19,14 +24,20 @@ export async function finalizeExecutionPhase(
     throw new Error('Phase ID and success status are required');
   }
 
-  const finalStatus = success
-    ? ExecutionPhaseStatus.COMPLETED
-    : ExecutionPhaseStatus.FAILED;
+  console.log('Finalizing phase', phaseId, success);
+
+  const finalStatus =
+    success === WorkflowExecutionStatus.WAITING_FOR_APPROVAL
+      ? ExecutionPhaseStatus.WAITING_FOR_APPROVAL
+      : success
+        ? ExecutionPhaseStatus.COMPLETED
+        : ExecutionPhaseStatus.FAILED;
 
   const workflowExecutionData = {
     status: finalStatus,
     completedAt: new Date(),
     outputs: JSON.stringify(outputs),
+    temp: JSON.stringify(tempValues),
     creditsCost: creditsConsumed,
   };
 

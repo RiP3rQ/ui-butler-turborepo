@@ -26,6 +26,7 @@ import {
   ClientTaskRegister,
   createFlowNodeFunction,
 } from "@repo/tasks-registry";
+import { toast } from "sonner";
 import NodeComponent from "@/components/react-flow/nodes/node-component";
 import DeletableEdge from "@/components/react-flow/edges/deletable-edge";
 
@@ -109,7 +110,7 @@ function FlowEditor({ workflow }: Readonly<FlowEditorProps>): JSX.Element {
       // no self-connections allowed
       if (connection.source === connection.target) {
         console.error("Self-connections are not allowed");
-        // TODO: TOAST error
+        toast.error("Self-connections are not allowed");
         return false;
       }
 
@@ -118,7 +119,7 @@ function FlowEditor({ workflow }: Readonly<FlowEditorProps>): JSX.Element {
       const targetNode = nodes.find((n) => n.id === connection.target);
       if (!sourceNode || !targetNode) {
         console.error("Source or target node not found");
-        // TODO: TOAST error
+        toast.error("Source or target node not found");
         return false;
       }
 
@@ -135,7 +136,7 @@ function FlowEditor({ workflow }: Readonly<FlowEditorProps>): JSX.Element {
 
       if (input?.type !== output?.type) {
         console.error("Connection type mismatch");
-        // TODO: TOAST error
+        toast.error("Connection type mismatch");
         return false;
       }
 

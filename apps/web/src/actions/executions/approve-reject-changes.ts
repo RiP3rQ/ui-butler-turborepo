@@ -1,14 +1,17 @@
 "use server";
 
 import { cookies } from "next/headers";
-import type { WorkflowExecutionWithPhases } from "@repo/types";
 import { getErrorMessage } from "@/lib/get-error-message";
 
-export async function getWorkflowExecutionWithPhasesDetailsFunction({
-  executionId,
-}: {
+interface ApprovePendingChangesProps {
   executionId: number;
-}): Promise<WorkflowExecutionWithPhases> {
+  decision: "approve" | "reject";
+}
+
+export async function approvePendingChanges({
+  executionId,
+  decision,
+}: Readonly<ApprovePendingChangesProps>): Promise<void> {
   try {
     // Get existing cookies
     const cookieStore = await cookies();
@@ -20,21 +23,20 @@ export async function getWorkflowExecutionWithPhasesDetailsFunction({
       .join("; ");
 
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/workflows/executions?executionId=${String(executionId)}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/executions-executions/${String(executionId)}/approve`,
       {
-        method: "GET",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Cookie: cookieHeader, // Include cookies in the request
         },
+        body: JSON.stringify({ decision }),
       },
     );
 
     if (!res.ok) {
-      throw new Error("Workflows not found");
+      throw new Error("Failed to approve changes");
     }
-
-    return (await res.json()) as WorkflowExecutionWithPhases;
   } catch (error) {
     console.error(error);
     const errorMessage = getErrorMessage(error);

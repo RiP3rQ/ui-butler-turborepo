@@ -1,4 +1,9 @@
-import { BaseWorkflowTask, ExecutionEnvironment, TaskType } from '@repo/types';
+import {
+  BaseWorkflowTask,
+  ExecutionEnvironment,
+  TaskType,
+  WorkflowExecutionStatus,
+} from '@repo/types';
 import { setCodeContextExecutor } from './set-code-context-executor';
 import { optimizeCodeExecutor } from './optimize-code-executor';
 import { improveStylesExecutor } from './improve-styles-executor';
@@ -13,7 +18,8 @@ import { DrizzleDatabase } from '../../database/merged-schemas';
 type ExecutorFunctionType<T extends BaseWorkflowTask> = (
   environment: ExecutionEnvironment<T>,
   database: DrizzleDatabase,
-) => Promise<boolean>;
+  workflowExecutionId: number,
+) => Promise<boolean | typeof WorkflowExecutionStatus.WAITING_FOR_APPROVAL>;
 
 type RegistryType = {
   [K in TaskType]: ExecutorFunctionType<BaseWorkflowTask & { type: K }>;

@@ -38,6 +38,7 @@ export async function optimizeCodeExecutor(
     }
 
     environment.setCode(object.optimizedCode.code);
+    environment.setOutput('Code', object.optimizedCode.code);
     environment.log.SUCCESS('Code optimized successfully');
     return true;
   } catch (e) {

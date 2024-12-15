@@ -16,6 +16,7 @@ export function setupPhaseEnvironment(
   }
 
   environment.phases[node.id] = {
+    temp: {},
     inputs: {},
     outputs: {},
   };
@@ -47,7 +48,7 @@ export function setupPhaseEnvironment(
     }
 
     const outputValue =
-      environment.phases[connectedEdge.source].outputs[
+      environment.phases[connectedEdge.source]?.outputs[
         connectedEdge.sourceHandle
       ];
     if (!outputValue) {

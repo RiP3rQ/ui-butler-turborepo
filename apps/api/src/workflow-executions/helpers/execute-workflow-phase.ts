@@ -52,12 +52,8 @@ export async function executeWorkflowPhase(
 
   // Decrement user balance
   const creditsRequired = ServerTaskRegister[node.data.type].credits;
-  let success = await decrementUserCredits(
-    database,
-    userId,
-    creditsRequired,
-    logCollector,
-  );
+  let success: boolean | typeof WorkflowExecutionStatus.WAITING_FOR_APPROVAL =
+    await decrementUserCredits(database, userId, creditsRequired, logCollector);
   const creditsConsumed = success ? creditsRequired : 0;
 
   if (success) {
@@ -71,13 +67,17 @@ export async function executeWorkflowPhase(
     );
   }
 
+  console.log('Phase executed', success);
+
   // Finalize phase-executors
   const outputs = environment.phases[node.id].outputs;
+  const tempValues = environment.phases[node.id].temp;
   await finalizeExecutionPhase(
     database,
     phase.id,
     success,
     outputs,
+    tempValues,
     logCollector,
     creditsConsumed,
   );

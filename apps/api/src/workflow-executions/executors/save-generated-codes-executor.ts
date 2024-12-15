@@ -7,17 +7,46 @@ export async function saveGeneratedCodesExecutor(
   database: DrizzleDatabase,
 ): Promise<boolean> {
   try {
-    const codeContext = environment.getCode();
-    if (!codeContext) {
-      environment.log.ERROR('Code context is empty');
+    const code = environment.getCode();
+    if (!code) {
+      environment.log.ERROR('Code is empty');
     }
 
-    const tests = environment.getInput('Tests');
-    if (!tests) {
-      environment.log.ERROR('Tests are empty');
+    const e2eTests = environment.getInput('E2E Tests');
+    if (!e2eTests) {
+      environment.log.ERROR('E2E Tests are empty');
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    const unitTests = environment.getInput('Unit Tests');
+    if (!unitTests) {
+      environment.log.ERROR('Unit Tests are empty');
+    }
+
+    const mdxDocs = environment.getInput('MDX Docs');
+    if (!mdxDocs) {
+      environment.log.ERROR('MDX Docs are empty');
+    }
+
+    const tsDocs = environment.getInput('Typescript Docs');
+    if (!tsDocs) {
+      environment.log.ERROR('TypeScript Docs are empty');
+    }
+
+    const updatedComponents = {
+      e2eTests,
+      unitTests,
+      mdxDocs,
+      code,
+      tsDocs,
+      updatedAt: new Date(),
+    };
+
+    console.log('Updated components:', updatedComponents);
+
+    // await database
+    //   .update(components)
+    //   .set(updatedComponents)
+    //   .where(eq(components.id, environment.componentId)); // TODO: ADD COMPONENT ID TO ENVIRONMENT
 
     environment.log.INFO('Saving generated codes...');
     console.log('Saving generated codes...');
