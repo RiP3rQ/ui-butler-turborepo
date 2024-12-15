@@ -36,7 +36,7 @@ export const workflowExecutions = pgTable(
   }),
 );
 
-export const WorkflowExecution = typeof workflowExecutions.$inferSelect;
+export type WorkflowExecution = typeof workflowExecutions.$inferSelect;
 export type NewWorkflowExecution = typeof workflowExecutions.$inferInsert;
 
 export const workflowExecutionRelations = relations(

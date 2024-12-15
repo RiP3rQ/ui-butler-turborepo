@@ -1,56 +1,53 @@
-import { Controller } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { WorkflowExecutionsService } from './workflow-executions.service';
-import { WorkflowsService } from '../workflows/workflows.service';
+import { LogErrors } from '../common/error-handling/log-errors.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CurrentUser } from '../auth/current-user.decorator';
+import type { User } from '../database/schemas/users';
+import { ApproveChangesDto } from './dto/approve-changes.dto';
 
 @Controller('executions-executions')
 export class WorkflowExecutionsController {
   constructor(
-    private readonly workflowService: WorkflowsService,
     private readonly workflowExecutionsService: WorkflowExecutionsService,
   ) {}
 
-  // @Get(':executionId/pending-changes')
-  // async getPendingChanges(@Param('executionId') executionId: number) {
-  //   const execution = await this.database.query.workflowExecutions.findFirst({
-  //     where: eq(workflowExecutions.id, executionId),
-  //     with: {
-  //       executionPhases: true,
-  //     },
-  //   });
-  //
-  //   if (!execution) {
-  //     throw new NotFoundException('Execution not found');
-  //   }
-  //
-  //   const pendingPhase = execution.executionPhases.find(
-  //     (phase) => phase.status === ExecutionPhaseStatus.PENDING,
-  //   );
-  //
-  //   return {
-  //     pendingCode: pendingPhase?.outputs?.pendingCode || '',
-  //     status: execution.status,
-  //   };
-  // }
-  //
-  // @Post(':executionId/approve')
-  // async approveChanges(
-  //   @Param('executionId') executionId: number,
-  //   @Body() body: { approved: boolean },
-  // ) {
-  //   const remainingPhases = await resumeWorkflowExecution(
-  //     executionId,
-  //     this.database,
-  //     body.approved,
-  //   );
-  //
-  //   if (body.approved && remainingPhases) {
-  //     // Continue execution with remaining phases
-  //     await this.workflowService.executeWorkflowPhases(
-  //       executionId,
-  //       remainingPhases,
-  //     );
-  //   }
-  //
-  //   return { message: body.approved ? 'Changes approved' : 'Changes rejected' };
-  // }
+  @Get(':executionId/pending-changes')
+  @LogErrors()
+  @UseGuards(JwtAuthGuard)
+  getPendingChanges(
+    @CurrentUser() user: User,
+    @Param('executionId') executionId: number,
+  ) {
+    if (!user) {
+      throw new NotFoundException('Unauthorized');
+    }
+    return this.workflowExecutionsService.getPendingChanges(user, executionId);
+  }
+
+  @Post(':executionId/approve')
+  @LogErrors()
+  @UseGuards(JwtAuthGuard)
+  approveChanges(
+    @CurrentUser() user: User,
+    @Param('executionId') executionId: number,
+    @Body() body: ApproveChangesDto,
+  ) {
+    if (!user) {
+      throw new NotFoundException('Unauthorized');
+    }
+    return this.workflowExecutionsService.approveChanges(
+      user,
+      executionId,
+      body,
+    );
+  }
 }
