@@ -72,6 +72,7 @@ export const executionPhase = pgTable(
 
     inputs: text('inputs'),
     outputs: text('outputs'),
+    temp: text('temp'),
 
     creditsCost: integer('credits_cost'),
 

@@ -33,7 +33,10 @@ export async function executeWorkflowPhases(
       execution.userId,
     );
 
-    if (!phaseExecution.success) {
+    // Check if execution is waiting for approval
+    if (
+      phaseExecution.success === WorkflowExecutionStatus.WAITING_FOR_APPROVAL
+    ) {
       // Check if execution is waiting for approval
       const execution = await database.query.workflowExecutions.findFirst({
         where: eq(workflowExecutions.id, executionId),
@@ -43,7 +46,10 @@ export async function executeWorkflowPhases(
         // Stop execution here and wait for user approval
         return;
       }
+    }
 
+    // Handling phase execution failure
+    if (!phaseExecution.success) {
       executionFailed = true;
       break;
     }

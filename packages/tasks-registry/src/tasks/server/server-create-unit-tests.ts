@@ -14,7 +14,7 @@ export const ServerCreateUnitTestsTask = {
   outputs: [
     {
       name: "Unit Tests",
-      type: TaskParamType.STRING,
+      type: TaskParamType.UNIT_TESTS,
     },
   ] as const,
   credits: 3,

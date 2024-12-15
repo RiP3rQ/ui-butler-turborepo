@@ -14,7 +14,7 @@ export const ServerCreateMDXDocsTask = {
   outputs: [
     {
       name: "MDX Docs",
-      type: TaskParamType.STRING,
+      type: TaskParamType.MDX,
     },
   ] as const,
   credits: 3,

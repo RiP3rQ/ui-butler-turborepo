@@ -64,6 +64,27 @@
       "when": 1733776868528,
       "tag": "0008_purple_thunderbird",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1734281177661,
+      "tag": "0009_loose_paibok",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1734286900763,
+      "tag": "0010_fat_dreaming_celestial",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1734289743825,
+      "tag": "0011_cuddly_fenris",
+      "breakpoints": true
     }
   ]
 }

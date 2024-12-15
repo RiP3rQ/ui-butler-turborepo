@@ -2,7 +2,10 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DATABASE_CONNECTION } from '../database/database-connection';
 import type { DrizzleDatabase } from '../database/merged-schemas';
 import { and, eq } from 'drizzle-orm';
-import { workflowExecutions } from '../database/schemas/workflow-executions';
+import {
+  executionPhase,
+  workflowExecutions,
+} from '../database/schemas/workflow-executions';
 import { Edge } from '@nestjs/core/inspector/interfaces/edge.interface';
 import {
   ApproveChangesRequest,
@@ -41,13 +44,15 @@ export class WorkflowExecutionsService {
     }
 
     const pendingPhase = execution.executionPhases.find(
-      (phase) => phase.status === ExecutionPhaseStatus.FAILED, // TODO: CHANGE THIS TO PROPER TYPE
+      (phase) => phase.status === ExecutionPhaseStatus.WAITING_FOR_APPROVAL,
     );
 
-    const parsedOutputs = JSON.parse(pendingPhase?.outputs || '{}');
+    console.log('Pending phase', pendingPhase);
+
+    const parsedTemp = JSON.parse(pendingPhase?.temp || '{}');
 
     return {
-      pendingApproval: parsedOutputs,
+      pendingApproval: parsedTemp,
       status: execution.status as IWorkflowExecutionStatus,
     } satisfies ApproveChangesRequest;
   }
@@ -73,15 +78,12 @@ export class WorkflowExecutionsService {
 
     // Find the current pending phase that requested approval
     const currentPhase = execution.executionPhases.find(
-      (phase) => phase.status === ExecutionPhaseStatus.FAILED, // TODO: CHANGE THIS TO PROPER TYPE
+      (phase) => phase.status === ExecutionPhaseStatus.WAITING_FOR_APPROVAL,
     );
 
     if (!currentPhase) {
       throw new Error('No pending phase found');
     }
-
-    // Parse the current phase inputs to get the original code
-    const inputs = JSON.parse(currentPhase.inputs || '{}');
 
     // Get the remaining phases
     const currentPhaseIndex = execution.executionPhases.indexOf(currentPhase);
@@ -93,9 +95,9 @@ export class WorkflowExecutionsService {
     const edges = (JSON.parse(execution.definition)?.edges ?? []) as Edge[];
 
     // Parse the current phase outputs to get the pending code
-    const outputs = JSON.parse(currentPhase.outputs || '{}');
-    const originalCode = outputs?.['Original code'] ?? '';
-    const pendingCode = outputs?.['Pending code'] ?? '';
+    const temp = JSON.parse(currentPhase.temp || '{}');
+    const originalCode = temp?.['Original code'] ?? '';
+    const pendingCode = temp?.['Pending code'] ?? '';
 
     // Create environment with the appropriate code context
     const environment: Environment = {
@@ -119,6 +121,14 @@ export class WorkflowExecutionsService {
         status: WorkflowExecutionStatus.RUNNING,
       })
       .where(eq(workflowExecutions.id, executionId));
+
+    // Update current phase status to COMPLETED
+    await this.database
+      .update(executionPhase)
+      .set({
+        status: ExecutionPhaseStatus.COMPLETED,
+      })
+      .where(eq(executionPhase.id, currentPhase.id));
 
     // Continue execution with remaining phases
     await executeWorkflowPhases(

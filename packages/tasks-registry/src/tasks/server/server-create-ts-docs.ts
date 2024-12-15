@@ -14,7 +14,7 @@ export const ServerCreateTypeScriptDocsTask = {
   outputs: [
     {
       name: "TypeScript Docs",
-      type: TaskParamType.STRING,
+      type: TaskParamType.TS_DOCS,
     },
   ] as const,
   credits: 1,

@@ -1,5 +1,4 @@
-import type { AppNode, TaskParam } from "@repo/types";
-import { TaskParamType } from "@repo/types";
+import { type AppNode, type TaskParam, TaskParamType } from "@repo/types";
 import { useReactFlow } from "@xyflow/react";
 import { useCallback } from "react";
 import StringParamField from "@/components/react-flow/nodes/param-fields/string-param-field";
@@ -44,6 +43,10 @@ function NodeParamField({
           value={value}
         />
       );
+    case TaskParamType.UNIT_TESTS:
+    case TaskParamType.E2E_TESTS:
+    case TaskParamType.MDX:
+    case TaskParamType.TS_DOCS:
     case TaskParamType.CODE_INSTANCE:
       return (
         <CodeInstanceParamField
