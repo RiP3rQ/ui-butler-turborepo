@@ -258,6 +258,9 @@ importers:
       '@xyflow/react':
         specifier: ^12.3.5
         version: 12.3.5(@types/react@18.3.14)(react-dom@19.0.0-rc-02c0e824-20241028(react@19.0.0-rc-02c0e824-20241028))(react@19.0.0-rc-02c0e824-20241028)
+      ai:
+        specifier: ^4.0.14
+        version: 4.0.14(react@19.0.0-rc-02c0e824-20241028)(zod@3.23.8)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1

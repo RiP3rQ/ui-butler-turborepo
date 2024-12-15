@@ -9,6 +9,7 @@ import {
   ComponentIcon,
   Frame,
   Map,
+  PuzzleIcon,
   SquareTerminal,
   VariableIcon,
 } from "lucide-react";
@@ -39,6 +40,12 @@ const data = {
       title: "Analytics dashboard",
       url: "/analytics-dashboard",
       icon: ChartAreaIcon,
+      isActive: false,
+    },
+    {
+      title: "Generate new component",
+      url: "/generate-component",
+      icon: PuzzleIcon,
       isActive: false,
     },
     {
