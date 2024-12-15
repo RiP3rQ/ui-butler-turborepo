@@ -38,15 +38,24 @@ export class WorkflowExecutionsController {
   @UseGuards(JwtAuthGuard)
   approveChanges(
     @CurrentUser() user: User,
-    @Param('executionId') executionId: number,
+    @Param('executionId') executionId: string,
     @Body() body: ApproveChangesDto,
   ) {
     if (!user) {
       throw new NotFoundException('Unauthorized');
     }
+
+    if (!executionId) {
+      throw new NotFoundException('Execution not found');
+    }
+
+    if (!body) {
+      throw new NotFoundException('Body not found');
+    }
+
     return this.workflowExecutionsService.approveChanges(
       user,
-      executionId,
+      Number(executionId),
       body,
     );
   }

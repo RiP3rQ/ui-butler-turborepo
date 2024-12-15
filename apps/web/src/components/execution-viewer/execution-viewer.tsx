@@ -47,7 +47,10 @@ function ExecutionViewer({ initialData }: Readonly<ExecutionViewerProps>) {
         executionId: initialData.id,
       }),
     refetchInterval: (q) =>
-      q.state.data?.status === WorkflowExecutionStatus.RUNNING ? 1000 : false,
+      q.state.data?.status === WorkflowExecutionStatus.FAILED ||
+      q.state.data?.status === WorkflowExecutionStatus.COMPLETED
+        ? false
+        : 1000,
   });
 
   const pendingChangesQuery = useQuery({

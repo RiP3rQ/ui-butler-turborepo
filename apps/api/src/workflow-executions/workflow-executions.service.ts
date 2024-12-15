@@ -73,7 +73,7 @@ export class WorkflowExecutionsService {
 
     // Find the current pending phase that requested approval
     const currentPhase = execution.executionPhases.find(
-      (phase) => phase.status === ExecutionPhaseStatus.PENDING,
+      (phase) => phase.status === ExecutionPhaseStatus.FAILED, // TODO: CHANGE THIS TO PROPER TYPE
     );
 
     if (!currentPhase) {
@@ -82,24 +82,35 @@ export class WorkflowExecutionsService {
 
     // Parse the current phase inputs to get the original code
     const inputs = JSON.parse(currentPhase.inputs || '{}');
-    const originalCode = inputs.originalCode || ''; // This should be stored in inputs when requesting approval
 
     // Get the remaining phases
     const currentPhaseIndex = execution.executionPhases.indexOf(currentPhase);
-    const remainingPhases = execution.executionPhases.slice(currentPhaseIndex);
+    const remainingPhases = execution.executionPhases
+      .slice(currentPhaseIndex)
+      .filter((phase) => phase.status === ExecutionPhaseStatus.PENDING);
 
     // Parse edges from the execution definition
     const edges = (JSON.parse(execution.definition)?.edges ?? []) as Edge[];
 
-    // Create environment with the appropriate code context
+    // Parse the current phase outputs to get the pending code
+    const outputs = JSON.parse(currentPhase.outputs || '{}');
+    const originalCode = outputs?.['Original code'] ?? '';
+    const pendingCode = outputs?.['Pending code'] ?? '';
 
+    // Create environment with the appropriate code context
     const environment: Environment = {
       phases: {},
       // If not approved, use original code, if approved use the modified code
-      // @ts-expect-error - TS doesn't know currentPhase.outputs?.code is defined
-      code: body.approve ? currentPhase.outputs?.code || '' : originalCode,
+      code:
+        body.decision === 'approve'
+          ? (pendingCode ?? originalCode)
+          : originalCode,
       workflowExecutionId: executionId,
     };
+
+    console.log('Environment', environment);
+    console.log('Current phase', currentPhase);
+    console.log('remainingPhases', remainingPhases);
 
     // Update execution status to RUNNING
     await this.database
@@ -120,9 +131,10 @@ export class WorkflowExecutionsService {
     );
 
     return {
-      message: body.approve
-        ? 'Changes approved, workflow execution resumed'
-        : 'Changes rejected, continuing with original code',
+      message:
+        body.decision === 'approve'
+          ? 'Changes approved, workflow execution resumed'
+          : 'Changes rejected, continuing with original code',
       status: WorkflowExecutionStatus.RUNNING,
     };
   }
