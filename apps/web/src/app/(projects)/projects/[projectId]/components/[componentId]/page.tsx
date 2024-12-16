@@ -9,7 +9,7 @@ import {
 import moment from "moment";
 import { Label } from "@repo/ui/components/ui/label";
 import { getSingleComponentsDataFunction } from "@/actions/components/get-single-components-data";
-import { SingleComponentView } from "@/components/component-viewer/single-component-view";
+import SingleComponentViewWithShortcuts from "@/components/component-viewer/single-component-view-with-shortcuts";
 
 type Params = Promise<{ projectId: string; componentId: string }>;
 export default async function SingleComponentPage({
@@ -52,20 +52,24 @@ export default async function SingleComponentPage({
               <div>
                 Created at:{" "}
                 <span>
-                  {moment(componentsData.createdAt).format("DD/MM/YYYY")}
+                  {moment(componentsData.createdAt).format("yyyy-MM-DD HH:mm")}
                 </span>
               </div>
               <div>
                 Updated at:{" "}
                 <span>
-                  {moment(componentsData.updatedAt).format("DD/MM/YYYY")}
+                  {moment(componentsData.updatedAt).format("yyyy-MM-DD HH:mm")}
                 </span>
               </div>
             </div>
           </CardDescription>
         </CardHeader>
         <CardContent className="h-fit w-full">
-          <SingleComponentView componentsData={componentsData} />
+          <SingleComponentViewWithShortcuts
+            componentsData={componentsData}
+            projectId={projectId}
+            componentId={componentId}
+          />
         </CardContent>
       </Card>
     </div>

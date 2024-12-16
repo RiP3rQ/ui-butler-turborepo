@@ -37,3 +37,10 @@ export interface SingleComponentApiResponseType {
   hasStorybook: boolean;
   storybookCode?: string;
 }
+
+export type CodeType =
+  | "code"
+  | "typescriptDocs"
+  | "unitTests"
+  | "e2eTests"
+  | "storybook";
