@@ -6,6 +6,7 @@ import {
   NotFoundException,
   Param,
   Post,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { ComponentsService } from './components.service';
@@ -13,8 +14,10 @@ import { LogErrors } from '../common/error-handling/log-errors.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
 import type { User } from '../database/schemas/users';
-import { CreateComponentDto } from './dto/create-new-component.dto';
+import { SaveComponentDto } from './dto/save-component.dto';
 import { FavoriteComponentDto } from './dto/favorite-component.dto';
+import { GenerateComponentRequestDto } from './dto/component-generate-message.dto';
+import type { Response } from 'express';
 
 @Controller('components')
 export class ComponentsController {
@@ -46,14 +49,14 @@ export class ComponentsController {
   @Post()
   @LogErrors()
   @UseGuards(JwtAuthGuard)
-  createComponent(
+  saveComponent(
     @CurrentUser() user: User,
-    @Body() createComponentDto: CreateComponentDto,
+    @Body() saveComponentDto: SaveComponentDto,
   ) {
     if (!user) {
       throw new NotFoundException('Unauthorized');
     }
-    return this.componentsService.createComponent(user, createComponentDto);
+    return this.componentsService.saveComponent(user, saveComponentDto);
   }
 
   @Post('/favorite')
@@ -68,5 +71,35 @@ export class ComponentsController {
     }
 
     return this.componentsService.favoriteComponent(user, favoriteComponentDto);
+  }
+
+  @Post('/generate')
+  @UseGuards(JwtAuthGuard)
+  async generateComponent(
+    @CurrentUser() user: User,
+    @Body() body: GenerateComponentRequestDto,
+    @Res() res: Response,
+  ) {
+    try {
+      if (!user) {
+        throw new NotFoundException('Unauthorized');
+      }
+
+      const lastMessage = body.messages[body.messages.length - 1];
+
+      if (!lastMessage || !lastMessage.content) {
+        throw new Error('No message content provided');
+      }
+
+      await this.componentsService.generateComponentStream(
+        lastMessage.content,
+        res,
+      );
+    } catch (error) {
+      console.error('Error generating component:', error);
+      res.status(500).json({
+        error: error instanceof Error ? error.message : JSON.stringify(error),
+      });
+    }
   }
 }

@@ -9,6 +9,7 @@ import {
   ComponentIcon,
   Frame,
   Map,
+  PuzzleIcon,
   SquareTerminal,
   VariableIcon,
 } from "lucide-react";
@@ -42,8 +43,14 @@ const data = {
       isActive: false,
     },
     {
-      title: "Create new component",
-      url: "/create-new-component",
+      title: "Generate new component",
+      url: "/generate-component",
+      icon: PuzzleIcon,
+      isActive: false,
+    },
+    {
+      title: "Save component",
+      url: "/save-component",
       icon: ComponentIcon,
       isActive: false,
     },

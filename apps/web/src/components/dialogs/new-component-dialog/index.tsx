@@ -1,15 +1,17 @@
 "use client";
 
-import { SaveIcon } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@repo/ui/components/ui/card";
 import { Button } from "@repo/ui/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@repo/ui/components/ui/dialog";
+import { Input } from "@repo/ui/components/ui/input";
+import { useShallow } from "zustand/react/shallow";
+import { useCallback } from "react";
 import {
   Form,
   FormControl,
@@ -19,10 +21,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@repo/ui/components/ui/form";
-import { Input } from "@repo/ui/components/ui/input";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@repo/ui/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -30,22 +29,42 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/ui/components/ui/select";
-import { Skeleton } from "@repo/ui/components/ui/skeleton";
+import { CardContent, CardFooter } from "@repo/ui/components/ui/card";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { RunCodeEditorActions } from "@/components/code-editor/run-actions-component";
-import { CODE_ACTIONS } from "@/constants/code-actions";
+import { Loader2Icon, SaveIcon } from "lucide-react";
+import { useModalsStateStore } from "@/store/modals-store";
+import { saveComponentFunction } from "@/actions/components/save-component";
+import { getErrorMessage } from "@/lib/get-error-message";
 import {
-  createComponentSchema,
-  type CreateComponentSchemaType,
+  saveComponentSchema,
+  type SaveComponentSchemaType,
 } from "@/schemas/component";
 import { getUserProjects } from "@/actions/projects/get-user-projects";
-import { getErrorMessage } from "@/lib/get-error-message";
-import { createNewComponentFunction } from "@/actions/components/create-new-component";
-import { CodeEditorWithPreview } from "@/components/code-editor/code-editor-with-preview";
 
-export default function SaveNewComponentPage(): JSX.Element {
+export function CreateNewComponentDialog(): JSX.Element {
   const router = useRouter();
+  const { createNewComponentModal } = useModalsStateStore(
+    useShallow((state) => state),
+  );
+
+  const form = useForm<SaveComponentSchemaType>({
+    resolver: zodResolver(saveComponentSchema),
+    defaultValues: {
+      title: "",
+      projectId: "",
+      code: createNewComponentModal.code,
+    },
+  });
+
+  const closeButtonOnClickHandler = useCallback(() => {
+    form.reset();
+    createNewComponentModal.setIsOpen(false);
+  }, [createNewComponentModal]);
+
   const { data, isLoading } = useQuery({
     queryKey: ["projects"],
     queryFn: async () => {
@@ -54,13 +73,14 @@ export default function SaveNewComponentPage(): JSX.Element {
   });
 
   const { mutate, isPending } = useMutation({
-    mutationFn: createNewComponentFunction,
+    mutationFn: saveComponentFunction,
     onSuccess: (res) => {
       form.reset();
       router.push(`/projects/${res.projectId}/components/${res.id}`);
       toast.success("Created new component successfully!", {
         id: "new-component",
       });
+      closeButtonOnClickHandler();
     },
     onError: (error: unknown) => {
       console.error(error);
@@ -69,29 +89,22 @@ export default function SaveNewComponentPage(): JSX.Element {
     },
   });
 
-  const form = useForm<CreateComponentSchemaType>({
-    resolver: zodResolver(createComponentSchema),
-    defaultValues: {
-      title: "",
-      projectId: "",
-      code: "",
-    },
-  });
-
-  const handleSaveAction = (values: CreateComponentSchemaType) => {
+  const handleSaveAction = (values: SaveComponentSchemaType) => {
     mutate(values);
   };
 
   return (
-    <div className="flex flex-col items-center min-h-[calc(100vh-200px)] w-full max-w-full px-8 py-4">
-      <Card className="w-full h-full">
-        <CardHeader>
-          <CardTitle>Create new component</CardTitle>
-          <CardDescription>
-            Using the code editor below, you can write your component code and
-            then choose to save it or run an action.
-          </CardDescription>
-        </CardHeader>
+    <Dialog
+      onOpenChange={closeButtonOnClickHandler}
+      open={createNewComponentModal.isOpen}
+    >
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Create a new component</DialogTitle>
+          <DialogDescription>
+            To save this component, assign proper name and appropriate project.
+          </DialogDescription>
+        </DialogHeader>
         <CardContent className="h-fit ">
           <Form {...form}>
             <form
@@ -159,41 +172,30 @@ export default function SaveNewComponentPage(): JSX.Element {
                   )}
                 />
               </div>
-              <FormField
-                control={form.control}
-                name="code"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex gap-1 items-center">
-                      Component&#39;s code
-                      <p className="text-primary text-xs">(Required)</p>
-                    </FormLabel>
-                    <FormControl>
-                      <CodeEditorWithPreview
-                        codeValue={field.value}
-                        setCodeValue={field.onChange}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <CardFooter className="flex items-center justify-end space-x-3">
-                {/* TODO: ADD proper disable */}
-                <RunCodeEditorActions actions={CODE_ACTIONS} />
+              <CardFooter className="flex items-center justify-end gap-3 p-0">
+                <DialogClose asChild onClick={closeButtonOnClickHandler}>
+                  <Button type="button" variant="secondary">
+                    Cancel
+                  </Button>
+                </DialogClose>
                 <Button
                   className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500"
                   type="submit"
-                  disabled={isPending} //TODO: Add proper validation
+                  variant="default"
+                  disabled={isPending} // TODO: Add loading state
                 >
-                  Save
-                  <SaveIcon className="size-4" />
+                  {isPending ? (
+                    <Loader2Icon className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <SaveIcon className="h-5 w-5" />
+                  )}
+                  Save component
                 </Button>
               </CardFooter>
             </form>
           </Form>
         </CardContent>
-      </Card>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

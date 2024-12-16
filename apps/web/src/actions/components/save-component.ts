@@ -3,10 +3,10 @@
 import { cookies } from "next/headers";
 import { type ComponentType } from "@repo/types";
 import { getErrorMessage } from "@/lib/get-error-message";
-import type { CreateComponentSchemaType } from "@/schemas/component";
+import type { SaveComponentSchemaType } from "@/schemas/component";
 
-export async function createNewComponentFunction(
-  form: CreateComponentSchemaType,
+export async function saveComponentFunction(
+  form: SaveComponentSchemaType,
 ): Promise<ComponentType> {
   try {
     // Get existing cookies
@@ -28,7 +28,7 @@ export async function createNewComponentFunction(
     });
 
     if (!res.ok) {
-      throw new Error("Failed to create new component");
+      throw new Error("Failed to save component");
     }
 
     return (await res.json()) as ComponentType;

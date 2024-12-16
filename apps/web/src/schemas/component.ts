@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const createComponentSchema = z.object({
+export const saveComponentSchema = z.object({
   title: z
     .string()
     .min(1, {
@@ -21,5 +21,18 @@ export const createComponentSchema = z.object({
       message: "Code should be less than 10000 characters",
     }),
 });
+export type SaveComponentSchemaType = z.infer<typeof saveComponentSchema>;
 
-export type CreateComponentSchemaType = z.infer<typeof createComponentSchema>;
+export const generateComponentSchema = z.object({
+  prompt: z
+    .string()
+    .min(1, {
+      message: "Prompt is required",
+    })
+    .max(1999, {
+      message: "Prompt should be less than 2000 characters",
+    }),
+});
+export type GenerateComponentSchemaType = z.infer<
+  typeof generateComponentSchema
+>;
