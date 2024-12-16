@@ -33,14 +33,20 @@ import { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import TooltipWrapper from "@repo/ui/components/tooltip-wrapper";
+import { useShallow } from "zustand/react/shallow";
 import { getErrorMessage } from "@/lib/get-error-message";
 import {
   generateComponentSchema,
   type GenerateComponentSchemaType,
 } from "@/schemas/component";
 import CodeEditor from "@/components/code-editor/editor";
+import { useModalsStateStore } from "@/store/modals-store";
 
 export default function GenerateComponentPage(): JSX.Element {
+  const { createNewComponentModal } = useModalsStateStore(
+    useShallow((state) => state),
+  );
+
   const form = useForm<GenerateComponentSchemaType>({
     resolver: zodResolver(generateComponentSchema),
     defaultValues: {
@@ -112,6 +118,15 @@ export default function GenerateComponentPage(): JSX.Element {
       }
     }
   }, [latestAssistantMessage]);
+
+  const handleOpenSaveComponentModal = useCallback(() => {
+    if (!latestAssistantMessage?.content) {
+      toast.error("No code to save");
+      return;
+    }
+    createNewComponentModal.setCode(latestAssistantMessage.content);
+    createNewComponentModal.setIsOpen(true);
+  }, [createNewComponentModal, latestAssistantMessage]);
 
   // Add keyboard shortcuts
   useEffect(() => {
@@ -248,7 +263,7 @@ export default function GenerateComponentPage(): JSX.Element {
                 </TooltipWrapper>
                 <TooltipWrapper content="Save the generated code to a project">
                   <Button
-                    onClick={handleCopy}
+                    onClick={handleOpenSaveComponentModal}
                     variant="default"
                     size="sm"
                     className="gap-2"

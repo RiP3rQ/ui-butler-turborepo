@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ActionRunDialog } from "@/components/code-editor/action-run-dialog";
+import { CreateNewComponentDialog } from "@/components/dialogs/new-component-dialog";
 
 export function DialogsComponentsProvider(): JSX.Element {
   // This is a workaround to prevent the component from rendering on the server
@@ -14,5 +15,10 @@ export function DialogsComponentsProvider(): JSX.Element {
   }, []);
   if (!isMounted) return <></>;
 
-  return <ActionRunDialog />;
+  return (
+    <>
+      <ActionRunDialog />
+      <CreateNewComponentDialog />
+    </>
+  );
 }
