@@ -42,8 +42,7 @@ const ACCORDION_ITEMS = [
     value: "item-2",
     title: "Typescript Docs",
     codeType: "typescriptDocs" as const,
-    getCode: (data: SingleComponentApiResponseType) =>
-      data.typescriptDocsCode || "",
+    getCode: (data: SingleComponentApiResponseType) => data.tsDocs || "",
     checkImplemented: (data: SingleComponentApiResponseType) =>
       data.hasTypescriptDocs,
   },
@@ -52,7 +51,7 @@ const ACCORDION_ITEMS = [
     value: "item-3",
     title: "Unit tests",
     codeType: "unitTests" as const,
-    getCode: (data: SingleComponentApiResponseType) => data.unitTestsCode || "",
+    getCode: (data: SingleComponentApiResponseType) => data.unitTests || "",
     checkImplemented: (data: SingleComponentApiResponseType) =>
       data.wasUnitTested,
   },
@@ -61,18 +60,17 @@ const ACCORDION_ITEMS = [
     value: "item-4",
     title: "E2E tests",
     codeType: "e2eTests" as const,
-    getCode: (data: SingleComponentApiResponseType) => data.e2eTestsCode || "",
+    getCode: (data: SingleComponentApiResponseType) => data.e2eTests || "",
     checkImplemented: (data: SingleComponentApiResponseType) =>
       data.wasE2ETested,
   },
   {
-    id: "storybook",
+    id: "mdx-docs",
     value: "item-5",
-    title: "Storybook",
-    codeType: "storybook" as const,
-    getCode: (data: SingleComponentApiResponseType) => data.storybookCode || "",
-    checkImplemented: (data: SingleComponentApiResponseType) =>
-      data.hasStorybook,
+    title: "MDX Docs",
+    codeType: "mdxDocs" as const,
+    getCode: (data: SingleComponentApiResponseType) => data.mdxDocs || "",
+    checkImplemented: (data: SingleComponentApiResponseType) => data.hasMdxDocs,
   },
 ] as const;
 

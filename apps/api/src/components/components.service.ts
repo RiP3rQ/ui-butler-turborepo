@@ -40,7 +40,13 @@ export class ComponentsService {
       .select({
         id: components.id,
         title: components.title,
+        // CODE VALUES
         code: components.code,
+        e2eTests: components.e2eTests,
+        unitTests: components.unitTests,
+        mdxDocs: components.mdxDocs,
+        tsDocs: components.tsDocs,
+        // CDOE VALUES [END]
         projectId: components.projectId,
         createdAt: components.createdAt,
         updatedAt: components.updatedAt,
@@ -63,10 +69,10 @@ export class ComponentsService {
 
     return {
       ...component,
-      wasE2ETested: false,
-      wasUnitTested: false,
-      hasStorybook: false,
-      hasTypescriptDocs: false,
+      wasE2ETested: !!component.e2eTests,
+      wasUnitTested: !!component.unitTests,
+      hasMdxDocs: !!component.mdxDocs,
+      hasTypescriptDocs: !!component.tsDocs,
     } satisfies SingleComponentApiResponseType;
   }
 

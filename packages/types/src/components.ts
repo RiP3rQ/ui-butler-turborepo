@@ -27,19 +27,19 @@ export interface SingleComponentApiResponseType {
 
   // Typescript description
   hasTypescriptDocs: boolean;
-  typescriptDocsCode?: string;
+  tsDocs?: string;
 
   // Unit Tests
   wasUnitTested: boolean;
-  unitTestsCode?: string;
+  unitTests?: string;
 
   // E2E Tests
   wasE2ETested: boolean;
-  e2eTestsCode?: string;
+  e2eTests?: string;
 
-  // Storybook
-  hasStorybook: boolean;
-  storybookCode?: string;
+  // MDX Docs
+  hasMdxDocs: boolean;
+  mdxDocs?: string;
 }
 
 export const codeTypeValues = [
