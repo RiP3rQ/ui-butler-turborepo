@@ -14,13 +14,24 @@ import { Badge } from "@repo/ui/components/ui/badge";
 import { Card, CardContent } from "@repo/ui/components/ui/card";
 import { toast } from "sonner";
 import { Button } from "@repo/ui/components/ui/button";
-import { Loader2Icon, SaveIcon, XIcon } from "lucide-react";
+import {
+  BookOpenIcon,
+  FileCode2Icon,
+  Loader2Icon,
+  SaveIcon,
+  TabletSmartphoneIcon,
+  TestTubeDiagonalIcon,
+  XIcon,
+} from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { cn } from "@repo/ui/lib/utils";
 import CodeEditor from "@/components/code-editor/editor";
 import { updateComponentCode } from "@/actions/components/update-components-code";
 import { useCodeEditorStore } from "@/store/code-editor-store";
 import { getErrorMessage } from "@/lib/get-error-message";
+import { generateCodeFunction } from "@/actions/components/generate-code-function";
+import { DisplayActionButton } from "@/components/component-viewer/display-action-button";
 
 export interface SingleComponentViewProps {
   componentsData: SingleComponentApiResponseType;
@@ -36,6 +47,7 @@ const ACCORDION_ITEMS = [
     codeType: "code" as const,
     getCode: (data: SingleComponentApiResponseType) => data.code,
     checkImplemented: () => true,
+    action: {},
   },
   {
     id: "typescript-docs",
@@ -45,6 +57,10 @@ const ACCORDION_ITEMS = [
     getCode: (data: SingleComponentApiResponseType) => data.tsDocs || "",
     checkImplemented: (data: SingleComponentApiResponseType) =>
       data.hasTypescriptDocs,
+    action: {
+      title: "Generate Typescript Docs",
+      icon: FileCode2Icon,
+    },
   },
   {
     id: "unit-tests",
@@ -54,6 +70,10 @@ const ACCORDION_ITEMS = [
     getCode: (data: SingleComponentApiResponseType) => data.unitTests || "",
     checkImplemented: (data: SingleComponentApiResponseType) =>
       data.wasUnitTested,
+    action: {
+      title: "Generate Unit Tests",
+      icon: TestTubeDiagonalIcon,
+    },
   },
   {
     id: "e2e-tests",
@@ -63,6 +83,10 @@ const ACCORDION_ITEMS = [
     getCode: (data: SingleComponentApiResponseType) => data.e2eTests || "",
     checkImplemented: (data: SingleComponentApiResponseType) =>
       data.wasE2ETested,
+    action: {
+      title: "Generate E2E Tests",
+      icon: TabletSmartphoneIcon,
+    },
   },
   {
     id: "mdx-docs",
@@ -71,6 +95,10 @@ const ACCORDION_ITEMS = [
     codeType: "mdxDocs" as const,
     getCode: (data: SingleComponentApiResponseType) => data.mdxDocs || "",
     checkImplemented: (data: SingleComponentApiResponseType) => data.hasMdxDocs,
+    action: {
+      title: "Generate MDX Docs",
+      icon: BookOpenIcon,
+    },
   },
 ] as const;
 
@@ -92,6 +120,26 @@ export function SingleComponentView({
       console.error(error);
       const errorMessage = getErrorMessage(error);
       toast.error(errorMessage, { id: "updated-component" });
+    },
+  });
+
+  const { mutate: generateCodeMutation } = useMutation({
+    mutationFn: generateCodeFunction,
+    onSuccess: () => {
+      toast.success("Code generated successfully", {
+        id: "generated-code",
+      });
+      // @ts-expect-error Reason: queryClient has no types
+      queryClient.invalidateQueries([
+        "single-component",
+        projectId,
+        componentId,
+      ]);
+    },
+    onError: (error) => {
+      console.error(error);
+      const errorMessage = getErrorMessage(error);
+      toast.error(errorMessage, { id: "generated-code" });
     },
   });
 
@@ -123,6 +171,7 @@ export function SingleComponentView({
     } finally {
       clearPendingChange(codeType);
       setUpdating(null);
+      // TODO: FIX LATER THIS REVALIDATE
       // @ts-expect-error Reason: queryClient has no types
       queryClient.invalidateQueries([
         "single-component",
@@ -139,7 +188,7 @@ export function SingleComponentView({
       defaultValue={["item-1"]}
     >
       {ACCORDION_ITEMS.map(
-        ({ id, value, title, codeType, getCode, checkImplemented }) => {
+        ({ id, value, title, codeType, getCode, checkImplemented, action }) => {
           const isImplemented = checkImplemented(componentsData);
           const originalCode = getCode(componentsData);
           const currentCode = pendingChanges[codeType] ?? originalCode;
@@ -154,14 +203,31 @@ export function SingleComponentView({
             >
               <AccordionTrigger className="px-4">
                 <div className="flex items-center justify-between w-full gap-4">
-                  <span className="font-medium">{title}</span>
+                  <span
+                    className={cn(
+                      "font-medium",
+                      !isImplemented && "text-amber-500",
+                    )}
+                  >
+                    {title}
+                    {!isImplemented && (
+                      <span className="text-xs text-amber-500 pl-3">
+                        (Not implemented yet)
+                      </span>
+                    )}
+                  </span>
                   <div className="flex items-center gap-2">
                     {hasChanges ? (
                       <Badge variant="outline" className="text-yellow-500">
                         Unsaved Changes
                       </Badge>
                     ) : null}
-                    {!isImplemented && <NotImplementedBadge />}
+                    <DisplayActionButton
+                      action={action}
+                      type={codeType}
+                      componentId={componentId}
+                      generateCodeMutation={generateCodeMutation}
+                    />
                   </div>
                 </div>
               </AccordionTrigger>
@@ -233,24 +299,5 @@ export function SingleComponentView({
         },
       )}
     </Accordion>
-  );
-}
-
-function NotImplementedBadge(): JSX.Element {
-  return (
-    <Badge
-      className="
-        bg-amber-500 text-white
-        hover:bg-amber-700
-        cursor-not-allowed
-        transition-colors
-        px-3 py-1
-        text-xs font-medium
-        rounded-full
-        mr-3
-      "
-    >
-      Not implemented yet
-    </Badge>
   );
 }
