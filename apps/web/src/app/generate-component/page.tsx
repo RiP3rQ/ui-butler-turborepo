@@ -26,16 +26,19 @@ import {
   Loader2Icon,
   PlayCircleIcon,
   RotateCcwIcon,
+  SaveIcon,
 } from "lucide-react";
 import { cn } from "@repo/ui/lib/utils";
-import { useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import TooltipWrapper from "@repo/ui/components/tooltip-wrapper";
 import { getErrorMessage } from "@/lib/get-error-message";
 import {
   generateComponentSchema,
   type GenerateComponentSchemaType,
 } from "@/schemas/component";
+import CodeEditor from "@/components/code-editor/editor";
 
 export default function GenerateComponentPage(): JSX.Element {
   const form = useForm<GenerateComponentSchemaType>({
@@ -59,28 +62,47 @@ export default function GenerateComponentPage(): JSX.Element {
     },
   });
 
-  const handleGenerateComponent = async (
-    values: GenerateComponentSchemaType,
-  ) => {
-    try {
-      await append({
-        content: values.prompt,
-        role: "user",
-      });
-    } catch (error) {
-      console.error("Error generating component:", error);
-      toast.error("Failed to generate component");
-    }
-  };
+  const handleGenerateComponent = useCallback(
+    async (values: GenerateComponentSchemaType) => {
+      try {
+        await append({
+          content: values.prompt,
+          role: "user",
+        });
+      } catch (error) {
+        console.error("Error generating component:", error);
+        toast.error("Failed to generate component");
+      }
+    },
+    [append],
+  );
 
-  const handleReset = () => {
-    form.reset();
+  // Get the latest assistant message
+  const latestAssistantMessage = useMemo(
+    () =>
+      messages
+        .filter((m) => m.role === "assistant")
+        .map((m) => ({
+          ...m,
+          content: m.content.replace(/^```tsx|```$/g, "").trim(),
+        }))
+        .map((m) => ({
+          ...m,
+          content: m.content.endsWith("```")
+            ? m.content.slice(0, -3).trim()
+            : m.content,
+        }))
+        .pop(),
+    [messages],
+  );
+
+  const handleReset = useCallback(() => {
     stop();
     reload();
     toast.success("Form reset successfully");
-  };
+  }, [stop, reload]);
 
-  const handleCopy = async () => {
+  const handleCopy = useCallback(async () => {
     if (latestAssistantMessage) {
       try {
         await navigator.clipboard.writeText(latestAssistantMessage.content);
@@ -89,7 +111,7 @@ export default function GenerateComponentPage(): JSX.Element {
         toast.error("Failed to copy code to clipboard");
       }
     }
-  };
+  }, [latestAssistantMessage]);
 
   // Add keyboard shortcuts
   useEffect(() => {
@@ -105,14 +127,6 @@ export default function GenerateComponentPage(): JSX.Element {
     };
   }, []);
 
-  // Get the latest assistant message
-  const latestAssistantMessage = messages
-    .filter((m) => m.role === "assistant")
-    .pop();
-
-  console.log("messages", messages);
-  console.log("isLoading", isLoading);
-
   return (
     <div className="flex flex-col items-center min-h-[calc(100vh-200px)] w-full max-w-full px-8 py-4 space-y-6">
       <Card className="w-full">
@@ -127,7 +141,7 @@ export default function GenerateComponentPage(): JSX.Element {
         <CardContent>
           <Form {...form}>
             <form
-              className="space-y-6 w-full"
+              className="space-y-6 w-full relative"
               onSubmit={form.handleSubmit(handleGenerateComponent)}
             >
               <FormField
@@ -139,14 +153,35 @@ export default function GenerateComponentPage(): JSX.Element {
                       Prompt
                       <span className="text-primary text-xs">(Required)</span>
                     </FormLabel>
-                    <FormControl>
-                      <Textarea
-                        {...field}
-                        className="w-full h-[30vh] resize-none"
-                        placeholder="Enter your component description..."
-                        disabled={isLoading}
-                      />
-                    </FormControl>
+                    <div className="relative">
+                      <FormControl>
+                        <Textarea
+                          {...field}
+                          className={cn(
+                            "w-full h-[30vh] resize-none",
+                            isLoading && "blur-sm",
+                          )}
+                          placeholder="Enter your component description..."
+                          disabled={isLoading}
+                        />
+                      </FormControl>
+                      {isLoading ? (
+                        <div className="absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-sm">
+                          <Card className="w-[300px]">
+                            <CardContent className="flex flex-col items-center justify-center p-6 space-y-4">
+                              <Loader2Icon className="h-8 w-8 animate-spin text-primary" />
+                              <p className="text-center font-medium">
+                                Generating your component...
+                                <br />
+                                <span className="text-sm text-muted-foreground">
+                                  This might take a few seconds
+                                </span>
+                              </p>
+                            </CardContent>
+                          </Card>
+                        </div>
+                      ) : null}
+                    </div>
                     <FormDescription>
                       Enter a detailed description of the component you want to
                       generate
@@ -161,7 +196,10 @@ export default function GenerateComponentPage(): JSX.Element {
                   variant="outline"
                   onClick={handleReset}
                   disabled={isLoading}
-                  className="gap-2"
+                  className={cn(
+                    "gap-2",
+                    isLoading && "opacity-50 cursor-not-allowed",
+                  )}
                 >
                   <RotateCcwIcon className="h-4 w-4" />
                   Reset
@@ -171,7 +209,7 @@ export default function GenerateComponentPage(): JSX.Element {
                   disabled={isLoading}
                   className={cn(
                     "gap-2",
-                    isLoading && "cursor-not-allowed opacity-60",
+                    isLoading && "opacity-50 cursor-not-allowed",
                   )}
                 >
                   {isLoading ? (
@@ -197,45 +235,40 @@ export default function GenerateComponentPage(): JSX.Element {
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               Generated Component
-              <Button
-                onClick={handleCopy}
-                variant="ghost"
-                size="sm"
-                className="gap-2"
-              >
-                <CopyIcon className="h-4 w-4" />
-                Copy Code
-              </Button>
+              <div className="flex items-center justify-center space-x-2">
+                <TooltipWrapper content="Copy the generated code to clipboard">
+                  <Button
+                    onClick={handleCopy}
+                    variant="secondary"
+                    size="sm"
+                    className="gap-2"
+                  >
+                    <CopyIcon className="h-4 w-4" />
+                  </Button>
+                </TooltipWrapper>
+                <TooltipWrapper content="Save the generated code to a project">
+                  <Button
+                    onClick={handleCopy}
+                    variant="default"
+                    size="sm"
+                    className="gap-2"
+                  >
+                    <SaveIcon className="h-4 w-4" />
+                    Save component
+                  </Button>
+                </TooltipWrapper>
+              </div>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="relative">
-              <pre className="bg-muted p-4 rounded-lg overflow-x-auto max-h-[60vh] overflow-y-auto">
-                <code className="text-sm">
-                  {latestAssistantMessage.content}
-                </code>
-              </pre>
+            <div className="h-[80vh]">
+              <CodeEditor
+                codeValue={latestAssistantMessage.content}
+                setCodeValue={() => {}}
+              />
             </div>
           </CardContent>
         </Card>
-      ) : null}
-
-      {/* Loading Overlay */}
-      {isLoading ? (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
-          <Card className="w-[300px]">
-            <CardContent className="flex flex-col items-center justify-center p-6 space-y-4">
-              <Loader2Icon className="h-8 w-8 animate-spin text-primary" />
-              <p className="text-center font-medium">
-                Generating your component...
-                <br />
-                <span className="text-sm text-muted-foreground">
-                  This might take a few seconds
-                </span>
-              </p>
-            </CardContent>
-          </Card>
-        </div>
       ) : null}
     </div>
   );
