@@ -1,11 +1,22 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { DATABASE_CONNECTION } from '../database/database-connection';
 import type { DrizzleDatabase } from '../database/merged-schemas';
 import { User } from '../database/schemas/users';
 import { SaveComponentDto } from './dto/save-component.dto';
-import { components, NewComponent } from '../database/schemas/components';
+import {
+  Component,
+  components,
+  NewComponent,
+} from '../database/schemas/components';
 import { and, eq } from 'drizzle-orm';
 import {
+  CodeType,
   type ComponentType,
   SingleComponentApiResponseType,
 } from '@repo/types';
@@ -14,6 +25,7 @@ import { FavoriteComponentDto } from './dto/favorite-component.dto';
 import { streamText } from 'ai';
 import { GEMINI_MODEL } from '../common/openai/ai';
 import { Response } from 'express';
+import { UpdateComponentCodeDto } from './dto/update-component.dto';
 
 @Injectable()
 export class ComponentsService {
@@ -148,5 +160,81 @@ export class ComponentsService {
       
       Return only the component code without any additional explanation.
     `.trim();
+  }
+
+  // PATCH /components/:componentId/:codeType
+  async updateComponentCode(
+    user: User,
+    componentId: number,
+    codeType: CodeType,
+    updateComponentCodeDto: UpdateComponentCodeDto,
+  ) {
+    // Create type-safe update object
+    const updateData = this.createUpdateObject(
+      codeType,
+      updateComponentCodeDto.content,
+    );
+
+    try {
+      const [updatedComponent] = await this.database
+        .update(components)
+        .set({
+          ...updateData,
+        })
+        .where(
+          and(eq(components.id, componentId), eq(components.userId, user.id)),
+        )
+        .returning();
+
+      if (!updatedComponent) {
+        throw new NotFoundException(
+          `Component with ID ${componentId} not found`,
+        );
+      }
+
+      return updatedComponent;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        `Failed to update component ${codeType}`,
+      );
+    }
+  }
+
+  private createUpdateObject(
+    codeType: CodeType,
+    content: string,
+  ): Partial<Component> {
+    switch (codeType) {
+      case 'code':
+        return {
+          code: content,
+          updatedAt: new Date(),
+        };
+      case 'typescriptDocs':
+        return {
+          tsDocs: content,
+          updatedAt: new Date(),
+        };
+      case 'unitTests':
+        return {
+          unitTests: content,
+          updatedAt: new Date(),
+        };
+      case 'e2eTests':
+        return {
+          e2eTests: content,
+          updatedAt: new Date(),
+        };
+      case 'mdxDocs':
+        return {
+          mdxDocs: content,
+          updatedAt: new Date(),
+        };
+      default:
+        throw new BadRequestException(`Invalid code type: ${codeType}`);
+    }
   }
 }

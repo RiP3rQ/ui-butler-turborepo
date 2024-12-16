@@ -5,6 +5,9 @@ import {
   Get,
   NotFoundException,
   Param,
+  ParseEnumPipe,
+  ParseIntPipe,
+  Patch,
   Post,
   Res,
   UseGuards,
@@ -18,6 +21,8 @@ import { SaveComponentDto } from './dto/save-component.dto';
 import { FavoriteComponentDto } from './dto/favorite-component.dto';
 import { GenerateComponentRequestDto } from './dto/component-generate-message.dto';
 import type { Response } from 'express';
+import { type CodeType, codeTypeValues } from '@repo/types';
+import { UpdateComponentCodeDto } from './dto/update-component.dto';
 
 @Controller('components')
 export class ComponentsController {
@@ -101,5 +106,26 @@ export class ComponentsController {
         error: error instanceof Error ? error.message : JSON.stringify(error),
       });
     }
+  }
+
+  @Patch('/:componentId/:codeType')
+  @LogErrors()
+  @UseGuards(JwtAuthGuard)
+  updateComponentCode(
+    @CurrentUser() user: User,
+    @Param('componentId', ParseIntPipe) componentId: number,
+    @Param('codeType', new ParseEnumPipe(codeTypeValues)) codeType: CodeType,
+    @Body() updateComponentCodeDto: UpdateComponentCodeDto,
+  ) {
+    if (!user) {
+      throw new NotFoundException('Unauthorized');
+    }
+
+    return this.componentsService.updateComponentCode(
+      user,
+      Number(componentId),
+      codeType,
+      updateComponentCodeDto,
+    );
   }
 }

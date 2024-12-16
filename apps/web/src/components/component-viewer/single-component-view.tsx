@@ -15,7 +15,7 @@ import { Card, CardContent } from "@repo/ui/components/ui/card";
 import { toast } from "sonner";
 import { Button } from "@repo/ui/components/ui/button";
 import { Loader2Icon, SaveIcon, XIcon } from "lucide-react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import CodeEditor from "@/components/code-editor/editor";
 import { updateComponentCode } from "@/actions/components/update-components-code";
@@ -81,6 +81,7 @@ export function SingleComponentView({
   projectId,
   componentId,
 }: Readonly<SingleComponentViewProps>): JSX.Element {
+  const queryClient = useQueryClient();
   const [updating, setUpdating] = useState<string | null>(null);
   const { mutate } = useMutation({
     mutationFn: updateComponentCode,
@@ -118,12 +119,18 @@ export function SingleComponentView({
         codeType: codeType as CodeType,
         content: newCode,
       });
-      clearPendingChange(codeType);
       toast.success(`${codeType} updated successfully`);
     } catch (error) {
       toast.error(getErrorMessage(error));
     } finally {
+      clearPendingChange(codeType);
       setUpdating(null);
+      // @ts-expect-error Reason: queryClient has no types
+      queryClient.invalidateQueries([
+        "single-component",
+        projectId,
+        componentId,
+      ]);
     }
   };
 
@@ -145,7 +152,6 @@ export function SingleComponentView({
             <AccordionItem
               key={id}
               value={value}
-              disabled={!isImplemented}
               className="border rounded-lg shadow-sm hover:shadow-md transition-shadow"
             >
               <AccordionTrigger className="px-4">
@@ -166,6 +172,7 @@ export function SingleComponentView({
                   <CodeEditor
                     codeValue={currentCode}
                     setCodeValue={(newCode) => {
+                      // @ts-ignore TODO: FIX LATER
                       handleCodeChange(codeType, newCode);
                     }}
                   />

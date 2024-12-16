@@ -1,7 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { type CodeType } from "@repo/types";
+import { type CodeType, type ComponentType } from "@repo/types";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 interface UpdateComponentCodeParams {
@@ -14,7 +14,7 @@ export async function updateComponentCode({
   componentId,
   codeType,
   content,
-}: UpdateComponentCodeParams): Promise<void> {
+}: UpdateComponentCodeParams): Promise<ComponentType> {
   try {
     const cookieStore = await cookies();
     const cookieHeader = cookieStore
@@ -37,6 +37,8 @@ export async function updateComponentCode({
     if (!res.ok) {
       throw new Error(`Failed to update ${codeType}`);
     }
+
+    return (await res.json()) as ComponentType;
   } catch (error) {
     console.error(error);
     throw new Error(getErrorMessage(error));
