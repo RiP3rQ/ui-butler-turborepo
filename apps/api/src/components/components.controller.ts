@@ -23,6 +23,7 @@ import { GenerateComponentRequestDto } from './dto/component-generate-message.dt
 import type { Response } from 'express';
 import { type CodeType, codeTypeValues } from '@repo/types';
 import { UpdateComponentCodeDto } from './dto/update-component.dto';
+import { GenerateCodeDto } from './dto/generate-code.dto';
 
 @Controller('components')
 export class ComponentsController {
@@ -127,5 +128,19 @@ export class ComponentsController {
       codeType,
       updateComponentCodeDto,
     );
+  }
+
+  @Post('/generate-code')
+  @LogErrors()
+  @UseGuards(JwtAuthGuard)
+  generateCodeBasedOnType(
+    @CurrentUser() user: User,
+    @Body() body: GenerateCodeDto,
+  ) {
+    if (!user) {
+      throw new NotFoundException('Unauthorized');
+    }
+
+    return this.componentsService.generateCodeFunction(user, body);
   }
 }

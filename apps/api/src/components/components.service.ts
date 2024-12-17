@@ -22,10 +22,12 @@ import {
 } from '@repo/types';
 import { projects } from '../database/schemas/projects';
 import { FavoriteComponentDto } from './dto/favorite-component.dto';
-import { streamText } from 'ai';
+import { generateText, streamText } from 'ai';
 import { GEMINI_MODEL } from '../common/openai/ai';
 import { Response } from 'express';
 import { UpdateComponentCodeDto } from './dto/update-component.dto';
+import { GenerateCodeDto } from './dto/generate-code.dto';
+import { singleGeneratedPrompts } from '@repo/prompts';
 
 @Injectable()
 export class ComponentsService {
@@ -241,6 +243,100 @@ export class ComponentsService {
         };
       default:
         throw new BadRequestException(`Invalid code type: ${codeType}`);
+    }
+  }
+
+  // POST /components/generate-code
+  async generateCodeFunction(
+    user: User,
+    body: GenerateCodeDto,
+  ): Promise<ComponentType> {
+    try {
+      const { componentId, codeType } = body;
+
+      // Get the component
+      const [component] = await this.database
+        .select({
+          id: components.id,
+          code: components.code,
+          tsDocs: components.tsDocs,
+          unitTests: components.unitTests,
+          e2eTests: components.e2eTests,
+          mdxDocs: components.mdxDocs,
+        })
+        .from(components)
+        .where(
+          and(eq(components.id, componentId), eq(components.userId, user.id)),
+        );
+
+      if (!component) {
+        throw new NotFoundException('Component not found');
+      }
+
+      // Generate the code based on type
+      const generatedCode = await this.generateCode(codeType, component.code);
+
+      // Prepare update object based on code type
+      const updateData = this.createUpdateObject(codeType, generatedCode);
+
+      // Update the component in the database
+      const updatedData = {
+        ...updateData,
+        updatedAt: new Date(),
+      };
+
+      const [updatedComponent] = await this.database
+        .update(components)
+        .set(updatedData)
+        .where(
+          and(eq(components.id, componentId), eq(components.userId, user.id)),
+        )
+        .returning();
+
+      if (!updatedComponent) {
+        throw new Error('Failed to update component');
+      }
+
+      return updatedComponent;
+    } catch (error) {
+      console.error('Error generating code:', error);
+      throw error;
+    }
+  }
+
+  private async generateCode(
+    codeType: CodeType,
+    sourceCode: string,
+  ): Promise<string> {
+    // Skip generation for 'code' type as it's the source
+    if (codeType === 'code') {
+      return sourceCode;
+    }
+
+    const prompt = singleGeneratedPrompts[codeType]?.(sourceCode);
+    if (!prompt) {
+      throw new Error(`No prompt defined for code type: ${codeType}`);
+    }
+
+    try {
+      const { text } = await generateText({
+        model: GEMINI_MODEL,
+        prompt,
+      });
+
+      // Remove code block markers and language specification
+      return (
+        text
+          // Remove opening ```language
+          .replace(/^```[\w-]*\n/, '')
+          // Remove closing ```
+          .replace(/\n```$/, '')
+          // Trim any extra whitespace
+          .trim()
+      );
+    } catch (error) {
+      console.error(`Error generating ${codeType}:`, error);
+      throw new Error(`Failed to generate ${codeType}`);
     }
   }
 }
