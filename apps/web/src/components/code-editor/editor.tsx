@@ -6,7 +6,7 @@ import { type Dispatch, type SetStateAction } from "react";
 
 interface CodeEditorProps {
   codeValue: string;
-  setCodeValue: Dispatch<SetStateAction<string>>;
+  setCodeValue: Dispatch<SetStateAction<string>> | ((code: string) => void);
   className?: string;
 }
 
