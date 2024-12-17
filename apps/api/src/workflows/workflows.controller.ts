@@ -72,12 +72,12 @@ export class WorkflowsController {
   @UseGuards(JwtAuthGuard)
   deleteWorkflow(
     @CurrentUser() user: User,
-    @Param('workflowId') workflowId: string,
+    @Query('workflowId') workflowId: string,
   ) {
     if (!user) {
       throw new NotFoundException('Unauthorized');
     }
-    return this.workflowsService.deleteWorkflow(user, +workflowId);
+    return this.workflowsService.deleteWorkflow(user, Number(workflowId));
   }
 
   @Post('duplicate-workflow')

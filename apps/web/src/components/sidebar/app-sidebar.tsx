@@ -7,13 +7,10 @@ import {
   Bot,
   ChartAreaIcon,
   ComponentIcon,
-  Frame,
-  Map,
   PuzzleIcon,
   SquareTerminal,
   VariableIcon,
 } from "lucide-react";
-import { VercelLogoIcon } from "@radix-ui/react-icons";
 import {
   Sidebar,
   SidebarContent,
@@ -21,10 +18,9 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@repo/ui/components/ui/sidebar";
-import type { BundlesType, ProjectType } from "@repo/types";
+import type { ProjectType } from "@repo/types";
 import { SidebarMainContent } from "@/components/sidebar/sidebar-main-content";
 import { SidebarFooterContent } from "@/components/sidebar/sidebar-footer-content";
-import { SavedBundles } from "@/components/sidebar/saved-components-bundles";
 import { CustomSidebarHeader } from "@/components/sidebar/sidebar-header";
 
 // This is sample data.
@@ -74,23 +70,6 @@ const data = {
       items: [],
     },
   ],
-  savedBundles: [
-    {
-      name: "Dummy Data 1",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Dummy Data 2",
-      url: "#",
-      icon: VercelLogoIcon,
-    },
-    {
-      name: "Dummy Data 3",
-      url: "#",
-      icon: Map,
-    },
-  ],
 };
 
 interface AdditionalAppSidebarProps {
@@ -127,7 +106,6 @@ export function AppSidebar({
       </SidebarHeader>
       <SidebarContent>
         <SidebarMainContent items={mainContentData} />
-        <SavedBundles bundles={data.savedBundles as BundlesType[]} />
       </SidebarContent>
       <SidebarFooter>
         <SidebarFooterContent />
