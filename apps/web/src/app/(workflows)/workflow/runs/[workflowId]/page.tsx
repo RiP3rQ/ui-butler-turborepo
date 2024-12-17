@@ -6,7 +6,7 @@ import { getHistoricWorkflowExecutions } from "@/actions/workflows/get-historic-
 
 type Params = Promise<{ workflowId: string }>;
 
-function ExecutionHistoricDataForWorkflowPage({
+export default async function ExecutionHistoricDataForWorkflowPage({
   params,
 }: Readonly<{
   params: Params;
@@ -43,4 +43,3 @@ function ExecutionHistoricDataForWorkflowPage({
     </div>
   );
 }
-export default ExecutionHistoricDataForWorkflowPage;

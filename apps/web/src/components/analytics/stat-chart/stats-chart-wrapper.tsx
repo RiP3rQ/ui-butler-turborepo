@@ -12,7 +12,8 @@ import StatsChart from "@/components/analytics/stat-chart/stats-chart";
 interface StatsChartWrapperProps {
   data: UsedCreditsInPeriodResponse[];
 }
-function StatsChartWrapper({
+
+export function StatsChartWrapper({
   data,
 }: Readonly<StatsChartWrapperProps>): JSX.Element {
   return (
@@ -32,4 +33,3 @@ function StatsChartWrapper({
     </Card>
   );
 }
-export default StatsChartWrapper;

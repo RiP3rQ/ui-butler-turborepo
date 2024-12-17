@@ -14,7 +14,8 @@ interface CreditsUserChartWrapperProps {
   title: string;
   description: string;
 }
-function CreditsUserChartWrapper({
+
+export function CreditsUserChartWrapper({
   data,
   title,
   description,
@@ -34,4 +35,3 @@ function CreditsUserChartWrapper({
     </Card>
   );
 }
-export default CreditsUserChartWrapper;

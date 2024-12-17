@@ -6,7 +6,7 @@ import type {
   DashboardTableFavoritedContentResponse,
   Period,
 } from '@repo/types';
-import { and, eq, gte, isNotNull, lte, min, sql } from 'drizzle-orm';
+import { and, eq, gte, lte, min, sql } from 'drizzle-orm';
 import { periodToDateRange } from './lib/period-to-date-range';
 import { inArray } from 'drizzle-orm/sql/expressions/conditions';
 import { eachDayOfInterval, format } from 'date-fns';
@@ -73,7 +73,6 @@ export class AnalyticsService {
           eq(workflowExecutions.userId, user.id),
           gte(workflowExecutions.startedAt, startDate),
           lte(workflowExecutions.startedAt, endDate),
-          inArray(workflowExecutions.status, ['COMPLETED', 'FAILED']), // TODO: PROPER ENUM VALUE
         ),
       );
     const phasesInPeriod = await this.database
@@ -84,8 +83,8 @@ export class AnalyticsService {
       .where(
         and(
           eq(executionPhase.userId, user.id),
-          eq(executionPhase.status, 'COMPLETED'), // TODO: PROPER ENUM VALUE
-          isNotNull(executionPhase.creditsCost),
+          gte(executionPhase.startedAt, startDate),
+          lte(executionPhase.startedAt, endDate),
         ),
       );
 

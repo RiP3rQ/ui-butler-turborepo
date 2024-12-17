@@ -1,37 +1,40 @@
-import { Suspense } from "react";
-import { Loader2Icon } from "lucide-react";
+import { redirect } from "next/navigation";
+import { toast } from "sonner";
 import Topbar from "@/components/react-flow/topbar/topbar";
-import ExecutionViewerWrapper from "@/components/execution-viewer/execution-viewer-wrapper";
+import { getWorkflowExecutionWithPhasesDetailsFunction } from "@/actions/workflows/get-workflow-execution-details";
+import { ExecutionViewer } from "@/components/execution-viewer/execution-viewer";
 
 type Params = Promise<{ workflowId: string; runId: string }>;
-const WorkflowRunPage = async ({
+export default async function WorkflowRunPage({
   params,
 }: Readonly<{
   params: Params;
-}>) => {
-  const { workflowId, runId } = await params;
-  return (
-    <div className="flex flex-col h-screen w-full overflow-hidden">
-      <Topbar
-        hideButtons
-        subtitle={`Run ID: ${runId}`}
-        title="Workflow execution details"
-        workflowId={Number(workflowId)}
-      />
-      <section className="flex h-full overflow-auto">
-        <Suspense fallback={<ExecutionViewerLoader />}>
-          <ExecutionViewerWrapper executionId={Number(runId)} />
-        </Suspense>
-      </section>
-    </div>
-  );
-};
-export default WorkflowRunPage;
-
-function ExecutionViewerLoader() {
-  return (
-    <div className="flex w-full items-center justify-center">
-      <Loader2Icon className="size-10 animate-spin stroke-green-400" />
-    </div>
-  );
+}>): Promise<JSX.Element> {
+  try {
+    const { workflowId, runId } = await params;
+    const workflowExecution =
+      await getWorkflowExecutionWithPhasesDetailsFunction({
+        executionId: Number(runId),
+      });
+    return (
+      <div className="flex flex-col h-screen w-full overflow-hidden">
+        <Topbar
+          hideButtons
+          subtitle={`Run ID: ${runId}`}
+          title="Workflow execution details"
+          workflowId={Number(workflowId)}
+        />
+        <section className="flex h-full overflow-auto">
+          <ExecutionViewer
+            executionId={Number(runId)}
+            initialData={workflowExecution}
+          />
+        </section>
+      </div>
+    );
+  } catch (e) {
+    console.error("Error loading workflow:", e);
+    toast.error("Workflow execution not found");
+    return redirect("/workflows-list");
+  }
 }
