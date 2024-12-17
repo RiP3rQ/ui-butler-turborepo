@@ -5,7 +5,7 @@ import { Loader2Icon, PlayIcon } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { runWorkflow } from "@/actions/executions/run-workflow.ts";
+import { runWorkflow } from "@/actions/executions/run-workflow";
 
 interface RunWorkflowButtonProps {
   workflowId: number;

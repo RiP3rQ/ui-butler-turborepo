@@ -5,6 +5,7 @@ import { getErrorMessage } from "@/lib/get-error-message";
 
 export async function runWorkflow(form: {
   workflowId: number;
+  componentId?: number;
   flowDefinition?: string;
 }): Promise<{
   url: string;

@@ -27,11 +27,16 @@ export async function approveChangesExecutor(
     environment.setTemp('Original code', originalCodeContext);
     environment.setTemp('Pending code', codeContext);
 
+    console.dir(originalCodeContext, { depth: null, colors: true });
+    console.dir(codeContext, { depth: null, colors: true });
+
     // Set output to code context
     environment.setOutput('Code', codeContext);
 
     // Pause the workflow execution
     await pauseWorkflowExecution(workflowExecutionId, database);
+
+    environment.log.SUCCESS('Successfully paused the workflow execution');
 
     // Return false to stop the execution
     // The execution will be resumed later when user approves/rejects

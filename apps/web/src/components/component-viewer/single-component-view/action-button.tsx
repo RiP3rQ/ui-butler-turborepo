@@ -1,35 +1,31 @@
+"use client";
+
 import { Loader2Icon, type LucideIcon } from "lucide-react";
-import type { UseMutateFunction } from "@tanstack/react-query";
-import type { CodeType, ComponentType } from "@repo/types";
 import { Button } from "@repo/ui/components/ui/button";
-import { type GenerateCodeFunctionProps } from "@/actions/components/generate-code-function";
+import { type CodeType } from "@repo/types";
+import { cn } from "@repo/ui/lib/utils";
 import { useConfirmationModalStore } from "@/store/confirmation-modal-store";
 import { getErrorMessage } from "@/lib/get-error-message";
 
-interface DisplayActionButtonProps {
+interface ActionButtonProps {
   action?: {
-    title?: string;
-    icon?: LucideIcon;
+    title: string;
+    icon: LucideIcon;
   };
   type: CodeType;
   componentId: string;
-  generateCodeMutation: UseMutateFunction<
-    ComponentType,
-    Error,
-    Readonly<GenerateCodeFunctionProps>
-  >;
   isGenerating: boolean;
   isAnyGenerating: boolean;
+  onGenerate: () => void;
 }
 
-export function DisplayActionButton({
+export function ActionButton({
   action,
   type,
-  componentId,
-  generateCodeMutation,
   isGenerating,
   isAnyGenerating,
-}: Readonly<DisplayActionButtonProps>): JSX.Element | null {
+  onGenerate,
+}: ActionButtonProps) {
   const {
     setIsModalOpen,
     setIsPending,
@@ -37,7 +33,9 @@ export function DisplayActionButton({
     setConfirmationModalBasicState,
   } = useConfirmationModalStore();
 
-  function handleGenerateCodeWithConfirmation() {
+  if (!action?.title || !action.icon) return null;
+
+  const handleClick = () => {
     setConfirmationModalBasicState({
       isModalOpen: true,
       modalTitle: "Confirm code generation",
@@ -48,10 +46,7 @@ export function DisplayActionButton({
         try {
           setIsPending(true);
           setSaveButtonDisabled(true);
-          generateCodeMutation({
-            componentId: Number(componentId),
-            codeType: type,
-          });
+          onGenerate();
         } catch (e) {
           throw new Error(getErrorMessage(e));
         } finally {
@@ -61,23 +56,19 @@ export function DisplayActionButton({
         }
       },
     });
-  }
+  };
 
-  if (!action?.title || !action.icon) return null;
+  const Icon = isGenerating ? Loader2Icon : action.icon;
 
   return (
     <Button
       variant="outline"
       size="sm"
-      onClick={handleGenerateCodeWithConfirmation}
+      onClick={handleClick}
       className="mx-2"
       disabled={isAnyGenerating}
     >
-      {isGenerating ? (
-        <Loader2Icon className="size-4 mr-2 animate-spin" />
-      ) : (
-        <action.icon className="size-4 mr-2" />
-      )}
+      <Icon className={cn("size-4 mr-2", isGenerating && "animate-spin")} />
       {isGenerating ? "Generating..." : action.title}
     </Button>
   );
