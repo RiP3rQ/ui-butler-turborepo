@@ -4,10 +4,8 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@repo/ui/components/ui/alert";
-import { Suspense } from "react";
 import { CreateCredentialDialog } from "@/components/credentials/create-credential-dialog";
 import { UserCredendials } from "@/components/credentials/user-credentials";
-import { UserWorkflowsSkeleton } from "@/app/(workflows)/workflows-list/_components/user-workflows-skeleton";
 import { getUserCredentials } from "@/actions/credentials/get-user-credentials";
 
 export default async function CredentialsPage() {
@@ -32,10 +30,7 @@ export default async function CredentialsPage() {
             safe
           </AlertDescription>
         </Alert>
-        <Suspense fallback={<UserWorkflowsSkeleton />}>
-          {/* @ts-expect-error Server Component */}
-          <UserCredendials initialData={credentials} />
-        </Suspense>
+        <UserCredendials initialData={credentials} />
       </div>
     </div>
   );

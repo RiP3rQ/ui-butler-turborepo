@@ -21,10 +21,6 @@ export default async function WorkflowPage({
       workflowId,
     });
 
-    if (!workflow) {
-      redirect("/workflows-list");
-    }
-
     return <Editor workflow={workflow} workflowId={workflowId} />;
   } catch (error) {
     console.error("Error loading workflow:", error);

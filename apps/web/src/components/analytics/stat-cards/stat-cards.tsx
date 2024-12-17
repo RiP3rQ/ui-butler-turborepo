@@ -8,7 +8,7 @@ interface StatCardsProps {
   data: StatCardsValuesResponse;
 }
 
-function StatCards({ data }: Readonly<StatCardsProps>): JSX.Element {
+export function StatCards({ data }: Readonly<StatCardsProps>): JSX.Element {
   return (
     <div className="grid gap-3 lg:gap-8 lg:grid-cols-3 min-h-[120px]">
       <SingleStatCard
@@ -29,7 +29,6 @@ function StatCards({ data }: Readonly<StatCardsProps>): JSX.Element {
     </div>
   );
 }
-export default StatCards;
 
 export function StatsCardSkeleton(): JSX.Element {
   return (

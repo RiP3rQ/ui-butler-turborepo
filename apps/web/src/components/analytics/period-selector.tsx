@@ -29,7 +29,8 @@ interface PeriodSelectorProps {
   periods: Period[];
   selectedPeriod: Period;
 }
-function PeriodSelector({
+
+export function PeriodSelector({
   periods,
   selectedPeriod,
 }: Readonly<PeriodSelectorProps>): JSX.Element {
@@ -60,4 +61,3 @@ function PeriodSelector({
     </Select>
   );
 }
-export default PeriodSelector;

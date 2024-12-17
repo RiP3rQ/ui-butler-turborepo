@@ -15,14 +15,14 @@ export default async function SingleProjectPage({
     return redirect("/dashboard");
   }
 
-  const projectData = await getProjectsDetailsFunction({
-    projectId,
-  });
+  try {
+    const projectData = await getProjectsDetailsFunction({
+      projectId,
+    });
 
-  if (!projectData) {
+    return <ProjectCard projectData={projectData} projectId={projectId} />;
+  } catch (e) {
     toast.error("Project not found");
     return redirect("/dashboard");
   }
-
-  return <ProjectCard projectData={projectData} projectId={projectId} />;
 }

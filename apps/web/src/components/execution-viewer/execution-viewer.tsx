@@ -1,7 +1,10 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import type { IExecutionPhaseStatus } from "@repo/types";
+import type {
+  IExecutionPhaseStatus,
+  WorkflowExecutionWithPhases,
+} from "@repo/types";
 import { WorkflowExecutionStatus } from "@repo/types";
 import {
   CalendarIcon,
@@ -33,14 +36,18 @@ export type ExecutionData = Awaited<
 >;
 
 interface ExecutionViewerProps {
-  initialData: ExecutionData;
+  executionId: number;
+  initialData: WorkflowExecutionWithPhases;
 }
 
-function ExecutionViewer({ initialData }: Readonly<ExecutionViewerProps>) {
+export function ExecutionViewer({
+  executionId,
+  initialData,
+}: Readonly<ExecutionViewerProps>): JSX.Element {
   const [selectedPhase, setSelectedPhase] = useState<number | null>(null);
 
   const query = useQuery({
-    queryKey: ["execution", initialData.id],
+    queryKey: ["execution", executionId],
     initialData,
     queryFn: () =>
       getWorkflowExecutionWithPhasesDetailsFunction({
@@ -236,5 +243,3 @@ function ExecutionViewer({ initialData }: Readonly<ExecutionViewerProps>) {
     </div>
   );
 }
-
-export default ExecutionViewer;
