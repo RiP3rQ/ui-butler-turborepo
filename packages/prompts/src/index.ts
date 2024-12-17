@@ -5,3 +5,6 @@ export * from "./create-unit-tests-prompt";
 export * from "./create-e2e-tests-prompt";
 export * from "./create-mdx-docs-prompt";
 export * from "./create-a-component-from-scratch-prompt";
+
+// Single generated prompts
+export * from "./single-generated";

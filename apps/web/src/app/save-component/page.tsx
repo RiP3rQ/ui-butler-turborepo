@@ -33,16 +33,14 @@ import {
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { RunCodeEditorActions } from "@/components/code-editor/run-actions-component";
-import { CODE_ACTIONS } from "@/constants/code-actions";
 import { getUserProjects } from "@/actions/projects/get-user-projects";
 import { getErrorMessage } from "@/lib/get-error-message";
-import { CodeEditorWithPreview } from "@/components/code-editor/code-editor-with-preview";
 import { saveComponentFunction } from "@/actions/components/save-component";
 import {
   saveComponentSchema,
   type SaveComponentSchemaType,
 } from "@/schemas/component";
+import CodeEditor from "@/components/code-editor/editor";
 
 export default function SaveNewComponentPage(): JSX.Element {
   const router = useRouter();
@@ -169,7 +167,7 @@ export default function SaveNewComponentPage(): JSX.Element {
                       <p className="text-primary text-xs">(Required)</p>
                     </FormLabel>
                     <FormControl>
-                      <CodeEditorWithPreview
+                      <CodeEditor
                         codeValue={field.value}
                         setCodeValue={field.onChange}
                       />
@@ -178,9 +176,7 @@ export default function SaveNewComponentPage(): JSX.Element {
                   </FormItem>
                 )}
               />
-              <CardFooter className="flex items-center justify-end space-x-3">
-                {/* TODO: ADD proper disable */}
-                <RunCodeEditorActions actions={CODE_ACTIONS} />
+              <CardFooter className="flex items-center justify-end p-0">
                 <Button
                   className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500"
                   type="submit"

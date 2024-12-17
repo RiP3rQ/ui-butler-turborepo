@@ -16,7 +16,7 @@ function CodeEditor({
   className,
 }: Readonly<CodeEditorProps>): JSX.Element {
   return (
-    <div className={cn(`w-full h-full`, className)}>
+    <div className={cn(`w-full h-[600px] min-h-[600px]`, className)}>
       <Editor
         defaultValue='// Add your code here and then click "Save" or "Run action"'
         language="typescript"
