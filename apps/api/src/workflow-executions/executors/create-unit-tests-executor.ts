@@ -37,6 +37,7 @@ export async function createUnitTestsExecutor(
     }
 
     environment.setOutput('Unit Tests', object.unitTests);
+    environment.setUnitTests(object.unitTests);
     environment.log.SUCCESS('Unit tests generated successfully');
     return true;
   } catch (e) {

@@ -7,6 +7,10 @@ export type Environment = {
   componentId?: number;
   code?: string;
   startingCode?: string;
+  tsDocs?: string;
+  mdxDocs?: string;
+  unitTests?: string;
+  e2eTests?: string;
   // phases with phaseId as key
   phases: Record<
     string,
@@ -22,11 +26,7 @@ export type InputOutputNames<T extends readonly TaskParam[]> =
   T[number]["name"];
 
 export type ExecutionEnvironment<T extends BaseWorkflowTask> = {
-  getInput(name: InputOutputNames<T["inputs"]>): string;
-  setOutput(name: InputOutputNames<T["outputs"]>, value: string): void;
-
-  getTemp(name: InputOutputNames<T["temp"]>): string;
-  setTemp(name: InputOutputNames<T["temp"]>, value: string): void;
+  getComponentId(): number | undefined;
 
   getStartingCode(): string;
   setStartingCode(code: string): void;
@@ -34,7 +34,24 @@ export type ExecutionEnvironment<T extends BaseWorkflowTask> = {
   getCode(): string | undefined;
   setCode(code: string): void;
 
-  getComponentId(): number | undefined;
+  getInput(name: InputOutputNames<T["inputs"]>): string;
+  setOutput(name: InputOutputNames<T["outputs"]>, value: string): void;
+
+  getTemp(name: InputOutputNames<T["temp"]>): string;
+  setTemp(name: InputOutputNames<T["temp"]>, value: string): void;
+
+  // Generated codes
+  getTsDocs(): string;
+  setTsDocs(tsDocs: string): void;
+
+  getMdxDocs(): string;
+  setMdxDocs(mdxDocs: string): void;
+
+  getUnitTests(): string;
+  setUnitTests(unitTests: string): void;
+
+  getE2ETests(): string;
+  setE2ETests(e2eTests: string): void;
 
   log: LogCollector;
 };

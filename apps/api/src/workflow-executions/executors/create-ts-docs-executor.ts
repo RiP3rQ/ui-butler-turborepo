@@ -39,6 +39,7 @@ export async function createTsDocsExecutor(
     }
 
     environment.setOutput('TypeScript Docs', object.typescriptDocs);
+    environment.setTsDocs(object.typescriptDocs);
     environment.log.SUCCESS('Typescript docs generated successfully');
     return true;
   } catch (e) {

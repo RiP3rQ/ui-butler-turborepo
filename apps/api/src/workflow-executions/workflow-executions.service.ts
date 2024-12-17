@@ -98,6 +98,11 @@ export class WorkflowExecutionsService {
     const temp = JSON.parse(currentPhase.temp || '{}');
     const originalCode = temp?.['Original code'] ?? '';
     const pendingCode = temp?.['Pending code'] ?? '';
+    const componentId = Number(temp?.['Component ID'] ?? '');
+
+    if (!componentId || isNaN(componentId)) {
+      throw new Error('Component ID not found');
+    }
 
     // Create environment with the appropriate code context
     const environment: Environment = {
@@ -109,7 +114,7 @@ export class WorkflowExecutionsService {
           : originalCode,
       startingCode: originalCode,
       workflowExecutionId: executionId,
-      componentId: body.componentId,
+      componentId,
     };
 
     console.log('Environment', environment);
