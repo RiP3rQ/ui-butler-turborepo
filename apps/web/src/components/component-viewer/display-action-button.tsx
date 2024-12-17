@@ -1,4 +1,4 @@
-import type { LucideIcon } from "lucide-react";
+import { Loader2Icon, type LucideIcon } from "lucide-react";
 import type { UseMutateFunction } from "@tanstack/react-query";
 import type { CodeType, ComponentType } from "@repo/types";
 import { Button } from "@repo/ui/components/ui/button";
@@ -18,6 +18,8 @@ interface DisplayActionButtonProps {
     Error,
     Readonly<GenerateCodeFunctionProps>
   >;
+  isGenerating: boolean;
+  isAnyGenerating: boolean;
 }
 
 export function DisplayActionButton({
@@ -25,6 +27,8 @@ export function DisplayActionButton({
   type,
   componentId,
   generateCodeMutation,
+  isGenerating,
+  isAnyGenerating,
 }: Readonly<DisplayActionButtonProps>): JSX.Element | null {
   const {
     setIsModalOpen,
@@ -67,9 +71,14 @@ export function DisplayActionButton({
       size="sm"
       onClick={handleGenerateCodeWithConfirmation}
       className="mx-2"
+      disabled={isAnyGenerating}
     >
-      <action.icon className="size-4 mr-2" />
-      {action.title}
+      {isGenerating ? (
+        <Loader2Icon className="size-4 mr-2 animate-spin" />
+      ) : (
+        <action.icon className="size-4 mr-2" />
+      )}
+      {isGenerating ? "Generating..." : action.title}
     </Button>
   );
 }

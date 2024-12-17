@@ -109,6 +109,10 @@ export function SingleComponentView({
 }: Readonly<SingleComponentViewProps>): JSX.Element {
   const queryClient = useQueryClient();
   const [updating, setUpdating] = useState<string | null>(null);
+  const [generatingCodeType, setGeneratingCodeType] = useState<CodeType | null>(
+    null,
+  );
+
   const { mutate } = useMutation({
     mutationFn: updateComponentCode,
     onSuccess: () => {
@@ -123,8 +127,17 @@ export function SingleComponentView({
     },
   });
 
-  const { mutate: generateCodeMutation } = useMutation({
+  const {
+    mutate: generateCodeMutation,
+    isPending: isGenerateCodeMutationPending,
+  } = useMutation({
     mutationFn: generateCodeFunction,
+    onMutate: (variables) => {
+      setGeneratingCodeType(variables.codeType);
+    },
+    onSettled: () => {
+      setGeneratingCodeType(null);
+    },
     onSuccess: () => {
       toast.success("Code generated successfully", {
         id: "generated-code",
@@ -227,6 +240,8 @@ export function SingleComponentView({
                       type={codeType}
                       componentId={componentId}
                       generateCodeMutation={generateCodeMutation}
+                      isGenerating={generatingCodeType === codeType}
+                      isAnyGenerating={generatingCodeType !== null}
                     />
                   </div>
                 </div>
