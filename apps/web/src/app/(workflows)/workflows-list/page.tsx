@@ -1,9 +1,10 @@
-import { Suspense } from "react";
-import { UserWorkflowsSkeleton } from "@/app/(workflows)/workflows-list/_components/user-workflows-skeleton";
 import { UserWorkflows } from "@/app/(workflows)/workflows-list/_components/user-workflows-list";
 import { CreateWorkflowDialog } from "@/app/(workflows)/workflows-list/_components/create-workflow-dialog";
+import { getUserWorkflows } from "@/actions/workflows/get-workflows";
 
-export default function WorkflowsListPage(): JSX.Element {
+export default async function WorkflowsListPage(): Promise<JSX.Element> {
+  const workflows = await getUserWorkflows();
+
   return (
     <div className="flex-1 flex flex-col h-full">
       <div className="flex justify-between">
@@ -14,10 +15,7 @@ export default function WorkflowsListPage(): JSX.Element {
         <CreateWorkflowDialog />
       </div>
       <div className="w-full py-6">
-        <Suspense fallback={<UserWorkflowsSkeleton />}>
-          {/* @ts-expect-error Server Component */}
-          <UserWorkflows />
-        </Suspense>
+        <UserWorkflows workflows={workflows} />
       </div>
     </div>
   );

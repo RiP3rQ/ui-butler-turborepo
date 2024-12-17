@@ -48,7 +48,6 @@ export class AuthController {
     @CurrentUser() user: User,
     @Res({ passthrough: true }) response: ExpressResponse,
   ) {
-    console.log('refresh token');
     await this.authService.login(user, response);
   }
 

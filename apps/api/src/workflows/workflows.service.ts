@@ -114,6 +114,8 @@ export class WorkflowsService {
 
   // Delete /workflows
   async deleteWorkflow(user: User, workflowId: number) {
+    console.log('@@ workflowId', workflowId);
+    console.log('@@ user', user);
     const [deletedWorkflow] = await this.database
       .delete(workflows)
       .where(and(eq(workflows.id, workflowId), eq(workflows.userId, user.id)))

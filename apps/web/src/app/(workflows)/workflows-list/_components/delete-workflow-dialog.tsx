@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -28,6 +28,7 @@ export function DeleteWorkflowDialog({
   workflowName,
   workflowId,
 }: Readonly<DeleteWorkflowDialogProps>): JSX.Element {
+  const queryClient = useQueryClient();
   const [confirmText, setConfirmText] = useState<string>("");
 
   const { mutate, isPending } = useMutation({
@@ -35,6 +36,8 @@ export function DeleteWorkflowDialog({
     onSuccess: () => {
       toast.success("Workflow deleted successfully", { id: workflowId });
       setConfirmText("");
+      // @ts-expect-error Reason: queryClient has no types
+      queryClient.invalidateQueries("workflows");
     },
     onError: () => {
       toast.error("Failed to delete executions", { id: workflowId });

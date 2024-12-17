@@ -1,17 +1,31 @@
+"use client";
+
 import { AlertCircleIcon, InboxIcon } from "lucide-react";
 import {
   Alert,
   AlertDescription,
   AlertTitle,
 } from "@repo/ui/components/ui/alert";
+import { useQuery } from "@tanstack/react-query";
+import { type WorkflowType } from "@repo/types";
 import { WorkflowCard } from "@/app/(workflows)/workflows-list/_components/workflow-card";
 import { CreateWorkflowDialog } from "@/app/(workflows)/workflows-list/_components/create-workflow-dialog";
 import { getUserWorkflows } from "@/actions/workflows/get-workflows";
 
-export async function UserWorkflows() {
-  const workflows = await getUserWorkflows();
+interface UserWorkflowsProps {
+  workflows: WorkflowType[];
+}
 
-  if (!workflows) {
+export function UserWorkflows({
+  workflows,
+}: Readonly<UserWorkflowsProps>): JSX.Element {
+  const { data, isError } = useQuery({
+    queryKey: ["workflows"],
+    queryFn: getUserWorkflows,
+    initialData: workflows,
+  });
+
+  if (isError) {
     return (
       <Alert variant="destructive">
         <AlertCircleIcon className="size-4" />
@@ -24,7 +38,7 @@ export async function UserWorkflows() {
     );
   }
 
-  if (workflows.length === 0) {
+  if (data.length === 0) {
     return (
       <div className="flex flex-col gap-4 h-full items-center justify-center">
         <div className="rounded-full bg-accent size-20 flex items-center justify-center">
@@ -43,7 +57,7 @@ export async function UserWorkflows() {
 
   return (
     <div className="grid grid-cols-1 gap-4">
-      {workflows.map((workflow) => (
+      {data.map((workflow) => (
         <WorkflowCard key={workflow.id} workflow={workflow} />
       ))}
     </div>
