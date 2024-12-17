@@ -1,35 +1,41 @@
+"use client";
+
 import { InboxIcon } from "lucide-react";
+import { type WorkflowExecution } from "@repo/types";
+import { useQuery } from "@tanstack/react-query";
 import ExecutionsTable from "@/components/execution-viewer/executions-table";
 import { getHistoricWorkflowExecutions } from "@/actions/workflows/get-historic-workflow-executions";
 
 interface ExecutionRunsHistoricTableProps {
   workflowId: string;
+  historicExecutions: WorkflowExecution[];
 }
 
-const WorkflowHistoricExecutionsTable = async ({
+function WorkflowHistoricExecutionsTable({
   workflowId,
-}: Readonly<ExecutionRunsHistoricTableProps>) => {
-  const historicExecutions = await getHistoricWorkflowExecutions({
-    workflowId: Number(workflowId),
+  historicExecutions,
+}: Readonly<ExecutionRunsHistoricTableProps>): JSX.Element {
+  const { data, isError } = useQuery({
+    queryKey: ["workflows"],
+    queryFn: async () =>
+      await getHistoricWorkflowExecutions({ workflowId: Number(workflowId) }),
+    initialData: historicExecutions,
   });
 
-  if (!historicExecutions) {
+  if (isError) {
     return <div>Could not find any historic executions</div>;
   }
 
-  if (historicExecutions.length === 0) {
+  if (data.length === 0) {
     return <RenderEmptyState />;
   }
 
   return (
     <div className="container py-6 w-full">
-      <ExecutionsTable
-        initialData={historicExecutions}
-        workflowId={Number(workflowId)}
-      />
+      <ExecutionsTable initialData={data} workflowId={Number(workflowId)} />
     </div>
   );
-};
+}
 export default WorkflowHistoricExecutionsTable;
 
 function RenderEmptyState() {

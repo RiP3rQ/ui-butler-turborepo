@@ -1,11 +1,10 @@
 "use client";
 import { Button } from "@repo/ui/components/ui/button";
 import { DownloadCloudIcon } from "lucide-react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import useWorkflowExecutionPlan from "@/hooks/use-workflow-execution-plan";
 import { unpublishWorkflowFunction } from "@/actions/workflows/unpublish-workflow";
-import useWorkflowExecutionPlan2 from "@/hooks/use-workflow-execution-plan2";
 
 interface UnpublishButtonProps {
   workflowId: number;
@@ -14,8 +13,8 @@ interface UnpublishButtonProps {
 function UnpublishButton({
   workflowId,
 }: Readonly<UnpublishButtonProps>): JSX.Element {
+  const queryClient = useQueryClient();
   const generate = useWorkflowExecutionPlan();
-  const generate2 = useWorkflowExecutionPlan2();
 
   const { mutate, isPending } = useMutation({
     mutationFn: unpublishWorkflowFunction,
@@ -23,6 +22,8 @@ function UnpublishButton({
       toast.success("Workflow unpublished successfully", {
         id: "unpublish-workflow",
       });
+      // @ts-expect-error Reason: queryClient has no types
+      queryClient.invalidateQueries(["workflow", workflowId]);
     },
     onError: () => {
       toast.error("Failed to unpublish workflow", { id: "unpublish-workflow" });
@@ -36,9 +37,6 @@ function UnpublishButton({
       onClick={() => {
         // Client-side validation + return in form of execution plan
         const plan = generate();
-        const plan2 = generate2();
-        console.dir(plan, { depth: null, colors: true });
-        console.dir(plan2, { depth: null, colors: true });
         if (!plan) {
           // Client-side validation!
           return;
