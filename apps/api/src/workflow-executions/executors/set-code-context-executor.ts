@@ -18,21 +18,32 @@ export async function setCodeContextExecutor(
       environment.log.WARNING(
         "Using the code context from the environment's input",
       );
+      const codeContext = environment.getInput('Code');
+      if (!codeContext) {
+        environment.log.ERROR('Code context is empty');
+        throw new Error('Code context is empty');
+      }
+      environment.setCode(codeContext);
+      environment.setStartingCode(codeContext);
+      environment.log.SUCCESS('Code context set successfully');
+      return true;
     }
 
-    const [component] = await database
-      .select({
-        code: components.code,
-      })
-      .from(components)
-      .where(eq(components.id, componentId));
+    const [component] = componentId
+      ? await database
+          .select({
+            code: components.code,
+          })
+          .from(components)
+          .where(eq(components.id, componentId))
+      : [];
 
     if (!component) {
       environment.log.ERROR('Component not found');
       throw new Error('Component not found');
     }
 
-    const codeContext = component.code || environment.getInput('Code');
+    const codeContext = component?.code || environment.getInput('Code');
 
     if (!codeContext) {
       environment.log.ERROR('Code context is empty');

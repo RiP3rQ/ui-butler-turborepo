@@ -7,7 +7,7 @@ export class RunWorkflowDto {
 
   @IsNumber()
   @IsNotEmpty()
-  componentId: number = 0;
+  componentId?: number = 0;
 
   @IsString()
   flowDefinition?: string = '';
