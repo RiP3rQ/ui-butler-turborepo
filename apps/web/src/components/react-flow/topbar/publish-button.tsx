@@ -1,6 +1,6 @@
 "use client";
 import { UploadIcon } from "lucide-react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useReactFlow } from "@xyflow/react";
 import { Button } from "@repo/ui/components/ui/button";
@@ -14,6 +14,7 @@ interface PublishButtonProps {
 function PublishButton({
   workflowId,
 }: Readonly<PublishButtonProps>): JSX.Element {
+  const queryClient = useQueryClient();
   const generate = useWorkflowExecutionPlan();
   const { toObject } = useReactFlow();
 
@@ -23,6 +24,8 @@ function PublishButton({
       toast.success("Workflow published successfully", {
         id: "publish-workflow",
       });
+      // @ts-expect-error Reason: queryClient has no types
+      queryClient.invalidateQueries(["workflow", workflowId]);
     },
     onError: () => {
       toast.error("Failed to publish workflow", { id: "publish-workflow" });

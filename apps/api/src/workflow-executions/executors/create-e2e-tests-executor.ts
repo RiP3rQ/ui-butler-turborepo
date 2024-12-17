@@ -37,6 +37,7 @@ export async function createE2ETestsExecutor(
     }
 
     environment.setOutput('E2E Tests', object.e2eTests);
+    environment.setE2ETests(object.e2eTests);
     environment.log.SUCCESS('E2E tests generated successfully');
     return true;
   } catch (e) {

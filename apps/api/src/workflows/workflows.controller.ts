@@ -123,7 +123,7 @@ export class WorkflowsController {
   @UseGuards(JwtAuthGuard)
   unpublishWorkflow(
     @CurrentUser() user: User,
-    @Param('workflowId') workflowId: string,
+    @Query('workflowId') workflowId: string,
   ) {
     if (!user) {
       throw new NotFoundException('Unauthorized');

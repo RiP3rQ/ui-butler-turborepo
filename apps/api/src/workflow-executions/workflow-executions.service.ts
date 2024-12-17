@@ -86,10 +86,10 @@ export class WorkflowExecutionsService {
     }
 
     // Get the remaining phases
-    const currentPhaseIndex = execution.executionPhases.indexOf(currentPhase);
-    const remainingPhases = execution.executionPhases
-      .slice(currentPhaseIndex)
-      .filter((phase) => phase.status === ExecutionPhaseStatus.PENDING);
+    console.log('execution.executionPhases', execution.executionPhases);
+    const remainingPhases = execution.executionPhases.filter(
+      (phase) => phase.status === ExecutionPhaseStatus.PENDING,
+    );
 
     // Parse edges from the execution definition
     const edges = (JSON.parse(execution.definition)?.edges ?? []) as Edge[];
@@ -98,6 +98,11 @@ export class WorkflowExecutionsService {
     const temp = JSON.parse(currentPhase.temp || '{}');
     const originalCode = temp?.['Original code'] ?? '';
     const pendingCode = temp?.['Pending code'] ?? '';
+    const componentId = Number(temp?.['Component ID'] ?? '');
+
+    if (!componentId || isNaN(componentId)) {
+      console.warn('Component ID not found in temp');
+    }
 
     // Create environment with the appropriate code context
     const environment: Environment = {
@@ -109,7 +114,7 @@ export class WorkflowExecutionsService {
           : originalCode,
       startingCode: originalCode,
       workflowExecutionId: executionId,
-      componentId: body.componentId,
+      componentId,
     };
 
     console.log('Environment', environment);
@@ -133,7 +138,7 @@ export class WorkflowExecutionsService {
       .where(eq(executionPhase.id, currentPhase.id));
 
     // Continue execution with remaining phases
-    await executeWorkflowPhases(
+    executeWorkflowPhases(
       this.database,
       environment,
       executionId,

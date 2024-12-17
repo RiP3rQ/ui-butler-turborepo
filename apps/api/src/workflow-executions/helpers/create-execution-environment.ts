@@ -11,9 +11,8 @@ export function createExecutionEnvironment(
   logCollector: LogCollector,
 ): ExecutionEnvironment<any> {
   return {
-    getInput: (name: string) => environment.phases[node.id]?.inputs[name] || '',
-    setOutput: (name: string, value: string) => {
-      environment.phases[node.id].outputs[name] = value;
+    getComponentId(): number {
+      return environment.componentId;
     },
 
     getStartingCode(): string {
@@ -23,6 +22,16 @@ export function createExecutionEnvironment(
       environment.startingCode = code;
     },
 
+    getCode: () => environment.code,
+    setCode: (code: string) => {
+      environment.code = code;
+    },
+
+    getInput: (name: string) => environment.phases[node.id]?.inputs[name] || '',
+    setOutput: (name: string, value: string) => {
+      environment.phases[node.id].outputs[name] = value;
+    },
+
     getTemp(name: string): string {
       return environment.phases[node.id]?.temp[name] || '';
     },
@@ -30,13 +39,30 @@ export function createExecutionEnvironment(
       environment.phases[node.id].temp[name] = value;
     },
 
-    getCode: () => environment.code,
-    setCode: (code: string) => {
-      environment.code = code;
+    // Generated codes
+    getTsDocs(): string {
+      return environment.tsDocs;
     },
-
-    getComponentId(): number {
-      return environment.componentId;
+    setTsDocs(tsDocs: string): void {
+      environment.tsDocs = tsDocs;
+    },
+    getMdxDocs(): string {
+      return environment.mdxDocs;
+    },
+    setMdxDocs(mdxDocs: string): void {
+      environment.mdxDocs = mdxDocs;
+    },
+    getUnitTests(): string {
+      return environment.unitTests;
+    },
+    setUnitTests(unitTests: string): void {
+      environment.unitTests = unitTests;
+    },
+    getE2ETests(): string {
+      return environment.e2eTests;
+    },
+    setE2ETests(e2eTests: string): void {
+      environment.e2eTests = e2eTests;
     },
 
     log: logCollector,

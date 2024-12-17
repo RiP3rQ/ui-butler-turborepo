@@ -26,6 +26,10 @@ export const ServerApproveChangesTask = {
       name: "Pending code",
       type: TaskParamType.CODE_INSTANCE,
     },
+    {
+      name: "Component ID",
+      type: TaskParamType.STRING,
+    },
   ] as const,
   credits: 0,
 } satisfies BaseWorkflowTask;

@@ -37,6 +37,7 @@ export async function createMdxDocsExecutor(
     }
 
     environment.setOutput('MDX Docs', object.mdxDocs);
+    environment.setMdxDocs(object.mdxDocs);
     environment.log.SUCCESS('Mdx docs generated successfully');
     return true;
   } catch (e) {

@@ -21,11 +21,15 @@ export async function approveChangesExecutor(
       throw new Error('Original code context is empty');
     }
 
-    environment.log.INFO('Waiting for user approval...');
+    const componentId = environment.getComponentId();
+    if (!componentId) {
+      environment.log.WARNING('Component ID is empty');
+    }
 
     // Save the original code context to the database
     environment.setTemp('Original code', originalCodeContext);
     environment.setTemp('Pending code', codeContext);
+    environment.setTemp('Component ID', String(componentId));
 
     console.dir(originalCodeContext, { depth: null, colors: true });
     console.dir(codeContext, { depth: null, colors: true });

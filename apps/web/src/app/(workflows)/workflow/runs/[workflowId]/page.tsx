@@ -2,15 +2,20 @@ import { Suspense } from "react";
 import { Loader2Icon } from "lucide-react";
 import Topbar from "@/components/react-flow/topbar/topbar";
 import WorkflowHistoricExecutionsTable from "@/components/execution-viewer/execution-runs-historic-table";
+import { getHistoricWorkflowExecutions } from "@/actions/workflows/get-historic-workflow-executions";
 
 type Params = Promise<{ workflowId: string }>;
 
-const ExecutionHistoricDataForWorkflowPage = async ({
+function ExecutionHistoricDataForWorkflowPage({
   params,
 }: Readonly<{
   params: Params;
-}>) => {
+}>) {
   const workflowId = (await params).workflowId;
+
+  const historicExecutions = await getHistoricWorkflowExecutions({
+    workflowId: Number(workflowId),
+  });
 
   return (
     <div className="h-full w-full overflow-auto">
@@ -30,9 +35,12 @@ const ExecutionHistoricDataForWorkflowPage = async ({
           </div>
         }
       >
-        <WorkflowHistoricExecutionsTable workflowId={workflowId} />
+        <WorkflowHistoricExecutionsTable
+          workflowId={workflowId}
+          historicExecutions={historicExecutions}
+        />
       </Suspense>
     </div>
   );
-};
+}
 export default ExecutionHistoricDataForWorkflowPage;
