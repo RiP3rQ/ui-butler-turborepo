@@ -5,6 +5,10 @@ export class RunWorkflowDto {
   @IsNotEmpty()
   workflowId: number = 0;
 
+  @IsNumber()
+  @IsNotEmpty()
+  componentId: number = 0;
+
   @IsString()
   flowDefinition?: string = '';
 }

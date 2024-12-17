@@ -149,8 +149,10 @@ export class WorkflowsController {
 
     console.log('runWorkflowDto', runWorkflowDto);
 
-    if (!runWorkflowDto.workflowId) {
-      throw new BadRequestException('Invalid request');
+    if (!runWorkflowDto.workflowId || !runWorkflowDto.componentId) {
+      throw new BadRequestException(
+        'Invalid request -> missing workflowId or componentId',
+      );
     }
 
     return this.workflowsService.runWorkflow(user, runWorkflowDto);

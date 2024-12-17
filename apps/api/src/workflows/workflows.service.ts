@@ -353,7 +353,10 @@ export class WorkflowsService {
         }
 
         // Execute the workflow without await to not block the response
-        this.workflowExecutionsService.executeWorkflow(execution.id);
+        this.workflowExecutionsService.executeWorkflow(
+          execution.id,
+          runWorkflowDto.componentId,
+        );
 
         return {
           url: `/workflow/runs/${runWorkflowDto.workflowId}/${execution.id}`,

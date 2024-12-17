@@ -17,10 +17,10 @@ export function createExecutionEnvironment(
     },
 
     getStartingCode(): string {
-      return environment.code;
+      return environment.startingCode;
     },
     setStartingCode(code: string): void {
-      environment.code = code;
+      environment.startingCode = code;
     },
 
     getTemp(name: string): string {
@@ -33,6 +33,10 @@ export function createExecutionEnvironment(
     getCode: () => environment.code,
     setCode: (code: string) => {
       environment.code = code;
+    },
+
+    getComponentId(): number {
+      return environment.componentId;
     },
 
     log: logCollector,

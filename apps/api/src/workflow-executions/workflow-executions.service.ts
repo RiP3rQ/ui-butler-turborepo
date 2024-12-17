@@ -107,7 +107,9 @@ export class WorkflowExecutionsService {
         body.decision === 'approve'
           ? (pendingCode ?? originalCode)
           : originalCode,
+      startingCode: originalCode,
       workflowExecutionId: executionId,
+      componentId: body.componentId,
     };
 
     console.log('Environment', environment);
@@ -150,7 +152,11 @@ export class WorkflowExecutionsService {
   }
 
   // EXECUTE WORKFLOW ----------------------------------------------------------
-  async executeWorkflow(workflowExecutionId: number, nextRunAt?: Date) {
+  async executeWorkflow(
+    workflowExecutionId: number,
+    componentId: number,
+    nextRunAt?: Date,
+  ) {
     // execute workflow
     console.log('executing workflow', workflowExecutionId);
 
@@ -170,7 +176,9 @@ export class WorkflowExecutionsService {
     const environment: Environment = {
       phases: {},
       code: '',
+      startingCode: '',
       workflowExecutionId: workflowExecutionId,
+      componentId: componentId,
     };
 
     // INIT WORKFLOW EXECUTION

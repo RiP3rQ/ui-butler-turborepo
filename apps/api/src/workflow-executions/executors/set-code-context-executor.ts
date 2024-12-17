@@ -1,11 +1,39 @@
 import { ExecutionEnvironment } from '@repo/types';
 import { ServerSetCodeContextTaskType } from '@repo/tasks-registry';
+import { DrizzleDatabase } from '../../database/merged-schemas';
+import { components } from '../../database/schemas/components';
+import { eq } from 'drizzle-orm';
 
 export async function setCodeContextExecutor(
   environment: ExecutionEnvironment<ServerSetCodeContextTaskType>,
+  database: DrizzleDatabase,
 ): Promise<boolean> {
   try {
-    const codeContext = environment.getInput('Code');
+    environment.log.INFO('Setting code context');
+
+    environment.log.INFO("Fetching component's code context");
+    const componentId = environment.getComponentId();
+    if (!componentId) {
+      environment.log.ERROR('Component ID is empty');
+      environment.log.WARNING(
+        "Using the code context from the environment's input",
+      );
+    }
+
+    const [component] = await database
+      .select({
+        code: components.code,
+      })
+      .from(components)
+      .where(eq(components.id, componentId));
+
+    if (!component) {
+      environment.log.ERROR('Component not found');
+      throw new Error('Component not found');
+    }
+
+    const codeContext = component.code || environment.getInput('Code');
+
     if (!codeContext) {
       environment.log.ERROR('Code context is empty');
       throw new Error('Code context is empty');

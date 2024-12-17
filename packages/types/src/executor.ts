@@ -4,7 +4,9 @@ import { TaskParam } from "./task";
 
 export type Environment = {
   workflowExecutionId: number;
+  componentId?: number;
   code?: string;
+  startingCode?: string;
   // phases with phaseId as key
   phases: Record<
     string,
@@ -31,6 +33,8 @@ export type ExecutionEnvironment<T extends BaseWorkflowTask> = {
 
   getCode(): string | undefined;
   setCode(code: string): void;
+
+  getComponentId(): number | undefined;
 
   log: LogCollector;
 };

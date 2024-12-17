@@ -10,6 +10,7 @@ import moment from "moment";
 import { Label } from "@repo/ui/components/ui/label";
 import { getSingleComponentsDataFunction } from "@/actions/components/get-single-components-data";
 import SingleComponentViewWithShortcuts from "@/components/component-viewer/single-component-view-with-shortcuts";
+import { RunWorkflowButton } from "@/components/component-viewer/single-component-view/run-workflow-button";
 
 type Params = Promise<{ projectId: string; componentId: string }>;
 export default async function SingleComponentPage({
@@ -27,10 +28,6 @@ export default async function SingleComponentPage({
     projectId,
     componentId,
   });
-
-  if (!componentsData) {
-    return <div>Component not found</div>;
-  }
 
   return (
     <div className="flex flex-col items-center min-h-[calc(100vh-200px)] w-full max-w-full px-8 py-4">
@@ -65,6 +62,7 @@ export default async function SingleComponentPage({
           </CardDescription>
         </CardHeader>
         <CardContent className="h-fit w-full">
+          <RunWorkflowButton componentId={componentId} />
           <SingleComponentViewWithShortcuts
             componentsData={componentsData}
             projectId={projectId}
