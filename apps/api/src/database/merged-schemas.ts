@@ -6,6 +6,7 @@ import * as workflowsSchema from './schemas/workflows';
 import * as projectsSchema from './schemas/projects';
 import * as componentsSchema from './schemas/components';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { NeonHttpDatabase } from 'drizzle-orm/neon-http';
 
 export const mergedSchemas = {
   ...userSchema,
@@ -18,3 +19,4 @@ export const mergedSchemas = {
 };
 export type DatabaseSchemas = typeof mergedSchemas;
 export type DrizzleDatabase = NodePgDatabase<DatabaseSchemas>;
+export type NeonDatabaseType = NeonHttpDatabase<DatabaseSchemas>;
