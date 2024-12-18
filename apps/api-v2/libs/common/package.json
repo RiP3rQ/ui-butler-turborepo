@@ -21,6 +21,7 @@
     "@repo/typescript-config": "workspace:*"
   },
   "dependencies": {
+    "@ai-sdk/google": "^1.0.11",
     "@nestjs/passport": "^10.0.3",
     "class-validator": "^0.14.1"
   }

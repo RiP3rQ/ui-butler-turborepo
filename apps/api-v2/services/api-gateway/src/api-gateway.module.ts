@@ -9,6 +9,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ErrorInterceptor } from './interceptors/error.interceptor';
 import { ConfigModule } from '@nestjs/config';
 import Joi from 'joi';
+import { ComponentsController } from './controllers/components.controller';
 
 @Module({
   imports: [
@@ -57,6 +58,11 @@ import Joi from 'joi';
         transport: Transport.TCP,
         options: servicesConfig.execution,
       },
+      {
+        name: 'COMPONENTS_SERVICE',
+        transport: Transport.TCP,
+        options: servicesConfig.components,
+      },
     ]),
   ],
   controllers: [
@@ -64,6 +70,7 @@ import Joi from 'joi';
     AuthController,
     BillingController,
     UsersController,
+    ComponentsController,
   ],
   providers: [
     AuthProxyService,

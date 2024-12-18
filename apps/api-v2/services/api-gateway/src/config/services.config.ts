@@ -27,4 +27,8 @@ export const servicesConfig = {
     host: process.env.EXECUTION_SERVICE_HOST || 'localhost',
     port: parseInt(process.env.EXECUTION_SERVICE_PORT, 10) || 3346,
   },
+  components: {
+    host: process.env.COMPONENTS_SERVICE_HOST || 'localhost',
+    port: parseInt(process.env.COMPONENTS_SERVICE_PORT, 10) || 3347,
+  },
 };
