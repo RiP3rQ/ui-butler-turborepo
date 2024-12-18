@@ -80,7 +80,7 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/types": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@types/react": "^18.3.17",
+    "@types/react": "^19.0.1",
     "@types/react-color": "^3.0.13",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",

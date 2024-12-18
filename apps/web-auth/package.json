@@ -48,7 +48,7 @@
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.2",
     "@types/node-fetch": "^2.6.12",
-    "@types/react": "^18.3.17",
+    "@types/react": "^19.0.1",
     "@types/react-dom": "^18.3.5",
     "daisyui": "^4.12.22",
     "eslint": "^8.57.1",
