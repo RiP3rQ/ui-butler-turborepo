@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ActionRunDialog } from "@/components/code-editor/action-run-dialog";
 import { CreateNewComponentDialog } from "@/components/dialogs/new-component-dialog";
 import ConfirmationDialog from "@/components/dialogs/confirmation-dialog";
 
@@ -18,7 +17,6 @@ export function DialogsComponentsProvider(): JSX.Element {
 
   return (
     <>
-      <ActionRunDialog />
       <CreateNewComponentDialog />
       <ConfirmationDialog />
     </>

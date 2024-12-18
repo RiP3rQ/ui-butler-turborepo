@@ -14,6 +14,7 @@ import { useCodeEditorStore } from "@/store/code-editor-store";
 import { ACCORDION_ITEMS } from "@/constants/single-component-accordion-items";
 import { ActionButton } from "@/components/component-viewer/single-component-view/action-button";
 import { CodeSection } from "@/components/component-viewer/single-component-view/code-section";
+import { CopyButton } from "@/components/copy-code-button";
 
 export function SingleComponentView({
   componentsData,
@@ -105,6 +106,9 @@ export function SingleComponentView({
                       });
                     }}
                   />
+                  <div className="mx-2">
+                    <CopyButton value={currentCode} />
+                  </div>
                 </div>
               </div>
             </AccordionTrigger>

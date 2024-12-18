@@ -22,7 +22,6 @@ import { Textarea } from "@repo/ui/components/ui/textarea";
 import { useChat } from "ai/react";
 import { toast } from "sonner";
 import {
-  CopyIcon,
   Loader2Icon,
   PlayCircleIcon,
   RotateCcwIcon,
@@ -41,6 +40,7 @@ import {
 } from "@/schemas/component";
 import CodeEditor from "@/components/code-editor/editor";
 import { useModalsStateStore } from "@/store/modals-store";
+import { CopyButton } from "@/components/copy-code-button";
 
 export default function GenerateComponentPage(): JSX.Element {
   const { createNewComponentModal } = useModalsStateStore(
@@ -107,17 +107,6 @@ export default function GenerateComponentPage(): JSX.Element {
     reload();
     toast.success("Form reset successfully");
   }, [stop, reload]);
-
-  const handleCopy = useCallback(async () => {
-    if (latestAssistantMessage) {
-      try {
-        await navigator.clipboard.writeText(latestAssistantMessage.content);
-        toast.success("Code copied to clipboard");
-      } catch (error) {
-        toast.error("Failed to copy code to clipboard");
-      }
-    }
-  }, [latestAssistantMessage]);
 
   const handleOpenSaveComponentModal = useCallback(() => {
     if (!latestAssistantMessage?.content) {
@@ -251,16 +240,7 @@ export default function GenerateComponentPage(): JSX.Element {
             <CardTitle className="flex items-center justify-between">
               Generated Component
               <div className="flex items-center justify-center space-x-2">
-                <TooltipWrapper content="Copy the generated code to clipboard">
-                  <Button
-                    onClick={handleCopy}
-                    variant="secondary"
-                    size="sm"
-                    className="gap-2"
-                  >
-                    <CopyIcon className="h-4 w-4" />
-                  </Button>
-                </TooltipWrapper>
+                <CopyButton value={latestAssistantMessage.content} />
                 <TooltipWrapper content="Save the generated code to a project">
                   <Button
                     onClick={handleOpenSaveComponentModal}
