@@ -17,6 +17,12 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@database/database": ["libs/database/src"],
+      "@database/database/*": ["libs/database/src/*"],
+      "@common/common": ["libs/common/src"],
+      "@common/common/*": ["libs/common/src/*"]
+    }
   }
 }

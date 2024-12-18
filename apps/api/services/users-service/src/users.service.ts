@@ -1,20 +1,13 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { DATABASE_CONNECTION } from '../../../src/database/database-connection';
-import { type NeonDatabaseType } from '../../../src/database/merged-schemas';
-import { CreateUserDto } from '../../../src/users/dto/create-user.dto';
-import { profile, User, users } from '../../../src/database/schemas/users';
 import { hash } from 'bcryptjs';
-import {
-  ReceivedRefreshToken,
-  TokenPayload,
-} from '../../../src/auth/token-payload.interface';
-import { CreateProfileDto } from '../../../src/users/dto/create-profile.dto';
 import { and, eq } from 'drizzle-orm';
+import { CreateUserDto } from './dto/create-user.dto';
+import { type NeonDatabaseType, users } from '../../../libs/database/src';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @Inject(DATABASE_CONNECTION)
+    @Inject('DATABASE_CONNECTION')
     private readonly database: NeonDatabaseType,
   ) {}
 
