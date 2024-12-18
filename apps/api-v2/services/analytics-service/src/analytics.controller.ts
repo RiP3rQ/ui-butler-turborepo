@@ -1,66 +1,57 @@
-import { Controller, UseGuards } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AnalyticsService } from './analytics.service';
-import { CurrentUser, JwtAuthGuard, type User } from '@app/common';
+import { User } from '@app/common';
 
 @Controller()
 export class AnalyticsController {
   constructor(private readonly analyticsService: AnalyticsService) {}
 
   @MessagePattern('analytics.periods')
-  @UseGuards(JwtAuthGuard)
-  async getPeriods(@CurrentUser() user: User) {
-    return this.analyticsService.getPeriods(user);
+  async getPeriods(@Payload() data: { user: User }) {
+    return this.analyticsService.getPeriods(data.user);
   }
 
   @MessagePattern('analytics.stat-cards')
-  @UseGuards(JwtAuthGuard)
   async getStatCardsValues(
-    @Payload() data: { month: number; year: number },
-    @CurrentUser() user: User,
+    @Payload() data: { user: User; month: number; year: number },
   ) {
     return this.analyticsService.getStatCardsValues(
-      user,
+      data.user,
       data.month,
       data.year,
     );
   }
 
   @MessagePattern('analytics.workflow-stats')
-  @UseGuards(JwtAuthGuard)
   async getWorkflowExecutionStats(
-    @Payload() data: { month: number; year: number },
-    @CurrentUser() user: User,
+    @Payload() data: { user: User; month: number; year: number },
   ) {
     return this.analyticsService.getWorkflowExecutionStats(
-      user,
+      data.user,
       data.month,
       data.year,
     );
   }
 
   @MessagePattern('analytics.used-credits')
-  @UseGuards(JwtAuthGuard)
   async getUsedCreditsInPeriod(
-    @Payload() data: { month: number; year: number },
-    @CurrentUser() user: User,
+    @Payload() data: { user: User; month: number; year: number },
   ) {
     return this.analyticsService.getUsedCreditsInPeriod(
-      user,
+      data.user,
       data.month,
       data.year,
     );
   }
 
   @MessagePattern('analytics.dashboard-stats')
-  @UseGuards(JwtAuthGuard)
-  async getDashboardStatCardsValues(@CurrentUser() user: User) {
-    return this.analyticsService.getDashboardStatCardsValues(user);
+  async getDashboardStatCardsValues(@Payload() data: { user: User }) {
+    return this.analyticsService.getDashboardStatCardsValues(data.user);
   }
 
   @MessagePattern('analytics.favorited')
-  @UseGuards(JwtAuthGuard)
-  async getFavoritedTableContent(@CurrentUser() user: User) {
-    return this.analyticsService.getFavoritedTableContent(user);
+  async getFavoritedTableContent(@Payload() data: { user: User }) {
+    return this.analyticsService.getFavoritedTableContent(data.user);
   }
 }

@@ -2,9 +2,25 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { Module } from '@nestjs/common';
 import { servicesConfig } from './config/services.config';
 import { AuthProxyService } from './proxies/auth.proxy.service';
+import { AuthController } from './controllers/auth.controller';
+import { BillingController } from './controllers/billing.controller';
+import { UsersController } from './controllers/users.controller';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ErrorInterceptor } from './interceptors/error.interceptor';
+import { ConfigModule } from '@nestjs/config';
+import Joi from 'joi';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validationSchema: Joi.object({
+        PORT: Joi.number().default(3339),
+        AUTH_SERVICE_HOST: Joi.string().default('localhost'),
+        AUTH_SERVICE_PORT: Joi.number().default(3340),
+        // ... other service configurations //TODO: Add other service configurations
+      }),
+    }),
     ClientsModule.register([
       {
         name: 'AUTH_SERVICE',
@@ -43,7 +59,18 @@ import { AuthProxyService } from './proxies/auth.proxy.service';
       },
     ]),
   ],
-  controllers: [],
-  providers: [AuthProxyService],
+  controllers: [
+    AuthController,
+    AuthController,
+    BillingController,
+    UsersController,
+  ],
+  providers: [
+    AuthProxyService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ErrorInterceptor,
+    },
+  ],
 })
 export class ApiGatewayModule {}

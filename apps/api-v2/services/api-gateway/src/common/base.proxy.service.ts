@@ -1,21 +1,26 @@
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
+import { Logger } from '@nestjs/common';
 
 export class BaseProxyService {
-  constructor(protected client: ClientProxy) {}
+  private readonly logger = new Logger(this.constructor.name);
 
-  protected async send(pattern: string, data: any) {
-    try {
-      return await firstValueFrom(this.client.send(pattern, data));
-    } catch (err) {
-      throw err;
-    }
-  }
+  constructor(
+    protected readonly client: ClientProxy,
+    private readonly serviceName: string,
+  ) {}
 
-  protected async emit(pattern: string, data: any) {
+  protected async send<T>(pattern: string, data: any): Promise<T> {
     try {
-      return await firstValueFrom(this.client.emit(pattern, data));
+      const response = await firstValueFrom(this.client.send<T>(pattern, data));
+      return response;
     } catch (err) {
+      if (err instanceof Error) {
+        this.logger.error(
+          `Error in ${this.serviceName} service: ${err.message}`,
+          err.stack,
+        );
+      }
       throw err;
     }
   }

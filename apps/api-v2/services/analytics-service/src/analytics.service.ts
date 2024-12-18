@@ -1,12 +1,13 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { User } from '@app/common';
-import { and, eq, gte, inArray, lte, min, sql } from 'drizzle-orm';
+import { and, eq, gte, lte, min, sql } from 'drizzle-orm';
+import { inArray } from 'drizzle-orm/sql/expressions/conditions';
 import { eachDayOfInterval, format } from 'date-fns';
+import { User } from '@app/common';
 import {
   components,
   DATABASE_CONNECTION,
-  type DrizzleDatabase,
   executionPhase,
+  type NeonDatabaseType,
   projects,
   workflowExecutions,
 } from '@app/database';
@@ -15,7 +16,7 @@ import {
 export class AnalyticsService {
   constructor(
     @Inject(DATABASE_CONNECTION)
-    private readonly database: DrizzleDatabase,
+    private readonly database: NeonDatabaseType,
   ) {}
 
   async getPeriods(user: User) {
@@ -45,10 +46,7 @@ export class AnalyticsService {
   }
 
   async getStatCardsValues(user: User, month: number, year: number) {
-    const { startDate, endDate } = this.periodToDateRange({
-      month,
-      year,
-    });
+    const { startDate, endDate } = this.periodToDateRange({ month, year });
 
     const executionsInPeriod = await this.database
       .select({
@@ -87,10 +85,7 @@ export class AnalyticsService {
   }
 
   async getWorkflowExecutionStats(user: User, month: number, year: number) {
-    const { startDate, endDate } = this.periodToDateRange({
-      month,
-      year,
-    });
+    const { startDate, endDate } = this.periodToDateRange({ month, year });
 
     const executionsInPeriod = await this.database
       .select({
@@ -127,10 +122,7 @@ export class AnalyticsService {
   }
 
   async getUsedCreditsInPeriod(user: User, month: number, year: number) {
-    const { startDate, endDate } = this.periodToDateRange({
-      month,
-      year,
-    });
+    const { startDate, endDate } = this.periodToDateRange({ month, year });
 
     const executionsPhases = await this.database
       .select({
