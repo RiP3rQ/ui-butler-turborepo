@@ -22,10 +22,7 @@ export const userCredentials = pgTable(
     updatedAt: timestamp('updated_at')
       .notNull()
       .defaultNow()
-      .$onUpdate(
-        () => sql`now
-      ()`,
-      ),
+      .$onUpdate(() => sql`now()`),
   },
   (table) => ({
     userIdNameUnique: unique('credentials_user_id_name_unique').on(
