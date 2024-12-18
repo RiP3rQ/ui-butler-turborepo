@@ -32,7 +32,7 @@ import {
 import {
   calculateWorkflowCost,
   createFlowNodeFunction,
-  parseFlowToExecutionPlan2,
+  parseFlowToExecutionPlan,
   ServerTaskRegister,
 } from '@repo/tasks-registry';
 import { Edge } from '@nestjs/core/inspector/interfaces/edge.interface';
@@ -188,7 +188,7 @@ export class WorkflowsService {
     }
 
     const flow = JSON.parse(publishWorkflowDto.flowDefinition);
-    const result = parseFlowToExecutionPlan2(
+    const result = parseFlowToExecutionPlan(
       flow.nodes as AppNode[],
       flow.edges as Edge[],
     );
@@ -300,7 +300,7 @@ export class WorkflowsService {
         throw new Error('Flow definition is not defined');
       }
       const flow = JSON.parse(runWorkflowDto.flowDefinition);
-      const result = parseFlowToExecutionPlan2(flow.nodes, flow.edges);
+      const result = parseFlowToExecutionPlan(flow.nodes, flow.edges);
       if (result.error) {
         throw new Error('Error parsing flow to execution plan');
       }
