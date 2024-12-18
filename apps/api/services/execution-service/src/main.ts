@@ -9,10 +9,11 @@ async function bootstrap() {
       transport: Transport.TCP, // or Transport.REDIS, Transport.KAFKA, etc.
       options: {
         host: 'localhost',
-        port: 3343, // different port for each service
+        port: 3346, // different port for each service
       },
     },
   );
   await app.listen();
 }
+
 bootstrap();

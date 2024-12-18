@@ -9,7 +9,7 @@ async function bootstrap() {
       transport: Transport.TCP, // or Transport.REDIS, Transport.KAFKA, etc.
       options: {
         host: 'localhost',
-        port: 3001, // different port for each service
+        port: 3345, // different port for each service
       },
     },
   );
