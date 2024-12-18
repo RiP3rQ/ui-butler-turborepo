@@ -3,7 +3,6 @@ import type {
   AppNodeMissingInputs,
   WorkflowExecutionPlan,
   WorkflowExecutionPlanError,
-  WorkflowExecutionPlanPhase,
 } from "@repo/types";
 import { FlowToExecutionPlanValidationType } from "@repo/types";
 import type { Edge } from "@xyflow/react";
@@ -18,165 +17,102 @@ export function parseFlowToExecutionPlan(
   nodes: AppNode[],
   edges: Edge[],
 ): FlowToExecutionPlanType {
+  // Find entry point
   const entryPoint = nodes.find(
-    (node) => ClientTaskRegister[node.data.type].isEntryPoint,
+    (node) => ClientTaskRegister[node.data.type]?.isEntryPoint,
   );
 
   if (!entryPoint) {
     return {
-      error: {
-        type: FlowToExecutionPlanValidationType.NO_ENTRY_POINT,
-      },
+      error: { type: FlowToExecutionPlanValidationType.NO_ENTRY_POINT },
     };
   }
 
   const planned = new Set<string>();
   const inputsWithErrors: AppNodeMissingInputs[] = [];
+  const dependencyMap = createDependencyMap(edges);
+  const levelMap = createLevelMap(nodes, dependencyMap);
 
-  // validate the entry point
-  const invalidInputs = getInvalidInputs(entryPoint, edges, planned);
-  if (invalidInputs.length > 0) {
-    inputsWithErrors.push({
-      nodeId: entryPoint.id || "",
-      inputs: invalidInputs,
-    });
-  }
-
-  // First phase-executors is always the entry point
+  // Start with entry point
   const executionPlan: WorkflowExecutionPlan = [
-    {
-      phase: 1,
-      nodes: [entryPoint],
-    },
+    { phase: 1, nodes: [entryPoint] },
   ];
   planned.add(entryPoint.id);
 
-  // Loop through the nodes and edges to create the execution plan
-  for (
-    let phase = 2;
-    phase <= nodes.length && planned.size < nodes.length;
-    phase++
-  ) {
-    const nextPhase: WorkflowExecutionPlanPhase = {
-      phase,
-      nodes: [],
-    };
-    // visit all nodes that are connected to the previous phase-executors
-    for (const currentNode of nodes) {
-      if (planned.has(currentNode.id)) continue;
+  // Group nodes by their dependency level
+  const nodesByLevel = new Map<number, AppNode[]>();
+  nodes.forEach((node) => {
+    if (node.id === entryPoint.id) return;
+    const level = levelMap.get(node.id) || 0;
+    if (!nodesByLevel.has(level)) {
+      nodesByLevel.set(level, []);
+    }
+    nodesByLevel.get(level)?.push(node);
+  });
 
-      const invalidInputsInner = getInvalidInputs(currentNode, edges, planned);
-      if (invalidInputsInner.length > 0) {
-        const incomers = getIncomers(currentNode, nodes, edges);
-        if (incomers.every((incomer) => planned.has(incomer.id))) {
-          // If all incoming incomers/edges are planned and there are still invalid inputs
-          // this means that this particular node has INVALID input
-          // which means that the workflow is invalid
-          console.error(
-            "Invalid workflow detected",
-            currentNode.id,
-            invalidInputsInner,
-          );
-          // Save the invalid inputs
-          inputsWithErrors.push({
-            nodeId: currentNode.id,
-            inputs: invalidInputsInner,
-          });
-        } else {
-          // Let's skip this node for now
-          continue;
-        }
+  // Create phases based on levels
+  Array.from(nodesByLevel.keys())
+    .sort((a, b) => a - b)
+    .forEach((level) => {
+      const nodesInLevel = nodesByLevel.get(level) || [];
+      const readyNodes = nodesInLevel.filter((node) =>
+        Array.from(dependencyMap.get(node.id) || []).every((depId) =>
+          planned.has(depId),
+        ),
+      );
+
+      if (readyNodes.length > 0) {
+        executionPlan.push({
+          phase: executionPlan.length + 1,
+          nodes: readyNodes,
+        });
+        readyNodes.forEach((node) => planned.add(node.id));
       }
+    });
 
-      nextPhase.nodes.push(currentNode);
-    }
-    for (const node of nextPhase.nodes) {
-      planned.add(node.id);
-    }
-    executionPlan.push(nextPhase);
-  }
-
-  if (inputsWithErrors.length > 0) {
-    return {
-      error: {
-        type: FlowToExecutionPlanValidationType.INVALID_INPUTS,
-        invalidElements: inputsWithErrors,
-      },
-    };
-  }
-
-  return {
-    executionPlan,
-  };
+  return { executionPlan };
 }
 
-function getInvalidInputs(
-  node: AppNode,
-  edges: Edge[],
-  planned: Set<string>,
-): string[] {
-  const invalidInputs: string[] = [];
-  const inputs = ClientTaskRegister[node.data.type].inputs;
-  for (const input of inputs) {
-    const inputValue = node.data.inputs[input.name];
-    const inputValueProvided = (inputValue?.length ?? 0) > 0;
+function createDependencyMap(edges: Edge[]): Map<string, Set<string>> {
+  const dependencyMap = new Map<string, Set<string>>();
 
-    if (inputValueProvided) {
-      // If the input value is provided, then it's valid
-      continue;
-    }
-
-    // If the input value is not provided, then we need to check
-    // if there is an output linked to the current input
-
-    const incomingEdges = edges.filter((edge) => edge.target === node.id);
-
-    const inputLinkedByOutput = incomingEdges.find(
-      (edge) => edge.targetHandle === input.name,
-    );
-
-    const requiredInputProvidedByVisitedOutput =
-      input.required && planned.has(inputLinkedByOutput?.source ?? "");
-
-    if (requiredInputProvidedByVisitedOutput) {
-      // the input is required and we have a valid value for it
-      // provided by a task that is already planned
-      continue;
-    } else if (!input.required) {
-      // the input is not required but there is an output linked to it
-      // then we need to be sure that the output is planned
-      if (planned.has(inputLinkedByOutput?.source ?? "")) {
-        // the output is providing a value for the input: so the input is valid
-        continue;
-      }
-    }
-
-    // TODO: DELETE THIS AFTER TESTING
-    continue;
-
-    // If we reach this point, then the input is invalid
-    invalidInputs.push(input.name);
-  }
-
-  return invalidInputs;
-}
-
-// Custom getIncomers function for usability on backend
-function getIncomers(
-  node: AppNode,
-  nodes: AppNode[],
-  edges: Edge[],
-): AppNode[] {
-  if (!node.id) {
-    return [];
-  }
-
-  const incomerIds = new Set();
   edges.forEach((edge) => {
-    if (edge.target === node.id) {
-      incomerIds.add(edge.source);
+    if (!dependencyMap.has(edge.target)) {
+      dependencyMap.set(edge.target, new Set());
+    }
+    dependencyMap.get(edge.target)?.add(edge.source);
+  });
+
+  return dependencyMap;
+}
+
+function createLevelMap(
+  nodes: AppNode[],
+  dependencyMap: Map<string, Set<string>>,
+): Map<string, number> {
+  const levelMap = new Map<string, number>();
+  const visited = new Set<string>();
+
+  function calculateLevel(nodeId: string): number {
+    if (visited.has(nodeId)) return levelMap.get(nodeId) || 0;
+    visited.add(nodeId);
+
+    const dependencies = dependencyMap.get(nodeId) || new Set();
+    if (dependencies.size === 0) return 0;
+
+    const maxDepLevel = Math.max(
+      ...Array.from(dependencies).map(calculateLevel),
+    );
+    const level = maxDepLevel + 1;
+    levelMap.set(nodeId, level);
+    return level;
+  }
+
+  nodes.forEach((node) => {
+    if (!visited.has(node.id)) {
+      calculateLevel(node.id);
     }
   });
 
-  return nodes.filter((item) => incomerIds.has(item.id));
+  return levelMap;
 }

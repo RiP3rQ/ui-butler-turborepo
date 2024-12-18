@@ -1,10 +1,58 @@
-export const CreateTypescriptDocsPrompt = `Create TypeScript documentation for this component that includes:
-A brief overview explaining the component's purpose and main functionality.
-List all interfaces and types, marking each property as required or optional with their respective types and default values.
-Document the component's props/parameters, clearly distinguishing between required and optional props with their types and validation rules.
-Specify the exact return type and structure of what the component returns.
-List all possible errors that can be thrown by the component and their conditions.
-Provide at least two practical usage examples with TypeScript types showing basic and advanced implementations.
-Include a complete working code example demonstrating proper usage with types.
-Note any important limitations, browser compatibility issues, or performance considerations.
-Format the documentation using markdown and ensure all type information is accurate and complete.`;
+export const CreateTypescriptDocsPrompt = `
+Generate comprehensive TypeScript 1. Type \`\`\`typescript
+// Core interfaces & types
+interface ComponentProps {
+  // Props with JSDoc comments
+}
+
+type ComponentReturn = {
+  // Return type definition
+}
+
+// Event & handler types
+type ComponentEvents = {
+  // Event types
+}
+
+// Utility & helper types
+type ComponentUtils = {
+  // Utility types
+}
+\`\`\`
+
+2. API - Props (required/optional)
+   - Events & handlers
+   - Return values
+   - Generic constraints
+   - Default values
+   - Validation rules
+
+3. \`\`\`typescript
+// Basic usage
+const Basic: FC<ComponentProps> = () => {
+  // Implementation
+}
+
+// Advanced usage with generics
+const Advanced = <T extends BaseType>() => {
+  // Implementation
+}
+
+// Error handling
+try {
+  // Usage with error cases
+} catch (e: ComponentError) {
+  // Error handling
+}
+\`\`\`
+
+4. - Type guards & assertions
+   - Generic type constraints
+   - Union & intersection types
+   - Utility type usage
+   - Error types & handling
+   - Performance considerations
+
+Format with proper JSDoc comments and type annotations.
+Return TypeScript documentation only.
+`;

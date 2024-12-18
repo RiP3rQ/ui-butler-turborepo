@@ -2,7 +2,7 @@ import { useReactFlow } from "@xyflow/react";
 import { useCallback } from "react";
 import type { AppNode, WorkflowExecutionPlanError } from "@repo/types";
 import { toast } from "sonner";
-import { parseFlowToExecutionPlan2 } from "@repo/tasks-registry";
+import { parseFlowToExecutionPlan } from "@repo/tasks-registry";
 import useFlowValidation from "@/hooks/use-flow-validation";
 
 const useWorkflowExecutionPlan2 = () => {
@@ -29,7 +29,7 @@ const useWorkflowExecutionPlan2 = () => {
   const generateExecutionPlan = useCallback(() => {
     const { nodes, edges } = toObject();
 
-    const { executionPlan, error } = parseFlowToExecutionPlan2(
+    const { executionPlan, error } = parseFlowToExecutionPlan(
       nodes as AppNode[],
       edges,
     );
