@@ -1,6 +1,45 @@
-export const OptimizePerformancePrompt = `Optimize the performance of the component. Analyze 
-its current implementation to identify bottlenecks and inefficiencies. 
-Focus on improving rendering speed, reducing memory usage, and minimizing unnecessary 
-computations. Consider implementing lazy loading, memoization, and batching updates. 
-Ensure compatibility with existing functionality and conduct performance testing to 
-validate improvements. Provide a summary of changes and their impact on performance.`;
+export const OptimizePerformancePrompt = `
+Optimize component performance:
+
+1. React Optimizations:
+   - useMemo/useCallback
+   - React.memo
+   - Lazy loading
+   - Suspense boundaries
+   - State batching
+   - Key management
+
+2. Rendering:
+   - Virtual lists
+   - Debounced updates
+   - Conditional rendering
+   - Tree shaking
+   - Code splitting
+
+3. Data & State:
+   - Normalized data
+   - Local state
+   - Cached values
+   - Computed properties
+   - Event delegation
+
+4. Resources:
+   - Asset optimization
+   - Bundle size
+   - Memory leaks
+   - Network calls
+   - Cleanup
+
+Before/After example:
+\`\`\`tsx
+// Before
+function Component({ data }) {
+  const items = data.map(...)
+  
+// After
+const Component = memo(({ data }) => {
+  const items = useMemo(() => data.map(...), [data])
+\`\`\`
+
+Return optimized code only.
+`;

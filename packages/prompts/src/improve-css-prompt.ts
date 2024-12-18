@@ -1,7 +1,35 @@
-export const ImproveCssPrompt = `Enhance the CSS/Tailwind CSS styles for 
-the component. Review the current styling for consistency, 
-responsiveness, and visual appeal. Simplify and refactor styles for 
-maintainability, using Tailwind CSS utilities where applicable. Ensure 
-cross-browser compatibility and adherence to design guidelines. Test the 
-component across different screen sizes and devices, and document any 
-style changes made.`;
+export const ImproveCssPrompt = `
+Enhance component styles with Tailwind CSS:
+
+1. Core:
+   - Layout & spacing
+   - Typography & colors
+   - Shadows & borders
+   - Transitions & animations
+
+2. Responsive:
+   - Mobile-first (sm/md/lg/xl)
+   - Flex/Grid layouts
+   - Container queries
+   - Adaptive spacing
+
+3. States:
+   - Hover/focus
+   - Active/disabled
+   - Loading/error
+   - Dark/light modes
+
+4. Features:
+   - Accessibility
+   - RTL support
+   - Reduced motion
+   - Print styles
+
+Follow:
+- DRY principles
+- Utility-first
+- Design system
+- Performance
+
+Return Tailwind classes only.
+`;
