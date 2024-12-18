@@ -3,17 +3,23 @@ import {
   Controller,
   Get,
   Inject,
+  NotFoundException,
   Post,
   Res,
   UseGuards,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
-import type { Response as ExpressResponse } from 'express';
-import { CreateUserDto } from '../../../../src/users/dto/create-user.dto';
-import { GoogleAuthGuard } from '../../../../src/auth/guards/google-auth.guard';
-import { type User } from '../../../../src/database/schemas/users';
-import { CurrentUser } from '../../../../src/auth/current-user.decorator';
+import { type Response as ExpressResponse } from 'express';
+import {
+  CreateUserDto,
+  CurrentUser,
+  GithubAuthGuard,
+  GoogleAuthGuard,
+  JwtRefreshAuthGuard,
+  LocalAuthGuard,
+  type User,
+} from '@app/common';
 
 @Controller('auth')
 export class AuthController {
@@ -22,34 +28,49 @@ export class AuthController {
   ) {}
 
   @Post('login')
+  @UseGuards(LocalAuthGuard)
   async login(
-    @Body() credentials: any,
+    @CurrentUser() user: User,
     @Res({ passthrough: true }) response: ExpressResponse,
   ) {
     const result = await firstValueFrom(
-      this.authClient.send({ cmd: 'auth.login' }, credentials),
+      this.authClient.send('auth.login', { user }),
     );
-    this.setAuthCookies(response, result);
+    this.setCookies(response, result);
     return result;
   }
 
   @Post('register')
   async register(
-    @Body() createUserDto: CreateUserDto,
+    @Body() user: CreateUserDto,
+    @Res({ passthrough: true }) response: ExpressResponse,
+  ) {
+    if (!user) {
+      throw new NotFoundException('User not found in request body');
+    }
+    const result = await firstValueFrom(
+      this.authClient.send('auth.register', { user }),
+    );
+    this.setCookies(response, result);
+    return result;
+  }
+
+  @Post('refresh')
+  @UseGuards(JwtRefreshAuthGuard)
+  async refreshToken(
+    @CurrentUser() user: User,
     @Res({ passthrough: true }) response: ExpressResponse,
   ) {
     const result = await firstValueFrom(
-      this.authClient.send({ cmd: 'auth.register' }, createUserDto),
+      this.authClient.send('auth.refresh', { user }),
     );
-    this.setAuthCookies(response, result);
+    this.setCookies(response, result);
     return result;
   }
 
   @Get('google')
   @UseGuards(GoogleAuthGuard)
-  async googleAuth() {
-    return this.authClient.send({ cmd: 'auth.google' }, {});
-  }
+  loginGoogle() {}
 
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
@@ -58,33 +79,49 @@ export class AuthController {
     @Res({ passthrough: true }) response: ExpressResponse,
   ) {
     const result = await firstValueFrom(
-      this.authClient.send({ cmd: 'auth.google.callback' }, { user }),
+      this.authClient.send('auth.google.callback', { user }),
     );
-    this.setAuthCookies(response, result);
+    this.setCookies(response, result);
+    if (result.redirect) {
+      response.redirect(result.redirectUrl);
+    }
     return result;
   }
 
-  private setAuthCookies(response: ExpressResponse, authData: any) {
-    const {
-      accessToken,
-      refreshToken,
-      expiresAccessToken,
-      expiresRefreshToken,
-    } = authData;
+  @Get('github')
+  @UseGuards(GithubAuthGuard)
+  loginGithub() {}
 
+  @Get('github/callback')
+  @UseGuards(GithubAuthGuard)
+  async githubCallback(
+    @CurrentUser() user: User,
+    @Res({ passthrough: true }) response: ExpressResponse,
+  ) {
+    const result = await firstValueFrom(
+      this.authClient.send('auth.github.callback', { user }),
+    );
+    this.setCookies(response, result);
+    if (result.redirect) {
+      response.redirect(result.redirectUrl);
+    }
+    return result;
+  }
+
+  private setCookies(response: ExpressResponse, authData: any) {
     const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
     };
 
-    response.cookie('Authentication', accessToken, {
+    response.cookie('Authentication', authData.accessToken, {
       ...cookieOptions,
-      expires: new Date(expiresAccessToken),
+      expires: new Date(authData.expiresAccessToken),
     });
 
-    response.cookie('Refresh', refreshToken, {
+    response.cookie('Refresh', authData.refreshToken, {
       ...cookieOptions,
-      expires: new Date(expiresRefreshToken),
+      expires: new Date(authData.expiresRefreshToken),
     });
   }
 }

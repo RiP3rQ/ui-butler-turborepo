@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { AnalyticsController } from './analytics.controller';
 import { AnalyticsService } from './analytics.service';
-import { DatabaseModule, JwtAuthGuard } from '@app/common';
+import { JwtAuthGuard } from '@app/common';
+import { DatabaseModule } from '@app/database';
 
 @Module({
   imports: [DatabaseModule],

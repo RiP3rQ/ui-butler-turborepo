@@ -1,7 +1,7 @@
 import { Controller, UseGuards } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AnalyticsService } from './analytics.service';
-import { CurrentUser, JwtAuthGuard, User } from '@app/common';
+import { CurrentUser, JwtAuthGuard, type User } from '@app/common';
 
 @Controller()
 export class AnalyticsController {

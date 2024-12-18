@@ -19,5 +19,9 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*"
+  },
+  "dependencies": {
+    "@nestjs/passport": "^10.0.3",
+    "class-validator": "^0.14.1"
   }
 }

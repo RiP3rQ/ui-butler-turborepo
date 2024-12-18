@@ -1,8 +1,18 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { hash } from 'bcryptjs';
 import { and, eq } from 'drizzle-orm';
-import { CreateUserDto } from './dto/create-user.dto';
-import { type NeonDatabaseType, users } from '../../../libs/database/src';
+import {
+  type NeonDatabaseType,
+  profile,
+  users,
+} from '../../../libs/database/src';
+import {
+  CreateProfileDto,
+  CreateUserDto,
+  ReceivedRefreshToken,
+  TokenPayload,
+  User,
+} from '@app/common';
 
 @Injectable()
 export class UsersService {
@@ -66,7 +76,7 @@ export class UsersService {
 
     const refreshTokenData = {
       refreshToken: data.refreshToken,
-    };
+    } as User;
 
     return this.database
       .update(users)

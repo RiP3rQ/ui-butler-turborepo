@@ -1,43 +1,18 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { TokenPayload } from '../../../src/auth/token-payload.interface';
-import type { Response as ExpressResponse } from 'express';
-import type { User } from '../../../src/database/schemas/users';
-import { compare, hash } from 'bcryptjs';
-import { UsersService } from '../../../src/users/users.service';
-import { JwtService, JwtSignOptions } from '@nestjs/jwt';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
+import { compare, hash } from 'bcryptjs';
+import { CreateUserDto, TokenPayload, User } from '@app/common';
+import { ClientProxy } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersService: UsersService,
-    private readonly jwtService: JwtService,
+    @Inject('USERS_SERVICE') private readonly usersClient: ClientProxy,
     private readonly configService: ConfigService,
+    private readonly jwtService: JwtService,
   ) {}
-
-  async generateAuthResponse(user: User) {
-    const tokenPayload: TokenPayload = {
-      userId: user.id.toString(),
-      email: user.email,
-    };
-
-    const { accessToken, refreshToken } =
-      await this.generateTokens(tokenPayload);
-    const { expiresAccessToken, expiresRefreshToken } =
-      this.getTokenExpirations();
-
-    const refreshTokenHash = await hash(refreshToken, 10);
-    await this.usersService.updateUser(tokenPayload, {
-      refreshToken: refreshTokenHash,
-    });
-
-    return {
-      accessToken,
-      refreshToken,
-      expiresAccessToken,
-      expiresRefreshToken,
-    };
-  }
 
   private async generateTokens(payload: TokenPayload) {
     const accessTokenExpiration = parseInt(
@@ -49,22 +24,16 @@ export class AuthService {
 
     const accessTokenOptions: JwtSignOptions = {
       secret: this.configService.getOrThrow('JWT_ACCESS_TOKEN_SECRET'),
-      expiresIn: Math.floor(accessTokenExpiration / 1000), // Convert MS to seconds
+      expiresIn: Math.floor(accessTokenExpiration / 1000),
     };
 
     const refreshTokenOptions: JwtSignOptions = {
       secret: this.configService.getOrThrow('JWT_REFRESH_TOKEN_SECRET'),
-      expiresIn: Math.floor(refreshTokenExpiration / 1000), // Convert MS to seconds
+      expiresIn: Math.floor(refreshTokenExpiration / 1000),
     };
 
-    const accessToken = this.jwtService.sign(
-      payload as object,
-      accessTokenOptions,
-    );
-    const refreshToken = this.jwtService.sign(
-      payload as object,
-      refreshTokenOptions,
-    );
+    const accessToken = this.jwtService.sign(payload, accessTokenOptions);
+    const refreshToken = this.jwtService.sign(payload, refreshTokenOptions);
 
     return { accessToken, refreshToken };
   }
@@ -89,34 +58,7 @@ export class AuthService {
     return { expiresAccessToken, expiresRefreshToken };
   }
 
-  private setCookies(
-    res: ExpressResponse,
-    {
-      accessToken,
-      refreshToken,
-    }: { accessToken: string; refreshToken: string },
-    {
-      expiresAccessToken,
-      expiresRefreshToken,
-    }: { expiresAccessToken: Date; expiresRefreshToken: Date },
-  ) {
-    const cookieOptions = {
-      httpOnly: true,
-      secure: this.configService.get('NODE_ENV') === 'production',
-    };
-
-    res.cookie('Authentication', accessToken, {
-      ...cookieOptions,
-      expires: expiresAccessToken,
-    });
-
-    res.cookie('Refresh', refreshToken, {
-      ...cookieOptions,
-      expires: expiresRefreshToken,
-    });
-  }
-
-  async login(user: User, response: ExpressResponse, redirect = false) {
+  async login(user: User, redirect = false) {
     const tokenPayload: TokenPayload = {
       userId: user.id.toString(),
       email: user.email ?? '',
@@ -124,69 +66,95 @@ export class AuthService {
 
     const { accessToken, refreshToken } =
       await this.generateTokens(tokenPayload);
-    const expirations = this.getTokenExpirations();
+    const { expiresAccessToken, expiresRefreshToken } =
+      this.getTokenExpirations();
 
     const refreshTokenData = await hash(refreshToken, 10);
 
-    await this.usersService.updateUser(tokenPayload, {
-      refreshToken: refreshTokenData,
-    });
+    // Instead of direct UsersService call, use the microservice
+    await firstValueFrom(
+      this.usersClient.send('users.update', {
+        query: tokenPayload,
+        data: { refreshToken: refreshTokenData },
+      }),
+    );
 
-    this.setCookies(response, { accessToken, refreshToken }, expirations);
+    const response = {
+      accessToken,
+      refreshToken,
+      expiresAccessToken,
+      expiresRefreshToken,
+    };
 
     if (redirect) {
-      response.redirect(this.configService.getOrThrow('AUTH_UI_REDIRECT'));
+      return {
+        ...response,
+        redirect: true,
+        redirectUrl: this.configService.getOrThrow('AUTH_UI_REDIRECT'),
+      };
     }
+
+    return response;
   }
 
-  async register(
-    user: { email: string; password: string; username: string },
-    response: ExpressResponse,
-  ) {
-    const newUser = await this.usersService.createUser(user);
+  async register(userData: CreateUserDto) {
+    // Use Users microservice to create user
+    const newUser = await firstValueFrom(
+      this.usersClient.send('users.create', userData),
+    );
 
     const tokenPayload: TokenPayload = {
       userId: newUser?.id.toString() ?? '',
-      email: user.email,
+      email: userData.email,
     };
 
     const { accessToken, refreshToken } =
       await this.generateTokens(tokenPayload);
-    const expirations = this.getTokenExpirations();
+    const { expiresAccessToken, expiresRefreshToken } =
+      this.getTokenExpirations();
 
-    this.setCookies(response, { accessToken, refreshToken }, expirations);
+    return {
+      accessToken,
+      refreshToken,
+      expiresAccessToken,
+      expiresRefreshToken,
+    };
   }
 
   async verifyUser(email: string, password: string) {
     try {
-      const user = await this.usersService.getUser({
-        email,
-      });
+      // Use Users microservice to get user
+      const user = await firstValueFrom(
+        this.usersClient.send('users.get.by.email', { email }),
+      );
       const authenticated = await compare(password, user?.password ?? '');
       if (!authenticated) {
         throw new UnauthorizedException();
       }
       return user;
     } catch (err) {
-      console.error(err);
+      console.log(err);
       throw new UnauthorizedException('Credentials are not valid.');
     }
   }
 
-  async veryifyUserRefreshToken(refreshToken: string, email: string) {
+  async verifyUserRefreshToken(refreshToken: string, email: string) {
     try {
-      const user = await this.usersService.getUser({ email: email });
+      // Use Users microservice to get user
+      const user = await firstValueFrom(
+        this.usersClient.send('users.get.by.email', { email }),
+      );
 
       if (!user?.refreshToken || !refreshToken) {
         throw new UnauthorizedException('Invalid refresh token');
       }
-      const authenticated = compare(refreshToken, user.refreshToken);
+      const authenticated = await compare(refreshToken, user.refreshToken);
       if (!authenticated) {
         throw new UnauthorizedException();
       }
       return user;
     } catch (err) {
-      console.error(err);
+      console.log(err);
       throw new UnauthorizedException('Refresh token is not valid.');
     }
   }

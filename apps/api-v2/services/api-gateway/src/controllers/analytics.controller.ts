@@ -1,7 +1,14 @@
-import { Controller, Get, Inject, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Inject,
+  ParseIntPipe,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { QueryParam } from '../../../../src/analytics/get-query-param.decorator';
 import { firstValueFrom } from 'rxjs';
+import { CurrentUser, JwtAuthGuard, type User } from '@app/common';
 
 @Controller('analytics')
 export class AnalyticsController {
@@ -20,8 +27,8 @@ export class AnalyticsController {
   @Get('stat-cards-values')
   @UseGuards(JwtAuthGuard)
   async getStatCardsValues(
-    @QueryParam('month', new ParseIntPipe()) month: number,
-    @QueryParam('year', new ParseIntPipe()) year: number,
+    @Query('month', new ParseIntPipe()) month: number,
+    @Query('year', new ParseIntPipe()) year: number,
     @CurrentUser() user: User,
   ) {
     return firstValueFrom(
@@ -36,8 +43,8 @@ export class AnalyticsController {
   @Get('workflow-execution-stats')
   @UseGuards(JwtAuthGuard)
   async getWorkflowExecutionStats(
-    @QueryParam('month', new ParseIntPipe()) month: number,
-    @QueryParam('year', new ParseIntPipe()) year: number,
+    @Query('month', new ParseIntPipe()) month: number,
+    @Query('year', new ParseIntPipe()) year: number,
     @CurrentUser() user: User,
   ) {
     return firstValueFrom(

@@ -9,11 +9,11 @@ export const servicesConfig = {
   },
   billing: {
     host: process.env.USERS_SERVICE_HOST || 'localhost',
-    port: parseInt(process.env.USERS_SERVICE_PORT, 10) || 3342,
+    port: parseInt(process.env.BILLING_SERVICE_PORT, 10) || 3342,
   },
   projects: {
     host: process.env.USERS_SERVICE_HOST || 'localhost',
-    port: parseInt(process.env.USERS_SERVICE_PORT, 10) || 3343,
+    port: parseInt(process.env.PROJECTS_SERVICE_PORT, 10) || 3343,
   },
   users: {
     host: process.env.USERS_SERVICE_HOST || 'localhost',
@@ -21,10 +21,10 @@ export const servicesConfig = {
   },
   workflow: {
     host: process.env.USERS_SERVICE_HOST || 'localhost',
-    port: parseInt(process.env.USERS_SERVICE_PORT, 10) || 3345,
+    port: parseInt(process.env.WORKFLOW_SERVICE_PORT, 10) || 3345,
   },
   execution: {
     host: process.env.USERS_SERVICE_HOST || 'localhost',
-    port: parseInt(process.env.USERS_SERVICE_PORT, 10) || 3346,
+    port: parseInt(process.env.EXECUTION_SERVICE_PORT, 10) || 3346,
   },
 };

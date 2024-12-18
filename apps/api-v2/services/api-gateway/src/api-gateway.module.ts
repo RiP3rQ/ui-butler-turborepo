@@ -1,7 +1,5 @@
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { servicesConfig } from './config/services.config';
 import { AuthProxyService } from './proxies/auth.proxy.service';
 
@@ -45,7 +43,7 @@ import { AuthProxyService } from './proxies/auth.proxy.service';
       },
     ]),
   ],
-  controllers: [AppController],
-  providers: [AppService, AuthProxyService],
+  controllers: [],
+  providers: [AuthProxyService],
 })
-export class AppModule {}
+export class ApiGatewayModule {}

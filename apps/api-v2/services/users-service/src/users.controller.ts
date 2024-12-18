@@ -1,13 +1,13 @@
 import { Controller } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { MessagePattern } from '@nestjs/microservices';
-import { CreateProfileDto } from './dto/create-profile.dto';
-import { CreateUserDto } from './dto/create-user.dto';
 import {
+  CreateProfileDto,
+  CreateUserDto,
   ReceivedRefreshToken,
   TokenPayload,
-} from '../../../src/auth/token-payload.interface';
-import { User } from '../../../src/database/schemas/users';
+  User,
+} from '@app/common';
 
 @Controller()
 export class UsersController {
@@ -31,6 +31,11 @@ export class UsersController {
   @MessagePattern({ cmd: 'users.create' })
   async createUser(createUserDto: CreateUserDto) {
     return this.usersService.createUser(createUserDto);
+  }
+
+  @MessagePattern({ cmd: 'users.get.or.create' })
+  async getOrCreateUser(createUserDto: CreateUserDto) {
+    return this.usersService.getOrCreateUser(createUserDto);
   }
 
   @MessagePattern({ cmd: 'users.get.by.email' })

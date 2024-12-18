@@ -1,48 +1,40 @@
-import { forwardRef, Module } from '@nestjs/common';
-import { UsersModule } from '../../../src/users/users.module';
-import { JwtModule } from '@nestjs/jwt';
+import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { LocalStrategy } from '../../../src/auth/strategies/local.strategy';
-import { JwtStrategy } from '../../../src/auth/strategies/jwt.strategy';
-import { JwtRefreshStrategy } from '../../../src/auth/strategies/jwt-refresh.strategy';
-import { GoogleStrategy } from '../../../src/auth/strategies/google.strategy';
-import { GithubStrategy } from '../../../src/auth/strategies/github.strategy';
-import { PassportModule } from '@nestjs/passport';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
-    forwardRef(() => UsersModule),
-    PassportModule,
+    ConfigModule.forRoot(),
+    // Import the ClientsModule and register the USERS_SERVICE client for communication with the users service
+    ClientsModule.register([
+      {
+        name: 'USERS_SERVICE',
+        transport: Transport.TCP,
+        options: {
+          host: process.env.USERS_SERVICE_HOST || 'localhost',
+          port: parseInt(process.env.USERS_SERVICE_PORT || '3341'),
+        },
+      },
+    ]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => {
-        const secretKey = configService.getOrThrow('JWT_REFRESH_TOKEN_SECRET');
-        const expirationMs = parseInt(
-          configService.getOrThrow('JWT_ACCESS_TOKEN_EXPIRATION_MS'),
-        );
-        const expirationString = `${expirationMs}ms`;
-
-        return {
-          global: true,
-          secret: secretKey,
-          signOptions: {
-            expiresIn: expirationString,
-          },
-        };
-      },
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.getOrThrow('JWT_ACCESS_TOKEN_SECRET'),
+        signOptions: {
+          expiresIn: Math.floor(
+            parseInt(
+              configService.getOrThrow('JWT_ACCESS_TOKEN_EXPIRATION_MS'),
+            ) / 1000,
+          ),
+        },
+      }),
       inject: [ConfigService],
     }),
   ],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    LocalStrategy,
-    JwtStrategy,
-    JwtRefreshStrategy,
-    GoogleStrategy,
-    GithubStrategy,
-  ],
+  providers: [AuthService],
 })
 export class AuthModule {}

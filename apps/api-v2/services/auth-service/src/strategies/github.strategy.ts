@@ -1,14 +1,15 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-github2';
-import { UsersService } from '../../../../src/users/users.service';
+import { ClientProxy } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
   constructor(
     configService: ConfigService,
-    private readonly usersService: UsersService,
+    @Inject('USERS_SERVICE') private readonly usersClient: ClientProxy,
   ) {
     super({
       clientID: configService.getOrThrow('GITHUB_AUTH_CLIENT_ID'),
@@ -35,10 +36,13 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
 
     const username = profile.username;
 
-    return await this.usersService.getOrCreateUser({
-      email,
-      password: '',
-      username,
-    });
+    // Instead of direct UsersService call, use the microservice
+    return await firstValueFrom(
+      this.usersClient.send('users.get.or.create', {
+        email,
+        password: '',
+        username,
+      }),
+    );
   }
 }

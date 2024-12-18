@@ -1,8 +1,15 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { DATABASE_CONNECTION, User } from '@app/common';
+import { User } from '@app/common';
 import { and, eq, gte, inArray, lte, min, sql } from 'drizzle-orm';
 import { eachDayOfInterval, format } from 'date-fns';
-import { DrizzleDatabase } from '@app/database';
+import {
+  components,
+  DATABASE_CONNECTION,
+  type DrizzleDatabase,
+  executionPhase,
+  projects,
+  workflowExecutions,
+} from '@app/database';
 
 @Injectable()
 export class AnalyticsService {
