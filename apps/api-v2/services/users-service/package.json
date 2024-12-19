@@ -34,10 +34,10 @@
   },
   "devDependencies": {
     "@repo/types": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
-    "@repo/typescript-config": "workspace:*",
     "@types/bcryptjs": "^2.4.6",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.2",

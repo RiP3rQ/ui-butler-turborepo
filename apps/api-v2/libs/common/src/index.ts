@@ -10,19 +10,22 @@ export * from "./guards/github-auth.guard";
 export * from "./guards/google-auth.guard";
 export * from "./guards/local-auth.guard";
 
-// credentials-s
+// dto-s
 export * from "./dto/create-profile.dto";
 export * from "./dto/create-user.dto";
 
-// components credentials-s
+// components dto-s
 export * from "./dto/components/favorite-component.dto";
 export * from "./dto/components/save-component.dto";
 export * from "./dto/components/update-component.dto";
 export * from "./dto/components/generate-code.dto";
 export * from "./dto/components/component-generate-message.dto";
 
-// credentials credentials-s
+// credentials dto-s
 export * from "./dto/credentials/create-credential.dto";
+
+// projects dto-s
+export * from "./dto/projects/create-new-project.dto";
 
 // AI
 export * from "./openai/ai";

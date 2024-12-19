@@ -10,6 +10,8 @@ import { ErrorInterceptor } from './interceptors/error.interceptor';
 import { ConfigModule } from '@nestjs/config';
 import Joi from 'joi';
 import { ComponentsController } from './controllers/components.controller';
+import { CredentialsController } from './controllers/credentials.controller';
+import { ProjectsController } from './controllers/projects.controller';
 
 @Module({
   imports: [
@@ -71,6 +73,8 @@ import { ComponentsController } from './controllers/components.controller';
     BillingController,
     UsersController,
     ComponentsController,
+    CredentialsController,
+    ProjectsController,
   ],
   providers: [
     AuthProxyService,
