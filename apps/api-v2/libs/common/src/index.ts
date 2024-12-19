@@ -10,9 +10,9 @@ export * from "./guards/github-auth.guard";
 export * from "./guards/google-auth.guard";
 export * from "./guards/local-auth.guard";
 
-// dto-s
-export * from "./dto/create-profile.dto";
-export * from "./dto/create-user.dto";
+// users dto-s
+export * from "./dto/users/create-profile.dto";
+export * from "./dto/users/create-user.dto";
 
 // components dto-s
 export * from "./dto/components/favorite-component.dto";
