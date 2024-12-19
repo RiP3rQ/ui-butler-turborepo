@@ -1,15 +1,16 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post, Req, Res } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { ComponentsService } from './components.service';
 import {
   FavoriteComponentDto,
   GenerateCodeDto,
+  GenerateComponentRequestDto,
   SaveComponentDto,
   UpdateComponentCodeDto,
   User,
 } from '@app/common';
 import { CodeType } from '@repo/types';
-import { Response } from 'express';
+import { type Response } from 'express';
 
 @Controller()
 export class ComponentsController {
@@ -46,14 +47,23 @@ export class ComponentsController {
     );
   }
 
-  @MessagePattern('components.generate')
+  @Post('api/components/generate')
   async generateComponent(
-    @Payload() data: { prompt: string; response: Response },
+    @Req() req: Request,
+    @Body() body: GenerateComponentRequestDto,
+    @Res() res: Response,
   ) {
-    return this.componentsService.generateComponentStream(
-      data.prompt,
-      data.response,
-    );
+    try {
+      const prompt = body.messages[body.messages.length - 1].content;
+      console.log('Processing prompt:', prompt);
+
+      return this.componentsService.generateComponentStream(prompt, res);
+    } catch (error) {
+      console.error('Error in Components Service:', error);
+      const errorMessage =
+        error instanceof Error ? error.message : JSON.stringify(error);
+      res.status(500).json({ error: errorMessage });
+    }
   }
 
   @MessagePattern('components.update-code')
