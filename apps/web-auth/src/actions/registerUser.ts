@@ -1,16 +1,20 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { getAuthCookie } from "@/lib/auth-cookie.ts";
+import { getAuthCookie } from "@/lib/auth-cookie";
 import { z } from "zod";
-import { registerFormSchema } from "@/schemas/register-schema.ts";
-import { getErrorMessage } from "@/lib/get-error-message.ts";
-import { setResponseCookies } from "@/lib/set-cookies.ts";
+import { registerFormSchema } from "@/schemas/register-schema";
+import { getErrorMessage } from "@/lib/get-error-message";
+import { setResponseCookies } from "@/lib/set-cookies";
 
 export default async function registerUser(
   formData: z.infer<typeof registerFormSchema>,
 ) {
   try {
+    // Delete confirm password field before sending to the server
+    // @ts-ignore
+    delete formData["confirmPassword"];
+
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
       {

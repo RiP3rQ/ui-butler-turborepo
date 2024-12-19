@@ -17,12 +17,24 @@ import { TerminusModule } from '@nestjs/terminus';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { getRateLimitConfig } from './config/rate-limit.config';
+import { PassportModule } from '@nestjs/passport';
+import {
+  GithubStrategy,
+  GoogleStrategy,
+  JwtRefreshStrategy,
+  JwtStrategy,
+  LocalStrategy,
+} from '@app/common';
+import { AnalyticsController } from './controllers/analytics.controller';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TerminusModule,
     ScheduleModule.forRoot(),
+    PassportModule.register({
+      defaultStrategy: 'jwt',
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
@@ -48,6 +60,18 @@ import { getRateLimitConfig } from './config/rate-limit.config';
       }),
     }),
     ClientsModule.registerAsync([
+      {
+        name: 'ANALYTICS_SERVICE',
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get('ANALYTICS_SERVICE_HOST'),
+            port: configService.get('ANALYTICS_SERVICE_PORT'),
+          },
+        }),
+        inject: [ConfigService],
+      },
       {
         name: 'AUTH_SERVICE',
         imports: [ConfigModule],
@@ -138,6 +162,7 @@ import { getRateLimitConfig } from './config/rate-limit.config';
     }),
   ],
   controllers: [
+    AnalyticsController,
     AuthController,
     BillingController,
     UsersController,
@@ -164,6 +189,12 @@ import { getRateLimitConfig } from './config/rate-limit.config';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
+    // Register all strategies
+    LocalStrategy,
+    JwtStrategy,
+    JwtRefreshStrategy,
+    GoogleStrategy,
+    GithubStrategy,
   ],
 })
 export class ApiGatewayModule {}

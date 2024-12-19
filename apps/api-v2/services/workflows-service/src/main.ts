@@ -7,7 +7,7 @@ async function bootstrap() {
     transport: Transport.TCP,
     options: {
       host: process.env.WORKFLOWS_SERVICE_HOST || 'localhost',
-      port: parseInt(process.env.WORKFLOWS_SERVICE_PORT, 10) || 3345,
+      port: parseInt(process.env.WORKFLOWS_SERVICE_PORT, 10) || 3342,
     },
   });
 

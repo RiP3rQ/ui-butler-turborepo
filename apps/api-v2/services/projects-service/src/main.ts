@@ -9,7 +9,7 @@ async function bootstrap() {
       transport: Transport.TCP, // or Transport.REDIS, Transport.KAFKA, etc.
       options: {
         host: process.env.PROJECTS_SERVICE_HOST || 'localhost',
-        port: parseInt(process.env.PROJECTS_SERVICE_PORT, 10) || 3343,
+        port: parseInt(process.env.PROJECTS_SERVICE_PORT, 10) || 3346,
       },
     },
   );

@@ -2,13 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { ApiGatewayModule } from './api-gateway.module';
 import { ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
-import { ResponseInterceptor } from './interceptors/response.interceptor';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import compression from 'compression';
 import { ConfigService } from '@nestjs/config';
-import { LoggingInterceptor } from './interceptors/logging.interceptor';
 import cookieParser from 'cookie-parser';
+import { EnhancedResponseInterceptor } from './interceptors/enhanced-response.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApiGatewayModule, {
@@ -45,8 +44,7 @@ async function bootstrap() {
 
   // Global filters and interceptors
   app.useGlobalFilters(new HttpExceptionFilter());
-  app.useGlobalInterceptors(new ResponseInterceptor());
-  app.useGlobalInterceptors(new LoggingInterceptor());
+  app.useGlobalInterceptors(new EnhancedResponseInterceptor());
 
   // Swagger documentation
   if (configService.get('NODE_ENV') !== 'production') {

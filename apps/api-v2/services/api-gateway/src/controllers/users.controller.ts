@@ -18,28 +18,24 @@ export class UsersController {
   @Get()
   @UseGuards(JwtAuthGuard)
   async getUsers() {
-    return firstValueFrom(this.usersClient.send({ cmd: 'users.get.all' }, {}));
+    return firstValueFrom(this.usersClient.send('users.get.all', {}));
   }
 
   @Get('current-basic')
   @UseGuards(JwtAuthGuard)
   async getCurrentUser(@CurrentUser() user: User) {
-    return firstValueFrom(
-      this.usersClient.send({ cmd: 'users.get.current' }, { user }),
-    );
+    return firstValueFrom(this.usersClient.send('users.get.current', { user }));
   }
 
   @Post('profile')
   async createProfile(@Body() createProfileDto: CreateProfileDto) {
     return firstValueFrom(
-      this.usersClient.send({ cmd: 'users.create.profile' }, createProfileDto),
+      this.usersClient.send('users.create.profile', createProfileDto),
     );
   }
 
   @Post()
   async createUser(@Body() createUserDto: CreateUserDto) {
-    return firstValueFrom(
-      this.usersClient.send({ cmd: 'users.create' }, createUserDto),
-    );
+    return firstValueFrom(this.usersClient.send('users.create', createUserDto));
   }
 }

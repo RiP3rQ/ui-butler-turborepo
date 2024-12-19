@@ -98,27 +98,34 @@ export class AuthService {
   }
 
   async register(userData: CreateUserDto) {
-    // Use Users microservice to create user
-    const newUser = await firstValueFrom(
-      this.usersClient.send('users.create', userData),
-    );
+    try {
+      // Use Users microservice to create user
+      const newUser = await firstValueFrom(
+        this.usersClient.send('users.create', userData),
+      );
 
-    const tokenPayload: TokenPayload = {
-      userId: newUser?.id.toString() ?? '',
-      email: userData.email,
-    };
+      console.log('New user:', newUser);
 
-    const { accessToken, refreshToken } =
-      await this.generateTokens(tokenPayload);
-    const { expiresAccessToken, expiresRefreshToken } =
-      this.getTokenExpirations();
+      const tokenPayload: TokenPayload = {
+        userId: newUser?.id.toString() ?? '',
+        email: userData.email,
+      };
 
-    return {
-      accessToken,
-      refreshToken,
-      expiresAccessToken,
-      expiresRefreshToken,
-    };
+      const { accessToken, refreshToken } =
+        await this.generateTokens(tokenPayload);
+      const { expiresAccessToken, expiresRefreshToken } =
+        this.getTokenExpirations();
+
+      return {
+        accessToken,
+        refreshToken,
+        expiresAccessToken,
+        expiresRefreshToken,
+      };
+    } catch (e) {
+      console.error(e);
+      throw new UnauthorizedException('User registration failed');
+    }
   }
 
   async verifyUser(email: string, password: string) {
