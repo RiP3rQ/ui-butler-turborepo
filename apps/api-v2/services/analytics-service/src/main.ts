@@ -1,11 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { AnalyticsModule } from './analytics.module';
-import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
-  const logger = new Logger('Analytics Service');
-
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AnalyticsModule,
     {
@@ -17,7 +14,7 @@ async function bootstrap() {
     },
   );
   await app.listen();
-  logger.log('Analytics Microservice is listening');
+  console.log('Analytics Microservice is listening');
 }
 
 bootstrap();
