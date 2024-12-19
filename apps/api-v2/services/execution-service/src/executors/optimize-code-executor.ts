@@ -1,9 +1,9 @@
 import { ExecutionEnvironment } from '@repo/types';
 import { ServerOptimizeCodeTaskType } from '@repo/tasks-registry';
 import { generateObject } from 'ai';
-import { GEMINI_MODEL } from '../../common/openai/ai';
 import { z } from 'zod';
 import { OptimizePerformancePrompt } from '@repo/prompts';
+import { GEMINI_MODEL } from '@app/common';
 
 export async function optimizeCodeExecutor(
   environment: ExecutionEnvironment<ServerOptimizeCodeTaskType>,

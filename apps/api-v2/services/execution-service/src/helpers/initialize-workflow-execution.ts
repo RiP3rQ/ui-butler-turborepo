@@ -1,9 +1,12 @@
 import { WorkflowExecutionStatus } from '@repo/types';
-import { DrizzleDatabase } from '../../database/merged-schemas';
-import { workflowExecutions } from '../../database/schemas/workflow-executions';
 import { eq } from 'drizzle-orm';
-import { workflows, WorkflowUpdate } from '../../database/schemas/workflows';
 import { NotFoundException } from '@nestjs/common';
+import {
+  DrizzleDatabase,
+  workflowExecutions,
+  workflows,
+  WorkflowUpdate,
+} from '@app/database';
 
 export async function initializeWorkflowExecution(
   database: DrizzleDatabase,

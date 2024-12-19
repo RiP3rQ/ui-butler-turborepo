@@ -2,16 +2,13 @@ import {
   Environment,
   ExecutionPhase,
   ServerSaveEdge,
+  WorkflowExecution,
   WorkflowExecutionStatus,
 } from '@repo/types';
 import { executeWorkflowPhase } from './execute-workflow-phase';
-import { DrizzleDatabase } from '../../database/merged-schemas';
 import { eq } from 'drizzle-orm';
-import {
-  WorkflowExecution,
-  workflowExecutions,
-} from '../../database/schemas/workflow-executions';
 import { initializeFinalizeExecution } from './initialize-finalize-execution';
+import { DrizzleDatabase, workflowExecutions } from '@app/database';
 
 export async function executeWorkflowPhases(
   database: DrizzleDatabase,

@@ -1,8 +1,7 @@
 import { ExecutionEnvironment } from '@repo/types';
 import { ServerSaveGeneratedCodesTaskType } from '@repo/tasks-registry';
-import { DrizzleDatabase } from '../../database/merged-schemas';
-import { components } from '../../database/schemas/components';
 import { eq } from 'drizzle-orm';
+import { components, DrizzleDatabase } from '@app/database';
 
 export async function saveGeneratedCodesExecutor(
   environment: ExecutionEnvironment<ServerSaveGeneratedCodesTaskType>,

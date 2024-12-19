@@ -13,7 +13,7 @@ import { createTsDocsExecutor } from './create-ts-docs-executor';
 import { createMdxDocsExecutor } from './create-mdx-docs-executor';
 import { saveGeneratedCodesExecutor } from './save-generated-codes-executor';
 import { approveChangesExecutor } from './approve-changes-executor';
-import { DrizzleDatabase } from '../../database/merged-schemas';
+import { DrizzleDatabase } from '@app/database';
 
 type ExecutorFunctionType<T extends BaseWorkflowTask> = (
   environment: ExecutionEnvironment<T>,

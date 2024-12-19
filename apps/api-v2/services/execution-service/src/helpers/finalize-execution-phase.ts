@@ -3,13 +3,9 @@ import {
   LogCollector,
   WorkflowExecutionStatus,
 } from '@repo/types';
-import { DrizzleDatabase } from '../../database/merged-schemas';
-import {
-  executionLog,
-  executionPhase,
-} from '../../database/schemas/workflow-executions';
 import { eq } from 'drizzle-orm';
 import { NotFoundException } from '@nestjs/common';
+import { DrizzleDatabase, executionLog, executionPhase } from '@app/database';
 
 export async function finalizeExecutionPhase(
   database: DrizzleDatabase,

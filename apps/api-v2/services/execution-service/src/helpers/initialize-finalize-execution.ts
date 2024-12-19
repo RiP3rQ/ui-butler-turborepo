@@ -1,12 +1,16 @@
 import { WorkflowExecutionStatus } from '@repo/types';
-import { DrizzleDatabase } from '../../database/merged-schemas';
-import { workflowExecutions } from '../../database/schemas/workflow-executions';
 import { and, eq, ne } from 'drizzle-orm';
-import { workflows, WorkflowUpdate } from '../../database/schemas/workflows';
+
 import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+import {
+  DrizzleDatabase,
+  workflowExecutions,
+  workflows,
+  WorkflowUpdate,
+} from '@app/database';
 
 export async function initializeFinalizeExecution(
   database: DrizzleDatabase,

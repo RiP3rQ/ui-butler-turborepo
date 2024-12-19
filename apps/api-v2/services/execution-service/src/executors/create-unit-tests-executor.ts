@@ -1,9 +1,9 @@
 import { ExecutionEnvironment } from '@repo/types';
 import { ServerCreateUnitTestsTaskType } from '@repo/tasks-registry';
 import { generateObject } from 'ai';
-import { GEMINI_MODEL } from '../../common/openai/ai';
 import { z } from 'zod';
 import { CreateUnitTestsPrompt } from '@repo/prompts';
+import { GEMINI_MODEL } from '@app/common';
 
 export async function createUnitTestsExecutor(
   environment: ExecutionEnvironment<ServerCreateUnitTestsTaskType>,
