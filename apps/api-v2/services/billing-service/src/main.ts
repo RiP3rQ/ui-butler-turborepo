@@ -14,6 +14,7 @@ async function bootstrap() {
     },
   );
   await app.listen();
+  console.log('Billing Microservice is listening');
 }
 
 bootstrap();

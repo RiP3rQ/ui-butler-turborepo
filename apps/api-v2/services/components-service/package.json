@@ -28,7 +28,6 @@
     "@nestjs/platform-express": "^10.0.0",
     "@repo/prompts": "workspace:*",
     "ai": "^4.0.20",
-    "drizzle-orm": "^0.36.4",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1"
   },

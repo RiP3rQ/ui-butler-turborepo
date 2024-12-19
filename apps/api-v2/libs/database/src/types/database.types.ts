@@ -6,3 +6,8 @@ export type DatabaseSchemas = typeof mergedSchemas;
 
 export type DrizzleDatabase = NodePgDatabase<DatabaseSchemas>;
 export type NeonDatabaseType = NeonHttpDatabase<DatabaseSchemas>;
+
+export interface DatabaseConnection {
+  pool: any;
+  db: DrizzleDatabase;
+}

@@ -8,4 +8,4 @@ import { ExecutionsService } from './execution.service';
   controllers: [ExecutionsController],
   providers: [ExecutionsService],
 })
-export class ExecutionModule {}
+export class ExecutionsModule {}

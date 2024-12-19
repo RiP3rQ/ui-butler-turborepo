@@ -1,8 +1,10 @@
 // config
 export * from "./config/database.config";
 
+// constants
+export * from "./constants/connection-name";
+
 // connections
-export * from "./connections/connection-name";
 export * from "./connections/database.factory";
 
 // schemas
@@ -20,6 +22,8 @@ export * from "./schemas/merged-schemas";
 // types
 export * from "./types/database.types";
 
-// module + service
+// module
 export * from "./database.module";
-export * from "./database.service";
+
+//export operators
+export { and, eq, gte, lte, min, sql, inArray } from "drizzle-orm"; // Export operators
