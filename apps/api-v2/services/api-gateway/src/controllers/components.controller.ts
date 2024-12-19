@@ -84,6 +84,7 @@ export class ComponentsController {
     @CurrentUser() user: User,
     @Body() saveComponentDto: SaveComponentDto,
   ) {
+    console.log('saveComponentDto:', saveComponentDto);
     return firstValueFrom(
       this.componentsClient.send('components.save', { user, saveComponentDto }),
     );

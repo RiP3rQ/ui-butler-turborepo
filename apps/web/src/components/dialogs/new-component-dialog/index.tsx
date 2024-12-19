@@ -3,7 +3,6 @@
 import { Button } from "@repo/ui/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -11,7 +10,7 @@ import {
 } from "@repo/ui/components/ui/dialog";
 import { Input } from "@repo/ui/components/ui/input";
 import { useShallow } from "zustand/react/shallow";
-import { useCallback } from "react";
+import { type JSX, useCallback } from "react";
 import {
   Form,
   FormControl,
@@ -63,7 +62,7 @@ export function CreateNewComponentDialog(): JSX.Element {
   const closeButtonOnClickHandler = useCallback(() => {
     form.reset();
     createNewComponentModal.setIsOpen(false);
-  }, [createNewComponentModal]);
+  }, [createNewComponentModal, form]);
 
   const { data, isLoading } = useQuery({
     queryKey: ["projects"],
@@ -89,9 +88,10 @@ export function CreateNewComponentDialog(): JSX.Element {
     },
   });
 
-  const handleSaveAction = (values: SaveComponentSchemaType) => {
+  const onSubmit = form.handleSubmit((values: SaveComponentSchemaType) => {
+    toast.loading("Saving component...", { id: "new-component" });
     mutate(values);
-  };
+  });
 
   return (
     <Dialog
@@ -105,12 +105,9 @@ export function CreateNewComponentDialog(): JSX.Element {
             To save this component, assign proper name and appropriate project.
           </DialogDescription>
         </DialogHeader>
-        <CardContent className="h-fit ">
+        <CardContent className="h-fit">
           <Form {...form}>
-            <form
-              className="space-y-6 w-full"
-              onSubmit={form.handleSubmit(handleSaveAction)}
-            >
+            <form onSubmit={onSubmit} className="space-y-6 w-full">
               <div className="grid grid-cols-2 space-x-3">
                 <FormField
                   control={form.control}
@@ -173,16 +170,18 @@ export function CreateNewComponentDialog(): JSX.Element {
                 />
               </div>
               <CardFooter className="flex items-center justify-end gap-3 p-0">
-                <DialogClose asChild onClick={closeButtonOnClickHandler}>
-                  <Button type="button" variant="secondary">
-                    Cancel
-                  </Button>
-                </DialogClose>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={closeButtonOnClickHandler}
+                >
+                  Cancel
+                </Button>
                 <Button
                   className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500"
                   type="submit"
                   variant="default"
-                  disabled={isPending} // TODO: Add loading state
+                  disabled={isPending}
                 >
                   {isPending ? (
                     <Loader2Icon className="h-5 w-5 animate-spin" />

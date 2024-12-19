@@ -55,8 +55,6 @@ export class ComponentsController {
   ) {
     try {
       const prompt = body.messages[body.messages.length - 1].content;
-      console.log('Processing prompt:', prompt);
-
       return this.componentsService.generateComponentStream(prompt, res);
     } catch (error) {
       console.error('Error in Components Service:', error);

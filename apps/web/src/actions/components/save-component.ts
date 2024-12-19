@@ -18,6 +18,8 @@ export async function saveComponentFunction(
       .map((cookie) => `${cookie.name}=${cookie.value}`)
       .join("; ");
 
+    console.log("form:", form);
+
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/components`, {
       method: "POST",
       headers: {
