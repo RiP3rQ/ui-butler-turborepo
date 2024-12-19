@@ -12,6 +12,7 @@ import Joi from 'joi';
 import { ComponentsController } from './controllers/components.controller';
 import { CredentialsController } from './controllers/credentials.controller';
 import { ProjectsController } from './controllers/projects.controller';
+import { WorkflowsController } from './controllers/workflows.controller';
 
 @Module({
   imports: [
@@ -75,6 +76,7 @@ import { ProjectsController } from './controllers/projects.controller';
     ComponentsController,
     CredentialsController,
     ProjectsController,
+    WorkflowsController,
   ],
   providers: [
     AuthProxyService,

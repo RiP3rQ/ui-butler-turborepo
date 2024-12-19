@@ -27,6 +27,13 @@ export * from "./dto/credentials/create-credential.dto";
 // projects dto-s
 export * from "./dto/projects/create-new-project.dto";
 
+// workflows dto-s
+export * from "./dto/workflows/create-workflow.dto";
+export * from "./dto/workflows/publish-workflow.dto";
+export * from "./dto/workflows/run-workflow.dto";
+export * from "./dto/workflows/update-workflow.dto";
+export * from "./dto/workflows/duplicate-workflow.dto";
+
 // AI
 export * from "./openai/ai";
 
