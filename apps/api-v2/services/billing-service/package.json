@@ -1,5 +1,5 @@
 {
-  "name": "billing-service",
+  "name": "@microservice/billing",
   "version": "0.0.1",
   "description": "",
   "author": "",

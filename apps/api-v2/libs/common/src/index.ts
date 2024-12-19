@@ -14,6 +14,13 @@ export * from "./guards/github-auth.guard";
 export * from "./guards/google-auth.guard";
 export * from "./guards/local-auth.guard";
 
+// strategies
+export * from "./strategies/jwt-refresh.strategy";
+export * from "./strategies/jwt.strategy";
+export * from "./strategies/github.strategy";
+export * from "./strategies/google.strategy";
+export * from "./strategies/local.strategy";
+
 // users dto-s
 export * from "./dto/users/create-profile.dto";
 export * from "./dto/users/create-user.dto";

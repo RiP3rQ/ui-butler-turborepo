@@ -26,7 +26,7 @@ import { getRateLimitConfig } from './config/rate-limit.config';
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
-        PORT: Joi.number().default(3339),
+        PORT: Joi.number().default(3333),
 
         AUTH_SERVICE_HOST: Joi.string().default('localhost'),
         AUTH_SERVICE_PORT: Joi.number().default(3340),
@@ -49,6 +49,18 @@ import { getRateLimitConfig } from './config/rate-limit.config';
     }),
     ClientsModule.registerAsync([
       {
+        name: 'AUTH_SERVICE',
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get('AUTH_SERVICE_HOST'),
+            port: configService.get('AUTH_SERVICE_PORT'),
+          },
+        }),
+        inject: [ConfigService],
+      },
+      {
         name: 'WORKFLOWS_SERVICE',
         imports: [ConfigModule],
         useFactory: (configService: ConfigService) => ({
@@ -56,18 +68,6 @@ import { getRateLimitConfig } from './config/rate-limit.config';
           options: {
             host: configService.get('WORKFLOW_SERVICE_HOST', 'localhost'),
             port: configService.get('WORKFLOW_SERVICE_PORT', 3342),
-          },
-        }),
-        inject: [ConfigService],
-      },
-      {
-        name: 'AUTH_SERVICE',
-        imports: [ConfigModule],
-        useFactory: (configService: ConfigService) => ({
-          transport: Transport.TCP,
-          options: {
-            host: configService.get('AUTH_SERVICE_HOST', 'localhost'),
-            port: configService.get('AUTH_SERVICE_PORT', 3340),
           },
         }),
         inject: [ConfigService],
@@ -138,7 +138,6 @@ import { getRateLimitConfig } from './config/rate-limit.config';
     }),
   ],
   controllers: [
-    AuthController,
     AuthController,
     BillingController,
     UsersController,

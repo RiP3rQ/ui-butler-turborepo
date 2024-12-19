@@ -1,5 +1,5 @@
 {
-  "name": "workflows-service",
+  "name": "@microservice/workflows",
   "version": "0.0.1",
   "description": "",
   "author": "",

@@ -231,9 +231,15 @@ importers:
       '@nestjs/common':
         specifier: ^10.4.15
         version: 10.4.15(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
+      '@nestjs/config':
+        specifier: ^3.3.0
+        version: 3.3.0(@nestjs/common@10.4.15(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(rxjs@7.8.1)
       '@nestjs/jwt':
         specifier: ^10.2.0
         version: 10.2.0(@nestjs/common@10.4.15(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))
+      '@nestjs/microservices':
+        specifier: ^10.4.15
+        version: 10.4.15(@nestjs/common@10.4.15(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.15)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       '@nestjs/passport':
         specifier: ^10.0.3
         version: 10.0.3(@nestjs/common@10.4.15(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(passport@0.7.0)
@@ -246,6 +252,24 @@ importers:
       crypto:
         specifier: ^1.0.1
         version: 1.0.1
+      express:
+        specifier: ^4.21.2
+        version: 4.21.2
+      passport-github2:
+        specifier: ^0.1.12
+        version: 0.1.12
+      passport-google-oauth20:
+        specifier: ^2.0.0
+        version: 2.0.0
+      passport-jwt:
+        specifier: ^4.0.1
+        version: 4.0.1
+      passport-local:
+        specifier: ^1.0.0
+        version: 1.0.0
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
     devDependencies:
       '@repo/types':
         specifier: workspace:*
@@ -253,6 +277,21 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../../../packages/config-typescript
+      '@types/express':
+        specifier: ^5.0.0
+        version: 5.0.0
+      '@types/passport-github2':
+        specifier: ^1.2.9
+        version: 1.2.9
+      '@types/passport-google-oauth20':
+        specifier: ^2.0.16
+        version: 2.0.16
+      '@types/passport-jwt':
+        specifier: ^4.0.1
+        version: 4.0.1
+      '@types/passport-local':
+        specifier: ^1.0.38
+        version: 1.0.38
 
   apps/api-v2/libs/database:
     dependencies:
@@ -308,9 +347,6 @@ importers:
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
-      drizzle-orm:
-        specifier: ^0.36.4
-        version: 0.36.4(@neondatabase/serverless@0.10.4)(@opentelemetry/api@1.9.0)(@types/pg@8.11.10)(@types/react@19.0.1)(pg@8.13.1)
       reflect-metadata:
         specifier: ^0.2.0
         version: 0.2.2
@@ -547,6 +583,9 @@ importers:
       bcryptjs:
         specifier: ^2.4.3
         version: 2.4.3
+      joi:
+        specifier: ^17.13.3
+        version: 17.13.3
       passport-github2:
         specifier: ^0.1.12
         version: 0.1.12
@@ -668,9 +707,6 @@ importers:
       '@nestjs/platform-express':
         specifier: ^10.0.0
         version: 10.4.15(@nestjs/common@10.4.15(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.15)
-      drizzle-orm:
-        specifier: ^0.36.4
-        version: 0.36.4(@neondatabase/serverless@0.10.4)(@opentelemetry/api@1.9.0)(@types/pg@8.11.10)(@types/react@19.0.1)(pg@8.13.1)(react@19.0.0-rc-02c0e824-20241028)
       reflect-metadata:
         specifier: ^0.2.0
         version: 0.2.2
@@ -774,9 +810,6 @@ importers:
       ai:
         specifier: ^4.0.20
         version: 4.0.20(react@19.0.0-rc-02c0e824-20241028)(zod@3.24.1)
-      drizzle-orm:
-        specifier: ^0.36.4
-        version: 0.36.4(@neondatabase/serverless@0.10.4)(@opentelemetry/api@1.9.0)(@types/pg@8.11.10)(@types/react@19.0.1)(pg@8.13.1)(react@19.0.0-rc-02c0e824-20241028)
       reflect-metadata:
         specifier: ^0.2.0
         version: 0.2.2
@@ -883,9 +916,6 @@ importers:
       ai:
         specifier: ^4.0.20
         version: 4.0.20(react@19.0.0-rc-02c0e824-20241028)(zod@3.24.1)
-      drizzle-orm:
-        specifier: ^0.36.4
-        version: 0.36.4(@neondatabase/serverless@0.10.4)(@opentelemetry/api@1.9.0)(@types/pg@8.11.10)(@types/react@19.0.1)(pg@8.13.1)(react@19.0.0-rc-02c0e824-20241028)
       reflect-metadata:
         specifier: ^0.2.0
         version: 0.2.2
@@ -986,9 +1016,6 @@ importers:
       '@nestjs/platform-express':
         specifier: ^10.0.0
         version: 10.4.15(@nestjs/common@10.4.15(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.15)
-      drizzle-orm:
-        specifier: ^0.36.4
-        version: 0.36.4(@neondatabase/serverless@0.10.4)(@opentelemetry/api@1.9.0)(@types/pg@8.11.10)(@types/react@19.0.1)(pg@8.13.1)(react@19.0.0-rc-02c0e824-20241028)
       reflect-metadata:
         specifier: ^0.2.0
         version: 0.2.2
@@ -1092,9 +1119,6 @@ importers:
       bcryptjs:
         specifier: ^2.4.3
         version: 2.4.3
-      drizzle-orm:
-        specifier: ^0.36.4
-        version: 0.36.4(@neondatabase/serverless@0.10.4)(@opentelemetry/api@1.9.0)(@types/pg@8.11.10)(@types/react@19.0.1)(pg@8.13.1)(react@19.0.0-rc-02c0e824-20241028)
       reflect-metadata:
         specifier: ^0.2.0
         version: 0.2.2
@@ -1198,9 +1222,6 @@ importers:
       '@repo/tasks-registry':
         specifier: workspace:*
         version: link:../../../../packages/tasks-registry
-      drizzle-orm:
-        specifier: ^0.36.4
-        version: 0.36.4(@neondatabase/serverless@0.10.4)(@opentelemetry/api@1.9.0)(@types/pg@8.11.10)(@types/react@19.0.1)(pg@8.13.1)(react@19.0.0-rc-02c0e824-20241028)
       reflect-metadata:
         specifier: ^0.2.0
         version: 0.2.2
@@ -12747,14 +12768,6 @@ snapshots:
       esbuild-register: 3.6.0(esbuild@0.19.12)
     transitivePeerDependencies:
       - supports-color
-
-  drizzle-orm@0.36.4(@neondatabase/serverless@0.10.4)(@opentelemetry/api@1.9.0)(@types/pg@8.11.10)(@types/react@19.0.1)(pg@8.13.1):
-    optionalDependencies:
-      '@neondatabase/serverless': 0.10.4
-      '@opentelemetry/api': 1.9.0
-      '@types/pg': 8.11.10
-      '@types/react': 19.0.1
-      pg: 8.13.1
 
   drizzle-orm@0.36.4(@neondatabase/serverless@0.10.4)(@opentelemetry/api@1.9.0)(@types/pg@8.11.10)(@types/react@19.0.1)(pg@8.13.1)(react@19.0.0-rc-02c0e824-20241028):
     optionalDependencies:

@@ -31,4 +31,23 @@ export class AuthController {
   async githubCallback(@Payload() data: { user: User }) {
     return this.authService.login(data.user, true);
   }
+
+  @MessagePattern('auth.verify-refresh-token')
+  async verifyRefreshToken(data: { refreshToken: string; email: string }) {
+    return this.authService.verifyUserRefreshToken(
+      data.refreshToken,
+      data.email,
+    );
+  }
+
+  @MessagePattern('auth.verify-user')
+  async verifyUser(data: { email: string; password: string }) {
+    try {
+      return await this.authService.verifyUser(data.email, data.password);
+    } catch (error) {
+      // Log the error but don't expose internal details
+      console.error('User verification failed:', error);
+      return null;
+    }
+  }
 }

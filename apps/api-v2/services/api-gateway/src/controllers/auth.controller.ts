@@ -2,14 +2,11 @@ import {
   Body,
   Controller,
   Get,
-  Inject,
   NotFoundException,
   Post,
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
-import { firstValueFrom } from 'rxjs';
 import { type Response as ExpressResponse } from 'express';
 import {
   CreateUserDto,
@@ -20,12 +17,11 @@ import {
   LocalAuthGuard,
   type User,
 } from '@app/common';
+import { AuthProxyService } from '../proxies/auth.proxy.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    @Inject('AUTH_SERVICE') private readonly authClient: ClientProxy,
-  ) {}
+  constructor(private readonly authProxyService: AuthProxyService) {}
 
   @Post('login')
   @UseGuards(LocalAuthGuard)
@@ -33,9 +29,7 @@ export class AuthController {
     @CurrentUser() user: User,
     @Res({ passthrough: true }) response: ExpressResponse,
   ) {
-    const result = await firstValueFrom(
-      this.authClient.send('auth.login', { user }),
-    );
+    const result = await this.authProxyService.login({ user });
     this.setCookies(response, result);
     return result;
   }
@@ -48,9 +42,7 @@ export class AuthController {
     if (!user) {
       throw new NotFoundException('User not found in request body');
     }
-    const result = await firstValueFrom(
-      this.authClient.send('auth.register', { user }),
-    );
+    const result = await this.authProxyService.register({ user });
     this.setCookies(response, result);
     return result;
   }
@@ -61,9 +53,7 @@ export class AuthController {
     @CurrentUser() user: User,
     @Res({ passthrough: true }) response: ExpressResponse,
   ) {
-    const result = await firstValueFrom(
-      this.authClient.send('auth.refresh', { user }),
-    );
+    const result = await this.authProxyService.refresh({ user });
     this.setCookies(response, result);
     return result;
   }
@@ -78,9 +68,7 @@ export class AuthController {
     @CurrentUser() user: User,
     @Res({ passthrough: true }) response: ExpressResponse,
   ) {
-    const result = await firstValueFrom(
-      this.authClient.send('auth.google.callback', { user }),
-    );
+    const result = await this.authProxyService.googleCallback({ user });
     this.setCookies(response, result);
     if (result.redirect) {
       response.redirect(result.redirectUrl);
@@ -98,9 +86,7 @@ export class AuthController {
     @CurrentUser() user: User,
     @Res({ passthrough: true }) response: ExpressResponse,
   ) {
-    const result = await firstValueFrom(
-      this.authClient.send('auth.github.callback', { user }),
-    );
+    const result = await this.authProxyService.githubCallback({ user });
     this.setCookies(response, result);
     if (result.redirect) {
       response.redirect(result.redirectUrl);

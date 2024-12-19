@@ -1,5 +1,5 @@
 {
-  "name": "execution-service",
+  "name": "@microservice/execution",
   "version": "0.0.1",
   "description": "",
   "author": "",

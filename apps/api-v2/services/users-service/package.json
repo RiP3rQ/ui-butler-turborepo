@@ -1,5 +1,5 @@
 {
-  "name": "users-service",
+  "name": "@microservice/users",
   "version": "0.0.1",
   "description": "",
   "author": "",
