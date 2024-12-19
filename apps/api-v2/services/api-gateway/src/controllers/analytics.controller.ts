@@ -12,13 +12,13 @@ import { firstValueFrom } from 'rxjs';
 import { CurrentUser, JwtAuthGuard, type User } from '@app/common';
 
 @Controller('analytics')
+@UseGuards(JwtAuthGuard)
 export class AnalyticsController {
   constructor(
     @Inject('ANALYTICS_SERVICE') private readonly analyticsClient: ClientProxy,
   ) {}
 
   @Get('periods')
-  @UseGuards(JwtAuthGuard)
   async getPeriods(@CurrentUser() user: User) {
     if (!user) {
       throw new NotFoundException('Unauthorized');
@@ -30,7 +30,6 @@ export class AnalyticsController {
   }
 
   @Get('stat-cards-values')
-  @UseGuards(JwtAuthGuard)
   async getStatCardsValues(
     @Query('month', new ParseIntPipe()) month: number,
     @Query('year', new ParseIntPipe()) year: number,
@@ -50,7 +49,6 @@ export class AnalyticsController {
   }
 
   @Get('workflow-execution-stats')
-  @UseGuards(JwtAuthGuard)
   async getWorkflowExecutionStats(
     @Query('month', new ParseIntPipe()) month: number,
     @Query('year', new ParseIntPipe()) year: number,
@@ -74,7 +72,6 @@ export class AnalyticsController {
   }
 
   @Get('used-credits-in-period')
-  @UseGuards(JwtAuthGuard)
   async getUsedCreditsInPeriod(
     @Query('month', new ParseIntPipe()) month: number,
     @Query('year', new ParseIntPipe()) year: number,
@@ -98,7 +95,6 @@ export class AnalyticsController {
   }
 
   @Get('dashboard-stat-cards-values')
-  @UseGuards(JwtAuthGuard)
   async getDashboardStatCardsValues(@CurrentUser() user: User) {
     if (!user) {
       throw new NotFoundException('Unauthorized');
@@ -109,7 +105,6 @@ export class AnalyticsController {
   }
 
   @Get('favorited-table-content')
-  @UseGuards(JwtAuthGuard)
   async getFavoritedTableContent(@CurrentUser() user: User) {
     if (!user) {
       throw new NotFoundException('Unauthorized');

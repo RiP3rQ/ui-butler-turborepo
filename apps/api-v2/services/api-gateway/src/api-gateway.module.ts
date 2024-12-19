@@ -14,16 +14,40 @@ import { CredentialsController } from './controllers/credentials.controller';
 import { ProjectsController } from './controllers/projects.controller';
 import { WorkflowsController } from './controllers/workflows.controller';
 import { ExecutionsController } from './controllers/execution.controller';
+import {
+  DiskHealthIndicator,
+  MemoryHealthIndicator,
+  TerminusModule,
+} from '@nestjs/terminus';
+import { HealthController } from './health/health.controller';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    TerminusModule,
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
         PORT: Joi.number().default(3339),
+
         AUTH_SERVICE_HOST: Joi.string().default('localhost'),
         AUTH_SERVICE_PORT: Joi.number().default(3340),
-        // ... other service configurations //TODO: Add other service configurations
+
+        USERS_SERVICE_HOST: Joi.string().default('localhost'),
+        USERS_SERVICE_PORT: Joi.number().default(3341),
+
+        WORKFLOW_SERVICE_HOST: Joi.string().default('localhost'),
+        WORKFLOW_SERVICE_PORT: Joi.number().default(3342),
+
+        EXECUTION_SERVICE_HOST: Joi.string().default('localhost'),
+        EXECUTION_SERVICE_PORT: Joi.number().default(3343),
+
+        BILLING_SERVICE_HOST: Joi.string().default('localhost'),
+        BILLING_SERVICE_PORT: Joi.number().default(3344),
+
+        COMPONENTS_SERVICE_HOST: Joi.string().default('localhost'),
+        COMPONENTS_SERVICE_PORT: Joi.number().default(3345),
       }),
     }),
     ClientsModule.register([
@@ -79,6 +103,8 @@ import { ExecutionsController } from './controllers/execution.controller';
     ProjectsController,
     WorkflowsController,
     ExecutionsController,
+    // HEALTH CONTROLLERS
+    HealthController,
   ],
   providers: [
     AuthProxyService,
@@ -86,6 +112,9 @@ import { ExecutionsController } from './controllers/execution.controller';
       provide: APP_INTERCEPTOR,
       useClass: ErrorInterceptor,
     },
+    // HEALTH CONTROLLERS
+    MemoryHealthIndicator,
+    DiskHealthIndicator,
   ],
 })
 export class ApiGatewayModule {}

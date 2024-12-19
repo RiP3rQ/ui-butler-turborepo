@@ -24,13 +24,13 @@ import {
 import { firstValueFrom } from 'rxjs';
 
 @Controller('workflows')
+@UseGuards(JwtAuthGuard)
 export class WorkflowsController {
   constructor(
     @Inject('WORKFLOWS_SERVICE') private readonly workflowsClient: ClientProxy,
   ) {}
 
   @Get()
-  @UseGuards(JwtAuthGuard)
   async getAllUserWorkflows(@CurrentUser() user: User) {
     return firstValueFrom(
       this.workflowsClient.send('workflows.get-all', { user }),
@@ -38,7 +38,6 @@ export class WorkflowsController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
   async getWorkflowById(
     @CurrentUser() user: User,
     @Param('id', ParseIntPipe) workflowId: number,
@@ -49,7 +48,6 @@ export class WorkflowsController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
   async createWorkflow(
     @CurrentUser() user: User,
     @Body() createWorkflowDto: CreateWorkflowDto,
@@ -63,7 +61,6 @@ export class WorkflowsController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
   async deleteWorkflow(
     @CurrentUser() user: User,
     @Param('id', ParseIntPipe) workflowId: number,
@@ -74,7 +71,6 @@ export class WorkflowsController {
   }
 
   @Post('duplicate')
-  @UseGuards(JwtAuthGuard)
   async duplicateWorkflow(
     @CurrentUser() user: User,
     @Body() duplicateWorkflowDto: DuplicateWorkflowDto,
@@ -88,7 +84,6 @@ export class WorkflowsController {
   }
 
   @Post(':id/publish')
-  @UseGuards(JwtAuthGuard)
   async publishWorkflow(
     @CurrentUser() user: User,
     @Body() publishWorkflowDto: PublishWorkflowDto,
@@ -102,7 +97,6 @@ export class WorkflowsController {
   }
 
   @Post(':id/unpublish')
-  @UseGuards(JwtAuthGuard)
   async unpublishWorkflow(
     @CurrentUser() user: User,
     @Param('id', ParseIntPipe) workflowId: number,
@@ -113,7 +107,6 @@ export class WorkflowsController {
   }
 
   @Post('run')
-  @UseGuards(JwtAuthGuard)
   async runWorkflow(
     @CurrentUser() user: User,
     @Body() runWorkflowDto: RunWorkflowDto,
@@ -124,7 +117,6 @@ export class WorkflowsController {
   }
 
   @Put(':id')
-  @UseGuards(JwtAuthGuard)
   async updateWorkflow(
     @CurrentUser() user: User,
     @Body() updateWorkflowDto: UpdateWorkflowDto,
@@ -138,7 +130,6 @@ export class WorkflowsController {
   }
 
   @Get(':id/historic')
-  @UseGuards(JwtAuthGuard)
   async getHistoricWorkflowExecutions(
     @CurrentUser() user: User,
     @Param('id', ParseIntPipe) workflowId: number,
@@ -149,7 +140,6 @@ export class WorkflowsController {
   }
 
   @Get('executions/:id')
-  @UseGuards(JwtAuthGuard)
   async getWorkflowExecutions(
     @CurrentUser() user: User,
     @Param('id', ParseIntPipe) executionId: number,
@@ -160,7 +150,6 @@ export class WorkflowsController {
   }
 
   @Get('phases/:id')
-  @UseGuards(JwtAuthGuard)
   async getWorkflowPhase(
     @CurrentUser() user: User,
     @Param('id', ParseIntPipe) phaseId: number,

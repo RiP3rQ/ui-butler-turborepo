@@ -12,13 +12,13 @@ import { CurrentUser, JwtAuthGuard, type User } from '@app/common';
 import { BalancePackId } from '@repo/types';
 
 @Controller('billing')
+@UseGuards(JwtAuthGuard)
 export class BillingController {
   constructor(
     @Inject('BILLING_SERVICE') private readonly billingClient: ClientProxy,
   ) {}
 
   @Get('setup')
-  @UseGuards(JwtAuthGuard)
   async setupUser(@CurrentUser() user: User) {
     if (!user) {
       throw new NotFoundException('Unauthorized');
@@ -30,7 +30,6 @@ export class BillingController {
   }
 
   @Get('purchase')
-  @UseGuards(JwtAuthGuard)
   async purchasePack(
     @Query('packId') packId: BalancePackId,
     @CurrentUser() user: User,
@@ -49,7 +48,6 @@ export class BillingController {
   }
 
   @Get('credits')
-  @UseGuards(JwtAuthGuard)
   async getUserCredits(@CurrentUser() user: User) {
     if (!user) {
       throw new NotFoundException('Unauthorized');

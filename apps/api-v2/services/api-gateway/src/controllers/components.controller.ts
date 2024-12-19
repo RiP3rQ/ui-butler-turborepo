@@ -27,6 +27,7 @@ import { type Response } from 'express';
 import { type CodeType, codeTypeValues } from '@repo/types';
 
 @Controller('components')
+@UseGuards(JwtAuthGuard)
 export class ComponentsController {
   constructor(
     @Inject('COMPONENTS_SERVICE')
@@ -34,7 +35,6 @@ export class ComponentsController {
   ) {}
 
   @Get('/:projectId/:componentId')
-  @UseGuards(JwtAuthGuard)
   async getComponent(
     @CurrentUser() user: User,
     @Param('projectId', ParseIntPipe) projectId: number,
@@ -50,7 +50,6 @@ export class ComponentsController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
   async saveComponent(
     @CurrentUser() user: User,
     @Body() saveComponentDto: SaveComponentDto,
@@ -61,7 +60,6 @@ export class ComponentsController {
   }
 
   @Post('/favorite')
-  @UseGuards(JwtAuthGuard)
   async favoriteComponent(
     @CurrentUser() user: User,
     @Body() favoriteComponentDto: FavoriteComponentDto,
@@ -75,7 +73,6 @@ export class ComponentsController {
   }
 
   @Post('/generate')
-  @UseGuards(JwtAuthGuard)
   async generateComponent(
     @CurrentUser() user: User,
     @Body() body: GenerateComponentRequestDto,
@@ -90,7 +87,6 @@ export class ComponentsController {
   }
 
   @Patch('/:componentId/:codeType')
-  @UseGuards(JwtAuthGuard)
   async updateComponentCode(
     @CurrentUser() user: User,
     @Param('componentId', ParseIntPipe) componentId: number,
@@ -108,7 +104,6 @@ export class ComponentsController {
   }
 
   @Post('/generate-code')
-  @UseGuards(JwtAuthGuard)
   async generateCodeBasedOnType(
     @CurrentUser() user: User,
     @Body() generateCodeDto: GenerateCodeDto,
