@@ -5,7 +5,7 @@ import { AuthProxyService } from './proxies/auth.proxy.service';
 import { AuthController } from './controllers/auth.controller';
 import { BillingController } from './controllers/billing.controller';
 import { UsersController } from './controllers/users.controller';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ErrorInterceptor } from './interceptors/error.interceptor';
 import { ConfigModule } from '@nestjs/config';
 import Joi from 'joi';
@@ -21,6 +21,8 @@ import {
 } from '@nestjs/terminus';
 import { HealthController } from './health/health.controller';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { getRateLimitConfig } from './config/rate-limit.config';
 
 @Module({
   imports: [
@@ -92,6 +94,9 @@ import { ScheduleModule } from '@nestjs/schedule';
         options: servicesConfig.components,
       },
     ]),
+    ThrottlerModule.forRootAsync({
+      useFactory: getRateLimitConfig,
+    }),
   ],
   controllers: [
     AuthController,
@@ -108,6 +113,7 @@ import { ScheduleModule } from '@nestjs/schedule';
   ],
   providers: [
     AuthProxyService,
+    // ERROR INTERCEPTOR
     {
       provide: APP_INTERCEPTOR,
       useClass: ErrorInterceptor,
@@ -115,6 +121,11 @@ import { ScheduleModule } from '@nestjs/schedule';
     // HEALTH CONTROLLERS
     MemoryHealthIndicator,
     DiskHealthIndicator,
+    // THROTTLER
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class ApiGatewayModule {}

@@ -7,10 +7,15 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import compression from 'compression';
 import { ConfigService } from '@nestjs/config';
+import { LoggingInterceptor } from './interceptors/logging.interceptor';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApiGatewayModule);
   const configService = app.get(ConfigService);
+
+  // Cookie-parser
+  app.use(cookieParser());
 
   // Security
   app.use(helmet());
@@ -39,6 +44,7 @@ async function bootstrap() {
   // Global filters and interceptors
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(new ResponseInterceptor());
+  app.useGlobalInterceptors(new LoggingInterceptor());
 
   // Swagger documentation
   if (configService.get('NODE_ENV') !== 'production') {

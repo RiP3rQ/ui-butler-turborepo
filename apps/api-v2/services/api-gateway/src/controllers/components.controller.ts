@@ -25,6 +25,8 @@ import {
 } from '@app/common';
 import { type Response } from 'express';
 import { type CodeType, codeTypeValues } from '@repo/types';
+import { Throttle } from '@nestjs/throttler';
+import { rateLimitConfigs } from '../config/rate-limit.config';
 
 @Controller('components')
 @UseGuards(JwtAuthGuard)
@@ -104,6 +106,8 @@ export class ComponentsController {
   }
 
   @Post('/generate-code')
+  // Override default configuration for Rate limiting and duration.
+  @Throttle({ ai: rateLimitConfigs.ai })
   async generateCodeBasedOnType(
     @CurrentUser() user: User,
     @Body() generateCodeDto: GenerateCodeDto,
