@@ -43,4 +43,4 @@ export const userCredentialsRelations = relations(
   }),
 );
 
-export type NewUserCredential = typeof userCredentials.$inferInsert;
+export type NewUserCredential = typeof userCredentials.$inferSelect;

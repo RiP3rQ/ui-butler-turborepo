@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
-import { DatabaseModule } from '../../../libs/database/src/database.module';
+import { DatabaseModule, users } from '@app/database';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { ConfigModule } from '@nestjs/config';
-import { users } from '../../../libs/database/src/schemas/users';
+import { CredentialsController } from '../credentials/credentials.controller';
+import { CredentialsService } from '../credentials/credentials.service';
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { users } from '../../../libs/database/src/schemas/users';
     }),
     DatabaseModule.forFeature(users),
   ],
-  controllers: [UsersController],
-  providers: [UsersService],
+  controllers: [UsersController, CredentialsController],
+  providers: [UsersService, CredentialsService],
 })
 export class UsersModule {}
