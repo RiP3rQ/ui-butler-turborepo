@@ -370,14 +370,12 @@ export class WorkflowsService {
 
         // Instead of direct workflowExecutionsService call, use the microservice
         // skip await for async execution
-        this.executionClient.send('execution.run.workflow', {
-          query: tokenPayload,
-          data: { refreshToken: refreshTokenData },
-        }),
-          this.workflowExecutionsService.executeWorkflow(
-            execution.id,
-            runWorkflowDto.componentId,
-          );
+        this.executionClient.send('executions.execute', {
+          data: {
+            workflowExecutionId: execution.id,
+            componentId: runWorkflowDto.componentId,
+          },
+        });
 
         return {
           url: `/workflow/runs/${runWorkflowDto.workflowId}/${execution.id}`,

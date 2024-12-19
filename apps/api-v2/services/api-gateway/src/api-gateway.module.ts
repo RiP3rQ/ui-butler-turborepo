@@ -13,6 +13,7 @@ import { ComponentsController } from './controllers/components.controller';
 import { CredentialsController } from './controllers/credentials.controller';
 import { ProjectsController } from './controllers/projects.controller';
 import { WorkflowsController } from './controllers/workflows.controller';
+import { ExecutionsController } from './controllers/execution.controller';
 
 @Module({
   imports: [
@@ -77,6 +78,7 @@ import { WorkflowsController } from './controllers/workflows.controller';
     CredentialsController,
     ProjectsController,
     WorkflowsController,
+    ExecutionsController,
   ],
   providers: [
     AuthProxyService,

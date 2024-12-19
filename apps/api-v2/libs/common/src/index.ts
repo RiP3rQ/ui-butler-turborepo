@@ -34,6 +34,9 @@ export * from "./dto/workflows/run-workflow.dto";
 export * from "./dto/workflows/update-workflow.dto";
 export * from "./dto/workflows/duplicate-workflow.dto";
 
+// execution dto-s
+export * from "./dto/execution/approve-changes.dto";
+
 // AI
 export * from "./openai/ai";
 

@@ -1,10 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { AppModule } from './app.module';
+import { ExecutionsModule } from './execution.module';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-    AppModule,
+    ExecutionsModule,
     {
       transport: Transport.TCP, // or Transport.REDIS, Transport.KAFKA, etc.
       options: {
@@ -14,6 +14,7 @@ async function bootstrap() {
     },
   );
   await app.listen();
+  console.log('Executions Microservice is listening');
 }
 
 bootstrap();
