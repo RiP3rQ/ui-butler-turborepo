@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "build": "turbo build",
-    "dev": "turbo dev --parallel",
+    "dev": "turbo dev --parallel --concurrency=20",
     "lint": "turbo lint",
     "type-check": "turbo type-check",
     "clean": "turbo clean",

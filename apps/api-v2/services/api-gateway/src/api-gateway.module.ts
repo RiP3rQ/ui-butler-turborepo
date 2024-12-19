@@ -1,31 +1,26 @@
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { Module } from '@nestjs/common';
-import { servicesConfig } from './config/services.config';
 import { AuthProxyService } from './proxies/auth.proxy.service';
 import { AuthController } from './controllers/auth.controller';
 import { BillingController } from './controllers/billing.controller';
 import { UsersController } from './controllers/users.controller';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ErrorInterceptor } from './interceptors/error.interceptor';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import Joi from 'joi';
 import { ComponentsController } from './controllers/components.controller';
 import { CredentialsController } from './controllers/credentials.controller';
 import { ProjectsController } from './controllers/projects.controller';
 import { WorkflowsController } from './controllers/workflows.controller';
 import { ExecutionsController } from './controllers/execution.controller';
-import {
-  DiskHealthIndicator,
-  MemoryHealthIndicator,
-  TerminusModule,
-} from '@nestjs/terminus';
-import { HealthController } from './health/health.controller';
+import { TerminusModule } from '@nestjs/terminus';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { getRateLimitConfig } from './config/rate-limit.config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     TerminusModule,
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({
@@ -52,46 +47,90 @@ import { getRateLimitConfig } from './config/rate-limit.config';
         COMPONENTS_SERVICE_PORT: Joi.number().default(3345),
       }),
     }),
-    ClientsModule.register([
+    ClientsModule.registerAsync([
+      {
+        name: 'WORKFLOWS_SERVICE',
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get('WORKFLOW_SERVICE_HOST', 'localhost'),
+            port: configService.get('WORKFLOW_SERVICE_PORT', 3342),
+          },
+        }),
+        inject: [ConfigService],
+      },
       {
         name: 'AUTH_SERVICE',
-        transport: Transport.TCP,
-        options: servicesConfig.auth,
-      },
-      {
-        name: 'ANALYTICS_SERVICE',
-        transport: Transport.TCP,
-        options: servicesConfig.analytics,
-      },
-      {
-        name: 'BILLING_SERVICE',
-        transport: Transport.TCP,
-        options: servicesConfig.billing,
-      },
-      {
-        name: 'PROJECTS_SERVICE',
-        transport: Transport.TCP,
-        options: servicesConfig.projects,
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get('AUTH_SERVICE_HOST', 'localhost'),
+            port: configService.get('AUTH_SERVICE_PORT', 3340),
+          },
+        }),
+        inject: [ConfigService],
       },
       {
         name: 'USERS_SERVICE',
-        transport: Transport.TCP,
-        options: servicesConfig.users,
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get('USERS_SERVICE_HOST', 'localhost'),
+            port: configService.get('USERS_SERVICE_PORT', 3341),
+          },
+        }),
+        inject: [ConfigService],
       },
       {
-        name: 'WORKFLOW_SERVICE',
-        transport: Transport.TCP,
-        options: servicesConfig.workflow,
+        name: 'EXECUTIONS_SERVICE',
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get('EXECUTIONS_SERVICE_HOST', 'localhost'),
+            port: configService.get('EXECUTIONS_SERVICE_PORT', 3343),
+          },
+        }),
+        inject: [ConfigService],
       },
       {
-        name: 'EXECUTION_SERVICE',
-        transport: Transport.TCP,
-        options: servicesConfig.execution,
+        name: 'BILLING_SERVICE',
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get('BILLING_SERVICE_HOST', 'localhost'),
+            port: configService.get('BILLING_SERVICE_PORT', 3344),
+          },
+        }),
+        inject: [ConfigService],
       },
       {
         name: 'COMPONENTS_SERVICE',
-        transport: Transport.TCP,
-        options: servicesConfig.components,
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get('COMPONENTS_SERVICE_HOST', 'localhost'),
+            port: configService.get('COMPONENTS_SERVICE_PORT', 3345),
+          },
+        }),
+        inject: [ConfigService],
+      },
+      {
+        name: 'PROJECTS_SERVICE',
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get('PROJECTS_SERVICE_HOST', 'localhost'),
+            port: configService.get('PROJECTS_SERVICE_PORT', 3346),
+          },
+        }),
+        inject: [ConfigService],
       },
     ]),
     ThrottlerModule.forRootAsync({
@@ -109,7 +148,7 @@ import { getRateLimitConfig } from './config/rate-limit.config';
     WorkflowsController,
     ExecutionsController,
     // HEALTH CONTROLLERS
-    HealthController,
+    // HealthController,
   ],
   providers: [
     AuthProxyService,
@@ -119,8 +158,8 @@ import { getRateLimitConfig } from './config/rate-limit.config';
       useClass: ErrorInterceptor,
     },
     // HEALTH CONTROLLERS
-    MemoryHealthIndicator,
-    DiskHealthIndicator,
+    // MemoryHealthIndicator,
+    // DiskHealthIndicator,
     // THROTTLER
     {
       provide: APP_GUARD,
