@@ -22,7 +22,7 @@ export interface BaseWorkflowTask {
 }
 
 export interface WorkflowTask extends BaseWorkflowTask {
-  icon: (props: LucideProps) => JSX.Element;
+  icon: (props: LucideProps) => React.JSX.Element;
 }
 
 export type WorkflowExecutionPlan = WorkflowExecutionPlanPhase[];

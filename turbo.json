@@ -2,6 +2,9 @@
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
   "cacheDir": ".turbo/cache",
+  "globalDependencies": [
+    "**/.env"
+  ],
   "globalEnv": ["NEXT_PUBLIC_API_URL", "NODE_ENV"],
   "tasks": {
     "build": {

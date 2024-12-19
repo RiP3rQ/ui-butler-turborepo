@@ -1,0 +1,44 @@
+{
+  "name": "@app/common",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint . --max-warnings 0"
+  },
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "types": "./src/index.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^10.4.15",
+    "@nestjs/jwt": "^10.2.0"
+  },
+  "devDependencies": {
+    "@repo/types": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/express": "^5.0.0",
+    "@types/passport-github2": "^1.2.9",
+    "@types/passport-google-oauth20": "^2.0.16",
+    "@types/passport-jwt": "^4.0.1",
+    "@types/passport-local": "^1.0.38"
+  },
+  "dependencies": {
+    "@ai-sdk/google": "^1.0.11",
+    "@nestjs/config": "^3.3.0",
+    "@nestjs/microservices": "^10.4.15",
+    "@nestjs/passport": "^10.0.3",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
+    "crypto": "^1.0.1",
+    "express": "^4.21.2",
+    "passport-github2": "^0.1.12",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-jwt": "^4.0.1",
+    "passport-local": "^1.0.0",
+    "rxjs": "^7.8.1"
+  }
+}

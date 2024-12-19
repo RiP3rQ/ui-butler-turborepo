@@ -28,7 +28,7 @@ import {
   SaveIcon,
 } from "lucide-react";
 import { cn } from "@repo/ui/lib/utils";
-import { useCallback, useEffect, useMemo } from "react";
+import { type JSX, useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import TooltipWrapper from "@repo/ui/components/tooltip-wrapper";
