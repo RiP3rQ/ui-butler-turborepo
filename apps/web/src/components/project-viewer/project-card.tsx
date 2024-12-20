@@ -10,7 +10,7 @@ import { Label } from "@repo/ui/components/ui/label";
 import moment from "moment";
 import { type ProjectDetailsType } from "@repo/types";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { type JSX, useMemo } from "react";
 import { MultipleComponentsView } from "@/components/component-viewer/multiple-component-view";
 import { getProjectsDetailsFunction } from "@/actions/projects/get-project-details";
 

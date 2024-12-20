@@ -9,6 +9,7 @@ import {
 import { Button } from "@repo/ui/components/ui/button";
 import { useShallow } from "zustand/react/shallow";
 import { useQuery } from "@tanstack/react-query";
+import { type JSX } from "react";
 import { NewProjectDialog } from "@/components/dialogs/new-project-dialog";
 import { useModalsStateStore } from "@/store/modals-store";
 import { getUserProjects } from "@/actions/projects/get-user-projects";

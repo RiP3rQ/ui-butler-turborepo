@@ -10,6 +10,7 @@ import { Input } from "@repo/ui/components/ui/input";
 import { Separator } from "@repo/ui/components/ui/separator";
 import { Textarea } from "@repo/ui/components/ui/textarea";
 import ColorPicker from "@repo/ui/components/color-picker";
+import { type JSX } from "react";
 import { type CreateNewProjectSchemaType } from "@/schemas/project";
 
 interface CreateNewProjectFormFieldsProps {

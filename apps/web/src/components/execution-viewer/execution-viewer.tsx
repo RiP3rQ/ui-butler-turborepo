@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Separator } from "@repo/ui/components/ui/separator";
-import { useEffect, useMemo, useState } from "react";
+import { type JSX, useEffect, useMemo, useState } from "react";
 import { Badge } from "@repo/ui/components/ui/badge";
 import ExecutionRunPhasesRenderer from "@/components/execution-viewer/execution-run-phases-renderer";
 import ExecutionRunPhasesHeader from "@/components/execution-viewer/execution-run-phases-header";

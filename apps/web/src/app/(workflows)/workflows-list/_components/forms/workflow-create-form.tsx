@@ -13,6 +13,7 @@ import { Input } from "@repo/ui/components/ui/input";
 import { Textarea } from "@repo/ui/components/ui/textarea";
 import { Button } from "@repo/ui/components/ui/button";
 import { Loader2Icon } from "lucide-react";
+import { type JSX } from "react";
 import type {
   createWorkflowSchema,
   CreateWorkflowSchemaType,

@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { type DashboardTableFavoritedContentResponse } from "@repo/types";
 import { useRouter } from "next/navigation";
+import { type JSX } from "react";
 
 export function ActionsTableColumns({
   row,

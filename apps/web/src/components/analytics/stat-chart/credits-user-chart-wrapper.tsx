@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/components/ui/card";
+import { type JSX } from "react";
 import CreditsChart from "@/components/analytics/stat-chart/credits-chart";
 
 interface CreditsUserChartWrapperProps {

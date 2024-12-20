@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import { Button } from "@repo/ui/components/ui/button";
 import { NavigationIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { type JSX, useState } from "react";
 import CodeEditor from "@/components/code-editor/editor";
 import { FavoriteButton } from "@/components/components/favorite-button";
 import { favoriteComponentFunction } from "@/actions/components/favorite-component";

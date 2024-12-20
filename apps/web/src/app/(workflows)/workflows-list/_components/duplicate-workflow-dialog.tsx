@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { type JSX, useCallback, useState } from "react";
 import { CopyIcon, Layers2Icon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";

@@ -21,7 +21,7 @@ import {
   TaskType,
   type WorkflowType,
 } from "@repo/types";
-import { useCallback, useEffect } from "react";
+import { type JSX, useCallback, useEffect } from "react";
 import {
   ClientTaskRegister,
   createFlowNodeFunction,
@@ -56,7 +56,7 @@ function FlowEditor({ workflow }: Readonly<FlowEditorProps>): JSX.Element {
 
   useEffect(() => {
     try {
-      const flow = JSON.parse(workflow.definition) as FlowType;
+      const flow = JSON.parse(workflow.definition) as FlowType | undefined;
       if (!flow) return;
       setNodes(flow.nodes || []);
       setEdges(flow.edges || []);

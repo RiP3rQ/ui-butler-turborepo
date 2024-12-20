@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { type JSX, useEffect, useState } from "react";
 import { CreateNewComponentDialog } from "@/components/dialogs/new-component-dialog";
 import ConfirmationDialog from "@/components/dialogs/confirmation-dialog";
 

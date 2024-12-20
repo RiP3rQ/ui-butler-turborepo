@@ -21,6 +21,7 @@ import {
 import { Separator } from "@repo/ui/components/ui/separator";
 import type { NavMainType } from "@repo/types";
 import { cn } from "@repo/ui/lib/utils";
+import { type JSX } from "react";
 
 interface NavMainProps {
   items: NavMainType[];

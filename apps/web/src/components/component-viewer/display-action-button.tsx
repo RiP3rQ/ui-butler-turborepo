@@ -2,6 +2,7 @@ import { Loader2Icon, type LucideIcon } from "lucide-react";
 import type { UseMutateFunction } from "@tanstack/react-query";
 import type { CodeType, ComponentType } from "@repo/types";
 import { Button } from "@repo/ui/components/ui/button";
+import { type JSX } from "react";
 import { type GenerateCodeFunctionProps } from "@/actions/components/generate-code-function";
 import { useConfirmationModalStore } from "@/store/confirmation-modal-store";
 import { getErrorMessage } from "@/lib/get-error-message";

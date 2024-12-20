@@ -2,6 +2,7 @@ import { cn } from "@repo/ui/lib/utils";
 import { buttonVariants } from "@repo/ui/components/ui/button";
 import { ShuffleIcon } from "lucide-react";
 import Link from "next/link";
+import { type JSX } from "react";
 
 interface EditWorkflowButtonProps {
   workflowId: number;

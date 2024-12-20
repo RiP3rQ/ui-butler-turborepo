@@ -8,6 +8,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@repo/ui/components/ui/chart";
+import { type JSX } from "react";
 
 const chartConfig = {
   successful: {

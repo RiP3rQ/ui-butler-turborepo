@@ -7,6 +7,7 @@ import {
   ClientTaskRegister,
   createFlowNodeFunction,
 } from "@repo/tasks-registry";
+import { type JSX } from "react";
 
 interface NodeHeaderProps {
   taskType: TaskType;

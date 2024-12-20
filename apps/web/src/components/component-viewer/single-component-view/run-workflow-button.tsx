@@ -14,6 +14,7 @@ import { ChevronDownIcon } from "lucide-react";
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { type JSX } from "react";
 import { useConfirmationModalStore } from "@/store/confirmation-modal-store";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { getUserWorkflows } from "@/actions/workflows/get-workflows";

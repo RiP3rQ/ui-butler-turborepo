@@ -2,6 +2,7 @@ import Link from "next/link";
 import { buttonVariants } from "@repo/ui/components/ui/button";
 import Container from "@repo/ui/components/landing-page/container";
 import Icons from "@repo/ui/components/landing-page/icons";
+import { type JSX } from "react";
 
 interface Props {
   isUserLoggedIn: boolean;

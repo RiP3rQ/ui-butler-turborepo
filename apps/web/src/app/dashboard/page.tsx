@@ -1,3 +1,4 @@
+import { type JSX } from "react";
 import { getDashboardStatCardsValues } from "@/actions/dashboard/get-dashboard-stat-cards-values";
 import { getUserProjects } from "@/actions/projects/get-user-projects";
 import { getDashboardTableFavoritedContent } from "@/actions/dashboard/get-dashboard-table-favorited-content";

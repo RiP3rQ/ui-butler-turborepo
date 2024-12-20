@@ -14,6 +14,7 @@ import { Button } from "@repo/ui/components/ui/button";
 import { CheckCircle2Icon, Loader2Icon, TrashIcon } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { type JSX } from "react";
 import { approvePendingChanges } from "@/actions/executions/approve-reject-changes";
 
 interface ApproveChangesDialogProps {

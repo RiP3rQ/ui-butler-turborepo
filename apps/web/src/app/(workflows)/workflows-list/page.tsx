@@ -1,3 +1,4 @@
+import { type JSX } from "react";
 import { UserWorkflows } from "@/app/(workflows)/workflows-list/_components/user-workflows-list";
 import { CreateWorkflowDialog } from "@/app/(workflows)/workflows-list/_components/create-workflow-dialog";
 import { getUserWorkflows } from "@/actions/workflows/get-workflows";

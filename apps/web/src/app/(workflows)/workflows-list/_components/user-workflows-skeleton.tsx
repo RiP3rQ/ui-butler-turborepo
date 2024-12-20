@@ -1,4 +1,5 @@
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
+import { type JSX } from "react";
 
 export function UserWorkflowsSkeleton(): JSX.Element {
   return (

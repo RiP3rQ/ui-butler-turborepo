@@ -6,6 +6,7 @@ import {
   type UsedCreditsInPeriodResponse,
 } from "@repo/types";
 import { useQuery } from "@tanstack/react-query";
+import { type JSX } from "react";
 import { StatCards } from "@/components/analytics/stat-cards/stat-cards";
 import { StatsChartWrapper } from "@/components/analytics/stat-chart/stats-chart-wrapper";
 import { CreditsUserChartWrapper } from "@/components/analytics/stat-chart/credits-user-chart-wrapper";

@@ -2,7 +2,7 @@
 
 import { Editor } from "@monaco-editor/react";
 import { cn } from "@repo/ui/lib/utils";
-import { type Dispatch, type SetStateAction } from "react";
+import { type Dispatch, type JSX, type SetStateAction } from "react";
 
 interface CodeEditorProps {
   codeValue: string;

@@ -2,6 +2,7 @@
 
 import { cn } from "@repo/ui/lib/utils";
 import { useReactFlow } from "@xyflow/react";
+import { type JSX } from "react";
 import useFlowValidation from "@/hooks/use-flow-validation";
 
 interface NodeCardProps {

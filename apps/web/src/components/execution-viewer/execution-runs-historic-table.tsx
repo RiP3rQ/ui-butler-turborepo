@@ -3,6 +3,7 @@
 import { InboxIcon } from "lucide-react";
 import { type WorkflowExecution } from "@repo/types";
 import { useQuery } from "@tanstack/react-query";
+import { type JSX } from "react";
 import ExecutionsTable from "@/components/execution-viewer/executions-table";
 import { getHistoricWorkflowExecutions } from "@/actions/workflows/get-historic-workflow-executions";
 

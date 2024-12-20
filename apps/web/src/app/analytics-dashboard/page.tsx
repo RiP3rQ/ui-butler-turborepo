@@ -1,4 +1,5 @@
 import type { Period } from "@repo/types";
+import { type JSX } from "react";
 import { getPeriods } from "@/actions/analytics/get-periods";
 import { getStatCardsValues } from "@/actions/analytics/get-stat-cards-values";
 import { getWorkflowExecutionStats } from "@/actions/analytics/get-workflow-execution-stats";

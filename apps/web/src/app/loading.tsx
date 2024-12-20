@@ -1,4 +1,5 @@
 import { Loader2Icon } from "lucide-react";
+import { type JSX } from "react";
 
 export default function LoadingPage(): JSX.Element {
   return (

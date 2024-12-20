@@ -2,6 +2,7 @@
 import { CirclePlayIcon, CoinsIcon, WaypointsIcon } from "lucide-react";
 import type { StatCardsValuesResponse } from "@repo/types";
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
+import { type JSX } from "react";
 import SingleStatCard from "@/components/analytics/stat-cards/single-stat-card";
 
 interface StatCardsProps {
