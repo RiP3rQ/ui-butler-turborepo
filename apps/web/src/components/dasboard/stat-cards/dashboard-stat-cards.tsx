@@ -8,7 +8,7 @@ import type { DashboardStatCardsValuesResponse } from "@repo/types";
 import { useQuery } from "@tanstack/react-query";
 import { type JSX } from "react";
 import SingleStatCard from "@/components/analytics/stat-cards/single-stat-card";
-import { getDashboardStatCardsValues } from "@/actions/dashboard/get-dashboard-stat-cards-values";
+import { getDashboardStatCardsValues } from "@/actions/dashboard/server-actions";
 
 interface StatCardsProps {
   initialData: DashboardStatCardsValuesResponse;

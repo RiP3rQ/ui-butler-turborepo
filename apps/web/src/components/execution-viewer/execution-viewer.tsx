@@ -28,8 +28,8 @@ import CountUpWrapper from "@/components/credits/count-up-wrapper";
 import { dateToDurationString } from "@/lib/dates";
 import { getPhasesTotalCost } from "@/lib/get-phases-total-cost";
 import { getWorkflowPhaseDetailsFunction } from "@/actions/workflows/get-workflow-phase-details";
-import { getPendingChanges } from "@/actions/executions/get-pending-changes";
 import { ApproveChangesDialog } from "@/components/dialogs/approve-changes-dialog";
+import { getPendingChanges } from "@/actions/executions/server-actions";
 
 export type ExecutionData = Awaited<
   ReturnType<typeof getWorkflowExecutionWithPhasesDetailsFunction>
