@@ -16,7 +16,7 @@ import { type JSX, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { type BalancePackId, CreditPacks } from "@repo/types";
-import { purchaseCredits } from "@/actions/billing/purchase-credits";
+import { purchaseCredits } from "@/actions/billing/server-actions";
 
 export function CreditsPurchaseBundles(): JSX.Element {
   const queryClient = useQueryClient();

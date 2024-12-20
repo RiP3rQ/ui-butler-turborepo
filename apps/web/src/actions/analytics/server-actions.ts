@@ -8,7 +8,7 @@ import type {
 import { AnalyticsService } from "./analytics-service";
 
 export async function getPeriods(): Promise<Period[]> {
-  return AnalyticsService.getPeriods();
+  return await AnalyticsService.getPeriods();
 }
 
 export async function getStatCardsValues(

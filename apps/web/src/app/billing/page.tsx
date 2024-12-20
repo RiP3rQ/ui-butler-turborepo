@@ -1,8 +1,8 @@
 import { Card, CardContent, CardFooter } from "@repo/ui/components/ui/card";
 import { type JSX } from "react";
 import { CreditsPurchaseBundles } from "@/components/billing/credits-purchase-bundles";
-import { getAvailableCredits } from "@/actions/billing/get-available-credits";
 import { BalanceCardContent } from "@/components/billing/balance-card-content";
+import { getAvailableCredits } from "@/actions/billing/server-actions";
 
 export default async function BillingPage(): Promise<JSX.Element> {
   const userBalance = await getAvailableCredits();
