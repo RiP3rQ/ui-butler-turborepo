@@ -51,7 +51,7 @@ export function ExecutionViewer({
     initialData,
     queryFn: () =>
       getWorkflowExecutionWithPhasesDetailsFunction({
-        executionId: initialData.id,
+        executionId: String(initialData.id),
       }),
     refetchInterval: (q) =>
       q.state.data?.status === WorkflowExecutionStatus.FAILED ||
@@ -80,18 +80,18 @@ export function ExecutionViewer({
   // currently running phase-executors
   useEffect(() => {
     // While running we auto-select the currently running phase-executors in sidebar
-    const allPhases = query.data.phases ?? [];
+    const allPhases = query.data.phases;
     if (isRunning) {
       // Select the last executed phase-executors
       const phaseToSelect = [...allPhases].sort((a, b) =>
-        (a.startedAt ?? new Date()) > (b.startedAt ?? new Date()) ? -1 : 1,
+        a.startedAt > b.startedAt ? -1 : 1,
       )[0];
 
       setSelectedPhase(phaseToSelect?.id ?? null);
       return;
     }
     const phaseToSelect = [...allPhases].sort((a, b) =>
-      (a.completedAt ?? new Date()) > (b.completedAt ?? new Date()) ? -1 : 1,
+      a.completedAt > b.completedAt ? -1 : 1,
     )[0];
     setSelectedPhase(phaseToSelect?.id ?? null);
   }, [query.data.phases, isRunning, setSelectedPhase]);
@@ -99,7 +99,8 @@ export function ExecutionViewer({
   const phaseDetails = useQuery({
     queryKey: ["phaseDetails", selectedPhase, query.data.status],
     enabled: selectedPhase !== null,
-    queryFn: () => getWorkflowPhaseDetailsFunction({ phaseId: selectedPhase! }),
+    queryFn: () =>
+      getWorkflowPhaseDetailsFunction({ phaseId: selectedPhase ?? 1 }),
   });
 
   const duration = dateToDurationString(
@@ -107,7 +108,7 @@ export function ExecutionViewer({
     query.data.completedAt,
   );
 
-  const creditsConsumed = getPhasesTotalCost(query.data.phases || []);
+  const creditsConsumed = getPhasesTotalCost(query.data.phases);
 
   return (
     <div className="flex w-full h-full">
@@ -165,7 +166,7 @@ export function ExecutionViewer({
         <Separator />
         <ExecutionRunPhasesRenderer
           isRunning={isRunning}
-          phases={query.data.phases || []}
+          phases={query.data.phases}
           selectedPhase={selectedPhase}
           setSelectedPhase={setSelectedPhase}
         />
@@ -207,7 +208,7 @@ export function ExecutionViewer({
                   {dateToDurationString(
                     new Date(phaseDetails.data.startedAt).toISOString(),
                     new Date(phaseDetails.data.completedAt).toISOString(),
-                  ) || "-"}
+                  ) ?? "-"}
                 </span>
               </Badge>
               {/* Creadits BADGE*/}
