@@ -1,11 +1,13 @@
 import type { Period } from "@repo/types";
 import { type JSX } from "react";
-import { getPeriods } from "@/actions/analytics/get-periods";
-import { getStatCardsValues } from "@/actions/analytics/get-stat-cards-values";
-import { getWorkflowExecutionStats } from "@/actions/analytics/get-workflow-execution-stats";
-import { getUsedCreditsInPeriod } from "@/actions/analytics/get-used-credits-in-period";
 import { PeriodSelector } from "@/components/analytics/period-selector";
 import { AnalyticsPageContent } from "@/components/analytics/analytics-page-content";
+import {
+  getPeriods,
+  getStatCardsValues,
+  getUsedCreditsInPeriod,
+  getWorkflowExecutionStats,
+} from "@/actions/analytics/server-actions";
 
 export default async function AnalyticsPage({
   searchParams,

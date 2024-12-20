@@ -10,9 +10,11 @@ import { type JSX } from "react";
 import { StatCards } from "@/components/analytics/stat-cards/stat-cards";
 import { StatsChartWrapper } from "@/components/analytics/stat-chart/stats-chart-wrapper";
 import { CreditsUserChartWrapper } from "@/components/analytics/stat-chart/credits-user-chart-wrapper";
-import { getStatCardsValues } from "@/actions/analytics/get-stat-cards-values";
-import { getWorkflowExecutionStats } from "@/actions/analytics/get-workflow-execution-stats";
-import { getUsedCreditsInPeriod } from "@/actions/analytics/get-used-credits-in-period";
+import {
+  getStatCardsValues,
+  getUsedCreditsInPeriod,
+  getWorkflowExecutionStats,
+} from "@/actions/analytics/server-actions";
 
 interface AnalyticsPageContentProps {
   period: Period;
