@@ -23,6 +23,12 @@ export const saveComponentSchema = z.object({
 });
 export type SaveComponentSchemaType = z.infer<typeof saveComponentSchema>;
 
+export async function validateComponentInput(
+  input: SaveComponentSchemaType,
+): Promise<SaveComponentSchemaType> {
+  return saveComponentSchema.parseAsync(input);
+}
+
 export const generateComponentSchema = z.object({
   prompt: z
     .string()

@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 import { type JSX, useState } from "react";
 import CodeEditor from "@/components/code-editor/editor";
 import { FavoriteButton } from "@/components/components/favorite-button";
-import { favoriteComponentFunction } from "@/actions/components/favorite-component";
+import { favoriteComponentFunction } from "@/actions/components/server-actions";
 
 interface MultipleComponentsViewProps {
   queryKey: string;

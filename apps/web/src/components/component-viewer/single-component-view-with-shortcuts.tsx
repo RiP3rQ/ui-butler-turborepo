@@ -3,8 +3,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { type SingleComponentViewProps } from "@repo/types";
 import { CodeEditorKeyboardShortcuts } from "@/components/code-editor/code-editor-keyboard-shortcuts";
-import { getSingleComponentsDataFunction } from "@/actions/components/get-single-components-data";
 import { SingleComponentView } from "@/components/component-viewer/single-component-view";
+import { getSingleComponentsDataFunction } from "@/actions/components/server-actions";
 
 export default function SingleComponentViewWithShortcuts(
   props: SingleComponentViewProps,

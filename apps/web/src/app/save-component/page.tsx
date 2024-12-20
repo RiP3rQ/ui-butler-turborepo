@@ -36,12 +36,12 @@ import { useRouter } from "next/navigation";
 import { type JSX } from "react";
 import { getUserProjects } from "@/actions/projects/get-user-projects";
 import { getErrorMessage } from "@/lib/get-error-message";
-import { saveComponentFunction } from "@/actions/components/save-component";
 import {
   saveComponentSchema,
   type SaveComponentSchemaType,
 } from "@/schemas/component";
 import CodeEditor from "@/components/code-editor/editor";
+import { saveComponentFunction } from "@/actions/components/server-actions";
 
 export default function SaveNewComponentPage(): JSX.Element {
   const router = useRouter();
@@ -56,7 +56,9 @@ export default function SaveNewComponentPage(): JSX.Element {
     mutationFn: saveComponentFunction,
     onSuccess: (res) => {
       form.reset();
-      router.push(`/projects/${res.projectId}/components/${res.id}`);
+      router.push(
+        `/projects/${String(res.projectId)}/components/${String(res.id)}`,
+      );
       toast.success("Created new component successfully!", {
         id: "new-component",
       });

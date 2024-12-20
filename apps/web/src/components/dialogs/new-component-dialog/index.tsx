@@ -36,13 +36,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { Loader2Icon, SaveIcon } from "lucide-react";
 import { useModalsStateStore } from "@/store/modals-store";
-import { saveComponentFunction } from "@/actions/components/save-component";
 import { getErrorMessage } from "@/lib/get-error-message";
 import {
   saveComponentSchema,
   type SaveComponentSchemaType,
 } from "@/schemas/component";
 import { getUserProjects } from "@/actions/projects/get-user-projects";
+import { saveComponentFunction } from "@/actions/components/server-actions";
 
 export function CreateNewComponentDialog(): JSX.Element {
   const router = useRouter();
@@ -75,7 +75,9 @@ export function CreateNewComponentDialog(): JSX.Element {
     mutationFn: saveComponentFunction,
     onSuccess: (res) => {
       form.reset();
-      router.push(`/projects/${res.projectId}/components/${res.id}`);
+      router.push(
+        `/projects/${String(res.projectId)}/components/${String(res.id)}`,
+      );
       toast.success("Created new component successfully!", {
         id: "new-component",
       });

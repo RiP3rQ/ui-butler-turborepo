@@ -6,10 +6,10 @@ import { toast } from "sonner";
 import { type CodeType, type ComponentType } from "@repo/types";
 import { getErrorMessage } from "@/lib/get-error-message";
 import {
+  generateCodeFunction,
   updateComponentCode,
-  type UpdateComponentCodeProps,
-} from "@/actions/components/update-components-code";
-import { generateCodeFunction } from "@/actions/components/generate-code-function";
+} from "@/actions/components/server-actions";
+import { type UpdateComponentCodeRequest } from "@/actions/components/types";
 
 export function useComponentCode(projectId: string, componentId: string) {
   const queryClient = useQueryClient();
@@ -20,7 +20,7 @@ export function useComponentCode(projectId: string, componentId: string) {
   const updateMutation = useMutation<
     ComponentType,
     Error,
-    Readonly<UpdateComponentCodeProps>
+    Readonly<UpdateComponentCodeRequest>
   >({
     mutationFn: updateComponentCode,
     onSuccess: () => {
