@@ -3,7 +3,7 @@ import { Global, Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
-import * as schema from "./schemas/merged-schemas";
+import { mergedSchemas } from "./schemas/merged-schemas";
 import { DATABASE_CONNECTION } from "./constants/connection-name";
 
 @Global()
@@ -34,7 +34,7 @@ import { DATABASE_CONNECTION } from "./constants/connection-name";
         try {
           await pool.connect();
           console.log("Database connection established successfully");
-          return drizzle(pool, { schema });
+          return drizzle(pool, { schema: mergedSchemas });
         } catch (error) {
           console.error("Failed to connect to database:", error);
           throw error;

@@ -40,17 +40,17 @@ export class ExecutionsController {
   async executeWorkflow(
     @Payload()
     data: {
-      workflowExecutionId: string;
-      componentId: string;
+      workflowExecutionId: number;
+      componentId: number;
       nextRunAt?: Date;
     },
   ) {
-    this.logger.debug('Executing workflow');
-    console.log('executing workflow');
-    console.log('data', data);
+    this.logger.debug(
+      `Executing workflow ${data.workflowExecutionId} with component ${data.componentId}`,
+    );
     return this.executionsService.executeWorkflow(
-      +data.workflowExecutionId,
-      +data.componentId,
+      data.workflowExecutionId,
+      data.componentId,
       data.nextRunAt,
     );
   }

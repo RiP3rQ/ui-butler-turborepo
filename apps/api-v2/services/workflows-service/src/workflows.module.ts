@@ -7,14 +7,14 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 @Module({
   imports: [
     DatabaseModule,
-    // Import the ClientsModule and register the EXECUTION_SERVICE client for communication with the execution service
+    // Import the ClientsModule and register the EXECUTIONS_SERVICE client for communication with the execution service
     ClientsModule.register([
       {
-        name: 'EXECUTION_SERVICE',
+        name: 'EXECUTIONS_SERVICE',
         transport: Transport.TCP,
         options: {
-          host: process.env.EXECUTION_SERVICE_HOST || 'localhost',
-          port: parseInt(process.env.EXECUTION_SERVICE_PORT, 10) || 3343,
+          host: process.env.EXECUTIONS_SERVICE_HOST || 'localhost',
+          port: parseInt(process.env.EXECUTIONS_SERVICES_PORT, 10) || 3343,
         },
       },
     ]),
