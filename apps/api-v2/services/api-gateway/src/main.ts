@@ -23,10 +23,14 @@ async function bootstrap() {
   app.use(compression());
 
   // API prefix and CORS
-  // app.setGlobalPrefix('api');
+  app.setGlobalPrefix('api');
+  // app.enableCors({
+  //   origin: configService.get('ALLOWED_ORIGINS', '*'),
+  //   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  //   credentials: true,
+  // }); // TODO: FIX THIS CORS
   app.enableCors({
-    origin: configService.get('ALLOWED_ORIGINS', '*'),
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    origin: true, // or specify your frontend URL
     credentials: true,
   });
 
@@ -65,10 +69,9 @@ async function bootstrap() {
   const port = configService.get('PORT', 3333);
   await app.listen(port);
 
-  // Log all registered routes
+  // Log all registered routes FOR DEBUGGING
   const server = app.getHttpServer();
   const router = server._events.request._router;
-
   console.log('\nRegistered Routes: ');
   router.stack
     .filter((layer: any) => layer.route)

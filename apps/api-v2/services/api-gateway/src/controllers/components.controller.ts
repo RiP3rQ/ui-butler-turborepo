@@ -1,4 +1,5 @@
 import {
+  All,
   Body,
   Controller,
   Get,
@@ -8,6 +9,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -17,24 +19,50 @@ import {
   CurrentUser,
   FavoriteComponentDto,
   GenerateCodeDto,
-  GenerateComponentRequestDto,
   JwtAuthGuard,
   SaveComponentDto,
   UpdateComponentCodeDto,
   type User,
 } from '@app/common';
-import { type Response } from 'express';
 import { type CodeType, codeTypeValues } from '@repo/types';
 import { Throttle } from '@nestjs/throttler';
 import { rateLimitConfigs } from '../config/rate-limit.config';
+import { type Request, type Response } from 'express';
+import HttpProxy from 'http-proxy';
+import { ClientRequest, IncomingMessage } from 'node:http';
 
 @Controller('components')
 @UseGuards(JwtAuthGuard)
 export class ComponentsController {
+  private proxy: HttpProxy;
   constructor(
     @Inject('COMPONENTS_SERVICE')
     private readonly componentsClient: ClientProxy,
-  ) {}
+  ) {
+    this.proxy = HttpProxy.createProxyServer();
+
+    // Correctly typed event handler
+    this.proxy.on(
+      'proxyReq',
+      function (proxyReq: ClientRequest, req: IncomingMessage) {
+        const originalReq = req as Request;
+
+        // Make sure to forward the authorization header
+        const authHeader = originalReq.headers['authorization'];
+        if (authHeader) {
+          proxyReq.setHeader('Authorization', authHeader);
+        }
+
+        // If the request has a body, we need to restream it
+        if (originalReq.body) {
+          const bodyData = JSON.stringify(originalReq.body);
+          proxyReq.setHeader('Content-Type', 'application/json');
+          proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
+          proxyReq.write(bodyData);
+        }
+      },
+    );
+  }
 
   @Get('/:projectId/:componentId')
   async getComponent(
@@ -56,6 +84,7 @@ export class ComponentsController {
     @CurrentUser() user: User,
     @Body() saveComponentDto: SaveComponentDto,
   ) {
+    console.log('saveComponentDto:', saveComponentDto);
     return firstValueFrom(
       this.componentsClient.send('components.save', { user, saveComponentDto }),
     );
@@ -74,18 +103,44 @@ export class ComponentsController {
     );
   }
 
-  @Post('/generate')
-  async generateComponent(
-    @CurrentUser() user: User,
-    @Body() body: GenerateComponentRequestDto,
-    @Res() res: Response,
-  ) {
-    return firstValueFrom(
-      this.componentsClient.send('components.generate', {
-        prompt: body.messages[body.messages.length - 1].content,
-        response: res,
-      }),
-    );
+  // This is a proxy endpoint because of the streaming response.
+  @All('generate')
+  async proxyRequest(@Req() req: Request, @Res() res: Response) {
+    return new Promise((resolve, reject) => {
+      this.proxy.web(
+        req,
+        res,
+        {
+          target: `http://${process.env.COMPONENTS_SERVICE_HOST || 'localhost'}:${process.env.COMPONENTS_SERVICE_HTTP_PORT || '3348'}`,
+          changeOrigin: true,
+          secure: false,
+          ws: true,
+        },
+        (err) => {
+          if (err) {
+            console.error('Proxy error:', err);
+            res.status(500).json({ error: 'Proxy error: ' + err.message });
+            reject(err);
+          }
+        },
+      );
+
+      this.proxy.on('error', (err) => {
+        console.error('Proxy error:', err);
+        if (!res.headersSent) {
+          res.status(500).json({ error: 'Proxy error: ' + err.message });
+        }
+        reject(err);
+      });
+
+      this.proxy.on('proxyRes', (proxyRes: IncomingMessage) => {
+        console.log('Received response from Components Service');
+        console.log('Status:', proxyRes.statusCode);
+        if (proxyRes.statusCode === 200) {
+          resolve(true);
+        }
+      });
+    });
   }
 
   @Patch('/:componentId/:codeType')

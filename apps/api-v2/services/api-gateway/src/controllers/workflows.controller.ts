@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
@@ -106,7 +107,7 @@ export class WorkflowsController {
     );
   }
 
-  @Post('run')
+  @Post('run-workflow')
   async runWorkflow(
     @CurrentUser() user: User,
     @Body() runWorkflowDto: RunWorkflowDto,
@@ -139,10 +140,10 @@ export class WorkflowsController {
     );
   }
 
-  @Get('executions/:id')
+  @Get('executions')
   async getWorkflowExecutions(
     @CurrentUser() user: User,
-    @Param('id', ParseIntPipe) executionId: number,
+    @Query('executionId') executionId: string | number,
   ) {
     return firstValueFrom(
       this.workflowsClient.send('workflows.executions', { user, executionId }),

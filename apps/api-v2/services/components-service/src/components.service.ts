@@ -6,7 +6,7 @@ import {
   ComponentType,
   SingleComponentApiResponseType,
 } from '@repo/types';
-import { generateText, streamText } from 'ai';
+import { generateText, pipeDataStreamToResponse, streamText } from 'ai';
 import { Response } from 'express';
 import { singleGeneratedPrompts } from '@repo/prompts';
 import {
@@ -155,18 +155,24 @@ export class ComponentsService {
   }
 
   async generateComponentStream(prompt: string, res: Response): Promise<void> {
-    try {
-      const enhancedPrompt = this.enhancePrompt(prompt);
-      const result = streamText({
-        model: GEMINI_MODEL,
-        prompt: enhancedPrompt,
-      });
-      return result.pipeDataStreamToResponse(res);
-    } catch (error) {
-      throw new RpcException(
-        error instanceof Error ? error.message : JSON.stringify(error),
-      );
-    }
+    const enhancedPrompt = this.enhancePrompt(prompt);
+    pipeDataStreamToResponse(res, {
+      execute: async (dataStreamWriter) => {
+        dataStreamWriter.writeData('initialized call');
+
+        const result = streamText({
+          model: GEMINI_MODEL,
+          prompt: enhancedPrompt,
+        });
+
+        result.mergeIntoDataStream(dataStreamWriter);
+      },
+      onError: (error) => {
+        // Error messages are masked by default for security reasons.
+        // If you want to expose the error message to the client, you can do so here:
+        return error instanceof Error ? error.message : String(error);
+      },
+    });
   }
 
   async updateComponentCode(

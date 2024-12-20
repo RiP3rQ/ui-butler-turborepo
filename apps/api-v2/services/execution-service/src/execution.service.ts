@@ -169,6 +169,8 @@ export class ExecutionsService {
       },
     });
 
+    console.log('execution', execution);
+
     if (!execution) {
       throw new Error('Execution not found');
     }

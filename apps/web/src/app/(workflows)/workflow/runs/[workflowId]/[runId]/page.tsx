@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { toast } from "sonner";
+import { type JSX } from "react";
 import Topbar from "@/components/react-flow/topbar/topbar";
 import { getWorkflowExecutionWithPhasesDetailsFunction } from "@/actions/workflows/get-workflow-execution-details";
 import { ExecutionViewer } from "@/components/execution-viewer/execution-viewer";
@@ -14,7 +15,7 @@ export default async function WorkflowRunPage({
     const { workflowId, runId } = await params;
     const workflowExecution =
       await getWorkflowExecutionWithPhasesDetailsFunction({
-        executionId: Number(runId),
+        executionId: runId,
       });
     return (
       <div className="flex flex-col h-screen w-full overflow-hidden">

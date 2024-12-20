@@ -471,6 +471,9 @@ importers:
       helmet:
         specifier: ^8.0.0
         version: 8.0.0
+      http-proxy:
+        specifier: ^1.18.1
+        version: 1.18.1
       joi:
         specifier: ^17.13.3
         version: 17.13.3
@@ -514,6 +517,9 @@ importers:
       '@types/geoip-lite':
         specifier: ^1.4.4
         version: 1.4.4
+      '@types/http-proxy':
+        specifier: ^1.17.15
+        version: 1.17.15
       '@types/jest':
         specifier: ^29.5.2
         version: 29.5.14
@@ -831,6 +837,15 @@ importers:
       ai:
         specifier: ^4.0.20
         version: 4.0.20(react@19.0.0-rc-02c0e824-20241028)(zod@3.24.1)
+      compression:
+        specifier: ^1.7.5
+        version: 1.7.5
+      cookie-parser:
+        specifier: ^1.4.7
+        version: 1.4.7
+      helmet:
+        specifier: ^8.0.0
+        version: 8.0.0
       reflect-metadata:
         specifier: ^0.2.0
         version: 0.2.2
@@ -853,6 +868,12 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../../../packages/config-typescript
+      '@types/compression':
+        specifier: ^1.7.5
+        version: 1.7.5
+      '@types/cookie-parser':
+        specifier: ^1.4.8
+        version: 1.4.8(@types/express@5.0.0)
       '@types/express':
         specifier: ^5.0.0
         version: 5.0.0
@@ -4331,6 +4352,9 @@ packages:
   '@types/http-errors@2.0.4':
     resolution: {integrity: sha512-D0CFMMtydbJAegzOyHjtiKPLlvnm3iTZyZRSZoLq2mRhDdmLfIWOCYPfQJ4cu2erKghU++QvjcUjp/5h7hESpA==}
 
+  '@types/http-proxy@1.17.15':
+    resolution: {integrity: sha512-25g5atgiVNTIv0LBDTg1H74Hvayx0ajtJPLLcYE3whFv75J0pWNtOBzaXJQgDTmrX1bx5U9YC2w/n65BN1HwRQ==}
+
   '@types/istanbul-lib-coverage@2.0.6':
     resolution: {integrity: sha512-2QF/t/auWm0lsy8XtKVPG19v3sSOQlJe/YHZgfjb/KBBHOGSV+J2q/S671rcq9uTBrLAXmZpqJiaQbMT+zNU1w==}
 
@@ -6251,6 +6275,15 @@ packages:
   flatted@3.3.2:
     resolution: {integrity: sha512-AiwGJM8YcNOaobumgtng+6NHuOqC3A7MixFeDafM3X9cIUM+xUXoS5Vfgf+OihAYe20fxqNM9yPBXJzRtZ/4eA==}
 
+  follow-redirects@1.15.9:
+    resolution: {integrity: sha512-gew4GsXizNgdoRyqmyfMHyAmXsZDk6mHkSxZFCzW9gwlbtOW44CDtYavM+y+72qD/Vq2l550kMF52DT8fOLJqQ==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+
   for-each@0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
 
@@ -6502,6 +6535,10 @@ packages:
   http-proxy-agent@5.0.0:
     resolution: {integrity: sha512-n2hY8YdoRE1i7r6M0w9DIw5GgZN0G25P8zLCRQ8rjXtTU3vsNFBI/vWK/UIeE6g5MUUz6avwAPXmL6Fy9D/90w==}
     engines: {node: '>= 6'}
+
+  http-proxy@1.18.1:
+    resolution: {integrity: sha512-7mz/721AbnJwIVbnaSv1Cz3Am0ZLT/UBwkC92VlxhXv/k/BBQfM2fXElQNC27BVGr0uwUpplYPQM9LnaBMR5NQ==}
+    engines: {node: '>=8.0.0'}
 
   http-signature@1.2.0:
     resolution: {integrity: sha512-CAbnr6Rz4CYQkLYUtSNXxQPUH2gK8f3iWexVlsnMeD+GjlsQ0Xsy1cOX+mN3dtxYomRy21CiOzU8Uhw6OwncEQ==}
@@ -11530,6 +11567,10 @@ snapshots:
 
   '@types/http-errors@2.0.4': {}
 
+  '@types/http-proxy@1.17.15':
+    dependencies:
+      '@types/node': 22.10.2
+
   '@types/istanbul-lib-coverage@2.0.6': {}
 
   '@types/istanbul-lib-report@3.0.3':
@@ -13936,6 +13977,8 @@ snapshots:
 
   flatted@3.3.2: {}
 
+  follow-redirects@1.15.9: {}
+
   for-each@0.3.3:
     dependencies:
       is-callable: 1.2.7
@@ -14197,6 +14240,14 @@ snapshots:
       debug: 4.4.0
     transitivePeerDependencies:
       - supports-color
+
+  http-proxy@1.18.1:
+    dependencies:
+      eventemitter3: 4.0.7
+      follow-redirects: 1.15.9
+      requires-port: 1.0.0
+    transitivePeerDependencies:
+      - debug
 
   http-signature@1.2.0:
     dependencies:

@@ -28,6 +28,9 @@
     "@nestjs/platform-express": "^10.0.0",
     "@repo/prompts": "workspace:*",
     "ai": "^4.0.20",
+    "compression": "^1.7.5",
+    "cookie-parser": "^1.4.7",
+    "helmet": "^8.0.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1"
   },
@@ -37,6 +40,8 @@
     "@nestjs/testing": "^10.0.0",
     "@repo/types": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@types/compression": "^1.7.5",
+    "@types/cookie-parser": "^1.4.8",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.2",
     "@types/node": "^20.3.1",

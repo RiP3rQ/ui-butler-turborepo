@@ -40,7 +40,8 @@ import {
 @Injectable()
 export class WorkflowsService {
   constructor(
-    @Inject('EXECUTION_SERVICE') private readonly executionClient: ClientProxy,
+    @Inject('EXECUTIONS_SERVICE')
+    private readonly executionsClient: ClientProxy,
     @Inject(DATABASE_CONNECTION)
     private readonly database: DrizzleDatabase,
   ) {}
@@ -370,11 +371,9 @@ export class WorkflowsService {
 
         // Instead of direct workflowExecutionsService call, use the microservice
         // skip await for async execution
-        this.executionClient.send('executions.execute', {
-          data: {
-            workflowExecutionId: execution.id,
-            componentId: runWorkflowDto.componentId,
-          },
+        this.executionsClient.emit('executions.execute', {
+          workflowExecutionId: execution.id,
+          componentId: runWorkflowDto.componentId,
         });
 
         return {

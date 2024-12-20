@@ -33,6 +33,7 @@ import {
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { type JSX } from "react";
 import { getUserProjects } from "@/actions/projects/get-user-projects";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { saveComponentFunction } from "@/actions/components/save-component";

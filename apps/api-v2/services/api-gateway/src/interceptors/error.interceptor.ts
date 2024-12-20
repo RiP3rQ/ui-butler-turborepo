@@ -32,6 +32,7 @@ export class ErrorInterceptor implements NestInterceptor {
         }
 
         const error = this.mapError(err);
+        console.error('error', error);
         return throwError(() => error);
       }),
     );

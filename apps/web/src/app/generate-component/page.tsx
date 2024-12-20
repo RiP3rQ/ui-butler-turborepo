@@ -247,6 +247,7 @@ export default function GenerateComponentPage(): JSX.Element {
                     variant="default"
                     size="sm"
                     className="gap-2"
+                    disabled={!latestAssistantMessage.content || isLoading}
                   >
                     <SaveIcon className="h-4 w-4" />
                     Save component
