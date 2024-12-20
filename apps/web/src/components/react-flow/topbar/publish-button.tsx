@@ -6,7 +6,7 @@ import { useReactFlow } from "@xyflow/react";
 import { Button } from "@repo/ui/components/ui/button";
 import { type JSX } from "react";
 import useWorkflowExecutionPlan from "@/hooks/use-workflow-execution-plan";
-import { publishWorkflowFunction } from "@/actions/workflows/publish-workflow";
+import { publishWorkflowFunction } from "@/actions/workflows/server-actions";
 
 interface PublishButtonProps {
   workflowId: number;

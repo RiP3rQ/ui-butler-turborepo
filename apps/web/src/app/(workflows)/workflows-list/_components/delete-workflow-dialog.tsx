@@ -14,7 +14,7 @@ import {
   AlertDialogTitle,
 } from "@repo/ui/components/ui/alert-dialog";
 import { Input } from "@repo/ui/components/ui/input";
-import { deleteWorkflow } from "@/actions/workflows/delete-workflow";
+import { deleteWorkflow } from "@/actions/workflows/server-actions";
 
 interface DeleteWorkflowDialogProps {
   open: boolean;

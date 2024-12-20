@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Loader2Icon } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
 import { type JSX } from "react";
-import { updateWorkflowByIdFunction } from "@/actions/workflows/update-workflow-by-id";
+import { updateWorkflowByIdFunction } from "@/actions/workflows/server-actions";
 
 interface SaveButtonProps {
   workflowId: number;

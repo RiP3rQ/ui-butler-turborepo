@@ -11,7 +11,7 @@ import { type WorkflowType } from "@repo/types";
 import { type JSX } from "react";
 import { WorkflowCard } from "@/app/(workflows)/workflows-list/_components/workflow-card";
 import { CreateWorkflowDialog } from "@/app/(workflows)/workflows-list/_components/create-workflow-dialog";
-import { getUserWorkflows } from "@/actions/workflows/get-workflows";
+import { getUserWorkflows } from "@/actions/workflows/server-actions";
 
 interface UserWorkflowsProps {
   workflows: WorkflowType[];

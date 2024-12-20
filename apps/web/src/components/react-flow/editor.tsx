@@ -8,7 +8,7 @@ import Topbar from "@/components/react-flow/topbar/topbar";
 import TasksMenuSidebar from "@/components/react-flow/sidebar/tasks-menu-sidebar";
 import FlowEditor from "@/components/react-flow/flow-editor";
 import { FlowValidationContextProvider } from "@/context/flow-validation-context";
-import { getWorkflowByIdFunction } from "@/actions/workflows/get-workflow-by-id";
+import { getWorkflowByIdFunction } from "@/actions/workflows/server-actions";
 
 interface EditorProps {
   workflow: WorkflowType;

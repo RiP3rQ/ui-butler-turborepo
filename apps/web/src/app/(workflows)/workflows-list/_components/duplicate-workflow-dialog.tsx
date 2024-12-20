@@ -19,7 +19,7 @@ import { cn } from "@repo/ui/lib/utils";
 import type { DuplicateWorkflowSchemaType } from "@/schemas/workflow";
 import { duplicateWorkflowSchema } from "@/schemas/workflow";
 import { WorkflowDuplicateForm } from "@/app/(workflows)/workflows-list/_components/forms/workflow-duplicate-form";
-import { duplicateWorkflow } from "@/actions/workflows/duplicate-workflow";
+import { duplicateWorkflow } from "@/actions/workflows/server-actions";
 
 interface DuplicateWorkflowDialogProps {
   workflowId: number;
@@ -43,7 +43,7 @@ export function DuplicateWorkflowDialog({
       toast.success("Workflow duplicated successfully", {
         id: "duplicate-executions",
       });
-      router.push(`/workflow/editor/${res.id}`);
+      router.push(`/workflow/editor/${String(res.id)}`);
       form.reset();
       setIsOpen((prev) => !prev);
     },

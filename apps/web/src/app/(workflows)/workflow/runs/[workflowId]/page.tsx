@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { Loader2Icon } from "lucide-react";
 import Topbar from "@/components/react-flow/topbar/topbar";
 import WorkflowHistoricExecutionsTable from "@/components/execution-viewer/execution-runs-historic-table";
-import { getHistoricWorkflowExecutions } from "@/actions/workflows/get-historic-workflow-executions";
+import { getHistoricWorkflowExecutions } from "@/actions/workflows/server-actions";
 
 type Params = Promise<{ workflowId: string }>;
 

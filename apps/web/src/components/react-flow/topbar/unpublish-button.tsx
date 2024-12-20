@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { type JSX } from "react";
 import useWorkflowExecutionPlan from "@/hooks/use-workflow-execution-plan";
-import { unpublishWorkflowFunction } from "@/actions/workflows/unpublish-workflow";
+import { unpublishWorkflowFunction } from "@/actions/workflows/server-actions";
 
 interface UnpublishButtonProps {
   workflowId: number;
@@ -45,7 +45,7 @@ function UnpublishButton({
         }
 
         toast.loading("Unpublishing workflow...", { id: "unpublish-workflow" });
-        mutate({ workflowId });
+        mutate(workflowId);
       }}
       variant="outline"
     >

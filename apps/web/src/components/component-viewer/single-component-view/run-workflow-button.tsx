@@ -17,8 +17,8 @@ import { toast } from "sonner";
 import { type JSX } from "react";
 import { useConfirmationModalStore } from "@/store/confirmation-modal-store";
 import { getErrorMessage } from "@/lib/get-error-message";
-import { getUserWorkflows } from "@/actions/workflows/get-workflows";
 import { runWorkflow } from "@/actions/executions/server-actions";
+import { getUserWorkflows } from "@/actions/workflows/server-actions";
 
 interface RunWorkflowButtonProps {
   componentId: string;
