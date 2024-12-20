@@ -41,8 +41,8 @@ import {
   saveComponentSchema,
   type SaveComponentSchemaType,
 } from "@/schemas/component";
-import { getUserProjects } from "@/actions/projects/get-user-projects";
 import { saveComponentFunction } from "@/actions/components/server-actions";
+import { getUserProjects } from "@/actions/projects/server-actions";
 
 export function CreateNewComponentDialog(): JSX.Element {
   const router = useRouter();

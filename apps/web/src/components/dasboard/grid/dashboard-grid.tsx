@@ -12,7 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { type JSX } from "react";
 import { NewProjectDialog } from "@/components/dialogs/new-project-dialog";
 import { useModalsStateStore } from "@/store/modals-store";
-import { getUserProjects } from "@/actions/projects/get-user-projects";
+import { getUserProjects } from "@/actions/projects/server-actions";
 
 interface DashboardGridProps {
   initialData: ProjectType[];

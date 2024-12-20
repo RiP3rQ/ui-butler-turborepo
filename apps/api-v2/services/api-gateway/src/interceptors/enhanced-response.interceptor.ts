@@ -86,7 +86,7 @@ export class EnhancedResponseInterceptor<T>
         this.logDebugInfo(debugInfo);
 
         // Only return the data to the client
-        return data;
+        return { data };
       }),
     );
   }

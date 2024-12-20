@@ -7,7 +7,7 @@ import ToastProvider from "@repo/ui/providers/toast-provider";
 import { QueryProvider } from "@/providers/query-provider";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { DialogsComponentsProvider } from "@/providers/dialogs-provider";
-import { getUserProjects } from "@/actions/projects/get-user-projects";
+import { getUserProjects } from "@/actions/projects/server-actions";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",

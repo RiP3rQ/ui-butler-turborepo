@@ -6,7 +6,7 @@ import {
 } from "@repo/ui/components/ui/alert";
 import { CreateCredentialDialog } from "@/components/credentials/create-credential-dialog";
 import { UserCredendials } from "@/components/credentials/user-credentials";
-import { getUserCredentials } from "@/actions/credentials/get-user-credentials";
+import { getUserCredentials } from "@/actions/credentials/server-actions";
 
 export default async function CredentialsPage() {
   const credentials = await getUserCredentials();

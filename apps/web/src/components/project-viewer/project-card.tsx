@@ -12,7 +12,7 @@ import { type ProjectDetailsType } from "@repo/types";
 import { useQuery } from "@tanstack/react-query";
 import { type JSX, useMemo } from "react";
 import { MultipleComponentsView } from "@/components/component-viewer/multiple-component-view";
-import { getProjectsDetailsFunction } from "@/actions/projects/get-project-details";
+import { getProjectsDetailsFunction } from "@/actions/projects/server-actions";
 
 interface ProjectCardProps {
   projectData: ProjectDetailsType;

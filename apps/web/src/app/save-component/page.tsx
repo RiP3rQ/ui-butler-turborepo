@@ -34,7 +34,6 @@ import { Skeleton } from "@repo/ui/components/ui/skeleton";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { type JSX } from "react";
-import { getUserProjects } from "@/actions/projects/get-user-projects";
 import { getErrorMessage } from "@/lib/get-error-message";
 import {
   saveComponentSchema,
@@ -42,6 +41,7 @@ import {
 } from "@/schemas/component";
 import CodeEditor from "@/components/code-editor/editor";
 import { saveComponentFunction } from "@/actions/components/server-actions";
+import { getUserProjects } from "@/actions/projects/server-actions";
 
 export default function SaveNewComponentPage(): JSX.Element {
   const router = useRouter();

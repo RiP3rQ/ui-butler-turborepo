@@ -17,7 +17,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Button } from "@repo/ui/components/ui/button";
 import { XIcon } from "lucide-react";
-import { deleteCredentialFunction } from "@/actions/credentials/delete-credential";
+import { deleteCredentialFunction } from "@/actions/credentials/server-actions";
 
 interface DeleteCredentialDialogProps {
   name: string;

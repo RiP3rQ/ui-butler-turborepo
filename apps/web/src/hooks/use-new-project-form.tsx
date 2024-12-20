@@ -11,8 +11,8 @@ import {
   type CreateNewProjectSchemaType,
 } from "@/schemas/project";
 import { getErrorMessage } from "@/lib/get-error-message";
-import { createNewProjectFunction } from "@/actions/projects/create-new-project";
 import { useModalsStateStore } from "@/store/modals-store";
+import { createNewProjectFunction } from "@/actions/projects/server-actions";
 
 export function useNewProjectForm(): {
   form: ReturnType<typeof useForm<CreateNewProjectSchemaType>>;

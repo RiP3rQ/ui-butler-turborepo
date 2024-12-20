@@ -25,11 +25,11 @@ import {
 } from "@repo/ui/components/ui/dialog";
 import { Button } from "@repo/ui/components/ui/button";
 import CustomDialogHeader from "@repo/ui/components/custom-dialog-header";
-import { createCredentialFunction } from "@/actions/credentials/create-credential";
 import {
   createCredentialSchema,
   type CreateCredentialSchemaType,
 } from "@/schemas/credential";
+import { createCredentialFunction } from "@/actions/credentials/server-actions";
 
 interface CreateCredentialDialogProps {
   triggerText?: string;
