@@ -53,7 +53,7 @@ export function RunWorkflowButton({
     },
   });
 
-  const handleClick = (workflow: WorkflowType) => {
+  const handleClick = (workflow: WorkflowType): void => {
     setConfirmationModalBasicState({
       isModalOpen: true,
       modalTitle: `Confirm workflow run`,
@@ -94,9 +94,9 @@ export function RunWorkflowButton({
         </DropdownMenuTrigger>
         <DropdownMenuContent className="">
           <DropdownMenuGroup>
-            {data.map((workflow, index) => (
+            {data.map((workflow) => (
               <DropdownMenuItem
-                key={index}
+                key={workflow.id}
                 onClick={() => {
                   handleClick(workflow);
                 }}

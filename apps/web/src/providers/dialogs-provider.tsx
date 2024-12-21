@@ -4,7 +4,7 @@ import { type JSX, useEffect, useState } from "react";
 import { CreateNewComponentDialog } from "@/components/dialogs/new-component-dialog";
 import ConfirmationDialog from "@/components/dialogs/confirmation-dialog";
 
-export function DialogsComponentsProvider(): JSX.Element {
+export function DialogsComponentsProvider(): JSX.Element | null {
   // This is a workaround to prevent the component from rendering on the server
   const [isMounted, setIsMounted] = useState<boolean>(false);
   useEffect(() => {
@@ -13,7 +13,7 @@ export function DialogsComponentsProvider(): JSX.Element {
       setIsMounted(false);
     };
   }, []);
-  if (!isMounted) return <></>;
+  if (!isMounted) return null;
 
   return (
     <>

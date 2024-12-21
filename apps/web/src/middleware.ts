@@ -33,11 +33,11 @@ export async function middleware(request: NextRequest) {
     );
 
     if (refreshRes.ok) {
-      const cookies = getAuthCookie(refreshRes);
-      if (cookies?.accessToken && cookies.refreshToken) {
+      const authCookies = getAuthCookie(refreshRes);
+      if (authCookies?.accessToken && authCookies.refreshToken) {
         const response = NextResponse.redirect(request.url);
-        response.cookies.set(cookies.accessToken);
-        response.cookies.set(cookies.refreshToken);
+        response.cookies.set(authCookies.accessToken);
+        response.cookies.set(authCookies.refreshToken);
         return response;
       }
     }

@@ -3,11 +3,11 @@
 import { useEffect } from "react";
 import { useCodeEditorStore } from "@/store/code-editor-store";
 
-export function CodeEditorKeyboardShortcuts() {
+export function CodeEditorKeyboardShortcuts(): null {
   const { clearAllPendingChanges } = useCodeEditorStore();
 
   useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
+    const handleKeyPress = (e: KeyboardEvent): void => {
       if ((e.ctrlKey || e.metaKey) && e.key === "z") {
         clearAllPendingChanges();
       }

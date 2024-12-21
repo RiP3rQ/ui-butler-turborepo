@@ -48,9 +48,9 @@ export function DeleteCredentialDialog({
   return (
     <AlertDialog
       open={open}
-      onOpenChange={(open) => {
+      onOpenChange={(openValue) => {
         setConfirmText("");
-        setOpen(open);
+        setOpen(openValue);
       }}
     >
       <AlertDialogTrigger asChild>

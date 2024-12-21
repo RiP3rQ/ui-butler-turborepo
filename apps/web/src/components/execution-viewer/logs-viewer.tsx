@@ -16,6 +16,7 @@ import {
 import { format } from "date-fns";
 import { cn } from "@repo/ui/lib/utils";
 import type { ExecutionLog, LogLevel } from "@repo/types";
+import { type JSX } from "react";
 
 interface LogsViewerProps {
   title: string;
@@ -23,7 +24,11 @@ interface LogsViewerProps {
   logs: ExecutionLog[] | undefined;
 }
 
-function LogsViewer({ title, subTitle, logs }: Readonly<LogsViewerProps>) {
+function LogsViewer({
+  title,
+  subTitle,
+  logs,
+}: Readonly<LogsViewerProps>): JSX.Element {
   return (
     <Card>
       <CardHeader className="rounded-lg rounded-b-none border-b py-4 bg-gray-50 dark:bg-background">
@@ -42,8 +47,8 @@ function LogsViewer({ title, subTitle, logs }: Readonly<LogsViewerProps>) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {logs?.map((log, index) => (
-              <TableRow key={log.id + index}>
+            {logs?.map((log) => (
+              <TableRow key={log.id}>
                 <TableCell className="w-48 text-xs text-muted-foreground p-[2px] pl-4 text-center tracking-wide">
                   {format(new Date(log.timestamp), "PP")}
                   {" - "}

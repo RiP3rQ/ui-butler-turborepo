@@ -9,7 +9,8 @@ function NotFoundPage(): JSX.Element {
         <h1 className="text-6xl font-bold text-primary mb-4">404</h1>
         <h2 className="text-2xl font-semibold mb-4">Not found</h2>
         <p className="text-muted-foreground mb-8 max-w-md">
-          Don't worry, even the best data sometimes get lost in the internet.
+          Don&#39;t worry, even the best data sometimes get lost in the
+          internet.
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4">
           <Link

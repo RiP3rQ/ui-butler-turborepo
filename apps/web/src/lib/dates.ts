@@ -12,7 +12,7 @@ export function dateToDurationString(
   const timeElapsed = new Date(end).getTime() - new Date(start).getTime();
   if (timeElapsed < 1000) {
     // Less than a second
-    return `${timeElapsed}ms`;
+    return `${timeElapsed.toString()}ms`;
   }
 
   const duration = intervalToDuration({
@@ -20,17 +20,18 @@ export function dateToDurationString(
     end: timeElapsed,
   });
 
-  const durationString = [
-    duration.minutes ? `${duration.minutes}m` : null,
-    duration.seconds ? `${duration.seconds}s` : null,
+  return [
+    duration.minutes ? `${duration.minutes.toString()}m` : null,
+    duration.seconds ? `${duration.seconds.toString()}s` : null,
   ]
     .filter((part) => part !== null)
     .join(" ");
-
-  return durationString;
 }
 
-export function periodToDateRange(period: Period) {
+export function periodToDateRange(period: Period): {
+  startDate: Date;
+  endDate: Date;
+} {
   const startDate = startOfMonth(new Date(period.year, period.month - 1));
   const endDate = endOfMonth(new Date(period.year, period.month - 1));
 

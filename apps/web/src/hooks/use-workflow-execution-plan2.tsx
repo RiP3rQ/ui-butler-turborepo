@@ -17,7 +17,7 @@ const useWorkflowExecutionPlan2 = () => {
           break;
         case "INVALID_INPUTS":
           toast.error("Invalid inputs found");
-          setInvalidInputs(error.invalidElements || []);
+          setInvalidInputs(error.invalidElements ?? []);
           break;
         default:
           toast.error("An error occurred while generating the execution plan");

@@ -43,10 +43,10 @@ export function ApproveChangesDialog({
   });
 
   if (!data?.["Original code"] || !data["Pending code"]) {
-    return <></>;
+    return null;
   }
 
-  const renderIcon = (variant: "approve" | "reject") => {
+  const renderIcon = (variant: "approve" | "reject"): JSX.Element => {
     if (isPending) {
       return <Loader2Icon className="mr-2 animate-spin" />;
     }

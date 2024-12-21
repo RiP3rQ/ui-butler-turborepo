@@ -1,7 +1,7 @@
-import React from "react";
+import React, { type JSX } from "react";
 import { WorkflowIcon } from "lucide-react";
 
-function ExecutionRunPhasesHeader() {
+function ExecutionRunPhasesHeader(): JSX.Element {
   return (
     <div className="flex items-center justify-center py-2 px-4">
       <div className="text-muted-foreground flex items-center gap-2">

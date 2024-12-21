@@ -16,6 +16,7 @@ export function ExecutionStatusIndicator({
   status,
 }: Readonly<ExecutionStatusIndicatorProps>): JSX.Element {
   return (
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     <div className={cn("size-2 rounded-full", indicatorStatusColors[status])} />
   );
 }

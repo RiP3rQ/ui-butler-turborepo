@@ -55,8 +55,9 @@ export function CreditsPurchaseBundles(): JSX.Element {
           disabled={isPending}
         >
           {CreditPacks.map((pack) => (
-            <div
+            <Button
               key={pack.id}
+              variant="ghost"
               className="flex items-center space-x-3 bg-secondary/50 rounded-lg p-3 hover:bg-secondary"
               onClick={() => {
                 if (!isPending) setSelectedPack(pack.id);
@@ -71,7 +72,7 @@ export function CreditsPurchaseBundles(): JSX.Element {
                   ${(pack.price / 100).toFixed(2)}
                 </span>
               </Label>
-            </div>
+            </Button>
           ))}
         </RadioGroup>
       </CardContent>

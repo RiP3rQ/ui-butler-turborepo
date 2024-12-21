@@ -39,7 +39,7 @@ function WorkflowHistoricExecutionsTable({
 }
 export default WorkflowHistoricExecutionsTable;
 
-function RenderEmptyState() {
+function RenderEmptyState(): JSX.Element {
   return (
     <div className="container w-full py-6">
       <div className="flex w-full h-full flex-col gap-2 justify-center items-center">

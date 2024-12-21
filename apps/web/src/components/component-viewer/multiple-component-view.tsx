@@ -68,10 +68,10 @@ export function MultipleComponentsView({
       className="w-full space-y-2"
       defaultValue={["item-1"]}
     >
-      {components.map((component, index) => {
+      {components.map((component) => {
         return (
           <AccordionItem
-            key={index}
+            key={component.id}
             value={`component-${String(component.id)}`}
             className="border rounded-lg shadow-sm hover:shadow-md transition-all duration-200 relative"
           >

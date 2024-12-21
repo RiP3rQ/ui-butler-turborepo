@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useState } from "react";
+import { type JSX, useCallback, useState } from "react";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
 import { cn } from "@repo/ui/lib/utils";
@@ -10,7 +10,7 @@ interface CopyButtonProps {
   className?: string;
 }
 
-export function CopyButton({ value, className }: CopyButtonProps) {
+export function CopyButton({ value, className }: CopyButtonProps): JSX.Element {
   const [copied, setCopied] = useState(false);
 
   const onCopy = useCallback(async () => {
@@ -44,7 +44,7 @@ export function CopyButton({ value, className }: CopyButtonProps) {
           copied && "opacity-50",
           className,
         )}
-        onClick={onCopy}
+        onClick={void onCopy}
       >
         <span className="sr-only">{copied ? "Copied!" : "Copy code"}</span>
 

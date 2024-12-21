@@ -6,6 +6,7 @@ import {
   CardTitle,
 } from "@repo/ui/components/ui/card";
 import { Input } from "@repo/ui/components/ui/input";
+import { type JSX } from "react";
 
 interface ParameterViewerProps {
   title: string;
@@ -17,8 +18,10 @@ function ParameterViewer({
   title,
   subTitle,
   paramsJSON,
-}: Readonly<ParameterViewerProps>) {
-  const params = paramsJSON ? JSON.parse(paramsJSON) : undefined;
+}: Readonly<ParameterViewerProps>): JSX.Element {
+  const params = (paramsJSON ? JSON.parse(paramsJSON) : undefined) as
+    | Record<string, string>
+    | undefined;
 
   return (
     <Card>

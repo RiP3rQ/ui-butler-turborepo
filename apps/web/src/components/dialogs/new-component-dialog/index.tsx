@@ -109,7 +109,7 @@ export function CreateNewComponentDialog(): JSX.Element {
         </DialogHeader>
         <CardContent className="h-fit">
           <Form {...form}>
-            <form onSubmit={onSubmit} className="space-y-6 w-full">
+            <form onSubmit={void onSubmit} className="space-y-6 w-full">
               <div className="grid grid-cols-2 space-x-3">
                 <FormField
                   control={form.control}

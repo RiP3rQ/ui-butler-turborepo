@@ -79,7 +79,7 @@ export default function SaveNewComponentPage(): JSX.Element {
     },
   });
 
-  const handleSaveAction = (values: SaveComponentSchemaType) => {
+  const handleSaveAction = (values: SaveComponentSchemaType): void => {
     mutate(values);
   };
 
@@ -99,7 +99,7 @@ export default function SaveNewComponentPage(): JSX.Element {
               className="space-y-6 w-full"
               onSubmit={void form.handleSubmit(handleSaveAction)}
             >
-              <div className="grid grid-cols-2 space-x-3">
+              <div className="grid grid-cols-2 space-x-4">
                 <FormField
                   control={form.control}
                   name="title"

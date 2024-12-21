@@ -55,9 +55,9 @@ export function PeriodSelector({
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        {periods.map((period, index) => (
+        {periods.map((period) => (
           <SelectItem
-            key={index}
+            key={period.year + period.month}
             value={`${String(period.month)}-${String(period.year)}`}
           >
             {`${MONTHS_NAMES[period.month - 1] ?? ""} ${String(period.year)}`}

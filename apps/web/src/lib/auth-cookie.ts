@@ -24,14 +24,14 @@ export const getAuthCookie = (response: Response) => {
       value: accessToken,
       secure: true,
       httpOnly: true,
-      expires: new Date(jwtDecode(accessToken).exp! * 1000),
+      expires: new Date((jwtDecode(accessToken).exp ?? 0) * 1000),
     },
     refreshToken: refreshToken && {
       name: REFRESH_COOKIE,
       value: refreshToken,
       secure: true,
       httpOnly: true,
-      expires: new Date(jwtDecode(refreshToken).exp! * 1000),
+      expires: new Date((jwtDecode(refreshToken).exp ?? 0) * 1000),
     },
   };
 };

@@ -56,9 +56,9 @@ export function DashboardGrid({
       </div>
 
       <div className="grid gap-3 lg:gap-8 grid-cols-3 lg:grid-cols-5 min-h-[120px]">
-        {data.map((item, index) => (
+        {data.map((item) => (
           <div
-            key={index}
+            key={item.id}
             className="p-4 rounded-lg shadow-md flex flex-col items-center justify-center border-2 border-white"
             style={{ backgroundColor: item.color }}
           >
@@ -69,7 +69,7 @@ export function DashboardGrid({
             <h3 className="text-xl font-semibold">{item.title}</h3>
             <p className="text-sm font-light">
               {item.numberOfComponents
-                ? `${item.numberOfComponents} components`
+                ? `${item.numberOfComponents.toString()} components`
                 : "0"}
             </p>
           </div>
