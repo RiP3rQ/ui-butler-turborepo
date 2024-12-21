@@ -36,8 +36,7 @@ export function DeleteWorkflowDialog({
     onSuccess: () => {
       toast.success("Workflow deleted successfully", { id: workflowId });
       setConfirmText("");
-      // @ts-expect-error Reason: queryClient has no types
-      queryClient.invalidateQueries("workflows");
+      void queryClient.invalidateQueries({ queryKey: "workflows" });
     },
     onError: () => {
       toast.error("Failed to delete executions", { id: workflowId });
@@ -46,9 +45,9 @@ export function DeleteWorkflowDialog({
 
   return (
     <AlertDialog
-      onOpenChange={(open) => {
+      onOpenChange={(openValue) => {
         setConfirmText("");
-        setOpen(open);
+        setOpen(openValue);
       }}
       open={open}
     >

@@ -55,7 +55,7 @@ export default function GenerateComponentPage(): JSX.Element {
   });
 
   const { messages, isLoading, append, reload, stop } = useChat({
-    api: `${process.env.NEXT_PUBLIC_API_URL}/components/generate`,
+    api: `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333/api"}/components/generate`,
     credentials: "include",
     headers: {
       Accept: "text/event-stream",
@@ -104,7 +104,7 @@ export default function GenerateComponentPage(): JSX.Element {
 
   const handleReset = useCallback(() => {
     stop();
-    reload();
+    void reload();
     toast.success("Form reset successfully");
   }, [stop, reload]);
 
@@ -121,7 +121,7 @@ export default function GenerateComponentPage(): JSX.Element {
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
-        form.handleSubmit(handleGenerateComponent)();
+        void form.handleSubmit(handleGenerateComponent)();
       }
     };
 

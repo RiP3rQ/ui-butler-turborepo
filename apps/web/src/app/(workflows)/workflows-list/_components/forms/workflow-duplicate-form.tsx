@@ -32,7 +32,10 @@ export function WorkflowDuplicateForm({
 }: Readonly<WorkflowDuplicateFormProps>): JSX.Element {
   return (
     <Form {...form}>
-      <form className="space-y-6 w-full" onSubmit={form.handleSubmit(onSubmit)}>
+      <form
+        className="space-y-6 w-full"
+        onSubmit={void form.handleSubmit(onSubmit)}
+      >
         <FormField
           control={form.control}
           name="name"

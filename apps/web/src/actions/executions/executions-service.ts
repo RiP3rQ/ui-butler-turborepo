@@ -11,7 +11,7 @@ import {
  * Service class for execution-related API calls
  */
 export class ExecutionsService {
-  private static readonly EXECUTIONS_PATH = "/executions-executions";
+  private static readonly EXECUTIONS_PATH = "/executions";
   private static readonly WORKFLOWS_PATH = "/workflows";
 
   /**

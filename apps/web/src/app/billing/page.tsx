@@ -9,7 +9,6 @@ export default async function BillingPage(): Promise<JSX.Element> {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold" />
       <Card
         className={
           "bg-gradient-to-br from-primary/10 via-primary/5 to-background" +

@@ -25,7 +25,7 @@ export async function middleware(request: NextRequest) {
   const refreshCookie = cookieStore.get(REFRESH_COOKIE);
   if (refreshCookie) {
     const refreshRes = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`,
+      `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333/api"}/auth/refresh`,
       {
         headers: { Cookie: cookieStore.toString() },
         method: "POST",
@@ -34,7 +34,7 @@ export async function middleware(request: NextRequest) {
 
     if (refreshRes.ok) {
       const cookies = getAuthCookie(refreshRes);
-      if (cookies?.accessToken && cookies?.refreshToken) {
+      if (cookies?.accessToken && cookies.refreshToken) {
         const response = NextResponse.redirect(request.url);
         response.cookies.set(cookies.accessToken);
         response.cookies.set(cookies.refreshToken);

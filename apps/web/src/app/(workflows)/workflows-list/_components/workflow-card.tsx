@@ -48,7 +48,7 @@ export function WorkflowCard({
               <TooltipWrapper content={workflow.description}>
                 <Link
                   className="flex items-center hover:underline"
-                  href={`/workflow/editor/${workflow.id}`}
+                  href={`/workflow/editor/${String(workflow.id)}`}
                 >
                   {workflow.name}
                 </Link>

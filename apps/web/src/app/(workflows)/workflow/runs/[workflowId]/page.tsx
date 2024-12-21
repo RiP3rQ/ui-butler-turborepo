@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { type JSX, Suspense } from "react";
 import { Loader2Icon } from "lucide-react";
 import Topbar from "@/components/react-flow/topbar/topbar";
 import WorkflowHistoricExecutionsTable from "@/components/execution-viewer/execution-runs-historic-table";
@@ -10,7 +10,7 @@ export default async function ExecutionHistoricDataForWorkflowPage({
   params,
 }: Readonly<{
   params: Params;
-}>) {
+}>): Promise<JSX.Element> {
   const workflowId = (await params).workflowId;
 
   const historicExecutions = await getHistoricWorkflowExecutions({

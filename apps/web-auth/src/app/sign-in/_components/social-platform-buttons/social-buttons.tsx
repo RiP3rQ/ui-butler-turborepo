@@ -1,4 +1,4 @@
-import SocialPlatformButton from "@/app/sign-in/_components/social-platform-buttons/social-platform-button.tsx";
+import SocialPlatformButton from "@/app/sign-in/_components/social-platform-buttons/social-platform-button";
 import { GithubIcon, GlobeIcon } from "lucide-react";
 
 const getSocialAuthUrl = (provider: "google" | "github"): string => {

@@ -32,7 +32,7 @@ export function LastRunDetails({
         {lastRunId ? (
           <Link
             className="flex items-center text-sm gap-2 group"
-            href={`/workflow/runs/${workflow.id}/${lastRunId}`}
+            href={`/workflow/runs/${String(workflow.id)}/${lastRunId}`}
           >
             <span>Last run:</span>
             <ExecutionStatusIndicator

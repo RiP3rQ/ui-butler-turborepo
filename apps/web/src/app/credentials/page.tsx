@@ -4,11 +4,12 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@repo/ui/components/ui/alert";
+import { type JSX } from "react";
 import { CreateCredentialDialog } from "@/components/credentials/create-credential-dialog";
 import { UserCredendials } from "@/components/credentials/user-credentials";
 import { getUserCredentials } from "@/actions/credentials/server-actions";
 
-export default async function CredentialsPage() {
+export default async function CredentialsPage(): Promise<JSX.Element> {
   const credentials = await getUserCredentials();
 
   return (

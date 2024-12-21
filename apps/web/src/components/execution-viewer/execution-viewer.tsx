@@ -70,12 +70,16 @@ export function ExecutionViewer({
     queryFn: () => getPendingChanges({ executionId: query.data.id }),
   });
 
+  console.log("pendingChangesQuery", pendingChangesQuery);
+
   const shouldOpenApproveChangesModal = useMemo(() => {
     return Boolean(
       query.data.status === WorkflowExecutionStatus.WAITING_FOR_APPROVAL &&
         pendingChangesQuery.data?.pendingApproval,
     );
   }, [query.data.status, pendingChangesQuery.data?.pendingApproval]);
+
+  console.log("shouldOpenApproveChangesModal", shouldOpenApproveChangesModal);
 
   const isRunning = query.data.status === WorkflowExecutionStatus.RUNNING;
 

@@ -19,7 +19,7 @@ export function EditWorkflowButton({
         }),
         "flex items-center gap-2",
       )}
-      href={`/workflow/editor/${workflowId}`}
+      href={`/workflow/editor/${workflowId.toString()}`}
     >
       <ShuffleIcon className="size-4" />
       Edit

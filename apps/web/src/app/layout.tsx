@@ -4,6 +4,7 @@ import "@repo/ui/globals.css";
 import { SidebarProvider } from "@repo/ui/components/ui/sidebar";
 import { cookies } from "next/headers";
 import ToastProvider from "@repo/ui/providers/toast-provider";
+import { type JSX } from "react";
 import { QueryProvider } from "@/providers/query-provider";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { DialogsComponentsProvider } from "@/providers/dialogs-provider";
@@ -30,7 +31,7 @@ export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>): Promise<JSX.Element> {
   const [cookieStore, userProjects] = await Promise.all([
     cookies(),
     getUserProjects(),
