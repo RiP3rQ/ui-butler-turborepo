@@ -17,7 +17,7 @@ const useWorkflowExecutionPlan = () => {
           break;
         case "INVALID_INPUTS":
           toast.error("Invalid inputs found");
-          setInvalidInputs(error.invalidElements || []);
+          setInvalidInputs(error.invalidElements ?? []);
           break;
         default:
           toast.error("An error occurred while generating the execution plan");
@@ -26,7 +26,7 @@ const useWorkflowExecutionPlan = () => {
     [setInvalidInputs],
   );
 
-  const generateExecutionPlan = useCallback(() => {
+  return useCallback(() => {
     const { nodes, edges } = toObject();
 
     const { executionPlan, error } = parseFlowToExecutionPlan(
@@ -42,8 +42,6 @@ const useWorkflowExecutionPlan = () => {
     clearErrors();
     return executionPlan;
   }, [toObject, clearErrors, handleError]);
-
-  return generateExecutionPlan;
 };
 
 export default useWorkflowExecutionPlan;

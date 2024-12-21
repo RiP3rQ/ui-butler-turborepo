@@ -4,7 +4,7 @@ import type { Period } from "@repo/types";
 export function dateToDurationString(
   start?: string | null,
   end?: string | null,
-) {
+): string | null {
   if (!start || !end) {
     return null;
   }

@@ -38,13 +38,15 @@ function NodeHeader({
             <>
               <Button
                 className="cursor-pointer text-red-500 hover:text-red-600"
-                onClick={async () => {
-                  await deleteElements({
+                onClick={() => {
+                  deleteElements({
                     nodes: [
                       {
                         id: nodeId,
                       },
                     ],
+                  }).catch((e: unknown) => {
+                    console.error(e);
                   });
                 }}
                 size="icon"

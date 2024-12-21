@@ -52,9 +52,10 @@ export function useComponentCode(projectId: string, componentId: string) {
     },
   });
 
-  const invalidateQueries = () => {
-    // @ts-expect-error Reason: queryClient has no types
-    queryClient.invalidateQueries(["single-component", projectId, componentId]);
+  const invalidateQueries = (): void => {
+    void queryClient.invalidateQueries({
+      queryKey: ["single-component", projectId, componentId],
+    });
   };
 
   return {

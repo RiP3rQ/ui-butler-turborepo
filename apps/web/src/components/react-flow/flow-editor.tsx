@@ -124,10 +124,10 @@ function FlowEditor({ workflow }: Readonly<FlowEditorProps>): JSX.Element {
       const targetTask = ClientTaskRegister[targetNode.data.type];
 
       const output = sourceTask.outputs.find(
-        (output) => output.name === connection.sourceHandle,
+        (outputValue) => outputValue.name === connection.sourceHandle,
       );
       const input = targetTask.inputs.find(
-        (input) => input.name === connection.targetHandle,
+        (inputValue) => inputValue.name === connection.targetHandle,
       );
 
       if (input?.type !== output?.type) {

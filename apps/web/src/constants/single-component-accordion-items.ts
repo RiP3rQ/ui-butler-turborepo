@@ -21,7 +21,7 @@ export const ACCORDION_ITEMS: readonly AccordionItemConfig[] = [
     value: "item-2",
     title: "Typescript Docs",
     codeType: "typescriptDocs",
-    getCode: (data) => data.tsDocs || "",
+    getCode: (data) => data.tsDocs ?? "",
     checkImplemented: (data) => data.hasTypescriptDocs,
     action: {
       title: "Generate Typescript Docs",
@@ -33,7 +33,7 @@ export const ACCORDION_ITEMS: readonly AccordionItemConfig[] = [
     value: "item-3",
     title: "Unit tests",
     codeType: "unitTests",
-    getCode: (data) => data.unitTests || "",
+    getCode: (data) => data.unitTests ?? "",
     checkImplemented: (data) => data.wasUnitTested,
     action: {
       title: "Generate Unit Tests",
@@ -45,7 +45,7 @@ export const ACCORDION_ITEMS: readonly AccordionItemConfig[] = [
     value: "item-4",
     title: "E2E tests",
     codeType: "e2eTests",
-    getCode: (data) => data.e2eTests || "",
+    getCode: (data) => data.e2eTests ?? "",
     checkImplemented: (data) => data.wasE2ETested,
     action: {
       title: "Generate E2E Tests",
@@ -57,7 +57,7 @@ export const ACCORDION_ITEMS: readonly AccordionItemConfig[] = [
     value: "item-5",
     title: "MDX Docs",
     codeType: "mdxDocs",
-    getCode: (data) => data.mdxDocs || "",
+    getCode: (data) => data.mdxDocs ?? "",
     checkImplemented: (data) => data.hasMdxDocs,
     action: {
       title: "Generate MDX Docs",

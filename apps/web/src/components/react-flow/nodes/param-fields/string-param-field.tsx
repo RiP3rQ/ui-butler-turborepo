@@ -1,7 +1,7 @@
 "use client";
 
 import { Label } from "@repo/ui/components/ui/label";
-import { useEffect, useId, useState } from "react";
+import { type JSX, useEffect, useId, useState } from "react";
 import { Input } from "@repo/ui/components/ui/input";
 import { Textarea } from "@repo/ui/components/ui/textarea";
 import type { ParamProps } from "@repo/types";
@@ -11,7 +11,7 @@ function StringParamField({
   value,
   updateNodeParamValue,
   disabled,
-}: Readonly<ParamProps>) {
+}: Readonly<ParamProps>): JSX.Element {
   const id = useId();
   const [internalValue, setInternalValue] = useState<string>(value);
 
@@ -19,7 +19,7 @@ function StringParamField({
     setInternalValue(value);
   }, [value]);
 
-  let Component: any = Input;
+  let Component: typeof Input | typeof Textarea = Input;
   if (param.variant === "textarea") {
     Component = Textarea;
   }
@@ -34,10 +34,10 @@ function StringParamField({
         className="w-full text-xs"
         disabled={disabled}
         id={id}
-        onBlur={(e: any) => {
+        onBlur={(e) => {
           updateNodeParamValue(e.target.value);
         }}
-        onChange={(e: any) => {
+        onChange={(e) => {
           setInternalValue(e.target.value);
         }}
         placeholder="Enter value here"
