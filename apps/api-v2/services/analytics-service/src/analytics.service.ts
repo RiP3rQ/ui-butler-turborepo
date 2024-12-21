@@ -16,6 +16,13 @@ import {
   sql,
   workflowExecutions,
 } from '@app/database';
+import {
+  DashboardStatCardsValuesResponse,
+  DashboardTableFavoritedContentResponse,
+  Period,
+  StatCardsValuesResponse,
+  UsedCreditsInPeriodResponse,
+} from '@repo/types';
 
 @Injectable()
 export class AnalyticsService {
@@ -24,7 +31,7 @@ export class AnalyticsService {
     private readonly database: NeonDatabaseType,
   ) {}
 
-  async getPeriods(user: User) {
+  async getPeriods(user: User): Promise<Period[]> {
     const yearsData = await this.database
       .select({ minYear: min(workflowExecutions.startedAt) })
       .from(workflowExecutions)
@@ -50,7 +57,11 @@ export class AnalyticsService {
     return periods;
   }
 
-  async getStatCardsValues(user: User, month: number, year: number) {
+  async getStatCardsValues(
+    user: User,
+    month: number,
+    year: number,
+  ): Promise<StatCardsValuesResponse> {
     const { startDate, endDate } = this.periodToDateRange({ month, year });
 
     const executionsInPeriod = await this.database
@@ -89,7 +100,11 @@ export class AnalyticsService {
     };
   }
 
-  async getWorkflowExecutionStats(user: User, month: number, year: number) {
+  async getWorkflowExecutionStats(
+    user: User,
+    month: number,
+    year: number,
+  ): Promise<UsedCreditsInPeriodResponse[]> {
     const { startDate, endDate } = this.periodToDateRange({ month, year });
 
     const executionsInPeriod = await this.database
@@ -126,7 +141,11 @@ export class AnalyticsService {
     }));
   }
 
-  async getUsedCreditsInPeriod(user: User, month: number, year: number) {
+  async getUsedCreditsInPeriod(
+    user: User,
+    month: number,
+    year: number,
+  ): Promise<UsedCreditsInPeriodResponse[]> {
     const { startDate, endDate } = this.periodToDateRange({ month, year });
 
     const executionsPhases = await this.database
@@ -151,11 +170,16 @@ export class AnalyticsService {
     executionsPhases.forEach((phase) => {
       if (!phase.startedAt) return;
 
-      const date = format(phase.startedAt, dateFormat);
-      if (phase.status === 'COMPLETED') {
-        statsDates[date].successful += phase.creditsCost ?? 0;
-      } else if (phase.status === 'FAILED') {
-        statsDates[date].failed += phase.creditsCost ?? 0;
+      try {
+        const date = format(new Date(phase.startedAt), dateFormat);
+        if (phase.status === 'COMPLETED') {
+          statsDates[date].successful += phase.creditsCost ?? 0;
+        } else if (phase.status === 'FAILED') {
+          statsDates[date].failed += phase.creditsCost ?? 0;
+        }
+      } catch (error) {
+        // Skip invalid dates
+        console.error('Invalid date format:', phase.startedAt);
       }
     });
 
@@ -165,8 +189,10 @@ export class AnalyticsService {
     }));
   }
 
-  async getDashboardStatCardsValues(user: User) {
-    const [data] = await this.database
+  async getDashboardStatCardsValues(
+    user: User,
+  ): Promise<DashboardStatCardsValuesResponse> {
+    const data = await this.database
       .select({
         currentActiveProjects: sql<number>`count(distinct
         ${projects.id}
@@ -188,13 +214,15 @@ export class AnalyticsService {
       .where(eq(projects.userId, user.id));
 
     return {
-      currentActiveProjects: data.currentActiveProjects ?? 0,
-      numberOfCreatedComponents: data.numberOfCreatedComponents ?? 0,
-      favoritesComponents: data.favoritesComponents ?? 0,
+      currentActiveProjects: data[0]?.currentActiveProjects ?? 0,
+      numberOfCreatedComponents: data[0]?.numberOfCreatedComponents ?? 0,
+      favoritesComponents: data[0]?.favoritesComponents ?? 0,
     };
   }
 
-  async getFavoritedTableContent(user: User) {
+  async getFavoritedTableContent(
+    user: User,
+  ): Promise<DashboardTableFavoritedContentResponse[]> {
     const favoritedComponents = await this.database
       .select({
         id: components.id,
@@ -218,7 +246,10 @@ export class AnalyticsService {
     }));
   }
 
-  private periodToDateRange(period: { month: number; year: number }) {
+  private periodToDateRange(period: { month: number; year: number }): {
+    startDate: Date;
+    endDate: Date;
+  } {
     const startDate = new Date(period.year, period.month - 1, 1);
     const endDate = new Date(period.year, period.month, 0);
     return { startDate, endDate };
@@ -228,7 +259,7 @@ export class AnalyticsService {
     startDate: Date,
     endDate: Date,
     dateFormat: string,
-  ) {
+  ): Record<string, { successful: number; failed: number }> {
     return eachDayOfInterval({ start: startDate, end: endDate })
       .map((date) => format(date, dateFormat))
       .reduce(
