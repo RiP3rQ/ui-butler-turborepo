@@ -1,4 +1,3 @@
-// auth.controller.spec.ts
 import { Test, TestingModule } from '@nestjs/testing';
 import { CreateUserDto, User } from '@app/common';
 import { AuthController } from '../auth.controller';

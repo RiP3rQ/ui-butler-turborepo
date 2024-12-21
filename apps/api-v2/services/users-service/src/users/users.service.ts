@@ -1,7 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { hash } from 'bcryptjs';
-import { and, eq } from 'drizzle-orm';
-import { type NeonDatabaseType, profile, users } from '@app/database';
+import { and, eq, type NeonDatabaseType, profile, users } from '@app/database';
 import {
   CreateProfileDto,
   CreateUserDto,
