@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@ai-sdk/google": "^1.0.11",
-    "@ai-sdk/openai": "^1.0.8",
+    "@ai-sdk/openai": "^1.0.10",
     "@neondatabase/serverless": "^0.10.4",
     "@nestjs/common": "^10.4.15",
     "@nestjs/config": "^3.3.0",
@@ -34,7 +34,7 @@
     "@repo/prompts": "workspace:*",
     "@repo/tasks-registry": "workspace:*",
     "@repo/types": "workspace:*",
-    "ai": "^4.0.20",
+    "ai": "^4.0.21",
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
