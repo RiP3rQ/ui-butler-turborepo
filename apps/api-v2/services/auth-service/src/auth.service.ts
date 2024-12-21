@@ -61,7 +61,7 @@ export class AuthService {
   async login(user: User, redirect = false) {
     const tokenPayload: TokenPayload = {
       userId: user.id.toString(),
-      email: user.email ?? '',
+      email: user.email,
     };
 
     const { accessToken, refreshToken } =
@@ -104,10 +104,12 @@ export class AuthService {
         this.usersClient.send('users.create', userData),
       );
 
-      console.log('New user:', newUser);
+      if (!newUser) {
+        throw new Error('User creation failed');
+      }
 
       const tokenPayload: TokenPayload = {
-        userId: newUser?.id.toString() ?? '',
+        userId: newUser.id.toString(),
         email: userData.email,
       };
 
