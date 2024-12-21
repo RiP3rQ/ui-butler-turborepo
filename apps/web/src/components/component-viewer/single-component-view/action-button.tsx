@@ -4,6 +4,7 @@ import { Loader2Icon, type LucideIcon } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
 import { type CodeType } from "@repo/types";
 import { cn } from "@repo/ui/lib/utils";
+import { type JSX } from "react";
 import { useConfirmationModalStore } from "@/store/confirmation-modal-store";
 import { getErrorMessage } from "@/lib/get-error-message";
 
@@ -25,7 +26,7 @@ export function ActionButton({
   isGenerating,
   isAnyGenerating,
   onGenerate,
-}: ActionButtonProps) {
+}: ActionButtonProps): JSX.Element {
   const {
     setIsModalOpen,
     setIsPending,
@@ -33,9 +34,9 @@ export function ActionButton({
     setConfirmationModalBasicState,
   } = useConfirmationModalStore();
 
-  if (!action?.title || !action.icon) return null;
+  if (!action?.title) return null;
 
-  const handleClick = () => {
+  const handleClick = (): void => {
     setConfirmationModalBasicState({
       isModalOpen: true,
       modalTitle: "Confirm code generation",

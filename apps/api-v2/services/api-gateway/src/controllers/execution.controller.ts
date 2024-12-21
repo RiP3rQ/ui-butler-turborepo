@@ -30,6 +30,7 @@ export class ExecutionsController {
     @CurrentUser() user: User,
     @Param('executionId', ParseIntPipe) executionId: number,
   ) {
+    console.log('executionId', executionId);
     return firstValueFrom(
       this.executionsClient.send('executions.pending-changes', {
         user,

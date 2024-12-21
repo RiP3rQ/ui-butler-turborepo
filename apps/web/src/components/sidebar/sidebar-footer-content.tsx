@@ -31,6 +31,7 @@ import {
 import { logoutUser } from "@repo/ui/actions/auth/logout-user";
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
 import { useRouter } from "next/navigation";
+import { type JSX } from "react";
 import { useCurrentUser } from "@/hooks/use-current-user";
 
 export function SidebarFooterContent(): JSX.Element {

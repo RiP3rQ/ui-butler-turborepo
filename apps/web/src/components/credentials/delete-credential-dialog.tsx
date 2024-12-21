@@ -12,12 +12,12 @@ import {
   AlertDialogTrigger,
 } from "@repo/ui/components/ui/alert-dialog";
 import { Input } from "@repo/ui/components/ui/input";
-import { useState } from "react";
+import { type JSX, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Button } from "@repo/ui/components/ui/button";
 import { XIcon } from "lucide-react";
-import { deleteCredentialFunction } from "@/actions/credentials/delete-credential";
+import { deleteCredentialFunction } from "@/actions/credentials/server-actions";
 
 interface DeleteCredentialDialogProps {
   name: string;
@@ -48,9 +48,9 @@ export function DeleteCredentialDialog({
   return (
     <AlertDialog
       open={open}
-      onOpenChange={(open) => {
+      onOpenChange={(openValue) => {
         setConfirmText("");
-        setOpen(open);
+        setOpen(openValue);
       }}
     >
       <AlertDialogTrigger asChild>

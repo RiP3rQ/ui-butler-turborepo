@@ -11,13 +11,13 @@ import {
   type CreateNewProjectSchemaType,
 } from "@/schemas/project";
 import { getErrorMessage } from "@/lib/get-error-message";
-import { createNewProjectFunction } from "@/actions/projects/create-new-project";
 import { useModalsStateStore } from "@/store/modals-store";
+import { createNewProjectFunction } from "@/actions/projects/server-actions";
 
 export function useNewProjectForm(): {
   form: ReturnType<typeof useForm<CreateNewProjectSchemaType>>;
   isPending: boolean;
-  handleSubmit: (values: CreateNewProjectSchemaType) => Promise<void>;
+  handleSubmit: (values: CreateNewProjectSchemaType) => void;
   isSubmitDisabled: boolean;
 } {
   const queryClient = useQueryClient();
@@ -53,7 +53,7 @@ export function useNewProjectForm(): {
     },
   });
 
-  const handleSubmit = async (values: CreateNewProjectSchemaType) => {
+  const handleSubmit = (values: CreateNewProjectSchemaType) => {
     try {
       toast.loading("Creating new project...", { id: "new-project" });
       mutate(values);

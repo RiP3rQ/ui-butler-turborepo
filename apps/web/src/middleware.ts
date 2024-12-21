@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { AUTH_COOKIE, getAuthCookie, REFRESH_COOKIE } from "@/lib/auth-cookie";
 
-export async function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest): Promise<NextResponse> {
   const cookieStore = await cookies();
   const authCookie = cookieStore.get(AUTH_COOKIE);
 
@@ -25,7 +25,7 @@ export async function middleware(request: NextRequest) {
   const refreshCookie = cookieStore.get(REFRESH_COOKIE);
   if (refreshCookie) {
     const refreshRes = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`,
+      `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333/api"}/auth/refresh`,
       {
         headers: { Cookie: cookieStore.toString() },
         method: "POST",
@@ -33,11 +33,11 @@ export async function middleware(request: NextRequest) {
     );
 
     if (refreshRes.ok) {
-      const cookies = getAuthCookie(refreshRes);
-      if (cookies?.accessToken && cookies?.refreshToken) {
+      const authCookies = getAuthCookie(refreshRes);
+      if (authCookies?.accessToken && authCookies.refreshToken) {
         const response = NextResponse.redirect(request.url);
-        response.cookies.set(cookies.accessToken);
-        response.cookies.set(cookies.refreshToken);
+        response.cookies.set(authCookies.accessToken);
+        response.cookies.set(authCookies.refreshToken);
         return response;
       }
     }

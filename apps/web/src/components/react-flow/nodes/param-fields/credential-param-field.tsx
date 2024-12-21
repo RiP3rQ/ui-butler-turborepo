@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@repo/ui/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
-import { getUserCredentials } from "@/actions/credentials/get-user-credentials";
+import { getUserCredentials } from "@/actions/credentials/server-actions";
 
 function CredentialParamField({
   param,

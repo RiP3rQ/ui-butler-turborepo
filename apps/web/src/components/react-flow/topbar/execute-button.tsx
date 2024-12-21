@@ -5,8 +5,9 @@ import { toast } from "sonner";
 import { useReactFlow } from "@xyflow/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@repo/ui/components/ui/button";
+import { type JSX } from "react";
 import useWorkflowExecutionPlan from "@/hooks/use-workflow-execution-plan";
-import { runWorkflowFunction } from "@/actions/workflows/run-workflow";
+import { runWorkflowFunction } from "@/actions/workflows/server-actions";
 
 interface ExecuteButtonProps {
   workflowId: number;

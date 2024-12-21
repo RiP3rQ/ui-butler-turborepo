@@ -55,7 +55,7 @@ export default function GenerateComponentPage(): JSX.Element {
   });
 
   const { messages, isLoading, append, reload, stop } = useChat({
-    api: `${process.env.NEXT_PUBLIC_API_URL}/components/generate`,
+    api: `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333/api"}/components/generate`,
     credentials: "include",
     headers: {
       Accept: "text/event-stream",
@@ -104,7 +104,7 @@ export default function GenerateComponentPage(): JSX.Element {
 
   const handleReset = useCallback(() => {
     stop();
-    reload();
+    void reload();
     toast.success("Form reset successfully");
   }, [stop, reload]);
 
@@ -119,9 +119,9 @@ export default function GenerateComponentPage(): JSX.Element {
 
   // Add keyboard shortcuts
   useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
+    const handleKeyPress = (e: KeyboardEvent): void => {
       if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
-        form.handleSubmit(handleGenerateComponent)();
+        void form.handleSubmit(handleGenerateComponent)();
       }
     };
 
@@ -129,7 +129,7 @@ export default function GenerateComponentPage(): JSX.Element {
     return () => {
       window.removeEventListener("keydown", handleKeyPress);
     };
-  }, []);
+  }, [form, handleGenerateComponent]);
 
   return (
     <div className="flex flex-col items-center min-h-[calc(100vh-200px)] w-full max-w-full px-8 py-4 space-y-6">
@@ -146,7 +146,7 @@ export default function GenerateComponentPage(): JSX.Element {
           <Form {...form}>
             <form
               className="space-y-6 w-full relative"
-              onSubmit={form.handleSubmit(handleGenerateComponent)}
+              onSubmit={void form.handleSubmit(handleGenerateComponent)}
             >
               <FormField
                 control={form.control}

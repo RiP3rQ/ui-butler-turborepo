@@ -1,5 +1,5 @@
 // components/SingleComponentView.tsx
-import { useCallback } from "react";
+import { type JSX, useCallback } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -20,7 +20,7 @@ export function SingleComponentView({
   componentsData,
   projectId,
   componentId,
-}: SingleComponentViewProps) {
+}: SingleComponentViewProps): JSX.Element {
   const { updating, generatingCodeType, updateMutation, generateMutation } =
     useComponentCode(projectId, componentId);
 

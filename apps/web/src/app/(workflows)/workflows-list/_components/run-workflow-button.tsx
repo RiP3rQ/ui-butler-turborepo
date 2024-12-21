@@ -5,14 +5,15 @@ import { Loader2Icon, PlayIcon } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { runWorkflow } from "@/actions/executions/run-workflow";
+import { type JSX } from "react";
+import { runWorkflow } from "@/actions/executions/server-actions";
 
 interface RunWorkflowButtonProps {
   workflowId: number;
 }
 export function RunWorkflowButton({
   workflowId,
-}: Readonly<RunWorkflowButtonProps>) {
+}: Readonly<RunWorkflowButtonProps>): JSX.Element {
   const router = useRouter();
   const { mutate, isPending } = useMutation({
     mutationFn: runWorkflow,

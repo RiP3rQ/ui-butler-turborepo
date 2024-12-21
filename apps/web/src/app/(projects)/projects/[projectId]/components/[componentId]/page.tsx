@@ -8,9 +8,10 @@ import {
 } from "@repo/ui/components/ui/card";
 import moment from "moment";
 import { Label } from "@repo/ui/components/ui/label";
-import { getSingleComponentsDataFunction } from "@/actions/components/get-single-components-data";
+import { type JSX } from "react";
 import SingleComponentViewWithShortcuts from "@/components/component-viewer/single-component-view-with-shortcuts";
 import { RunWorkflowButton } from "@/components/component-viewer/single-component-view/run-workflow-button";
+import { getSingleComponentsDataFunction } from "@/actions/components/server-actions";
 
 type Params = Promise<{ projectId: string; componentId: string }>;
 export default async function SingleComponentPage({

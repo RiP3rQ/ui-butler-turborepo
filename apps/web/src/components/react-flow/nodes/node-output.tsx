@@ -1,6 +1,7 @@
 import { Handle, Position } from "@xyflow/react";
 import { cn } from "@repo/ui/lib/utils";
 import type { TaskParamType } from "@repo/types";
+import { type JSX } from "react";
 import { ColorForHandle } from "@/components/react-flow/nodes/common";
 
 interface NodeOutputProps {

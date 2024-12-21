@@ -4,8 +4,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useReactFlow } from "@xyflow/react";
 import { Button } from "@repo/ui/components/ui/button";
+import { type JSX } from "react";
 import useWorkflowExecutionPlan from "@/hooks/use-workflow-execution-plan";
-import { publishWorkflowFunction } from "@/actions/workflows/publish-workflow";
+import { publishWorkflowFunction } from "@/actions/workflows/server-actions";
 
 interface PublishButtonProps {
   workflowId: number;
@@ -24,8 +25,9 @@ function PublishButton({
       toast.success("Workflow published successfully", {
         id: "publish-workflow",
       });
-      // @ts-expect-error Reason: queryClient has no types
-      queryClient.invalidateQueries(["workflow", workflowId]);
+      void queryClient.invalidateQueries({
+        queryKey: ["workflow", workflowId],
+      });
     },
     onError: () => {
       toast.error("Failed to publish workflow", { id: "publish-workflow" });

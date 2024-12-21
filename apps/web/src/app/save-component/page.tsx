@@ -34,14 +34,14 @@ import { Skeleton } from "@repo/ui/components/ui/skeleton";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { type JSX } from "react";
-import { getUserProjects } from "@/actions/projects/get-user-projects";
 import { getErrorMessage } from "@/lib/get-error-message";
-import { saveComponentFunction } from "@/actions/components/save-component";
 import {
   saveComponentSchema,
   type SaveComponentSchemaType,
 } from "@/schemas/component";
 import CodeEditor from "@/components/code-editor/editor";
+import { saveComponentFunction } from "@/actions/components/server-actions";
+import { getUserProjects } from "@/actions/projects/server-actions";
 
 export default function SaveNewComponentPage(): JSX.Element {
   const router = useRouter();
@@ -56,7 +56,9 @@ export default function SaveNewComponentPage(): JSX.Element {
     mutationFn: saveComponentFunction,
     onSuccess: (res) => {
       form.reset();
-      router.push(`/projects/${res.projectId}/components/${res.id}`);
+      router.push(
+        `/projects/${String(res.projectId)}/components/${String(res.id)}`,
+      );
       toast.success("Created new component successfully!", {
         id: "new-component",
       });
@@ -77,7 +79,7 @@ export default function SaveNewComponentPage(): JSX.Element {
     },
   });
 
-  const handleSaveAction = (values: SaveComponentSchemaType) => {
+  const handleSaveAction = (values: SaveComponentSchemaType): void => {
     mutate(values);
   };
 
@@ -95,9 +97,9 @@ export default function SaveNewComponentPage(): JSX.Element {
           <Form {...form}>
             <form
               className="space-y-6 w-full"
-              onSubmit={form.handleSubmit(handleSaveAction)}
+              onSubmit={void form.handleSubmit(handleSaveAction)}
             >
-              <div className="grid grid-cols-2 space-x-3">
+              <div className="grid grid-cols-2 space-x-4">
                 <FormField
                   control={form.control}
                   name="title"

@@ -2,8 +2,8 @@ import { redirect } from "next/navigation";
 import { toast } from "sonner";
 import { type JSX } from "react";
 import Topbar from "@/components/react-flow/topbar/topbar";
-import { getWorkflowExecutionWithPhasesDetailsFunction } from "@/actions/workflows/get-workflow-execution-details";
 import { ExecutionViewer } from "@/components/execution-viewer/execution-viewer";
+import { getWorkflowExecutionWithPhasesDetailsFunction } from "@/actions/workflows/server-actions";
 
 type Params = Promise<{ workflowId: string; runId: string }>;
 export default async function WorkflowRunPage({

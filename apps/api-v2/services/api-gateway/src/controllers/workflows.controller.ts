@@ -38,10 +38,10 @@ export class WorkflowsController {
     );
   }
 
-  @Get(':id')
+  @Get('get-by-id/:workflowId')
   async getWorkflowById(
     @CurrentUser() user: User,
-    @Param('id', ParseIntPipe) workflowId: number,
+    @Param('workflowId', ParseIntPipe) workflowId: number,
   ) {
     return firstValueFrom(
       this.workflowsClient.send('workflows.get-by-id', { user, workflowId }),
@@ -130,10 +130,10 @@ export class WorkflowsController {
     );
   }
 
-  @Get(':id/historic')
+  @Get('historic')
   async getHistoricWorkflowExecutions(
     @CurrentUser() user: User,
-    @Param('id', ParseIntPipe) workflowId: number,
+    @Query('workflowId', ParseIntPipe) workflowId: number,
   ) {
     return firstValueFrom(
       this.workflowsClient.send('workflows.historic', { user, workflowId }),

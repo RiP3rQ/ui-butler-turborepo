@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { type JSX, useCallback, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
 import type { CreateWorkflowSchemaType } from "@/schemas/workflow";
 import { createWorkflowSchema } from "@/schemas/workflow";
 import { WorkflowCreateForm } from "@/app/(workflows)/workflows-list/_components/forms/workflow-create-form";
-import { createWorkflow } from "@/actions/workflows/create-workflow";
+import { createWorkflow } from "@/actions/workflows/server-actions";
 
 interface CreateWorkflowDialogProps {
   triggerText?: string;
@@ -40,7 +40,7 @@ export function CreateWorkflowDialog({
       toast.success("Workflow created successfully", {
         id: "create-workflow",
       });
-      router.push(`/workflow/editor/${res.id}`);
+      router.push(`/workflow/editor/${String(res.id)}`);
       form.reset();
     },
     onError: () => {

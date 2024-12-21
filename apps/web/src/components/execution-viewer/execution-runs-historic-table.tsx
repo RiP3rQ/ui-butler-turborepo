@@ -3,8 +3,9 @@
 import { InboxIcon } from "lucide-react";
 import { type WorkflowExecution } from "@repo/types";
 import { useQuery } from "@tanstack/react-query";
+import { type JSX } from "react";
 import ExecutionsTable from "@/components/execution-viewer/executions-table";
-import { getHistoricWorkflowExecutions } from "@/actions/workflows/get-historic-workflow-executions";
+import { getHistoricWorkflowExecutions } from "@/actions/workflows/server-actions";
 
 interface ExecutionRunsHistoricTableProps {
   workflowId: string;
@@ -38,7 +39,7 @@ function WorkflowHistoricExecutionsTable({
 }
 export default WorkflowHistoricExecutionsTable;
 
-function RenderEmptyState() {
+function RenderEmptyState(): JSX.Element {
   return (
     <div className="container w-full py-6">
       <div className="flex w-full h-full flex-col gap-2 justify-center items-center">

@@ -11,6 +11,7 @@ import { Button } from "@repo/ui/components/ui/button";
 import { useShallow } from "zustand/react/shallow";
 import { Form } from "@repo/ui/components/ui/form";
 import { Loader2Icon } from "lucide-react";
+import { type JSX } from "react";
 import { useModalsStateStore } from "@/store/modals-store";
 import { useNewProjectForm } from "@/hooks/use-new-project-form";
 import { CreateNewProjectFormFields } from "@/components/dialogs/new-project-dialog/create-new-project-form-fields";
@@ -47,7 +48,7 @@ export function NewProjectDialog({
         </DialogHeader>
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(handleSubmit)}
+            onSubmit={void form.handleSubmit(handleSubmit)}
             className="space-y-2"
           >
             <CreateNewProjectFormFields

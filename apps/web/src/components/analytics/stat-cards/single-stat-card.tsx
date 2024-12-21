@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/components/ui/card";
+import { type JSX } from "react";
 import CountUpWrapper from "@/components/credits/count-up-wrapper";
 
 interface SingleStatCardProps {

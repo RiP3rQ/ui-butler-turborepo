@@ -3,9 +3,10 @@ import { ShieldOffIcon } from "lucide-react";
 import { Card } from "@repo/ui/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { type UserCredentials } from "@repo/types";
+import { type JSX } from "react";
 import { CredentialCard } from "@/components/credentials/credential-card";
 import { CreateCredentialDialog } from "@/components/credentials/create-credential-dialog";
-import { getUserCredentials } from "@/actions/credentials/get-user-credentials";
+import { getUserCredentials } from "@/actions/credentials/server-actions";
 
 interface UserCredentialsProps {
   initialData: UserCredentials[];

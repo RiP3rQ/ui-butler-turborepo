@@ -5,8 +5,9 @@ import { DataTable } from "@repo/ui/components/table/data-table";
 import { Button } from "@repo/ui/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
+import { type JSX } from "react";
 import { columns } from "@/components/dasboard/table/columns";
-import { getDashboardTableFavoritedContent } from "@/actions/dashboard/get-dashboard-table-favorited-content";
+import { getDashboardTableFavoritedContent } from "@/actions/dashboard/server-actions";
 
 interface DashboardFavoritedTableProps {
   initialData: DashboardTableFavoritedContentResponse[];

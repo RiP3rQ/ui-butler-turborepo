@@ -1,10 +1,13 @@
 import type { Period } from "@repo/types";
-import { getPeriods } from "@/actions/analytics/get-periods";
-import { getStatCardsValues } from "@/actions/analytics/get-stat-cards-values";
-import { getWorkflowExecutionStats } from "@/actions/analytics/get-workflow-execution-stats";
-import { getUsedCreditsInPeriod } from "@/actions/analytics/get-used-credits-in-period";
+import { type JSX } from "react";
 import { PeriodSelector } from "@/components/analytics/period-selector";
 import { AnalyticsPageContent } from "@/components/analytics/analytics-page-content";
+import {
+  getPeriods,
+  getStatCardsValues,
+  getUsedCreditsInPeriod,
+  getWorkflowExecutionStats,
+} from "@/actions/analytics/server-actions";
 
 export default async function AnalyticsPage({
   searchParams,
@@ -29,6 +32,8 @@ export default async function AnalyticsPage({
     getWorkflowExecutionStats(period),
     getUsedCreditsInPeriod(period),
   ]);
+
+  console.log(periods);
 
   return (
     <div className="flex flex-1 flex-col h-full gap-2 mx-auto max-w-6xl mt-4">

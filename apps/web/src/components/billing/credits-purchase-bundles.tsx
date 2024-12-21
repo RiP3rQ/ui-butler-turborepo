@@ -12,11 +12,11 @@ import { RadioGroup, RadioGroupItem } from "@repo/ui/components/ui/radio-group";
 import { Label } from "@repo/ui/components/ui/label";
 import { Button } from "@repo/ui/components/ui/button";
 import { CreditCardIcon } from "lucide-react";
-import { useState } from "react";
+import { type JSX, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { type BalancePackId, CreditPacks } from "@repo/types";
-import { purchaseCredits } from "@/actions/billing/purchase-credits";
+import { purchaseCredits } from "@/actions/billing/server-actions";
 
 export function CreditsPurchaseBundles(): JSX.Element {
   const queryClient = useQueryClient();
@@ -55,8 +55,9 @@ export function CreditsPurchaseBundles(): JSX.Element {
           disabled={isPending}
         >
           {CreditPacks.map((pack) => (
-            <div
+            <Button
               key={pack.id}
+              variant="ghost"
               className="flex items-center space-x-3 bg-secondary/50 rounded-lg p-3 hover:bg-secondary"
               onClick={() => {
                 if (!isPending) setSelectedPack(pack.id);
@@ -71,7 +72,7 @@ export function CreditsPurchaseBundles(): JSX.Element {
                   ${(pack.price / 100).toFixed(2)}
                 </span>
               </Label>
-            </div>
+            </Button>
           ))}
         </RadioGroup>
       </CardContent>

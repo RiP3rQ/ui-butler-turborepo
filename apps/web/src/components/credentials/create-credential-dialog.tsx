@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { type JSX, useCallback, useState } from "react";
 import { Loader2Icon, ShieldEllipsisIcon } from "lucide-react";
 import { useForm, type UseFormReturn } from "react-hook-form";
 import { type z } from "zod";
@@ -25,11 +25,11 @@ import {
 } from "@repo/ui/components/ui/dialog";
 import { Button } from "@repo/ui/components/ui/button";
 import CustomDialogHeader from "@repo/ui/components/custom-dialog-header";
-import { createCredentialFunction } from "@/actions/credentials/create-credential";
 import {
   createCredentialSchema,
   type CreateCredentialSchemaType,
 } from "@/schemas/credential";
+import { createCredentialFunction } from "@/actions/credentials/server-actions";
 
 interface CreateCredentialDialogProps {
   triggerText?: string;
@@ -105,7 +105,10 @@ function CredentialForm({
 }>): JSX.Element {
   return (
     <Form {...form}>
-      <form className="space-y-6 w-full" onSubmit={form.handleSubmit(onSubmit)}>
+      <form
+        className="space-y-6 w-full"
+        onSubmit={void form.handleSubmit(onSubmit)}
+      >
         <FormField
           control={form.control}
           name="name"

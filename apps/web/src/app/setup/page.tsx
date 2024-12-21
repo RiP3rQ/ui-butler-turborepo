@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { setupUser } from "@/actions/billing/setup-user";
+import { setupUser } from "@/actions/billing/server-actions";
 
 export default async function SetupPage(): Promise<void> {
   try {

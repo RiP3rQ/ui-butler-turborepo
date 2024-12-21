@@ -12,10 +12,10 @@ import { toast } from "sonner";
 import { Button } from "@repo/ui/components/ui/button";
 import { NavigationIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { type JSX, useState } from "react";
 import CodeEditor from "@/components/code-editor/editor";
 import { FavoriteButton } from "@/components/components/favorite-button";
-import { favoriteComponentFunction } from "@/actions/components/favorite-component";
+import { favoriteComponentFunction } from "@/actions/components/server-actions";
 
 interface MultipleComponentsViewProps {
   queryKey: string;
@@ -68,10 +68,10 @@ export function MultipleComponentsView({
       className="w-full space-y-2"
       defaultValue={["item-1"]}
     >
-      {components.map((component, index) => {
+      {components.map((component) => {
         return (
           <AccordionItem
-            key={index}
+            key={component.id}
             value={`component-${String(component.id)}`}
             className="border rounded-lg shadow-sm hover:shadow-md transition-all duration-200 relative"
           >

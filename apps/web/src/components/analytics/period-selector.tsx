@@ -9,8 +9,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/ui/components/ui/select";
+import { type JSX } from "react";
 
-const MONTHS_NAMES = [
+const MONTHS_NAMES: readonly string[] = [
   "January",
   "February",
   "March",
@@ -23,7 +24,7 @@ const MONTHS_NAMES = [
   "October",
   "November",
   "December",
-] as const;
+];
 
 interface PeriodSelectorProps {
   periods: Period[];
@@ -38,23 +39,28 @@ export function PeriodSelector({
   const searchParams = useSearchParams();
   return (
     <Select
-      onValueChange={(value) => {
-        console.log(value);
+      onValueChange={(value: string) => {
         const [month, year] = value.split("-");
+        if (!year || !month) {
+          return;
+        }
         const params = new URLSearchParams(searchParams);
-        params.set("month", month!);
-        params.set("year", year!);
+        params.set("month", month);
+        params.set("year", year);
         router.push(`?${params.toString()}`);
       }}
-      value={`${selectedPeriod.month}-${selectedPeriod.year}`}
+      value={`${String(selectedPeriod.month)}-${String(selectedPeriod.year)}`}
     >
       <SelectTrigger className="w-[180px]">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        {periods.map((period, index) => (
-          <SelectItem key={index} value={`${period.month}-${period.year}`}>
-            {`${MONTHS_NAMES[period.month - 1]} ${period.year}`}
+        {periods.map((period) => (
+          <SelectItem
+            key={period.year + period.month}
+            value={`${String(period.month)}-${String(period.year)}`}
+          >
+            {`${MONTHS_NAMES[period.month - 1] ?? ""} ${String(period.year)}`}
           </SelectItem>
         ))}
       </SelectContent>

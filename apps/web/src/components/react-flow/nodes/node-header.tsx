@@ -7,6 +7,7 @@ import {
   ClientTaskRegister,
   createFlowNodeFunction,
 } from "@repo/tasks-registry";
+import { type JSX } from "react";
 
 interface NodeHeaderProps {
   taskType: TaskType;
@@ -37,13 +38,15 @@ function NodeHeader({
             <>
               <Button
                 className="cursor-pointer text-red-500 hover:text-red-600"
-                onClick={async () => {
-                  await deleteElements({
+                onClick={() => {
+                  deleteElements({
                     nodes: [
                       {
                         id: nodeId,
                       },
                     ],
+                  }).catch((e: unknown) => {
+                    console.error(e);
                   });
                 }}
                 size="icon"

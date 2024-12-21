@@ -14,7 +14,8 @@ import { Button } from "@repo/ui/components/ui/button";
 import { CheckCircle2Icon, Loader2Icon, TrashIcon } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { approvePendingChanges } from "@/actions/executions/approve-reject-changes";
+import { type JSX } from "react";
+import { approvePendingChanges } from "@/actions/executions/server-actions";
 
 interface ApproveChangesDialogProps {
   executionId: number;
@@ -42,10 +43,10 @@ export function ApproveChangesDialog({
   });
 
   if (!data?.["Original code"] || !data["Pending code"]) {
-    return <></>;
+    return null;
   }
 
-  const renderIcon = (variant: "approve" | "reject") => {
+  const renderIcon = (variant: "approve" | "reject"): JSX.Element => {
     if (isPending) {
       return <Loader2Icon className="mr-2 animate-spin" />;
     }

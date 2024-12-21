@@ -14,10 +14,11 @@ import { ChevronDownIcon } from "lucide-react";
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { type JSX } from "react";
 import { useConfirmationModalStore } from "@/store/confirmation-modal-store";
 import { getErrorMessage } from "@/lib/get-error-message";
-import { getUserWorkflows } from "@/actions/workflows/get-workflows";
-import { runWorkflow } from "@/actions/executions/run-workflow";
+import { runWorkflow } from "@/actions/executions/server-actions";
+import { getUserWorkflows } from "@/actions/workflows/server-actions";
 
 interface RunWorkflowButtonProps {
   componentId: string;
@@ -52,7 +53,7 @@ export function RunWorkflowButton({
     },
   });
 
-  const handleClick = (workflow: WorkflowType) => {
+  const handleClick = (workflow: WorkflowType): void => {
     setConfirmationModalBasicState({
       isModalOpen: true,
       modalTitle: `Confirm workflow run`,
@@ -93,9 +94,9 @@ export function RunWorkflowButton({
         </DropdownMenuTrigger>
         <DropdownMenuContent className="">
           <DropdownMenuGroup>
-            {data.map((workflow, index) => (
+            {data.map((workflow) => (
               <DropdownMenuItem
-                key={index}
+                key={workflow.id}
                 onClick={() => {
                   handleClick(workflow);
                 }}

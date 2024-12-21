@@ -1,6 +1,7 @@
 import { Button } from "@repo/ui/components/ui/button";
 import { HeartIcon, Loader2Icon } from "lucide-react";
 import { cn } from "@repo/ui/lib/utils";
+import { type JSX } from "react";
 
 interface FavoriteButtonProps {
   isPending: boolean;

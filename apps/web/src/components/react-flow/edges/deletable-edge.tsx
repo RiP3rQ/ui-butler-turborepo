@@ -23,7 +23,7 @@ function DeletableEdge(props: Readonly<EdgeProps>) {
         <div
           style={{
             position: "absolute",
-            transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+            transform: `translate(-50%, -50%) translate(${labelX.toString()}px,${labelY.toString()}px)`,
             pointerEvents: "all",
           }}
         >

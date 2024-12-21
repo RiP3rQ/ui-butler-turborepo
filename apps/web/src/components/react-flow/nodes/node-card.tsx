@@ -2,6 +2,7 @@
 
 import { cn } from "@repo/ui/lib/utils";
 import { useReactFlow } from "@xyflow/react";
+import { type JSX } from "react";
 import useFlowValidation from "@/hooks/use-flow-validation";
 
 interface NodeCardProps {
@@ -31,19 +32,19 @@ function NodeCard({
 
     const { position, measured } = node;
 
-    if (!position || !measured) {
+    if (!measured?.width || !measured.height) {
       return;
     }
 
     const { width, height } = measured;
-    const x = position.x + width! / 2;
-    const y = position.y + height! / 2;
+    const x = position.x + width / 2;
+    const y = position.y + height / 2;
 
     if (!x || !y) {
       return;
     }
 
-    setCenter(x, y, {
+    void setCenter(x, y, {
       zoom: 1,
       duration: 300,
     });

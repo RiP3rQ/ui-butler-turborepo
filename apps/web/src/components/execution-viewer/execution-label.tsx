@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import type { ReactNode } from "react";
+import { type JSX, type ReactNode } from "react";
 
 interface ExecutionLabelProps {
   icon: LucideIcon;
@@ -11,7 +11,7 @@ function ExecutionLabel({
   icon: Icon,
   label,
   value,
-}: Readonly<ExecutionLabelProps>) {
+}: Readonly<ExecutionLabelProps>): JSX.Element {
   return (
     <div className="flex justify-between items-center py-2 px-4 text-sm">
       <div className="text-muted-foreground flex items-center gap-2">

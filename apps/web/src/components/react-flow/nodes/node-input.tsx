@@ -1,6 +1,7 @@
 import { Handle, Position, useEdges } from "@xyflow/react";
 import { cn } from "@repo/ui/lib/utils";
 import type { TaskParam } from "@repo/types";
+import { type JSX } from "react";
 import NodeParamField from "@/components/react-flow/nodes/param-fields/node-param-field";
 import { ColorForHandle } from "@/components/react-flow/nodes/common";
 import useFlowValidation from "@/hooks/use-flow-validation";

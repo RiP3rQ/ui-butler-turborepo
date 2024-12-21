@@ -13,6 +13,7 @@ import { Input } from "@repo/ui/components/ui/input";
 import { Textarea } from "@repo/ui/components/ui/textarea";
 import { Button } from "@repo/ui/components/ui/button";
 import { Loader2Icon } from "lucide-react";
+import { type JSX } from "react";
 import type {
   createWorkflowSchema,
   CreateWorkflowSchemaType,
@@ -31,7 +32,10 @@ export function WorkflowCreateForm({
 }: Readonly<WorkflowCreateFormProps>): JSX.Element {
   return (
     <Form {...form}>
-      <form className="space-y-6 w-full" onSubmit={form.handleSubmit(onSubmit)}>
+      <form
+        className="space-y-6 w-full"
+        onSubmit={void form.handleSubmit(onSubmit)}
+      >
         <FormField
           control={form.control}
           name="name"

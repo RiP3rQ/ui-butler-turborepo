@@ -4,6 +4,7 @@ import { formatInTimeZone } from "date-fns-tz";
 import { ChevronRightIcon, ClockIcon } from "lucide-react";
 import type { IWorkflowExecutionStatus, WorkflowType } from "@repo/types";
 import { WorkflowStatus } from "@repo/types";
+import { type JSX } from "react";
 import { ExecutionStatusLabel } from "@/components/execution-viewer/execution-status-label";
 import { ExecutionStatusIndicator } from "@/components/execution-viewer/execution-status-indicator";
 
@@ -31,7 +32,7 @@ export function LastRunDetails({
         {lastRunId ? (
           <Link
             className="flex items-center text-sm gap-2 group"
-            href={`/workflow/runs/${workflow.id}/${lastRunId}`}
+            href={`/workflow/runs/${String(workflow.id)}/${lastRunId}`}
           >
             <span>Last run:</span>
             <ExecutionStatusIndicator

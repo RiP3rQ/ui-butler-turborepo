@@ -2,6 +2,7 @@
 import { Loader2Icon, SaveIcon, XIcon } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
 import { Card, CardContent } from "@repo/ui/components/ui/card";
+import { type JSX } from "react";
 import CodeEditor from "@/components/code-editor/editor";
 
 interface CodeSectionProps {
@@ -22,7 +23,7 @@ export function CodeSection({
   onCodeChange,
   onSave,
   onDiscard,
-}: CodeSectionProps) {
+}: CodeSectionProps): JSX.Element {
   return (
     <div className="relative space-y-4">
       <CodeEditor codeValue={code} setCodeValue={onCodeChange} />

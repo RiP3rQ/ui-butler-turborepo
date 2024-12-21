@@ -21,7 +21,7 @@ import {
   TaskType,
   type WorkflowType,
 } from "@repo/types";
-import { useCallback, useEffect } from "react";
+import { type JSX, useCallback, useEffect } from "react";
 import {
   ClientTaskRegister,
   createFlowNodeFunction,
@@ -55,17 +55,14 @@ function FlowEditor({ workflow }: Readonly<FlowEditorProps>): JSX.Element {
   const { setViewport, screenToFlowPosition, updateNodeData } = useReactFlow();
 
   useEffect(() => {
-    try {
-      const flow = JSON.parse(workflow.definition) as FlowType;
-      if (!flow) return;
-      setNodes(flow.nodes || []);
-      setEdges(flow.edges || []);
-      if (!flow.viewport) return;
-      const { x = 0, y = 0, zoom = 1 } = flow.viewport;
-      setViewport({ x, y, zoom }).catch(console.error);
-    } catch (e) {
-      console.error(e);
-    }
+    const flow = JSON.parse(workflow.definition) as FlowType | undefined;
+    if (!flow) return;
+    setNodes(flow.nodes);
+    setEdges(flow.edges);
+    const { x = 0, y = 0, zoom = 1 } = flow.viewport;
+    setViewport({ x, y, zoom }).catch((e: unknown) => {
+      console.error("Error setting viewport", e);
+    });
   }, []);
 
   const onDragOver = useCallback((event: React.DragEvent) => {
@@ -92,14 +89,15 @@ function FlowEditor({ workflow }: Readonly<FlowEditorProps>): JSX.Element {
 
   const onConnect = useCallback(
     (connection: Connection) => {
-      // @ts-expect-error  // TODO: FIX THIS TYPE
       setEdges((edg) => addEdge({ ...connection, animated: true }, edg));
       if (!connection.targetHandle) return;
       // Remove input value if is present on connection
       const node = nodes.find((n) => n.id === connection.target);
       if (!node) return;
       const nodeInputs = node.data.inputs;
-      delete nodeInputs[connection.targetHandle];
+      if (connection.targetHandle in nodeInputs) {
+        nodeInputs[connection.targetHandle] = "";
+      }
       updateNodeData(node.id, { inputs: nodeInputs });
     },
     [nodes, setEdges, updateNodeData],
@@ -109,7 +107,6 @@ function FlowEditor({ workflow }: Readonly<FlowEditorProps>): JSX.Element {
     (connection: Edge | Connection) => {
       // no self-connections allowed
       if (connection.source === connection.target) {
-        console.error("Self-connections are not allowed");
         toast.error("Self-connections are not allowed");
         return false;
       }
@@ -118,7 +115,6 @@ function FlowEditor({ workflow }: Readonly<FlowEditorProps>): JSX.Element {
       const sourceNode = nodes.find((n) => n.id === connection.source);
       const targetNode = nodes.find((n) => n.id === connection.target);
       if (!sourceNode || !targetNode) {
-        console.error("Source or target node not found");
         toast.error("Source or target node not found");
         return false;
       }
@@ -128,19 +124,17 @@ function FlowEditor({ workflow }: Readonly<FlowEditorProps>): JSX.Element {
       const targetTask = ClientTaskRegister[targetNode.data.type];
 
       const output = sourceTask.outputs.find(
-        (output) => output.name === connection.sourceHandle,
+        (outputValue) => outputValue.name === connection.sourceHandle,
       );
       const input = targetTask.inputs.find(
-        (input) => input.name === connection.targetHandle,
+        (inputValue) => inputValue.name === connection.targetHandle,
       );
 
       if (input?.type !== output?.type) {
-        console.error("Connection type mismatch");
         toast.error("Connection type mismatch");
         return false;
       }
 
-      // TODO: EXPORT AS FUNCTION
       const hasCycle = (node: AppNode, visited = new Set()) => {
         if (visited.has(node.id)) return true;
         visited.add(node.id);

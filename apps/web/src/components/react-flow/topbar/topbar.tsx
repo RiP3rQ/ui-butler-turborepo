@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { ChevronLeftIcon } from "@radix-ui/react-icons";
 import TooltipWrapper from "@repo/ui/components/tooltip-wrapper";
 import { Button } from "@repo/ui/components/ui/button";
+import { type JSX } from "react";
 import NavigationTabs from "@/components/react-flow/topbar/navigation-tabs";
 import ExecuteButton from "@/components/react-flow/topbar/execute-button";
 import UnpublishButton from "@/components/react-flow/topbar/unpublish-button";

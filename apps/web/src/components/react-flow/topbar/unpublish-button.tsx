@@ -3,8 +3,9 @@ import { Button } from "@repo/ui/components/ui/button";
 import { DownloadCloudIcon } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { type JSX } from "react";
 import useWorkflowExecutionPlan from "@/hooks/use-workflow-execution-plan";
-import { unpublishWorkflowFunction } from "@/actions/workflows/unpublish-workflow";
+import { unpublishWorkflowFunction } from "@/actions/workflows/server-actions";
 
 interface UnpublishButtonProps {
   workflowId: number;
@@ -22,8 +23,9 @@ function UnpublishButton({
       toast.success("Workflow unpublished successfully", {
         id: "unpublish-workflow",
       });
-      // @ts-expect-error Reason: queryClient has no types
-      queryClient.invalidateQueries(["workflow", workflowId]);
+      void queryClient.invalidateQueries({
+        queryKey: ["workflow", workflowId],
+      });
     },
     onError: () => {
       toast.error("Failed to unpublish workflow", { id: "unpublish-workflow" });
@@ -43,7 +45,7 @@ function UnpublishButton({
         }
 
         toast.loading("Unpublishing workflow...", { id: "unpublish-workflow" });
-        mutate({ workflowId });
+        mutate(workflowId);
       }}
       variant="outline"
     >

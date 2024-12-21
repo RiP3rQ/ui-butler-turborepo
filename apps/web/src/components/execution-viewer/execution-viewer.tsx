@@ -15,21 +15,23 @@ import {
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Separator } from "@repo/ui/components/ui/separator";
-import { useEffect, useMemo, useState } from "react";
+import { type JSX, useEffect, useMemo, useState } from "react";
 import { Badge } from "@repo/ui/components/ui/badge";
 import ExecutionRunPhasesRenderer from "@/components/execution-viewer/execution-run-phases-renderer";
 import ExecutionRunPhasesHeader from "@/components/execution-viewer/execution-run-phases-header";
 import ExecutionLabel from "@/components/execution-viewer/execution-label";
-import { getWorkflowExecutionWithPhasesDetailsFunction } from "@/actions/workflows/get-workflow-execution-details";
 import ParameterViewer from "@/components/execution-viewer/parameter-viewer";
 import LogsViewer from "@/components/execution-viewer/logs-viewer";
 import ExecutionPhaseStatusBadge from "@/components/execution-viewer/execution-phase-status-badge";
 import CountUpWrapper from "@/components/credits/count-up-wrapper";
 import { dateToDurationString } from "@/lib/dates";
 import { getPhasesTotalCost } from "@/lib/get-phases-total-cost";
-import { getWorkflowPhaseDetailsFunction } from "@/actions/workflows/get-workflow-phase-details";
-import { getPendingChanges } from "@/actions/executions/get-pending-changes";
 import { ApproveChangesDialog } from "@/components/dialogs/approve-changes-dialog";
+import { getPendingChanges } from "@/actions/executions/server-actions";
+import {
+  getWorkflowExecutionWithPhasesDetailsFunction,
+  getWorkflowPhaseDetailsFunction,
+} from "@/actions/workflows/server-actions";
 
 export type ExecutionData = Awaited<
   ReturnType<typeof getWorkflowExecutionWithPhasesDetailsFunction>
@@ -51,7 +53,7 @@ export function ExecutionViewer({
     initialData,
     queryFn: () =>
       getWorkflowExecutionWithPhasesDetailsFunction({
-        executionId: initialData.id,
+        executionId: String(initialData.id),
       }),
     refetchInterval: (q) =>
       q.state.data?.status === WorkflowExecutionStatus.FAILED ||
@@ -68,6 +70,8 @@ export function ExecutionViewer({
     queryFn: () => getPendingChanges({ executionId: query.data.id }),
   });
 
+  console.log("pendingChangesQuery", pendingChangesQuery);
+
   const shouldOpenApproveChangesModal = useMemo(() => {
     return Boolean(
       query.data.status === WorkflowExecutionStatus.WAITING_FOR_APPROVAL &&
@@ -75,23 +79,25 @@ export function ExecutionViewer({
     );
   }, [query.data.status, pendingChangesQuery.data?.pendingApproval]);
 
+  console.log("shouldOpenApproveChangesModal", shouldOpenApproveChangesModal);
+
   const isRunning = query.data.status === WorkflowExecutionStatus.RUNNING;
 
   // currently running phase-executors
   useEffect(() => {
     // While running we auto-select the currently running phase-executors in sidebar
-    const allPhases = query.data.phases ?? [];
+    const allPhases = query.data.phases;
     if (isRunning) {
       // Select the last executed phase-executors
       const phaseToSelect = [...allPhases].sort((a, b) =>
-        (a.startedAt ?? new Date()) > (b.startedAt ?? new Date()) ? -1 : 1,
+        a.startedAt > b.startedAt ? -1 : 1,
       )[0];
 
       setSelectedPhase(phaseToSelect?.id ?? null);
       return;
     }
     const phaseToSelect = [...allPhases].sort((a, b) =>
-      (a.completedAt ?? new Date()) > (b.completedAt ?? new Date()) ? -1 : 1,
+      a.completedAt > b.completedAt ? -1 : 1,
     )[0];
     setSelectedPhase(phaseToSelect?.id ?? null);
   }, [query.data.phases, isRunning, setSelectedPhase]);
@@ -99,7 +105,8 @@ export function ExecutionViewer({
   const phaseDetails = useQuery({
     queryKey: ["phaseDetails", selectedPhase, query.data.status],
     enabled: selectedPhase !== null,
-    queryFn: () => getWorkflowPhaseDetailsFunction({ phaseId: selectedPhase! }),
+    queryFn: () =>
+      getWorkflowPhaseDetailsFunction({ phaseId: selectedPhase ?? 1 }),
   });
 
   const duration = dateToDurationString(
@@ -107,7 +114,7 @@ export function ExecutionViewer({
     query.data.completedAt,
   );
 
-  const creditsConsumed = getPhasesTotalCost(query.data.phases || []);
+  const creditsConsumed = getPhasesTotalCost(query.data.phases);
 
   return (
     <div className="flex w-full h-full">
@@ -165,7 +172,7 @@ export function ExecutionViewer({
         <Separator />
         <ExecutionRunPhasesRenderer
           isRunning={isRunning}
-          phases={query.data.phases || []}
+          phases={query.data.phases}
           selectedPhase={selectedPhase}
           setSelectedPhase={setSelectedPhase}
         />
@@ -207,7 +214,7 @@ export function ExecutionViewer({
                   {dateToDurationString(
                     new Date(phaseDetails.data.startedAt).toISOString(),
                     new Date(phaseDetails.data.completedAt).toISOString(),
-                  ) || "-"}
+                  ) ?? "-"}
                 </span>
               </Badge>
               {/* Creadits BADGE*/}

@@ -37,8 +37,8 @@ export type ExecutionEnvironment<T extends BaseWorkflowTask> = {
   getInput(name: InputOutputNames<T["inputs"]>): string;
   setOutput(name: InputOutputNames<T["outputs"]>, value: string): void;
 
-  getTemp(name: InputOutputNames<T["temp"]>): string;
-  setTemp(name: InputOutputNames<T["temp"]>, value: string): void;
+  getTemp(name: InputOutputNames<NonNullable<T["temp"]>>): string;
+  setTemp(name: InputOutputNames<NonNullable<T["temp"]>>, value: string): void;
 
   // Generated codes
   getTsDocs(): string;

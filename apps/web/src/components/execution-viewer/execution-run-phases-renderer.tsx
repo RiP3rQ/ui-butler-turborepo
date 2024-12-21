@@ -1,6 +1,7 @@
 import type { ExecutionPhase, IExecutionPhaseStatus } from "@repo/types";
 import { Badge } from "@repo/ui/components/ui/badge";
 import { Button } from "@repo/ui/components/ui/button";
+import { type JSX } from "react";
 import ExecutionPhaseStatusBadge from "@/components/execution-viewer/execution-phase-status-badge";
 
 interface ExecutionRunPhasesRendererProps {
@@ -15,7 +16,7 @@ function ExecutionRunPhasesRenderer({
   selectedPhase,
   setSelectedPhase,
   isRunning = false,
-}: Readonly<ExecutionRunPhasesRendererProps>) {
+}: Readonly<ExecutionRunPhasesRendererProps>): JSX.Element {
   return (
     <div className="overflow-auto h-full px-2 py-4 space-y-2">
       {phases.map((phase, index) => (
@@ -28,7 +29,7 @@ function ExecutionRunPhasesRenderer({
             }
             setSelectedPhase(selectedPhase === phase.id ? null : phase.id);
           }}
-          variant={selectedPhase === phase?.id ? "default" : "ghost"}
+          variant={selectedPhase === phase.id ? "default" : "ghost"}
         >
           <div className="flex items-center gap-2">
             <Badge variant="outline">{index + 1}</Badge>

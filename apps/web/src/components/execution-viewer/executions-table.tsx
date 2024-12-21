@@ -1,15 +1,22 @@
-'use client';
+"use client";
 
-import { useQuery } from '@tanstack/react-query';
-import { CoinsIcon } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
-import { useRouter } from 'next/navigation';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@repo/ui/components/ui/table';
-import { Badge } from '@repo/ui/components/ui/badge';
-import type { IWorkflowExecutionStatus } from '@repo/types';
-import { dateToDurationString } from '@/lib/dates';
-import { getHistoricWorkflowExecutions } from '@/actions/workflows/get-historic-workflow-executions';
-import { ExecutionStatusIndicator } from '@/components/execution-viewer/execution-status-indicator';
+import { useQuery } from "@tanstack/react-query";
+import { CoinsIcon } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
+import { useRouter } from "next/navigation";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@repo/ui/components/ui/table";
+import { Badge } from "@repo/ui/components/ui/badge";
+import type { IWorkflowExecutionStatus } from "@repo/types";
+import { dateToDurationString } from "@/lib/dates";
+import { ExecutionStatusIndicator } from "@/components/execution-viewer/execution-status-indicator";
+import { getHistoricWorkflowExecutions } from "@/actions/workflows/server-actions";
 
 type InitialDataType = Awaited<
   ReturnType<typeof getHistoricWorkflowExecutions>
@@ -21,13 +28,13 @@ interface ExecutionsTableProps {
 }
 
 function ExecutionsTable({
-                           initialData,
-                           workflowId,
-                         }: Readonly<ExecutionsTableProps>) {
+  initialData,
+  workflowId,
+}: Readonly<ExecutionsTableProps>) {
   const router = useRouter();
 
   const query = useQuery({
-    queryKey: ['executions', workflowId],
+    queryKey: ["executions", workflowId],
     initialData,
     queryFn: () => getHistoricWorkflowExecutions({ workflowId }),
     refetchInterval: 10 * 1000, // 10 seconds
@@ -49,11 +56,11 @@ function ExecutionsTable({
         <TableBody className="gap-2 h-full overflow-auto">
           {query.data.map((execution, index) => {
             const duration = dateToDurationString(
-              execution.startedAt,
-              execution.completedAt,
+              new Date(execution.startedAt).toISOString(),
+              new Date(execution.completedAt).toISOString(),
             );
             const formatedStartedAt =
-              execution.startedAt &&
+              new Date(execution.startedAt).toISOString() &&
               formatDistanceToNow(execution.startedAt, { addSuffix: true });
 
             return (
@@ -61,7 +68,9 @@ function ExecutionsTable({
                 className="cursor-pointer"
                 key={execution.id + index}
                 onClick={() => {
-                  router.push(`/workflow/runs/${workflowId}/${execution.id}`);
+                  router.push(
+                    `/workflow/runs/${workflowId.toString()}/${String(execution.id)}`,
+                  );
                 }}
               >
                 <TableCell>

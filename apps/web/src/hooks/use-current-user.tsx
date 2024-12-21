@@ -2,7 +2,7 @@
 
 import { type BasicUser } from "@repo/types";
 import { useQuery } from "@tanstack/react-query";
-import getCurrentUser from "@/actions/user/get-current-user";
+import getCurrentUser from "@/actions/user/server-actions";
 
 export function useCurrentUser(): {
   user: BasicUser | undefined;

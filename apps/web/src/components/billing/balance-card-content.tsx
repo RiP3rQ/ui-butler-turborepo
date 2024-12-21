@@ -2,8 +2,9 @@
 import { CoinsIcon } from "lucide-react";
 import { type UserBasicCredits } from "@repo/types";
 import { useQuery } from "@tanstack/react-query";
+import { type JSX } from "react";
 import CountUpWrapper from "@/components/credits/count-up-wrapper";
-import { getAvailableCredits } from "@/actions/billing/get-available-credits";
+import { getAvailableCredits } from "@/actions/billing/server-actions";
 
 interface BalanceCardContentProps {
   initialData: UserBasicCredits;
