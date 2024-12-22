@@ -845,8 +845,6 @@ export const AUTH_SERVICE_NAME = "AuthService";
 
 export interface MessageFns<T, V extends string> {
   readonly $type: V;
-
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
-
   decode(input: BinaryReader | Uint8Array, length?: number): T;
 }

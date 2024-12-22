@@ -189,8 +189,6 @@ function longToNumber(int64: { toString(): string }): number {
 
 export interface MessageFns<T, V extends string> {
   readonly $type: V;
-
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
-
   decode(input: BinaryReader | Uint8Array, length?: number): T;
 }

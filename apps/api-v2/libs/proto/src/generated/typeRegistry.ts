@@ -8,9 +8,7 @@ import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 
 export interface MessageType<Message extends UnknownMessage = UnknownMessage> {
   $type: Message["$type"];
-
   encode(message: Message, writer?: BinaryWriter): BinaryWriter;
-
   decode(input: BinaryReader | Uint8Array, length?: number): Message;
 }
 

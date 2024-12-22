@@ -95,6 +95,43 @@ export interface ReceivedRefreshToken {
   refreshToken: string;
 }
 
+export interface Credential {
+  $type: "api.users.Credential";
+  id: number;
+  name: string;
+  userId: number;
+  createdAt?: Timestamp | undefined;
+  updatedAt?: Timestamp | undefined;
+}
+
+export interface CreateCredentialDto {
+  $type: "api.users.CreateCredentialDto";
+  name: string;
+  value: string;
+}
+
+export interface GetCredentialsRequest {
+  $type: "api.users.GetCredentialsRequest";
+  user?: User | undefined;
+}
+
+export interface GetCredentialsResponse {
+  $type: "api.users.GetCredentialsResponse";
+  credentials: Credential[];
+}
+
+export interface CreateCredentialRequest {
+  $type: "api.users.CreateCredentialRequest";
+  user?: User | undefined;
+  credential?: CreateCredentialDto | undefined;
+}
+
+export interface DeleteCredentialRequest {
+  $type: "api.users.DeleteCredentialRequest";
+  user?: User | undefined;
+  id: number;
+}
+
 export const API_USERS_PACKAGE_NAME = "api.users";
 
 function createBaseUser(): User {
@@ -918,6 +955,389 @@ export const ReceivedRefreshToken: MessageFns<
 
 messageTypeRegistry.set(ReceivedRefreshToken.$type, ReceivedRefreshToken);
 
+function createBaseCredential(): Credential {
+  return { $type: "api.users.Credential", id: 0, name: "", userId: 0 };
+}
+
+export const Credential: MessageFns<Credential, "api.users.Credential"> = {
+  $type: "api.users.Credential" as const,
+
+  encode(
+    message: Credential,
+    writer: BinaryWriter = new BinaryWriter(),
+  ): BinaryWriter {
+    if (message.id !== 0) {
+      writer.uint32(8).int32(message.id);
+    }
+    if (message.name !== "") {
+      writer.uint32(18).string(message.name);
+    }
+    if (message.userId !== 0) {
+      writer.uint32(24).int32(message.userId);
+    }
+    if (message.createdAt !== undefined) {
+      Timestamp.encode(message.createdAt, writer.uint32(34).fork()).join();
+    }
+    if (message.updatedAt !== undefined) {
+      Timestamp.encode(message.updatedAt, writer.uint32(42).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): Credential {
+    const reader =
+      input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseCredential();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.id = reader.int32();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.name = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.userId = reader.int32();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.createdAt = Timestamp.decode(reader, reader.uint32());
+          continue;
+        }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
+          message.updatedAt = Timestamp.decode(reader, reader.uint32());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+};
+
+messageTypeRegistry.set(Credential.$type, Credential);
+
+function createBaseCreateCredentialDto(): CreateCredentialDto {
+  return { $type: "api.users.CreateCredentialDto", name: "", value: "" };
+}
+
+export const CreateCredentialDto: MessageFns<
+  CreateCredentialDto,
+  "api.users.CreateCredentialDto"
+> = {
+  $type: "api.users.CreateCredentialDto" as const,
+
+  encode(
+    message: CreateCredentialDto,
+    writer: BinaryWriter = new BinaryWriter(),
+  ): BinaryWriter {
+    if (message.name !== "") {
+      writer.uint32(10).string(message.name);
+    }
+    if (message.value !== "") {
+      writer.uint32(18).string(message.value);
+    }
+    return writer;
+  },
+
+  decode(
+    input: BinaryReader | Uint8Array,
+    length?: number,
+  ): CreateCredentialDto {
+    const reader =
+      input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseCreateCredentialDto();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.name = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.value = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+};
+
+messageTypeRegistry.set(CreateCredentialDto.$type, CreateCredentialDto);
+
+function createBaseGetCredentialsRequest(): GetCredentialsRequest {
+  return { $type: "api.users.GetCredentialsRequest" };
+}
+
+export const GetCredentialsRequest: MessageFns<
+  GetCredentialsRequest,
+  "api.users.GetCredentialsRequest"
+> = {
+  $type: "api.users.GetCredentialsRequest" as const,
+
+  encode(
+    message: GetCredentialsRequest,
+    writer: BinaryWriter = new BinaryWriter(),
+  ): BinaryWriter {
+    if (message.user !== undefined) {
+      User.encode(message.user, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(
+    input: BinaryReader | Uint8Array,
+    length?: number,
+  ): GetCredentialsRequest {
+    const reader =
+      input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetCredentialsRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.user = User.decode(reader, reader.uint32());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+};
+
+messageTypeRegistry.set(GetCredentialsRequest.$type, GetCredentialsRequest);
+
+function createBaseGetCredentialsResponse(): GetCredentialsResponse {
+  return { $type: "api.users.GetCredentialsResponse", credentials: [] };
+}
+
+export const GetCredentialsResponse: MessageFns<
+  GetCredentialsResponse,
+  "api.users.GetCredentialsResponse"
+> = {
+  $type: "api.users.GetCredentialsResponse" as const,
+
+  encode(
+    message: GetCredentialsResponse,
+    writer: BinaryWriter = new BinaryWriter(),
+  ): BinaryWriter {
+    for (const v of message.credentials) {
+      Credential.encode(v!, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(
+    input: BinaryReader | Uint8Array,
+    length?: number,
+  ): GetCredentialsResponse {
+    const reader =
+      input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetCredentialsResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.credentials.push(Credential.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+};
+
+messageTypeRegistry.set(GetCredentialsResponse.$type, GetCredentialsResponse);
+
+function createBaseCreateCredentialRequest(): CreateCredentialRequest {
+  return { $type: "api.users.CreateCredentialRequest" };
+}
+
+export const CreateCredentialRequest: MessageFns<
+  CreateCredentialRequest,
+  "api.users.CreateCredentialRequest"
+> = {
+  $type: "api.users.CreateCredentialRequest" as const,
+
+  encode(
+    message: CreateCredentialRequest,
+    writer: BinaryWriter = new BinaryWriter(),
+  ): BinaryWriter {
+    if (message.user !== undefined) {
+      User.encode(message.user, writer.uint32(10).fork()).join();
+    }
+    if (message.credential !== undefined) {
+      CreateCredentialDto.encode(
+        message.credential,
+        writer.uint32(18).fork(),
+      ).join();
+    }
+    return writer;
+  },
+
+  decode(
+    input: BinaryReader | Uint8Array,
+    length?: number,
+  ): CreateCredentialRequest {
+    const reader =
+      input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseCreateCredentialRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.user = User.decode(reader, reader.uint32());
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.credential = CreateCredentialDto.decode(
+            reader,
+            reader.uint32(),
+          );
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+};
+
+messageTypeRegistry.set(CreateCredentialRequest.$type, CreateCredentialRequest);
+
+function createBaseDeleteCredentialRequest(): DeleteCredentialRequest {
+  return { $type: "api.users.DeleteCredentialRequest", id: 0 };
+}
+
+export const DeleteCredentialRequest: MessageFns<
+  DeleteCredentialRequest,
+  "api.users.DeleteCredentialRequest"
+> = {
+  $type: "api.users.DeleteCredentialRequest" as const,
+
+  encode(
+    message: DeleteCredentialRequest,
+    writer: BinaryWriter = new BinaryWriter(),
+  ): BinaryWriter {
+    if (message.user !== undefined) {
+      User.encode(message.user, writer.uint32(10).fork()).join();
+    }
+    if (message.id !== 0) {
+      writer.uint32(16).int32(message.id);
+    }
+    return writer;
+  },
+
+  decode(
+    input: BinaryReader | Uint8Array,
+    length?: number,
+  ): DeleteCredentialRequest {
+    const reader =
+      input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDeleteCredentialRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.user = User.decode(reader, reader.uint32());
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.id = reader.int32();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+};
+
+messageTypeRegistry.set(DeleteCredentialRequest.$type, DeleteCredentialRequest);
+
 /** Users specific messages */
 
 export interface UsersServiceClient {
@@ -936,6 +1356,16 @@ export interface UsersServiceClient {
   getUserByEmail(request: GetUserByEmailRequest): Observable<User>;
 
   updateUser(request: UpdateUserRequest): Observable<User>;
+
+  /** Credentials */
+
+  getUserCredentials(
+    request: GetCredentialsRequest,
+  ): Observable<GetCredentialsResponse>;
+
+  createCredential(request: CreateCredentialRequest): Observable<Credential>;
+
+  deleteCredential(request: DeleteCredentialRequest): Observable<Credential>;
 }
 
 /** Users specific messages */
@@ -972,6 +1402,23 @@ export interface UsersServiceController {
   updateUser(
     request: UpdateUserRequest,
   ): Promise<User> | Observable<User> | User;
+
+  /** Credentials */
+
+  getUserCredentials(
+    request: GetCredentialsRequest,
+  ):
+    | Promise<GetCredentialsResponse>
+    | Observable<GetCredentialsResponse>
+    | GetCredentialsResponse;
+
+  createCredential(
+    request: CreateCredentialRequest,
+  ): Promise<Credential> | Observable<Credential> | Credential;
+
+  deleteCredential(
+    request: DeleteCredentialRequest,
+  ): Promise<Credential> | Observable<Credential> | Credential;
 }
 
 export function UsersServiceControllerMethods() {
@@ -984,6 +1431,9 @@ export function UsersServiceControllerMethods() {
       "getOrCreateUser",
       "getUserByEmail",
       "updateUser",
+      "getUserCredentials",
+      "createCredential",
+      "deleteCredential",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(
@@ -1015,8 +1465,6 @@ export const USERS_SERVICE_NAME = "UsersService";
 
 export interface MessageFns<T, V extends string> {
   readonly $type: V;
-
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
-
   decode(input: BinaryReader | Uint8Array, length?: number): T;
 }
