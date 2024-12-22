@@ -1,52 +1,51 @@
 import { Controller } from '@nestjs/common';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AuthService } from './auth.service';
-import {
-  AuthResponse,
-  AuthServiceController,
-  AuthServiceControllerMethods,
-  LoginRequest,
-  RegisterRequest,
-  User,
-  VerifyRefreshTokenRequest,
-  VerifyUserRequest,
-} from '@app/proto';
+import { CreateUserDto, User } from '@app/common';
 
 @Controller()
-@AuthServiceControllerMethods() // This decorator adds gRPC method metadata
-export class AuthController implements AuthServiceController {
+export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  async login(request: LoginRequest): Promise<AuthResponse> {
-    return this.authService.login(request.user);
+  @MessagePattern('auth.login')
+  async login(@Payload() data: { user: User }) {
+    return this.authService.login(data.user);
   }
 
-  async register(request: RegisterRequest): Promise<AuthResponse> {
-    return this.authService.register(request);
+  @MessagePattern('auth.register')
+  async register(@Payload() data: { user: CreateUserDto }) {
+    return this.authService.register(data.user);
   }
 
-  async refreshToken(request: LoginRequest): Promise<AuthResponse> {
-    return this.authService.login(request.user);
+  @MessagePattern('auth.refresh')
+  async refreshToken(@Payload() data: { user: User }) {
+    return this.authService.login(data.user);
   }
 
-  async googleCallback(request: LoginRequest): Promise<AuthResponse> {
-    return this.authService.login(request.user, true);
+  @MessagePattern('auth.google.callback')
+  async googleCallback(@Payload() data: { user: User }) {
+    return this.authService.login(data.user, true);
   }
 
-  async githubCallback(request: LoginRequest): Promise<AuthResponse> {
-    return this.authService.login(request.user, true);
+  @MessagePattern('auth.github.callback')
+  async githubCallback(@Payload() data: { user: User }) {
+    return this.authService.login(data.user, true);
   }
 
-  async verifyRefreshToken(request: VerifyRefreshTokenRequest): Promise<User> {
+  @MessagePattern('auth.verify-refresh-token')
+  async verifyRefreshToken(data: { refreshToken: string; email: string }) {
     return this.authService.verifyUserRefreshToken(
-      request.refreshToken,
-      request.email,
+      data.refreshToken,
+      data.email,
     );
   }
 
-  async verifyUser(request: VerifyUserRequest): Promise<User> {
+  @MessagePattern('auth.verify-user')
+  async verifyUser(data: { email: string; password: string }) {
     try {
-      return await this.authService.verifyUser(request.email, request.password);
+      return await this.authService.verifyUser(data.email, data.password);
     } catch (error) {
+      // Log the error but don't expose internal details
       console.error('User verification failed:', error);
       return null;
     }

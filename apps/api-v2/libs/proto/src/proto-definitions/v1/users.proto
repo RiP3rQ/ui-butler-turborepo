@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package api.v1;
+
+import "D:/ui-butler-turbo/apps/api-v2/libs/proto/src/proto-definitions/v1/common.proto";
+
+service UsersService {
+    rpc GetUsers (Empty) returns (GetUsersResponse);
+    rpc GetCurrentUser (GetCurrentUserRequest) returns (GetCurrentUserResponse);
+    rpc CreateProfile (CreateProfileDto) returns (Profile);
+    rpc CreateUser (CreateUserDto) returns (User);
+    rpc GetOrCreateUser (CreateUserDto) returns (User);
+    rpc GetUserByEmail (GetUserByEmailRequest) returns (User);
+    rpc UpdateUser (UpdateUserRequest) returns (User);
+}
+
+message Empty {}
+
+message GetUsersResponse {
+    repeated User users = 1;
+}
+
+message GetCurrentUserRequest {
+    User user = 1;
+}
+
+message GetCurrentUserResponse {
+    int32 id = 1;
+    optional string username = 2;
+    string email = 3;
+    optional string avatar = 4;
+}
+
+message GetUserByEmailRequest {
+    string email = 1;
+}
+
+message UpdateUserRequest {
+    TokenPayload query = 1;
+    ReceivedRefreshToken data = 2;
+}
+
+message ReceivedRefreshToken {
+    string refreshToken = 1;
+}

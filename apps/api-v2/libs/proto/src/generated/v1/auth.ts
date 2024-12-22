@@ -2,46 +2,30 @@
 // versions:
 //   protoc-gen-ts_proto  v2.6.0
 //   protoc               v3.20.3
-// source: auth/v1/auth.proto
+// source: v1/auth.proto
 
 /* eslint-disable */
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
+import { Timestamp } from "../google/protobuf/timestamp";
+import { CreateUserDto, User } from "./common";
 
-export const protobufPackage = "auth.v1";
+export const protobufPackage = "api.v1";
 
 export interface LoginRequest {
-  user: User | undefined;
+  user?: User | undefined;
 }
 
 export interface RegisterRequest {
-  email: string;
-  password: string;
-  name: string;
+  user?: CreateUserDto | undefined;
 }
 
-export interface AuthResponse {
-  accessToken: string;
-  refreshToken: string;
-  expiresAccessToken: string;
-  expiresRefreshToken: string;
-  redirect?: boolean | undefined;
-  redirectUrl?: string | undefined;
+export interface RefreshTokenRequest {
+  user?: User | undefined;
 }
 
-export interface User {
-  id: number;
-  email: string;
-  name?: string | undefined;
-  password?: string | undefined;
-  refreshToken?: string | undefined;
-  createdAt?: string | undefined;
-  updatedAt?: string | undefined;
-}
-
-export interface TokenPayload {
-  userId: string;
-  email: string;
+export interface SocialCallbackRequest {
+  user?: User | undefined;
 }
 
 export interface VerifyRefreshTokenRequest {
@@ -54,20 +38,27 @@ export interface VerifyUserRequest {
   password: string;
 }
 
-export interface Empty {}
+export interface AuthResponse {
+  accessToken: string;
+  refreshToken: string;
+  expiresAccessToken?: Timestamp | undefined;
+  expiresRefreshToken?: Timestamp | undefined;
+  redirect?: boolean | undefined;
+  redirectUrl?: string | undefined;
+}
 
-export const AUTH_V1_PACKAGE_NAME = "auth.v1";
+export const API_V1_PACKAGE_NAME = "api.v1";
 
 export interface AuthServiceClient {
   login(request: LoginRequest): Observable<AuthResponse>;
 
   register(request: RegisterRequest): Observable<AuthResponse>;
 
-  refreshToken(request: LoginRequest): Observable<AuthResponse>;
+  refreshToken(request: RefreshTokenRequest): Observable<AuthResponse>;
 
-  googleCallback(request: LoginRequest): Observable<AuthResponse>;
+  googleCallback(request: SocialCallbackRequest): Observable<AuthResponse>;
 
-  githubCallback(request: LoginRequest): Observable<AuthResponse>;
+  githubCallback(request: SocialCallbackRequest): Observable<AuthResponse>;
 
   verifyRefreshToken(request: VerifyRefreshTokenRequest): Observable<User>;
 
@@ -84,15 +75,15 @@ export interface AuthServiceController {
   ): Promise<AuthResponse> | Observable<AuthResponse> | AuthResponse;
 
   refreshToken(
-    request: LoginRequest,
+    request: RefreshTokenRequest,
   ): Promise<AuthResponse> | Observable<AuthResponse> | AuthResponse;
 
   googleCallback(
-    request: LoginRequest,
+    request: SocialCallbackRequest,
   ): Promise<AuthResponse> | Observable<AuthResponse> | AuthResponse;
 
   githubCallback(
-    request: LoginRequest,
+    request: SocialCallbackRequest,
   ): Promise<AuthResponse> | Observable<AuthResponse> | AuthResponse;
 
   verifyRefreshToken(

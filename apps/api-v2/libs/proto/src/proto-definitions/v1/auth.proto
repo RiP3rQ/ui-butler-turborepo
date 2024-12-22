@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package api.v1;
+
+import "google/protobuf/timestamp.proto";
+import "v1/common.proto";
+
+service AuthService {
+    rpc Login (LoginRequest) returns (AuthResponse);
+    rpc Register (RegisterRequest) returns (AuthResponse);
+    rpc RefreshToken (RefreshTokenRequest) returns (AuthResponse);
+    rpc GoogleCallback (SocialCallbackRequest) returns (AuthResponse);
+    rpc GithubCallback (SocialCallbackRequest) returns (AuthResponse);
+    rpc VerifyRefreshToken (VerifyRefreshTokenRequest) returns (User);
+    rpc VerifyUser (VerifyUserRequest) returns (User);
+}
+
+message LoginRequest {
+    User user = 1;
+}
+
+message RegisterRequest {
+    CreateUserDto user = 1;
+}
+
+message RefreshTokenRequest {
+    User user = 1;
+}
+
+message SocialCallbackRequest {
+    User user = 1;
+}
+
+message VerifyRefreshTokenRequest {
+    string refreshToken = 1;
+    string email = 2;
+}
+
+message VerifyUserRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message AuthResponse {
+    string accessToken = 1;
+    string refreshToken = 2;
+    google.protobuf.Timestamp expiresAccessToken = 3;
+    google.protobuf.Timestamp expiresRefreshToken = 4;
+    optional bool redirect = 5;
+    optional string redirectUrl = 6;
+}
