@@ -1,13 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import {
+  and,
   DATABASE_CONNECTION,
+  desc,
   type DrizzleDatabase,
+  eq,
   NewUserCredential,
   userCredentials,
 } from '@app/database';
 import { CreateCredentialDto, symmetricEncrypt, User } from '@app/common';
-import { and, desc, eq } from 'drizzle-orm';
 import { UserCredentials } from '@repo/types';
 
 @Injectable()

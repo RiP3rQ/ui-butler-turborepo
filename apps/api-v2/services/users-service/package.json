@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@app/proto": "workspace:*",
     "@app/common": "workspace:*",
     "@app/database": "workspace:*",
     "@nestjs/common": "^10.4.15",

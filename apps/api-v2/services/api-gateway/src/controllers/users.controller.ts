@@ -1,41 +1,94 @@
-import { Body, Controller, Get, Inject, Post, UseGuards } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
-import { firstValueFrom } from 'rxjs';
+// users.controller.ts
 import {
-  CreateProfileDto,
-  CreateUserDto,
-  CurrentUser,
-  JwtAuthGuard,
-  type User,
-} from '@app/common';
+  Body,
+  Controller,
+  Get,
+  Inject,
+  OnModuleInit,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import { type ClientGrpc } from '@nestjs/microservices';
+import { CurrentUser, JwtAuthGuard } from '@app/common';
+import { UsersProto } from '@app/proto';
+import { handleGrpcError } from '../utils/grpc-error.util';
+
+interface UsersServiceClient {
+  getUsers(request: UsersProto.Empty): Promise<UsersProto.GetUsersResponse>;
+
+  getCurrentUser(
+    request: UsersProto.GetCurrentUserRequest,
+  ): Promise<UsersProto.GetCurrentUserResponse>;
+
+  createProfile(
+    request: UsersProto.CreateProfileDto,
+  ): Promise<UsersProto.Profile>;
+
+  createUser(request: UsersProto.CreateUserDto): Promise<UsersProto.User>;
+}
 
 @Controller('users')
-export class UsersController {
-  constructor(
-    @Inject('USERS_SERVICE') private readonly usersClient: ClientProxy,
-  ) {}
+export class UsersController implements OnModuleInit {
+  private usersService: UsersServiceClient;
+
+  constructor(@Inject('USERS_SERVICE') private readonly client: ClientGrpc) {}
+
+  onModuleInit() {
+    this.usersService =
+      this.client.getService<UsersServiceClient>('UsersService');
+  }
 
   @Get()
   @UseGuards(JwtAuthGuard)
   async getUsers() {
-    return firstValueFrom(this.usersClient.send('users.get.all', {}));
+    try {
+      const request: UsersProto.Empty = { $type: 'api.users.Empty' };
+      return this.usersService.getUsers(request);
+    } catch (e) {
+      handleGrpcError(e);
+    }
   }
 
   @Get('current-basic')
   @UseGuards(JwtAuthGuard)
-  async getCurrentUser(@CurrentUser() user: User) {
-    return firstValueFrom(this.usersClient.send('users.get.current', { user }));
+  async getCurrentUser(@CurrentUser() user: UsersProto.User) {
+    try {
+      const request: UsersProto.GetCurrentUserRequest = {
+        $type: 'api.users.GetCurrentUserRequest',
+        user: {
+          ...user,
+          $type: 'api.users.User',
+        },
+      };
+      return this.usersService.getCurrentUser(request);
+    } catch (e) {
+      handleGrpcError(e);
+    }
   }
 
   @Post('profile')
-  async createProfile(@Body() createProfileDto: CreateProfileDto) {
-    return firstValueFrom(
-      this.usersClient.send('users.create.profile', createProfileDto),
-    );
+  async createProfile(@Body() createProfileDto: UsersProto.CreateProfileDto) {
+    try {
+      const request: UsersProto.CreateProfileDto = {
+        $type: 'api.users.CreateProfileDto',
+        ...createProfileDto,
+      };
+      return this.usersService.createProfile(request);
+    } catch (e) {
+      handleGrpcError(e);
+    }
   }
 
   @Post()
-  async createUser(@Body() createUserDto: CreateUserDto) {
-    return firstValueFrom(this.usersClient.send('users.create', createUserDto));
+  async createUser(@Body() createUserDto: UsersProto.CreateUserDto) {
+    try {
+      const request: UsersProto.CreateUserDto = {
+        $type: 'api.users.CreateUserDto',
+        ...createUserDto,
+      };
+      return this.usersService.createUser(request);
+    } catch (e) {
+      handleGrpcError(e);
+    }
   }
 }

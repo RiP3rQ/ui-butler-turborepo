@@ -1,13 +1,7 @@
 import { Controller, Logger } from '@nestjs/common';
+import { GrpcMethod } from '@nestjs/microservices';
 import { UsersService } from './users.service';
-import { MessagePattern } from '@nestjs/microservices';
-import {
-  CreateProfileDto,
-  CreateUserDto,
-  ReceivedRefreshToken,
-  TokenPayload,
-  User,
-} from '@app/common';
+import { UsersProto } from '@app/proto';
 
 @Controller()
 export class UsersController {
@@ -15,47 +9,91 @@ export class UsersController {
 
   constructor(private readonly usersService: UsersService) {}
 
-  @MessagePattern('users.get.all')
-  async getUsers() {
+  @GrpcMethod('UsersService', 'GetUsers')
+  async getUsers(
+    request: UsersProto.Empty,
+  ): Promise<UsersProto.GetUsersResponse> {
     this.logger.debug('Getting all users');
-    return this.usersService.getUsers();
+    const users = await this.usersService.getUsers();
+    return {
+      $type: 'api.users.GetUsersResponse',
+      users: users.map((user) => ({ ...user, $type: 'api.users.User' })),
+    };
   }
 
-  @MessagePattern('users.get.current')
-  async getCurrentUser(data: { user: User }) {
-    this.logger.debug(`Getting current user for: ${data.user.email}`);
-    return this.usersService.getCurrentUserBasic(data.user);
+  @GrpcMethod('UsersService', 'GetCurrentUser')
+  async getCurrentUser(
+    request: UsersProto.GetCurrentUserRequest,
+  ): Promise<UsersProto.GetCurrentUserResponse> {
+    this.logger.debug(`Getting current user for: ${request.user.email}`);
+    const userData = await this.usersService.getCurrentUserBasic(request.user);
+    return {
+      $type: 'api.users.GetCurrentUserResponse',
+      ...userData,
+    };
   }
 
-  @MessagePattern('users.create.profile')
-  async createProfile(createProfileDto: CreateProfileDto) {
+  @GrpcMethod('UsersService', 'CreateProfile')
+  async createProfile(
+    request: UsersProto.CreateProfileDto,
+  ): Promise<UsersProto.Profile> {
     this.logger.debug('Creating profile');
-    return this.usersService.createProfile(createProfileDto);
+    const profile = await this.usersService.createProfile(request);
+    return {
+      id: profile.id,
+      ...request,
+      $type: 'api.users.Profile',
+    };
   }
 
-  @MessagePattern('users.create')
-  async createUser(createUserDto: CreateUserDto) {
-    this.logger.debug(`Creating user with email: ${createUserDto.email}`);
-    return this.usersService.createUser(createUserDto);
+  @GrpcMethod('UsersService', 'CreateUser')
+  async createUser(
+    request: UsersProto.CreateUserDto,
+  ): Promise<UsersProto.User> {
+    this.logger.debug(`Creating user with email: ${request.email}`);
+    const user = await this.usersService.createUser(request);
+    return {
+      ...user,
+      $type: 'api.users.User',
+    };
   }
 
-  @MessagePattern('users.get.or.create')
-  async getOrCreateUser(createUserDto: CreateUserDto) {
-    this.logger.debug(
-      `Getting or creating user with email: ${createUserDto.email}`,
+  @GrpcMethod('UsersService', 'GetOrCreateUser')
+  async getOrCreateUser(
+    request: UsersProto.CreateUserDto,
+  ): Promise<UsersProto.User> {
+    this.logger.debug(`Getting or creating user with email: ${request.email}`);
+    const user = await this.usersService.getOrCreateUser(request);
+    return {
+      ...user,
+      $type: 'api.users.User',
+    };
+  }
+
+  @GrpcMethod('UsersService', 'GetUserByEmail')
+  async getUserByEmail(
+    request: UsersProto.GetUserByEmailRequest,
+  ): Promise<UsersProto.User> {
+    this.logger.debug(`Getting user by email: ${request.email}`);
+    const user = await this.usersService.getUser({ email: request.email });
+    return {
+      ...user,
+      $type: 'api.users.User',
+    };
+  }
+
+  @GrpcMethod('UsersService', 'UpdateUser')
+  async updateUser(
+    request: UsersProto.UpdateUserRequest,
+  ): Promise<UsersProto.User> {
+    this.logger.debug(`Updating user: ${request.query.email}`);
+    const [updatedUser] = await this.usersService.updateUser(
+      request.query,
+      request.data,
     );
-    return this.usersService.getOrCreateUser(createUserDto);
-  }
-
-  @MessagePattern('users.get.by.email')
-  async getUserByEmail(payload: { email: string }) {
-    this.logger.debug(`Getting user by email: ${payload.email}`);
-    return this.usersService.getUser(payload);
-  }
-
-  @MessagePattern('users.update')
-  async updateUser(data: { query: TokenPayload; data: ReceivedRefreshToken }) {
-    this.logger.debug(`Updating user: ${data.query.email}`);
-    return this.usersService.updateUser(data.query, data.data);
+    return {
+      ...updatedUser,
+      $type: 'api.users.User',
+    };
   }
 }

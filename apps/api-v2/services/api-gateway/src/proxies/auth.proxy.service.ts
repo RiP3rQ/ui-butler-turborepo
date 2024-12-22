@@ -1,14 +1,8 @@
 // auth.proxy.service.ts
-import {
-  HttpException,
-  HttpStatus,
-  Inject,
-  Injectable,
-  OnModuleInit,
-} from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
 import { AuthProto } from '@app/proto';
-import { GRPC_TO_HTTP_STATUS } from '../constants/grpc-error.constants';
+import { handleGrpcError } from '../utils/grpc-error.util';
 
 interface AuthServiceClient {
   login(request: AuthProto.LoginRequest): Promise<AuthProto.AuthResponse>;
@@ -50,7 +44,7 @@ export class AuthProxyService implements OnModuleInit {
     try {
       return await this.authService.login(request);
     } catch (error) {
-      this.handleGrpcError(error);
+      handleGrpcError(error);
     }
   }
 
@@ -60,7 +54,7 @@ export class AuthProxyService implements OnModuleInit {
     try {
       return await this.authService.register(request);
     } catch (error) {
-      this.handleGrpcError(error);
+      handleGrpcError(error);
     }
   }
 
@@ -70,7 +64,7 @@ export class AuthProxyService implements OnModuleInit {
     try {
       return await this.authService.refreshToken(request);
     } catch (error) {
-      this.handleGrpcError(error);
+      handleGrpcError(error);
     }
   }
 
@@ -80,7 +74,7 @@ export class AuthProxyService implements OnModuleInit {
     try {
       return await this.authService.googleCallback(request);
     } catch (error) {
-      this.handleGrpcError(error);
+      handleGrpcError(error);
     }
   }
 
@@ -90,7 +84,7 @@ export class AuthProxyService implements OnModuleInit {
     try {
       return await this.authService.githubCallback(request);
     } catch (error) {
-      this.handleGrpcError(error);
+      handleGrpcError(error);
     }
   }
 
@@ -100,7 +94,7 @@ export class AuthProxyService implements OnModuleInit {
     try {
       return await this.authService.verifyRefreshToken(request);
     } catch (error) {
-      this.handleGrpcError(error);
+      handleGrpcError(error);
     }
   }
 
@@ -110,32 +104,7 @@ export class AuthProxyService implements OnModuleInit {
     try {
       return await this.authService.verifyUser(request);
     } catch (error) {
-      this.handleGrpcError(error);
+      handleGrpcError(error);
     }
-  }
-
-  private handleGrpcError(error: any): never {
-    const status =
-      GRPC_TO_HTTP_STATUS[error.code] || HttpStatus.INTERNAL_SERVER_ERROR;
-
-    // Log the error
-    console.error('gRPC Auth Service Error:', {
-      code: error.code,
-      status,
-      message: error.message,
-      details: error.details,
-      metadata: error.metadata,
-      stack: error.stack,
-    });
-
-    // Create an appropriate HTTP exception
-    throw new HttpException(
-      {
-        status,
-        error: error.message,
-        details: error.details,
-      },
-      status,
-    );
   }
 }

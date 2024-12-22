@@ -26,7 +26,7 @@ import {
   LocalStrategy,
 } from '@app/common';
 import { AnalyticsController } from './controllers/analytics.controller';
-import { join } from 'path';
+import { createGrpcOptions } from './config/grpc.config';
 
 @Module({
   imports: [
@@ -61,6 +61,31 @@ import { join } from 'path';
       }),
     }),
     ClientsModule.registerAsync([
+      // AUTH
+      {
+        name: 'AUTH_SERVICE',
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) =>
+          createGrpcOptions(
+            configService.get('AUTH_SERVICE_HOST'),
+            configService.get('AUTH_SERVICE_PORT'),
+            'api.auth',
+            'auth',
+          ),
+        inject: [ConfigService],
+      },
+      {
+        name: 'USERS_SERVICE',
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) =>
+          createGrpcOptions(
+            configService.get('USERS_SERVICE_HOST'),
+            configService.get('USERS_SERVICE_PORT'),
+            'api.users',
+            'users',
+          ),
+        inject: [ConfigService],
+      },
       {
         name: 'ANALYTICS_SERVICE',
         imports: [ConfigModule],
@@ -74,31 +99,6 @@ import { join } from 'path';
         inject: [ConfigService],
       },
       {
-        name: 'AUTH_SERVICE',
-        imports: [ConfigModule],
-        useFactory: (configService: ConfigService) => ({
-          transport: Transport.GRPC,
-          options: {
-            package: 'api.auth',
-            protoPath: join(
-              __dirname,
-              '../../../libs/proto/src/proto/auth.proto',
-            ),
-            url: `${configService.get('AUTH_SERVICE_HOST')}:${configService.get('AUTH_SERVICE_PORT')}`,
-            loader: {
-              keepCase: true,
-              longs: String,
-              enums: String,
-              defaults: true,
-              oneofs: true,
-            },
-            maxReceiveMessageLength: 1024 * 1024 * 10, // 10MB
-            maxSendMessageLength: 1024 * 1024 * 10,
-          },
-        }),
-        inject: [ConfigService],
-      },
-      {
         name: 'WORKFLOWS_SERVICE',
         imports: [ConfigModule],
         useFactory: (configService: ConfigService) => ({
@@ -106,18 +106,6 @@ import { join } from 'path';
           options: {
             host: configService.get('WORKFLOW_SERVICE_HOST', 'localhost'),
             port: configService.get('WORKFLOW_SERVICE_PORT', 3342),
-          },
-        }),
-        inject: [ConfigService],
-      },
-      {
-        name: 'USERS_SERVICE',
-        imports: [ConfigModule],
-        useFactory: (configService: ConfigService) => ({
-          transport: Transport.TCP,
-          options: {
-            host: configService.get('USERS_SERVICE_HOST', 'localhost'),
-            port: configService.get('USERS_SERVICE_PORT', 3341),
           },
         }),
         inject: [ConfigService],

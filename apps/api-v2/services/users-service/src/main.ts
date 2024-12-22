@@ -1,20 +1,20 @@
 import { NestFactory } from '@nestjs/core';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { Transport } from '@nestjs/microservices';
+import { join } from 'path';
 import { UsersModule } from './users/users.module';
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-    UsersModule,
-    {
-      transport: Transport.TCP, // or Transport.REDIS, Transport.KAFKA, etc.
-      options: {
-        host: 'localhost',
-        port: 3341, // different port for each service
-      },
+  const app = await NestFactory.createMicroservice(UsersModule, {
+    transport: Transport.GRPC,
+    options: {
+      package: 'api.users',
+      protoPath: join(__dirname, '../../../libs/proto/src/proto/users.proto'),
+      url: `${process.env.USERS_SERVICE_HOST || 'localhost'}:${process.env.USERS_SERVICE_PORT || '3341'}`,
     },
-  );
+  });
+
   await app.listen();
-  console.log('Users Microservice is listening');
+  console.log('Users Microservice is listening on gRPC');
 }
 
 bootstrap();
