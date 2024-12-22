@@ -1,7 +1,7 @@
 // auth.service.ts
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { JwtService, JwtSignOptions } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcryptjs';
 import { type ClientGrpc, RpcException } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
@@ -70,18 +70,21 @@ export class AuthService {
       this.configService.getOrThrow('JWT_REFRESH_TOKEN_EXPIRATION_MS'),
     );
 
-    const accessTokenOptions: JwtSignOptions = {
-      secret: this.configService.getOrThrow('JWT_ACCESS_TOKEN_SECRET'),
-      expiresIn: Math.floor(accessTokenExpiration / 1000),
-    };
+    const accessToken = this.jwtService.sign(
+      { userId: payload.userId, email: payload.email },
+      {
+        secret: this.configService.getOrThrow('JWT_ACCESS_TOKEN_SECRET'),
+        expiresIn: Math.floor(accessTokenExpiration / 1000),
+      },
+    );
 
-    const refreshTokenOptions: JwtSignOptions = {
-      secret: this.configService.getOrThrow('JWT_REFRESH_TOKEN_SECRET'),
-      expiresIn: Math.floor(refreshTokenExpiration / 1000),
-    };
-
-    const accessToken = this.jwtService.sign(payload, accessTokenOptions);
-    const refreshToken = this.jwtService.sign(payload, refreshTokenOptions);
+    const refreshToken = this.jwtService.sign(
+      { userId: payload.userId, email: payload.email },
+      {
+        secret: this.configService.getOrThrow('JWT_REFRESH_TOKEN_SECRET'),
+        expiresIn: Math.floor(refreshTokenExpiration / 1000),
+      },
+    );
 
     return { accessToken, refreshToken };
   }
@@ -225,17 +228,7 @@ export class AuthService {
 
   async refreshToken(user: AuthProto.User): Promise<AuthProto.AuthResponse> {
     try {
-      if (!user || !user.id || !user.email) {
-        throw new RpcException({
-          code: status.INVALID_ARGUMENT,
-          message: 'Invalid user data provided for refresh token',
-        });
-      }
-
-      console.log('Refreshing token for user:', {
-        email: user.email,
-        id: user.id,
-      });
+      console.log('Refreshing tokens for user:', { email: user.email });
 
       const tokenPayload: AuthProto.TokenPayload = {
         $type: 'api.auth.TokenPayload',
@@ -248,8 +241,23 @@ export class AuthService {
       const { expiresAccessToken, expiresRefreshToken } =
         this.getTokenExpirations();
 
-      const refreshTokenData = await hash(refreshToken, 10);
-      await this.updateUserRefreshToken(tokenPayload, refreshTokenData);
+      const refreshTokenHash = await hash(refreshToken, 10);
+
+      // Update user's refresh token
+      const updateRequest: UsersProto.UpdateUserRequest = {
+        $type: 'api.users.UpdateUserRequest',
+        query: {
+          $type: 'api.users.TokenPayload',
+          userId: user.id.toString(),
+          email: user.email,
+        },
+        data: {
+          $type: 'api.users.ReceivedRefreshToken',
+          refreshToken: refreshTokenHash,
+        },
+      };
+
+      await firstValueFrom(this.usersService.updateUser(updateRequest));
 
       return {
         $type: 'api.auth.AuthResponse',
@@ -259,20 +267,10 @@ export class AuthService {
         expiresRefreshToken,
       };
     } catch (error) {
-      const err = error as GrpcError;
-      console.error('Error in refreshToken:', {
-        err,
-        user,
-        stack: err.stack,
-      });
-
-      if (error instanceof RpcException) {
-        throw error;
-      }
-
+      console.error('Error refreshing token:', error);
       throw new RpcException({
         code: status.INTERNAL,
-        message: 'Token refresh failed',
+        message: 'Failed to refresh token',
         details: error instanceof Error ? error.message : 'Unknown error',
       });
     }
@@ -342,6 +340,8 @@ export class AuthService {
     email: string,
   ): Promise<AuthProto.User> {
     try {
+      console.log('Verifying refresh token for:', { email });
+
       const request: UsersProto.GetUserByEmailRequest = {
         $type: 'api.users.GetUserByEmailRequest',
         email,
@@ -352,21 +352,35 @@ export class AuthService {
       );
 
       if (!user?.refreshToken || !refreshToken) {
-        throw new UnauthorizedException('Invalid refresh token');
+        console.log('No refresh token found for user:', { email });
+        throw new RpcException({
+          code: status.UNAUTHENTICATED,
+          message: 'Invalid refresh token',
+        });
       }
 
-      const authenticated = await compare(refreshToken, user.refreshToken);
-      if (!authenticated) {
-        throw new UnauthorizedException();
+      const isValid = await compare(refreshToken, user.refreshToken);
+      if (!isValid) {
+        console.log('Invalid refresh token for user:', { email });
+        throw new RpcException({
+          code: status.UNAUTHENTICATED,
+          message: 'Invalid refresh token',
+        });
       }
 
       return {
-        ...user,
         $type: 'api.auth.User',
+        id: user.id,
+        email: user.email,
+        username: user.username,
       };
-    } catch (err) {
-      console.log(err);
-      throw new UnauthorizedException('Refresh token is not valid.');
+    } catch (error) {
+      console.error('Error verifying refresh token:', error);
+      throw new RpcException({
+        code: status.UNAUTHENTICATED,
+        message: 'Refresh token is not valid',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      });
     }
   }
 }

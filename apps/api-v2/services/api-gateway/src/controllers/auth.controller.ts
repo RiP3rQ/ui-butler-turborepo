@@ -84,24 +84,21 @@ export class AuthController {
     @CurrentUser() user: AuthProto.User,
     @Res({ passthrough: true }) response: Response,
   ) {
-    console.log('Refresh token request for user:', user);
-
-    if (!user || !user.id || !user.email) {
-      throw new UnauthorizedException('Invalid user data');
-    }
-
-    const refreshRequest: AuthProto.RefreshTokenRequest = {
-      $type: 'api.auth.RefreshTokenRequest',
-      user: {
-        $type: 'api.auth.User',
-        id: user.id,
-        email: user.email,
-        username: user.username,
-      },
-    };
-
     try {
+      console.log('Refresh token request for user:', { email: user.email });
+
+      const refreshRequest: AuthProto.RefreshTokenRequest = {
+        $type: 'api.auth.RefreshTokenRequest',
+        user: {
+          $type: 'api.auth.User',
+          id: user.id,
+          email: user.email,
+          username: user.username,
+        },
+      };
+
       const result = await this.authProxyService.refreshToken(refreshRequest);
+
       if (!result) {
         throw new UnauthorizedException('Token refresh failed');
       }

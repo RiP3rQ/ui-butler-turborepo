@@ -1,4 +1,4 @@
-// jwt-refresh.strategy.ts
+// libs/common/src/strategies/jwt-refresh.strategy.ts
 import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PassportStrategy } from "@nestjs/passport";
@@ -35,9 +35,10 @@ export class JwtRefreshStrategy extends PassportStrategy(
 
   async validate(request: Request, payload: any) {
     try {
-      if (!payload?.email) {
-        throw new UnauthorizedException("Invalid token payload");
-      }
+      console.log("Validating refresh token:", {
+        email: payload.email,
+        refreshToken: request.cookies?.Refresh?.substring(0, 20) + "...",
+      });
 
       const verifyRequest: AuthProto.VerifyRefreshTokenRequest = {
         $type: "api.auth.VerifyRefreshTokenRequest",
@@ -45,9 +46,6 @@ export class JwtRefreshStrategy extends PassportStrategy(
         email: payload.email,
       };
 
-      console.log("Verifying refresh token:", { email: payload.email });
-
-      // Convert Observable to Promise
       const user = await firstValueFrom(
         this.authService.verifyRefreshToken(verifyRequest),
       );
@@ -56,12 +54,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
         throw new UnauthorizedException("Invalid refresh token");
       }
 
-      return {
-        $type: "api.auth.User",
-        id: user.id,
-        email: user.email,
-        username: user.username,
-      };
+      return user;
     } catch (error) {
       console.error("Refresh token validation error:", error);
       throw new UnauthorizedException("Invalid refresh token");
