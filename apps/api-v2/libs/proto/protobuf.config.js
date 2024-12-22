@@ -1,5 +1,5 @@
 module.exports = {
-  includeDirs: ["libs/proto/src/proto-definitions"],
+  includeDirs: ["libs/proto/src/proto"],
   outDir: "libs/proto/src/generated",
   options: {
     useOptionals: true,

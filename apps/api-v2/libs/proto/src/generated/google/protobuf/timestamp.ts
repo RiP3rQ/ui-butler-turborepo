@@ -5,6 +5,8 @@
 // source: google/protobuf/timestamp.proto
 
 /* eslint-disable */
+import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
+import { messageTypeRegistry } from "../../typeRegistry";
 
 export const protobufPackage = "google.protobuf";
 
@@ -100,6 +102,7 @@ export const protobufPackage = "google.protobuf";
  * ) to obtain a formatter capable of generating timestamps in this format.
  */
 export interface Timestamp {
+  $type: "google.protobuf.Timestamp";
   /**
    * Represents seconds of UTC time since Unix epoch
    * 1970-01-01T00:00:00Z. Must be from 0001-01-01T00:00:00Z to
@@ -116,3 +119,78 @@ export interface Timestamp {
 }
 
 export const GOOGLE_PROTOBUF_PACKAGE_NAME = "google.protobuf";
+
+function createBaseTimestamp(): Timestamp {
+  return { $type: "google.protobuf.Timestamp", seconds: 0, nanos: 0 };
+}
+
+export const Timestamp: MessageFns<Timestamp, "google.protobuf.Timestamp"> = {
+  $type: "google.protobuf.Timestamp" as const,
+
+  encode(
+    message: Timestamp,
+    writer: BinaryWriter = new BinaryWriter(),
+  ): BinaryWriter {
+    if (message.seconds !== 0) {
+      writer.uint32(8).int64(message.seconds);
+    }
+    if (message.nanos !== 0) {
+      writer.uint32(16).int32(message.nanos);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): Timestamp {
+    const reader =
+      input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseTimestamp();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.seconds = longToNumber(reader.int64());
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.nanos = reader.int32();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+};
+
+messageTypeRegistry.set(Timestamp.$type, Timestamp);
+
+function longToNumber(int64: { toString(): string }): number {
+  const num = globalThis.Number(int64.toString());
+  if (num > globalThis.Number.MAX_SAFE_INTEGER) {
+    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
+  }
+  if (num < globalThis.Number.MIN_SAFE_INTEGER) {
+    throw new globalThis.Error("Value is smaller than Number.MIN_SAFE_INTEGER");
+  }
+  return num;
+}
+
+export interface MessageFns<T, V extends string> {
+  readonly $type: V;
+
+  encode(message: T, writer?: BinaryWriter): BinaryWriter;
+
+  decode(input: BinaryReader | Uint8Array, length?: number): T;
+}

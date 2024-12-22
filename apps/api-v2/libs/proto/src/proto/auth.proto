@@ -1,10 +1,32 @@
 syntax = "proto3";
 
-package api.v1;
+package api.auth;
 
 import "google/protobuf/timestamp.proto";
-import "v1/common.proto";
 
+// Common messages for Auth
+message User {
+    int32 id = 1;
+    string email = 2;
+    string username = 3;
+    optional string password = 4;
+    optional string refreshToken = 5;
+    google.protobuf.Timestamp createdAt = 6;
+    google.protobuf.Timestamp updatedAt = 7;
+}
+
+message CreateUserDto {
+    string email = 1;
+    string password = 2;
+    optional string username = 3;
+}
+
+message TokenPayload {
+    string userId = 1;
+    string email = 2;
+}
+
+// Auth specific messages
 service AuthService {
     rpc Login (LoginRequest) returns (AuthResponse);
     rpc Register (RegisterRequest) returns (AuthResponse);

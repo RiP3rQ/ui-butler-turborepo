@@ -26,6 +26,7 @@ import {
   LocalStrategy,
 } from '@app/common';
 import { AnalyticsController } from './controllers/analytics.controller';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -76,10 +77,23 @@ import { AnalyticsController } from './controllers/analytics.controller';
         name: 'AUTH_SERVICE',
         imports: [ConfigModule],
         useFactory: (configService: ConfigService) => ({
-          transport: Transport.TCP,
+          transport: Transport.GRPC,
           options: {
-            host: configService.get('AUTH_SERVICE_HOST'),
-            port: configService.get('AUTH_SERVICE_PORT'),
+            package: 'api.auth',
+            protoPath: join(
+              __dirname,
+              '../../../libs/proto/src/proto/auth.proto',
+            ),
+            url: `${configService.get('AUTH_SERVICE_HOST')}:${configService.get('AUTH_SERVICE_PORT')}`,
+            loader: {
+              keepCase: true,
+              longs: String,
+              enums: String,
+              defaults: true,
+              oneofs: true,
+            },
+            maxReceiveMessageLength: 1024 * 1024 * 10, // 10MB
+            maxSendMessageLength: 1024 * 1024 * 10,
           },
         }),
         inject: [ConfigService],

@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { ENV_VARS, GRPC_CONFIG } from './constants';
-import { AUTH_V1_PACKAGE_NAME } from '@app/proto';
+import { JwtModule } from '@nestjs/jwt';
 import { join } from 'path';
 import Joi from 'joi';
-import { JwtModule } from '@nestjs/jwt';
-import { AuthController } from './auth.controller.ts';
-import { AuthService } from './auth.service.ts';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
+import { ENV_VARS } from './constants';
 
 @Module({
   imports: [
@@ -31,26 +30,21 @@ import { AuthService } from './auth.service.ts';
     ClientsModule.registerAsync([
       {
         name: 'USERS_SERVICE',
-        imports: [ConfigModule],
         useFactory: (configService: ConfigService) => ({
           transport: Transport.GRPC,
           options: {
-            package: AUTH_V1_PACKAGE_NAME,
+            url: `${configService.get(ENV_VARS.USERS_SERVICE.HOST)}:${configService.get(ENV_VARS.USERS_SERVICE.PORT)}`,
+            package: 'api.users',
             protoPath: join(
               __dirname,
-              '../../../libs/proto/src/auth/v1/auth.proto',
+              '../../../libs/proto/src/proto/users.proto',
             ),
-            url: `${configService.getOrThrow(ENV_VARS.USERS_SERVICE.HOST)}:${configService.getOrThrow(ENV_VARS.USERS_SERVICE.PORT)}`,
-            loader: GRPC_CONFIG.LOADER_OPTIONS,
-            maxReceiveMessageLength: GRPC_CONFIG.MAX_MESSAGE_SIZE,
-            maxSendMessageLength: GRPC_CONFIG.MAX_MESSAGE_SIZE,
           },
         }),
         inject: [ConfigService],
       },
     ]),
     JwtModule.registerAsync({
-      imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         secret: configService.getOrThrow('JWT_ACCESS_TOKEN_SECRET'),
         signOptions: {
@@ -63,20 +57,6 @@ import { AuthService } from './auth.service.ts';
     }),
   ],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    {
-      provide: 'GRPC_CONFIG',
-      useFactory: (configService: ConfigService) => ({
-        url: `${configService.get('AUTH_SERVICE_HOST')}:${configService.get('AUTH_SERVICE_PORT')}`,
-        package: AUTH_V1_PACKAGE_NAME,
-        protoPath: join(
-          __dirname,
-          '../../../libs/proto/src/auth/v1/auth.proto',
-        ),
-      }),
-      inject: [ConfigService],
-    },
-  ],
+  providers: [AuthService],
 })
 export class AuthModule {}

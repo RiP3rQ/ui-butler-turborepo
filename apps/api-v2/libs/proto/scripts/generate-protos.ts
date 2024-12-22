@@ -7,9 +7,8 @@ import * as fs from "fs";
 const execAsync = promisify(exec);
 
 async function generateProtos() {
-  const protoDir = path.join(__dirname, "../src/proto-definitions/v1");
+  const protoDir = path.join(__dirname, "../src/proto");
   const outDir = path.join(__dirname, "../src/generated");
-  const protoPath = path.join(__dirname, "../src/proto-definitions");
 
   // Create output directory if it doesn't exist
   if (!fs.existsSync(outDir)) {
@@ -27,13 +26,30 @@ async function generateProtos() {
     process.exit(1);
   }
 
-  const command = [
+  // Use protoc from node_modules
+  const protocPath = path.join(
+    process.cwd(),
+    "node_modules",
     "protoc",
-    `--plugin=protoc-gen-ts_proto=.\\node_modules\\.bin\\protoc-gen-ts_proto.cmd`,
-    `--ts_proto_out=${outDir}`,
-    "--ts_proto_opt=nestJs=true,useOptionals=true",
-    `--proto_path=${protoPath}`,
-    protoFiles.join(" "),
+    "protoc",
+    "bin",
+    "protoc.exe",
+  );
+
+  const tsProtoPath = path.join(
+    process.cwd(),
+    "node_modules",
+    ".bin",
+    "protoc-gen-ts_proto.cmd",
+  );
+
+  const command = [
+    `"${protocPath}"`,
+    `--plugin=protoc-gen-ts_proto="${tsProtoPath}"`,
+    `--ts_proto_out="${outDir}"`,
+    "--ts_proto_opt=nestJs=true,useOptionals=true,outputServices=grpc-nest,outputClientImpl=false,outputTypeRegistry=true",
+    `--proto_path="${protoDir}"`,
+    ...protoFiles.map((file) => `"${file}"`),
   ].join(" ");
 
   try {
