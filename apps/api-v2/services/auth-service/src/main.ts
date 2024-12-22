@@ -1,24 +1,40 @@
 import { NestFactory } from '@nestjs/core';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { Transport } from '@nestjs/microservices';
 import { AuthModule } from './auth.module';
+import { AUTH_V1_PACKAGE_NAME } from '@app/proto';
+import { join } from 'path';
+import { ConfigService } from '@nestjs/config';
 
 export async function bootstrap() {
   try {
-    const port = parseInt(process.env.AUTH_SERVICE_PORT || '3340');
-    const host = process.env.AUTH_SERVICE_HOST || 'localhost';
-
-    const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-      AuthModule,
-      {
-        transport: Transport.TCP,
-        options: {
-          host,
-          port: isNaN(port) ? 3340 : port,
-        },
+    const app = await NestFactory.createMicroservice(AuthModule, {
+      transport: Transport.GRPC,
+      options: {
+        package: AUTH_V1_PACKAGE_NAME,
+        protoPath: join(
+          __dirname,
+          '../../../libs/proto/src/auth/v1/auth.proto',
+        ),
+        url: `${process.env.AUTH_SERVICE_HOST || 'localhost'}:${process.env.AUTH_SERVICE_PORT || '5000'}`,
       },
-    );
+    });
+
+    const configService = app.get(ConfigService);
+
+    // Validate required environment variables
+    const requiredEnvVars = [
+      'JWT_ACCESS_TOKEN_SECRET',
+      'JWT_REFRESH_TOKEN_SECRET',
+      'JWT_ACCESS_TOKEN_EXPIRATION_MS',
+      'JWT_REFRESH_TOKEN_EXPIRATION_MS',
+    ];
+
+    for (const envVar of requiredEnvVars) {
+      configService.getOrThrow(envVar);
+    }
+
     await app.listen();
-    console.log('Auth Microservice is listening');
+    console.log('Auth Microservice is listening on gRPC');
   } catch (error) {
     console.error('Failed to start Auth Microservice:', error);
     throw error;
@@ -30,12 +46,10 @@ export function handleBootstrapError(error: Error): never {
   return process.exit(1);
 }
 
-// Create a separate function for initialization
 export function init(): void {
   if (require.main === module) {
     bootstrap().catch(handleBootstrapError);
   }
 }
 
-// Call init
 init();

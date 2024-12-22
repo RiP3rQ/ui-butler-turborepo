@@ -1,0 +1,45 @@
+export const GRPC_CONFIG = {
+  MAX_MESSAGE_SIZE: 1024 * 1024 * 20, // 20MB
+  LOADER_OPTIONS: {
+    keepCase: true,
+    longs: String,
+    enums: String,
+    defaults: true,
+    oneofs: true,
+  },
+  DEFAULT_RETRY: {
+    attempts: 5,
+    delay: 1000,
+  },
+} as const;
+
+export const ENV_VARS = {
+  AUTH_SERVICE: {
+    HOST: 'AUTH_SERVICE_HOST',
+    PORT: 'AUTH_SERVICE_PORT',
+    DEFAULT_PORT: 5000,
+  },
+  USERS_SERVICE: {
+    HOST: 'USERS_SERVICE_HOST',
+    PORT: 'USERS_SERVICE_PORT',
+    DEFAULT_PORT: 5001,
+  },
+  JWT: {
+    ACCESS_TOKEN_SECRET: 'JWT_ACCESS_TOKEN_SECRET',
+    REFRESH_TOKEN_SECRET: 'JWT_REFRESH_TOKEN_SECRET',
+    ACCESS_TOKEN_EXPIRATION_MS: 'JWT_ACCESS_TOKEN_EXPIRATION_MS',
+    REFRESH_TOKEN_EXPIRATION_MS: 'JWT_REFRESH_TOKEN_EXPIRATION_MS',
+  },
+} as const;
+
+export const GRPC_STATUS_CODES = {
+  OK: 0,
+  CANCELLED: 1,
+  UNKNOWN: 2,
+  INVALID_ARGUMENT: 3,
+  DEADLINE_EXCEEDED: 4,
+  NOT_FOUND: 5,
+  ALREADY_EXISTS: 6,
+  PERMISSION_DENIED: 7,
+  UNAUTHENTICATED: 16,
+} as const;

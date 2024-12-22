@@ -2,9 +2,9 @@ import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { compare, hash } from 'bcryptjs';
-import { CreateUserDto, TokenPayload, User } from '@app/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
+import { AuthResponse, RegisterRequest, TokenPayload, User } from '@app/proto';
 
 @Injectable()
 export class AuthService {
@@ -39,17 +39,15 @@ export class AuthService {
   }
 
   private getTokenExpirations() {
-    const expiresAccessToken = new Date();
-    expiresAccessToken.setTime(
-      expiresAccessToken.getTime() +
+    const expiresAccessToken = new Date(
+      Date.now() +
         parseInt(
           this.configService.getOrThrow('JWT_ACCESS_TOKEN_EXPIRATION_MS'),
         ),
     );
 
-    const expiresRefreshToken = new Date();
-    expiresRefreshToken.setTime(
-      expiresRefreshToken.getTime() +
+    const expiresRefreshToken = new Date(
+      Date.now() +
         parseInt(
           this.configService.getOrThrow('JWT_REFRESH_TOKEN_EXPIRATION_MS'),
         ),
@@ -58,7 +56,7 @@ export class AuthService {
     return { expiresAccessToken, expiresRefreshToken };
   }
 
-  async login(user: User, redirect = false) {
+  async login(user: User, redirect = false): Promise<AuthResponse> {
     const tokenPayload: TokenPayload = {
       userId: user.id.toString(),
       email: user.email,
@@ -71,7 +69,7 @@ export class AuthService {
 
     const refreshTokenData = await hash(refreshToken, 10);
 
-    // Instead of direct UsersService call, use the microservice
+    // Update user with new refresh token
     await firstValueFrom(
       this.usersClient.send('users.update', {
         query: tokenPayload,
@@ -79,11 +77,11 @@ export class AuthService {
       }),
     );
 
-    const response = {
+    const response: AuthResponse = {
       accessToken,
       refreshToken,
-      expiresAccessToken,
-      expiresRefreshToken,
+      expiresAccessToken: expiresAccessToken.toISOString(),
+      expiresRefreshToken: expiresRefreshToken.toISOString(),
     };
 
     if (redirect) {
@@ -97,10 +95,9 @@ export class AuthService {
     return response;
   }
 
-  async register(userData: CreateUserDto) {
+  async register(userData: RegisterRequest): Promise<AuthResponse> {
     try {
-      // Use Users microservice to create user
-      const newUser = await firstValueFrom(
+      const newUser = await firstValueFrom<User>(
         this.usersClient.send('users.create', userData),
       );
 
@@ -121,8 +118,8 @@ export class AuthService {
       return {
         accessToken,
         refreshToken,
-        expiresAccessToken,
-        expiresRefreshToken,
+        expiresAccessToken: expiresAccessToken.toISOString(),
+        expiresRefreshToken: expiresRefreshToken.toISOString(),
       };
     } catch (e) {
       console.error(e);
@@ -130,12 +127,12 @@ export class AuthService {
     }
   }
 
-  async verifyUser(email: string, password: string) {
+  async verifyUser(email: string, password: string): Promise<User> {
     try {
-      // Use Users microservice to get user
-      const user = await firstValueFrom(
+      const user = await firstValueFrom<User>(
         this.usersClient.send('users.get.by.email', { email }),
       );
+
       const authenticated = await compare(password, user?.password ?? '');
       if (!authenticated) {
         throw new UnauthorizedException();
@@ -147,16 +144,19 @@ export class AuthService {
     }
   }
 
-  async verifyUserRefreshToken(refreshToken: string, email: string) {
+  async verifyUserRefreshToken(
+    refreshToken: string,
+    email: string,
+  ): Promise<User> {
     try {
-      // Use Users microservice to get user
-      const user = await firstValueFrom(
+      const user = await firstValueFrom<User>(
         this.usersClient.send('users.get.by.email', { email }),
       );
 
       if (!user?.refreshToken || !refreshToken) {
         throw new UnauthorizedException('Invalid refresh token');
       }
+
       const authenticated = await compare(refreshToken, user.refreshToken);
       if (!authenticated) {
         throw new UnauthorizedException();
