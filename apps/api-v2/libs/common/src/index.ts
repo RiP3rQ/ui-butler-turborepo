@@ -2,6 +2,8 @@
 export * from "./types/user.interface";
 export * from "./types/token-payload.interface";
 export * from "./types/received-refresh-token.interface";
+export * from "./types/grpc-clients.interface";
+export * from "./types/grpc-error.interface";
 
 // decorators
 export * from "./decorators/current-user.decorator";

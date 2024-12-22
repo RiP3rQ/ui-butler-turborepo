@@ -1,19 +1,13 @@
 // auth.controller.ts
 import { Controller } from '@nestjs/common';
-import { GrpcMethod } from '@nestjs/microservices';
+import { GrpcMethod, RpcException } from '@nestjs/microservices';
 import { AuthService } from './auth.service';
 import { AuthProto } from '@app/proto';
+import { status } from '@grpc/grpc-js';
 
 @Controller()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-
-  @GrpcMethod('AuthService', 'Login')
-  async login(
-    request: AuthProto.LoginRequest,
-  ): Promise<AuthProto.AuthResponse> {
-    return this.authService.login(request.user);
-  }
 
   @GrpcMethod('AuthService', 'Register')
   async register(
@@ -22,10 +16,33 @@ export class AuthController {
     return this.authService.register(request.user);
   }
 
+  @GrpcMethod('AuthService', 'Login')
+  async login(
+    request: AuthProto.LoginRequest,
+  ): Promise<AuthProto.AuthResponse> {
+    if (!request?.user) {
+      throw new RpcException({
+        code: status.INVALID_ARGUMENT,
+        message: 'User data is required',
+      });
+    }
+
+    return this.authService.login(request.user);
+  }
+
   @GrpcMethod('AuthService', 'RefreshToken')
   async refreshToken(
     request: AuthProto.RefreshTokenRequest,
   ): Promise<AuthProto.AuthResponse> {
+    console.log('Refresh token request received:', request);
+
+    if (!request?.user) {
+      throw new RpcException({
+        code: status.INVALID_ARGUMENT,
+        message: 'User data is required',
+      });
+    }
+
     return this.authService.login(request.user);
   }
 

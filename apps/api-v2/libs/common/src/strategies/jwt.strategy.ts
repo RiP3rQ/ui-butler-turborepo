@@ -1,17 +1,22 @@
+// libs/common/src/strategies/jwt.strategy.ts
 import { ConfigService } from "@nestjs/config";
 import { PassportStrategy } from "@nestjs/passport";
 import { Request } from "express";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { TokenPayload } from "../types/token-payload.interface";
-import { Inject, Injectable } from "@nestjs/common";
-import { ClientProxy } from "@nestjs/microservices";
+import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
+import { type ClientGrpc } from "@nestjs/microservices";
+import { UsersServiceClient } from "../types/grpc-clients.interface";
+import { UsersProto } from "@app/proto";
 import { firstValueFrom } from "rxjs";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
+  private usersService: UsersServiceClient;
+
   constructor(
     configService: ConfigService,
-    @Inject("USERS_SERVICE") private readonly usersClient: ClientProxy,
+    @Inject("USERS_SERVICE") private readonly client: ClientGrpc,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
@@ -21,10 +26,32 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
+  onModuleInit() {
+    this.usersService =
+      this.client.getService<UsersServiceClient>("UsersService");
+  }
+
   async validate(payload: TokenPayload) {
-    // Instead of direct UsersService call, use the microservice
-    return await firstValueFrom(
-      this.usersClient.send("users.get.by.email", payload),
-    );
+    try {
+      const request: UsersProto.GetUserByEmailRequest = {
+        $type: "api.users.GetUserByEmailRequest",
+        email: payload.email,
+      };
+
+      console.log("Validating JWT for user:", { email: payload.email });
+
+      const user = await firstValueFrom(
+        this.usersService.getUserByEmail(request),
+      );
+
+      if (!user) {
+        throw new UnauthorizedException("User not found");
+      }
+
+      return user;
+    } catch (error) {
+      console.error("JWT validation error:", error);
+      throw new UnauthorizedException("Invalid token");
+    }
   }
 }

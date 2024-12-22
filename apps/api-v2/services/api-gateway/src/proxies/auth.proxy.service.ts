@@ -62,9 +62,11 @@ export class AuthProxyService implements OnModuleInit {
     request: AuthProto.RefreshTokenRequest,
   ): Promise<AuthProto.AuthResponse> {
     try {
+      console.log('Proxying refresh token request:', request);
       return await this.authService.refreshToken(request);
     } catch (error) {
-      handleGrpcError(error);
+      console.error('Error in auth proxy refreshToken:', error);
+      throw error;
     }
   }
 
