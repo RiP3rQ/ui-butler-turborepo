@@ -89,13 +89,13 @@ import { createGrpcOptions } from './config/grpc.config';
       {
         name: 'ANALYTICS_SERVICE',
         imports: [ConfigModule],
-        useFactory: (configService: ConfigService) => ({
-          transport: Transport.TCP,
-          options: {
-            host: configService.get('ANALYTICS_SERVICE_HOST'),
-            port: configService.get('ANALYTICS_SERVICE_PORT'),
-          },
-        }),
+        useFactory: (configService: ConfigService) =>
+          createGrpcOptions(
+            configService.get('ANALYTICS_SERVICE_HOST'),
+            configService.get('ANALYTICS_SERVICE_PORT'),
+            'api.analytics',
+            'analytics',
+          ),
         inject: [ConfigService],
       },
       {

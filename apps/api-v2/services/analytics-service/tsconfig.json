@@ -18,6 +18,6 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": false
   }
 }

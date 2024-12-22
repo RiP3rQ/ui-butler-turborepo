@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { User } from '@app/common';
-import { AnalyticsController } from '../analytics.controller.ts';
-import { AnalyticsService } from '../analytics.service.ts';
+import { AnalyticsController } from '../analytics.controller';
+import { AnalyticsService } from '../analytics.service';
 
 describe('AnalyticsController', () => {
   let controller: AnalyticsController;
