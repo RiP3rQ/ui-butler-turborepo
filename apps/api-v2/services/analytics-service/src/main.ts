@@ -1,31 +1,23 @@
 import { NestFactory } from '@nestjs/core';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { Transport } from '@nestjs/microservices';
 import { AnalyticsModule } from './analytics.module';
+import { join } from 'path';
 
-export async function bootstrap() {
-  try {
-    const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-      AnalyticsModule,
-      {
-        transport: Transport.TCP,
-        options: {
-          host: 'localhost',
-          port: 3347,
-        },
-      },
-    );
-    await app.listen();
-    console.log('Analytics Microservice is listening');
-  } catch (error) {
-    console.error('Failed to start microservice:', error);
-    throw error;
-  }
-}
-
-// Only run bootstrap if this file is being executed directly
-if (require.main === module) {
-  bootstrap().catch((error) => {
-    console.error('Bootstrap failed:', error);
-    process.exit(1);
+async function bootstrap() {
+  const app = await NestFactory.createMicroservice(AnalyticsModule, {
+    transport: Transport.GRPC,
+    options: {
+      package: 'api.analytics',
+      protoPath: join(
+        __dirname,
+        '../../../libs/proto/src/proto/analytics.proto',
+      ),
+      url: `${process.env.ANALYTICS_SERVICE_HOST || 'localhost'}:${process.env.ANALYTICS_SERVICE_PORT || '3347'}`,
+    },
   });
+
+  await app.listen();
+  console.log('Analytics  Microservice is listening on gRPC');
 }
+
+bootstrap();

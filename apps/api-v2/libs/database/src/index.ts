@@ -26,4 +26,4 @@ export * from "./types/database.types";
 export * from "./database.module";
 
 //export operators
-export { and, eq, gte, lte, min, sql, inArray } from "drizzle-orm"; // Export operators
+export { and, eq, gte, lte, min, sql, inArray, desc } from "drizzle-orm"; // Export operators

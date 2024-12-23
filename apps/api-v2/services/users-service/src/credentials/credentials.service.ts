@@ -1,14 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { status } from '@grpc/grpc-js';
 import { RpcException } from '@nestjs/microservices';
 import {
+  and,
   DATABASE_CONNECTION,
+  desc,
   type DrizzleDatabase,
+  eq,
   NewUserCredential,
   userCredentials,
 } from '@app/database';
-import { CreateCredentialDto, symmetricEncrypt, User } from '@app/common';
-import { and, desc, eq } from 'drizzle-orm';
-import { UserCredentials } from '@repo/types';
+import { symmetricEncrypt } from '@app/common';
+import { UsersProto } from '@app/proto';
 
 @Injectable()
 export class CredentialsService {
@@ -17,7 +20,7 @@ export class CredentialsService {
     private readonly database: DrizzleDatabase,
   ) {}
 
-  async getUserCredentials(user: User): Promise<UserCredentials[]> {
+  async getUserCredentials(user: UsersProto.User) {
     try {
       const userCredentialsData = await this.database
         .select({
@@ -32,21 +35,28 @@ export class CredentialsService {
         .orderBy(desc(userCredentials.name));
 
       if (!userCredentialsData) {
-        throw new RpcException('Credentials not found');
+        throw new RpcException({
+          code: status.NOT_FOUND,
+          message: 'Credentials not found',
+        });
       }
 
       return userCredentialsData;
     } catch (error) {
-      throw new RpcException(
-        error instanceof Error ? error.message : JSON.stringify(error),
-      );
+      if (error instanceof RpcException) {
+        throw error;
+      }
+      throw new RpcException({
+        code: status.INTERNAL,
+        message: error instanceof Error ? error.message : JSON.stringify(error),
+      });
     }
   }
 
   async createCredential(
-    user: User,
-    createCredentialDto: CreateCredentialDto,
-  ): Promise<UserCredentials> {
+    user: UsersProto.User,
+    createCredentialDto: UsersProto.CreateCredentialDto,
+  ) {
     try {
       const encryptedCredentialValue = symmetricEncrypt(
         createCredentialDto.value,
@@ -66,19 +76,26 @@ export class CredentialsService {
         .returning();
 
       if (!newCredential) {
-        throw new RpcException('Credential not created');
+        throw new RpcException({
+          code: status.INTERNAL,
+          message: 'Credential not created',
+        });
       }
 
       delete newCredential.value;
       return newCredential;
     } catch (error) {
-      throw new RpcException(
-        error instanceof Error ? error.message : JSON.stringify(error),
-      );
+      if (error instanceof RpcException) {
+        throw error;
+      }
+      throw new RpcException({
+        code: status.INTERNAL,
+        message: error instanceof Error ? error.message : JSON.stringify(error),
+      });
     }
   }
 
-  async deleteCredential(user: User, id: number): Promise<UserCredentials> {
+  async deleteCredential(user: UsersProto.User, id: number) {
     try {
       const [deletedCredential] = await this.database
         .delete(userCredentials)
@@ -88,15 +105,22 @@ export class CredentialsService {
         .returning();
 
       if (!deletedCredential) {
-        throw new RpcException('Credential not found');
+        throw new RpcException({
+          code: status.NOT_FOUND,
+          message: 'Credential not found',
+        });
       }
 
       delete deletedCredential.value;
       return deletedCredential;
     } catch (error) {
-      throw new RpcException(
-        error instanceof Error ? error.message : JSON.stringify(error),
-      );
+      if (error instanceof RpcException) {
+        throw error;
+      }
+      throw new RpcException({
+        code: status.INTERNAL,
+        message: error instanceof Error ? error.message : JSON.stringify(error),
+      });
     }
   }
 }

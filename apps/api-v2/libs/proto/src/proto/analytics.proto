@@ -1,0 +1,96 @@
+syntax = "proto3";
+
+package api.analytics;
+
+import "google/protobuf/timestamp.proto";
+
+service AnalyticsService {
+    rpc GetPeriods (GetPeriodsRequest) returns (GetPeriodsResponse);
+    rpc GetStatCardsValues (StatCardsRequest) returns (StatCardsResponse);
+    rpc GetWorkflowExecutionStats (WorkflowStatsRequest) returns (WorkflowStatsResponse);
+    rpc GetUsedCreditsInPeriod (UsedCreditsRequest) returns (UsedCreditsResponse);
+    rpc GetDashboardStatCardsValues (DashboardStatsRequest) returns (DashboardStatsResponse);
+    rpc GetFavoritedTableContent (FavoritedContentRequest) returns (FavoritedContentResponse);
+}
+
+message User {
+    int32 id = 1;
+    string email = 2;
+}
+
+message Period {
+    int32 year = 1;
+    int32 month = 2;
+}
+
+message GetPeriodsRequest {
+    User user = 1;
+}
+
+message GetPeriodsResponse {
+    repeated Period periods = 1;
+}
+
+message StatCardsRequest {
+    User user = 1;
+    int32 month = 2;
+    int32 year = 3;
+}
+
+message StatCardsResponse {
+    int32 workflowExecutions = 1;
+    double creditsConsumed = 2;
+    int32 phasesExecuted = 3;
+}
+
+message WorkflowStatsRequest {
+    User user = 1;
+    int32 month = 2;
+    int32 year = 3;
+}
+
+message DailyStats {
+    string date = 1;
+    int32 successful = 2;
+    int32 failed = 3;
+}
+
+message WorkflowStatsResponse {
+    repeated DailyStats stats = 1;
+}
+
+message UsedCreditsRequest {
+    User user = 1;
+    int32 month = 2;
+    int32 year = 3;
+}
+
+message UsedCreditsResponse {
+    repeated DailyStats stats = 1;
+}
+
+message DashboardStatsRequest {
+    User user = 1;
+}
+
+message DashboardStatsResponse {
+    int32 currentActiveProjects = 1;
+    int32 numberOfCreatedComponents = 2;
+    int32 favoritesComponents = 3;
+}
+
+message FavoritedContentRequest {
+    User user = 1;
+}
+
+message FavoritedComponent {
+    int32 id = 1;
+    string name = 2;
+    string projectName = 3;
+    google.protobuf.Timestamp createdAt = 4;
+    google.protobuf.Timestamp updatedAt = 5;
+}
+
+message FavoritedContentResponse {
+    repeated FavoritedComponent components = 1;
+}

@@ -26,6 +26,7 @@ import {
   LocalStrategy,
 } from '@app/common';
 import { AnalyticsController } from './controllers/analytics.controller';
+import { createGrpcOptions } from './config/grpc.config';
 
 @Module({
   imports: [
@@ -60,28 +61,41 @@ import { AnalyticsController } from './controllers/analytics.controller';
       }),
     }),
     ClientsModule.registerAsync([
-      {
-        name: 'ANALYTICS_SERVICE',
-        imports: [ConfigModule],
-        useFactory: (configService: ConfigService) => ({
-          transport: Transport.TCP,
-          options: {
-            host: configService.get('ANALYTICS_SERVICE_HOST'),
-            port: configService.get('ANALYTICS_SERVICE_PORT'),
-          },
-        }),
-        inject: [ConfigService],
-      },
+      // AUTH
       {
         name: 'AUTH_SERVICE',
         imports: [ConfigModule],
-        useFactory: (configService: ConfigService) => ({
-          transport: Transport.TCP,
-          options: {
-            host: configService.get('AUTH_SERVICE_HOST'),
-            port: configService.get('AUTH_SERVICE_PORT'),
-          },
-        }),
+        useFactory: (configService: ConfigService) =>
+          createGrpcOptions(
+            configService.get('AUTH_SERVICE_HOST'),
+            configService.get('AUTH_SERVICE_PORT'),
+            'api.auth',
+            'auth',
+          ),
+        inject: [ConfigService],
+      },
+      {
+        name: 'USERS_SERVICE',
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) =>
+          createGrpcOptions(
+            configService.get('USERS_SERVICE_HOST'),
+            configService.get('USERS_SERVICE_PORT'),
+            'api.users',
+            'users',
+          ),
+        inject: [ConfigService],
+      },
+      {
+        name: 'ANALYTICS_SERVICE',
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) =>
+          createGrpcOptions(
+            configService.get('ANALYTICS_SERVICE_HOST'),
+            configService.get('ANALYTICS_SERVICE_PORT'),
+            'api.analytics',
+            'analytics',
+          ),
         inject: [ConfigService],
       },
       {
@@ -92,18 +106,6 @@ import { AnalyticsController } from './controllers/analytics.controller';
           options: {
             host: configService.get('WORKFLOW_SERVICE_HOST', 'localhost'),
             port: configService.get('WORKFLOW_SERVICE_PORT', 3342),
-          },
-        }),
-        inject: [ConfigService],
-      },
-      {
-        name: 'USERS_SERVICE',
-        imports: [ConfigModule],
-        useFactory: (configService: ConfigService) => ({
-          transport: Transport.TCP,
-          options: {
-            host: configService.get('USERS_SERVICE_HOST', 'localhost'),
-            port: configService.get('USERS_SERVICE_PORT', 3341),
           },
         }),
         inject: [ConfigService],

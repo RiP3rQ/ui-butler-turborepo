@@ -1,52 +1,50 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { JwtModule } from '@nestjs/jwt';
+import { join } from 'path';
+import Joi from 'joi';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import * as Joi from 'joi';
+import { ENV_VARS } from './constants';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
-        USERS_SERVICE_HOST: Joi.string().default('localhost'),
-        USERS_SERVICE_PORT: Joi.number().default(3341),
+        [ENV_VARS.AUTH_SERVICE.HOST]: Joi.string().default('localhost'),
+        [ENV_VARS.AUTH_SERVICE.PORT]: Joi.number().default(
+          ENV_VARS.AUTH_SERVICE.DEFAULT_PORT,
+        ),
+        [ENV_VARS.USERS_SERVICE.HOST]: Joi.string().default('localhost'),
+        [ENV_VARS.USERS_SERVICE.PORT]: Joi.number().default(
+          ENV_VARS.USERS_SERVICE.DEFAULT_PORT,
+        ),
+        [ENV_VARS.JWT.ACCESS_TOKEN_SECRET]: Joi.string().required(),
+        [ENV_VARS.JWT.REFRESH_TOKEN_SECRET]: Joi.string().required(),
+        [ENV_VARS.JWT.ACCESS_TOKEN_EXPIRATION_MS]: Joi.number().required(),
+        [ENV_VARS.JWT.REFRESH_TOKEN_EXPIRATION_MS]: Joi.number().required(),
       }),
     }),
     ClientsModule.registerAsync([
       {
         name: 'USERS_SERVICE',
-        imports: [ConfigModule],
         useFactory: (configService: ConfigService) => ({
-          transport: Transport.TCP,
+          transport: Transport.GRPC,
           options: {
-            host: configService.getOrThrow('USERS_SERVICE_HOST'),
-            port: configService.getOrThrow('USERS_SERVICE_PORT'),
-            retryAttempts: 5,
-            retryDelay: 1000,
-          },
-        }),
-        inject: [ConfigService],
-      },
-      {
-        name: 'AUTH_SERVICE',
-        imports: [ConfigModule],
-        useFactory: (configService: ConfigService) => ({
-          transport: Transport.TCP,
-          options: {
-            host: configService.getOrThrow('AUTH_SERVICE_HOST', 'localhost'),
-            port: configService.getOrThrow('AUTH_SERVICE_PORT', 3340),
-            retryAttempts: 5,
-            retryDelay: 1000,
+            url: `${configService.get(ENV_VARS.USERS_SERVICE.HOST)}:${configService.get(ENV_VARS.USERS_SERVICE.PORT)}`,
+            package: 'api.users',
+            protoPath: join(
+              __dirname,
+              '../../../libs/proto/src/proto/users.proto',
+            ),
           },
         }),
         inject: [ConfigService],
       },
     ]),
     JwtModule.registerAsync({
-      imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         secret: configService.getOrThrow('JWT_ACCESS_TOKEN_SECRET'),
         signOptions: {

@@ -1,0 +1,121 @@
+syntax = "proto3";
+
+package api.users;
+
+import "google/protobuf/timestamp.proto";
+
+// Common messages for Users
+message User {
+    int32 id = 1;
+    string email = 2;
+    string username = 3;
+    optional string password = 4;
+    optional string refreshToken = 5;
+    google.protobuf.Timestamp createdAt = 6;
+    google.protobuf.Timestamp updatedAt = 7;
+}
+
+message CreateUserDto {
+    string email = 1;
+    string password = 2;
+    optional string username = 3;
+}
+
+message TokenPayload {
+    string userId = 1;
+    string email = 2;
+}
+
+message Profile {
+    int32 id = 1;
+    int32 userId = 2;
+    string bio = 3;
+    string location = 4;
+    string website = 5;
+    google.protobuf.Timestamp createdAt = 6;
+    google.protobuf.Timestamp updatedAt = 7;
+}
+
+message CreateProfileDto {
+    int32 userId = 1;
+    string bio = 2;
+    string location = 3;
+    string website = 4;
+}
+
+// Users specific messages
+service UsersService {
+    rpc GetUsers (Empty) returns (GetUsersResponse);
+    rpc GetCurrentUser (GetCurrentUserRequest) returns (GetCurrentUserResponse);
+    rpc CreateProfile (CreateProfileDto) returns (Profile);
+    rpc CreateUser (CreateUserDto) returns (User);
+    rpc GetOrCreateUser (CreateUserDto) returns (User);
+    rpc GetUserByEmail (GetUserByEmailRequest) returns (User);
+    rpc UpdateUser (UpdateUserRequest) returns (User);
+
+    // Credentials
+    rpc GetUserCredentials (GetCredentialsRequest) returns (GetCredentialsResponse);
+    rpc CreateCredential (CreateCredentialRequest) returns (Credential);
+    rpc DeleteCredential (DeleteCredentialRequest) returns (Credential);
+}
+
+message Empty {}
+
+message GetUsersResponse {
+    repeated User users = 1;
+}
+
+message GetCurrentUserRequest {
+    User user = 1;
+}
+
+message GetCurrentUserResponse {
+    int32 id = 1;
+    optional string username = 2;
+    string email = 3;
+    optional string avatar = 4;
+}
+
+message GetUserByEmailRequest {
+    string email = 1;
+}
+
+message UpdateUserRequest {
+    TokenPayload query = 1;
+    ReceivedRefreshToken data = 2;
+}
+
+message ReceivedRefreshToken {
+    string refreshToken = 1;
+}
+
+message Credential {
+    int32 id = 1;
+    string name = 2;
+    int32 userId = 3;
+    google.protobuf.Timestamp createdAt = 4;
+    google.protobuf.Timestamp updatedAt = 5;
+}
+
+message CreateCredentialDto {
+    string name = 1;
+    string value = 2;
+}
+
+message GetCredentialsRequest {
+    User user = 1;
+}
+
+message GetCredentialsResponse {
+    repeated Credential credentials = 1;
+}
+
+message CreateCredentialRequest {
+    User user = 1;
+    CreateCredentialDto credential = 2;
+}
+
+message DeleteCredentialRequest {
+    User user = 1;
+    int32 id = 2;
+}

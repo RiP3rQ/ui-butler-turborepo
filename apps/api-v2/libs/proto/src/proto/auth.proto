@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package api.auth;
+
+import "google/protobuf/timestamp.proto";
+
+// Common messages for Auth
+message User {
+    int32 id = 1;
+    string email = 2;
+    string username = 3;
+    optional string password = 4;
+    optional string refreshToken = 5;
+    google.protobuf.Timestamp createdAt = 6;
+    google.protobuf.Timestamp updatedAt = 7;
+}
+
+message CreateUserDto {
+    string email = 1;
+    string password = 2;
+    optional string username = 3;
+}
+
+message TokenPayload {
+    string userId = 1;
+    string email = 2;
+}
+
+// Auth specific messages
+service AuthService {
+    rpc Login (LoginRequest) returns (AuthResponse);
+    rpc Register (RegisterRequest) returns (AuthResponse);
+    rpc RefreshToken (RefreshTokenRequest) returns (AuthResponse);
+    rpc GoogleCallback (SocialCallbackRequest) returns (AuthResponse);
+    rpc GithubCallback (SocialCallbackRequest) returns (AuthResponse);
+    rpc VerifyRefreshToken (VerifyRefreshTokenRequest) returns (User);
+    rpc VerifyUser (VerifyUserRequest) returns (User);
+}
+
+message LoginRequest {
+    User user = 1;
+}
+
+message RegisterRequest {
+    CreateUserDto user = 1;
+}
+
+message RefreshTokenRequest {
+    User user = 1;
+}
+
+message SocialCallbackRequest {
+    User user = 1;
+}
+
+message VerifyRefreshTokenRequest {
+    string refreshToken = 1;
+    string email = 2;
+}
+
+message VerifyUserRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message AuthResponse {
+    string accessToken = 1;
+    string refreshToken = 2;
+    google.protobuf.Timestamp expiresAccessToken = 3;
+    google.protobuf.Timestamp expiresRefreshToken = 4;
+    optional bool redirect = 5;
+    optional string redirectUrl = 6;
+}

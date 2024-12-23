@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DATABASE_CONNECTION } from '@app/database';
 import { User } from '@app/common';
 import { NotFoundException } from '@nestjs/common';
-import { AnalyticsService } from '../analytics.service.ts';
+import { AnalyticsService } from '../analytics.service';
 
 describe('AnalyticsService', () => {
   let service: AnalyticsService;

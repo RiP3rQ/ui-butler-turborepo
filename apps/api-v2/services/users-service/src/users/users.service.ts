@@ -1,13 +1,14 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { hash } from 'bcryptjs';
-import { and, eq, type NeonDatabaseType, profile, users } from '@app/database';
 import {
-  CreateProfileDto,
-  CreateUserDto,
-  ReceivedRefreshToken,
-  TokenPayload,
+  and,
+  eq,
+  type NeonDatabaseType,
+  profile,
   User,
-} from '@app/common';
+  users,
+} from '@app/database';
+import { UsersProto } from '@app/proto';
 
 @Injectable()
 export class UsersService {
@@ -16,14 +17,17 @@ export class UsersService {
     private readonly database: NeonDatabaseType,
   ) {}
 
-  async createUser(data: CreateUserDto) {
+  async createUser(data: UsersProto.CreateUserDto) {
+    const newUserData = {
+      email: data.email,
+      password: await hash(data.password, 10),
+      username: data.username,
+    } as User;
+
     const newUser = await this.database
       .insert(users)
-      .values({
-        ...data,
-        password: await hash(data.password, 10),
-      })
-      .returning(); // request validation
+      .values(newUserData)
+      .returning();
     return newUser[0];
   }
 
@@ -33,13 +37,13 @@ export class UsersService {
     });
   }
 
-  async getOrCreateUser(data: CreateUserDto) {
+  async getOrCreateUser(data: UsersProto.CreateUserDto) {
     const user = await this.database
       .select()
       .from(users)
       .where(eq(users.email, data.email));
     if (!user || user?.length > 0) {
-      return user;
+      return user[0];
     }
     return this.createUser(data);
   }
@@ -50,14 +54,17 @@ export class UsersService {
       .from(users)
       .where(eq(users.email, payload.email));
 
-    if (!user) {
+    if (!user || user.length === 0) {
       throw new NotFoundException('User not found');
     }
 
     return user[0];
   }
 
-  async updateUser(query: TokenPayload, data: ReceivedRefreshToken) {
+  async updateUser(
+    query: UsersProto.TokenPayload,
+    data: UsersProto.ReceivedRefreshToken,
+  ) {
     const user = await this.database
       .select()
       .from(users)
@@ -65,13 +72,13 @@ export class UsersService {
         and(eq(users.id, Number(query.userId)), eq(users.email, query.email)),
       );
 
-    if (!user) {
+    if (!user || user.length === 0) {
       throw new NotFoundException('User not found');
     }
 
     const refreshTokenData = {
       refreshToken: data.refreshToken,
-    } as User;
+    } as Partial<User>;
 
     return this.database
       .update(users)
@@ -82,7 +89,7 @@ export class UsersService {
       .returning();
   }
 
-  async getCurrentUserBasic(user: User) {
+  async getCurrentUserBasic(user: UsersProto.User) {
     const [userBasicData] = await this.database
       .select()
       .from(users)
@@ -105,7 +112,9 @@ export class UsersService {
     };
   }
 
-  async createProfile(profileDto: CreateProfileDto) {
-    await this.database.insert(profile).values(profileDto);
+  async createProfile(
+    profileDto: UsersProto.CreateProfileDto,
+  ): Promise<UsersProto.Profile> {
+    return this.database.insert(profile).values(profileDto).returning()[0];
   }
 }

@@ -1,57 +1,101 @@
 import { Controller } from '@nestjs/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { GrpcMethod } from '@nestjs/microservices';
 import { AnalyticsService } from './analytics.service';
-import { User } from '@app/common';
+import { AnalyticsProto } from '@app/proto';
 
 @Controller()
 export class AnalyticsController {
   constructor(private readonly analyticsService: AnalyticsService) {}
 
-  @MessagePattern('analytics.periods')
-  async getPeriods(@Payload() data: { user: User }) {
-    return this.analyticsService.getPeriods(data.user);
+  @GrpcMethod('AnalyticsService', 'GetPeriods')
+  async getPeriods(
+    request: AnalyticsProto.GetPeriodsRequest,
+  ): Promise<AnalyticsProto.GetPeriodsResponse> {
+    const periods = await this.analyticsService.getPeriods(request.user);
+    return {
+      $type: 'api.analytics.GetPeriodsResponse',
+      periods: periods.map((period) => ({
+        $type: 'api.analytics.Period',
+        ...period,
+      })),
+    };
   }
 
-  @MessagePattern('analytics.stat-cards')
+  @GrpcMethod('AnalyticsService', 'GetStatCardsValues')
   async getStatCardsValues(
-    @Payload() data: { user: User; month: number; year: number },
-  ) {
-    return this.analyticsService.getStatCardsValues(
-      data.user,
-      data.month,
-      data.year,
+    request: AnalyticsProto.StatCardsRequest,
+  ): Promise<AnalyticsProto.StatCardsResponse> {
+    const stats = await this.analyticsService.getStatCardsValues(
+      request.user,
+      request.month,
+      request.year,
     );
+    return {
+      $type: 'api.analytics.StatCardsResponse',
+      ...stats,
+    };
   }
 
-  @MessagePattern('analytics.workflow-stats')
+  @GrpcMethod('AnalyticsService', 'GetWorkflowExecutionStats')
   async getWorkflowExecutionStats(
-    @Payload() data: { user: User; month: number; year: number },
-  ) {
-    return this.analyticsService.getWorkflowExecutionStats(
-      data.user,
-      data.month,
-      data.year,
+    request: AnalyticsProto.WorkflowStatsRequest,
+  ): Promise<AnalyticsProto.WorkflowStatsResponse> {
+    const stats = await this.analyticsService.getWorkflowExecutionStats(
+      request.user,
+      request.month,
+      request.year,
     );
+    return {
+      $type: 'api.analytics.WorkflowStatsResponse',
+      stats: stats.map((stat) => ({
+        $type: 'api.analytics.DailyStats',
+        ...stat,
+      })),
+    };
   }
 
-  @MessagePattern('analytics.used-credits')
+  @GrpcMethod('AnalyticsService', 'GetUsedCreditsInPeriod')
   async getUsedCreditsInPeriod(
-    @Payload() data: { user: User; month: number; year: number },
-  ) {
-    return this.analyticsService.getUsedCreditsInPeriod(
-      data.user,
-      data.month,
-      data.year,
+    request: AnalyticsProto.UsedCreditsRequest,
+  ): Promise<AnalyticsProto.UsedCreditsResponse> {
+    const stats = await this.analyticsService.getUsedCreditsInPeriod(
+      request.user,
+      request.month,
+      request.year,
     );
+    return {
+      $type: 'api.analytics.UsedCreditsResponse',
+      stats: stats.map((stat) => ({
+        $type: 'api.analytics.DailyStats',
+        ...stat,
+      })),
+    };
   }
 
-  @MessagePattern('analytics.dashboard-stats')
-  async getDashboardStatCardsValues(@Payload() data: { user: User }) {
-    return this.analyticsService.getDashboardStatCardsValues(data.user);
+  @GrpcMethod('AnalyticsService', 'GetDashboardStatCardsValues')
+  async getDashboardStatCardsValues(
+    request: AnalyticsProto.DashboardStatsRequest,
+  ): Promise<AnalyticsProto.DashboardStatsResponse> {
+    const stats = await this.analyticsService.getDashboardStatCardsValues(
+      request.user,
+    );
+    return {
+      $type: 'api.analytics.DashboardStatsResponse',
+      ...stats,
+    };
   }
 
-  @MessagePattern('analytics.favorited')
-  async getFavoritedTableContent(@Payload() data: { user: User }) {
-    return this.analyticsService.getFavoritedTableContent(data.user);
+  @GrpcMethod('AnalyticsService', 'GetFavoritedTableContent')
+  async getFavoritedTableContent(
+    request: AnalyticsProto.FavoritedContentRequest,
+  ): Promise<AnalyticsProto.FavoritedContentResponse> {
+    const components = await this.analyticsService.getFavoritedTableContent(
+      request.user,
+    );
+
+    return {
+      $type: 'api.analytics.FavoritedContentResponse',
+      components,
+    };
   }
 }

@@ -1,39 +1,87 @@
+// controllers/analytics.controller.ts
 import {
   Controller,
   Get,
   Inject,
   NotFoundException,
+  OnModuleInit,
   ParseIntPipe,
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
-import { firstValueFrom } from 'rxjs';
-import { CurrentUser, JwtAuthGuard, type User } from '@app/common';
+import { type ClientGrpc } from '@nestjs/microservices';
+import { CurrentUser, JwtAuthGuard } from '@app/common';
+import { AnalyticsProto } from '@app/proto';
+import { handleGrpcError } from '../utils/grpc-error.util';
+
+interface AnalyticsServiceClient {
+  getPeriods(
+    request: AnalyticsProto.GetPeriodsRequest,
+  ): Promise<AnalyticsProto.GetPeriodsResponse>;
+
+  getStatCardsValues(
+    request: AnalyticsProto.StatCardsRequest,
+  ): Promise<AnalyticsProto.StatCardsResponse>;
+
+  getWorkflowExecutionStats(
+    request: AnalyticsProto.WorkflowStatsRequest,
+  ): Promise<AnalyticsProto.WorkflowStatsResponse>;
+
+  getUsedCreditsInPeriod(
+    request: AnalyticsProto.UsedCreditsRequest,
+  ): Promise<AnalyticsProto.UsedCreditsResponse>;
+
+  getDashboardStatCardsValues(
+    request: AnalyticsProto.DashboardStatsRequest,
+  ): Promise<AnalyticsProto.DashboardStatsResponse>;
+
+  getFavoritedTableContent(
+    request: AnalyticsProto.FavoritedContentRequest,
+  ): Promise<AnalyticsProto.FavoritedContentResponse>;
+}
 
 @Controller('analytics')
 @UseGuards(JwtAuthGuard)
-export class AnalyticsController {
+export class AnalyticsController implements OnModuleInit {
+  private analyticsService: AnalyticsServiceClient;
+
   constructor(
-    @Inject('ANALYTICS_SERVICE') private readonly analyticsClient: ClientProxy,
+    @Inject('ANALYTICS_SERVICE') private readonly client: ClientGrpc,
   ) {}
 
+  onModuleInit() {
+    this.analyticsService =
+      this.client.getService<AnalyticsServiceClient>('AnalyticsService');
+  }
+
   @Get('periods')
-  async getPeriods(@CurrentUser() user: User) {
+  async getPeriods(@CurrentUser() user: AnalyticsProto.User) {
     if (!user) {
       throw new NotFoundException('Unauthorized');
     }
 
-    return firstValueFrom(
-      this.analyticsClient.send('analytics.periods', { user }),
-    );
+    try {
+      const request: AnalyticsProto.GetPeriodsRequest = {
+        $type: 'api.analytics.GetPeriodsRequest',
+        user: {
+          $type: 'api.analytics.User',
+          id: user.id,
+          email: user.email,
+        },
+      };
+
+      const response = await this.analyticsService.getPeriods(request);
+      return response.periods;
+    } catch (error) {
+      handleGrpcError(error);
+    }
   }
 
   @Get('stat-cards-values')
   async getStatCardsValues(
     @Query('month', new ParseIntPipe()) month: number,
     @Query('year', new ParseIntPipe()) year: number,
-    @CurrentUser() user: User,
+    @CurrentUser() user: AnalyticsProto.User,
   ) {
     if (!user) {
       throw new NotFoundException('Unauthorized');
@@ -43,16 +91,29 @@ export class AnalyticsController {
       throw new NotFoundException('Invalid query parameters provided');
     }
 
-    return firstValueFrom(
-      this.analyticsClient.send('analytics.stat-cards', { user, month, year }),
-    );
+    try {
+      const request: AnalyticsProto.StatCardsRequest = {
+        $type: 'api.analytics.StatCardsRequest',
+        user: {
+          $type: 'api.analytics.User',
+          id: user.id,
+          email: user.email,
+        },
+        month,
+        year,
+      };
+
+      return await this.analyticsService.getStatCardsValues(request);
+    } catch (error) {
+      handleGrpcError(error);
+    }
   }
 
   @Get('workflow-execution-stats')
   async getWorkflowExecutionStats(
     @Query('month', new ParseIntPipe()) month: number,
     @Query('year', new ParseIntPipe()) year: number,
-    @CurrentUser() user: User,
+    @CurrentUser() user: AnalyticsProto.User,
   ) {
     if (!user) {
       throw new NotFoundException('Unauthorized');
@@ -62,20 +123,31 @@ export class AnalyticsController {
       throw new NotFoundException('Invalid query parameters provided');
     }
 
-    return firstValueFrom(
-      this.analyticsClient.send('analytics.workflow-stats', {
-        user,
+    try {
+      const request: AnalyticsProto.WorkflowStatsRequest = {
+        $type: 'api.analytics.WorkflowStatsRequest',
+        user: {
+          $type: 'api.analytics.User',
+          id: user.id,
+          email: user.email,
+        },
         month,
         year,
-      }),
-    );
+      };
+
+      const response =
+        await this.analyticsService.getWorkflowExecutionStats(request);
+      return response.stats;
+    } catch (error) {
+      handleGrpcError(error);
+    }
   }
 
   @Get('used-credits-in-period')
   async getUsedCreditsInPeriod(
     @Query('month', new ParseIntPipe()) month: number,
     @Query('year', new ParseIntPipe()) year: number,
-    @CurrentUser() user: User,
+    @CurrentUser() user: AnalyticsProto.User,
   ) {
     if (!user) {
       throw new NotFoundException('Unauthorized');
@@ -85,32 +157,69 @@ export class AnalyticsController {
       throw new NotFoundException('Invalid query parameters provided');
     }
 
-    return firstValueFrom(
-      this.analyticsClient.send('analytics.used-credits', {
-        user,
+    try {
+      const request: AnalyticsProto.UsedCreditsRequest = {
+        $type: 'api.analytics.UsedCreditsRequest',
+        user: {
+          $type: 'api.analytics.User',
+          id: user.id,
+          email: user.email,
+        },
         month,
         year,
-      }),
-    );
+      };
+
+      const response =
+        await this.analyticsService.getUsedCreditsInPeriod(request);
+      return response.stats;
+    } catch (error) {
+      handleGrpcError(error);
+    }
   }
 
   @Get('dashboard-stat-cards-values')
-  async getDashboardStatCardsValues(@CurrentUser() user: User) {
+  async getDashboardStatCardsValues(@CurrentUser() user: AnalyticsProto.User) {
     if (!user) {
       throw new NotFoundException('Unauthorized');
     }
-    return firstValueFrom(
-      this.analyticsClient.send('analytics.dashboard-stats', { user }),
-    );
+
+    try {
+      const request: AnalyticsProto.DashboardStatsRequest = {
+        $type: 'api.analytics.DashboardStatsRequest',
+        user: {
+          $type: 'api.analytics.User',
+          id: user.id,
+          email: user.email,
+        },
+      };
+
+      return await this.analyticsService.getDashboardStatCardsValues(request);
+    } catch (error) {
+      handleGrpcError(error);
+    }
   }
 
   @Get('favorited-table-content')
-  async getFavoritedTableContent(@CurrentUser() user: User) {
+  async getFavoritedTableContent(@CurrentUser() user: AnalyticsProto.User) {
     if (!user) {
       throw new NotFoundException('Unauthorized');
     }
-    return firstValueFrom(
-      this.analyticsClient.send('analytics.favorited', { user }),
-    );
+
+    try {
+      const request: AnalyticsProto.FavoritedContentRequest = {
+        $type: 'api.analytics.FavoritedContentRequest',
+        user: {
+          $type: 'api.analytics.User',
+          id: user.id,
+          email: user.email,
+        },
+      };
+
+      const response =
+        await this.analyticsService.getFavoritedTableContent(request);
+      return response.components;
+    } catch (error) {
+      handleGrpcError(error);
+    }
   }
 }
