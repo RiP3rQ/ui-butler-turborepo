@@ -46,7 +46,6 @@ export class AuthController {
     return this.authService.login(request.user);
   }
 
-  // TODO: FIX GITHUB LOGIN FUNCTIONALITY
   @GrpcMethod('AuthService', 'GoogleCallback')
   async googleCallback(
     request: AuthProto.SocialCallbackRequest,
@@ -54,7 +53,6 @@ export class AuthController {
     return this.authService.login(request.user, true);
   }
 
-  // TODO: FIX GITHUB LOGIN FUNCTIONALITY
   @GrpcMethod('AuthService', 'GithubCallback')
   async githubCallback(
     request: AuthProto.SocialCallbackRequest,
