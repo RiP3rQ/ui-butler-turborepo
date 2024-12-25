@@ -3,6 +3,7 @@ export { Timestamp } from "./generated/google/protobuf/timestamp";
 export * as AuthProto from "./generated/auth";
 export * as UsersProto from "./generated/users";
 export * as AnalyticsProto from "./generated/analytics";
+export * as ProjectsProto from "./generated/projects";
 
 // Export other utilities
 export * from "./constants/grpc.constants";

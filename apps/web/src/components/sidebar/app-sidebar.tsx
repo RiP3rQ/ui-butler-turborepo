@@ -55,19 +55,16 @@ const data = {
       url: "/workflows-list",
       icon: SquareTerminal,
       isActive: false,
-      items: [],
     },
     {
       title: "Projects",
       url: "#",
       icon: Bot,
-      items: [],
     },
     {
       title: "Credentials",
       url: "/credentials",
       icon: VariableIcon,
-      items: [],
     },
   ],
 };

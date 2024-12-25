@@ -3,51 +3,117 @@ import {
   Controller,
   Get,
   Inject,
+  OnModuleInit,
   Param,
   ParseIntPipe,
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
-import { firstValueFrom } from 'rxjs';
-import {
-  CreateProjectDto,
-  CurrentUser,
-  JwtAuthGuard,
-  type User,
-} from '@app/common';
+import { type ClientGrpc } from '@nestjs/microservices';
+import { firstValueFrom, Observable } from 'rxjs';
+import { CurrentUser, JwtAuthGuard } from '@app/common';
+import { ProjectsProto } from '@app/proto';
+import { handleGrpcError } from '../utils/grpc-error.util';
+
+interface ProjectsServiceClient {
+  getProjectsByUserId(
+    request: ProjectsProto.GetProjectsRequest,
+  ): Observable<ProjectsProto.GetProjectsResponse>;
+
+  getProjectDetails(
+    request: ProjectsProto.GetProjectDetailsRequest,
+  ): Observable<ProjectsProto.ProjectDetails>;
+
+  createProject(
+    request: ProjectsProto.CreateProjectRequest,
+  ): Observable<ProjectsProto.Project>;
+}
 
 @Controller('projects')
 @UseGuards(JwtAuthGuard)
-export class ProjectsController {
+export class ProjectsController implements OnModuleInit {
+  private projectsService: ProjectsServiceClient;
+
   constructor(
-    @Inject('PROJECTS_SERVICE') private readonly projectsClient: ClientProxy,
+    @Inject('PROJECTS_SERVICE') private readonly client: ClientGrpc,
   ) {}
 
+  onModuleInit() {
+    this.projectsService =
+      this.client.getService<ProjectsServiceClient>('ProjectsService');
+  }
+
   @Get()
-  async getProjectsByUserId(@CurrentUser() user: User) {
-    return firstValueFrom(
-      this.projectsClient.send('projects.get-all', { user }),
-    );
+  async getProjectsByUserId(@CurrentUser() user: ProjectsProto.User) {
+    try {
+      const request: ProjectsProto.GetProjectsRequest = {
+        $type: 'api.projects.GetProjectsRequest',
+        user: {
+          $type: 'api.projects.User',
+          id: user.id,
+          email: user.email,
+          username: user.username,
+        },
+      };
+
+      const response = await firstValueFrom(
+        this.projectsService.getProjectsByUserId(request),
+      );
+
+      return response.projects;
+    } catch (error) {
+      handleGrpcError(error);
+    }
   }
 
   @Get(':projectId')
   async getProjectDetails(
-    @CurrentUser() user: User,
+    @CurrentUser() user: ProjectsProto.User,
     @Param('projectId', ParseIntPipe) projectId: number,
   ) {
-    return firstValueFrom(
-      this.projectsClient.send('projects.get-details', { user, projectId }),
-    );
+    try {
+      const request: ProjectsProto.GetProjectDetailsRequest = {
+        $type: 'api.projects.GetProjectDetailsRequest',
+        user: {
+          $type: 'api.projects.User',
+          id: user.id,
+          email: user.email,
+          username: user.username,
+        },
+        projectId,
+      };
+
+      return await firstValueFrom(
+        this.projectsService.getProjectDetails(request),
+      );
+    } catch (error) {
+      handleGrpcError(error);
+    }
   }
 
   @Post()
   async createProject(
-    @CurrentUser() user: User,
-    @Body() createProjectDto: CreateProjectDto,
+    @CurrentUser() user: ProjectsProto.User,
+    @Body() createProjectDto: ProjectsProto.CreateProjectDto,
   ) {
-    return firstValueFrom(
-      this.projectsClient.send('projects.create', { user, createProjectDto }),
-    );
+    try {
+      const request: ProjectsProto.CreateProjectRequest = {
+        $type: 'api.projects.CreateProjectRequest',
+        user: {
+          $type: 'api.projects.User',
+          id: user.id,
+          email: user.email,
+          username: user.username,
+        },
+        project: {
+          $type: 'api.projects.CreateProjectDto',
+          ...createProjectDto,
+        },
+      };
+
+      return await firstValueFrom(this.projectsService.createProject(request));
+    } catch (error) {
+      handleGrpcError(error);
+    }
   }
 }

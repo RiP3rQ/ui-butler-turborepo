@@ -10,7 +10,7 @@ import { columns } from "@/components/dasboard/table/columns";
 import { getDashboardTableFavoritedContent } from "@/actions/dashboard/server-actions";
 
 interface DashboardFavoritedTableProps {
-  initialData: DashboardTableFavoritedContentResponse[];
+  initialData?: DashboardTableFavoritedContentResponse[];
 }
 
 export function DashboardFavoritedTable({
@@ -23,6 +23,8 @@ export function DashboardFavoritedTable({
     queryFn: getDashboardTableFavoritedContent,
     initialData,
   });
+
+  console.log("data", data);
 
   return (
     <div className="w-full h-full mx-1 space-y-4">
@@ -40,7 +42,7 @@ export function DashboardFavoritedTable({
       </div>
       <DataTable
         columns={columns}
-        data={data}
+        data={data ?? []}
         hideFilterInput
         filterKey="Name"
       />

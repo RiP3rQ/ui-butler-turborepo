@@ -1,7 +1,7 @@
 import type { LucideProps } from "lucide-react";
-import { FC } from "react";
+import { JSX } from "react";
 
-type IconType = Record<string, FC<LucideProps>>;
+type IconType = Record<string, JSX.Element<LucideProps>>;
 
 const Icons: IconType = {
   logo: (props: LucideProps) => (
@@ -931,6 +931,6 @@ const Icons: IconType = {
       </defs>
     </svg>
   ),
-};
+} as const;
 
 export default Icons;

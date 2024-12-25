@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package api.projects;
+
+import "google/protobuf/timestamp.proto";
+
+service ProjectsService {
+    rpc GetProjectsByUserId (GetProjectsRequest) returns (GetProjectsResponse);
+    rpc GetProjectDetails (GetProjectDetailsRequest) returns (ProjectDetails);
+    rpc CreateProject (CreateProjectRequest) returns (Project);
+}
+
+message User {
+    int32 id = 1;
+    string email = 2;
+    string username = 3;
+}
+
+message Project {
+    int32 id = 1;
+    string title = 2;
+    string description = 3;
+    string color = 4;
+    google.protobuf.Timestamp createdAt = 5;
+    google.protobuf.Timestamp updatedAt = 6;
+    int32 userId = 7;
+    optional int32 numberOfComponents = 8;
+}
+
+message Component {
+    int32 id = 1;
+    string title = 2;
+    string description = 3;
+    int32 projectId = 4;
+    int32 userId = 5;
+    bool isFavorite = 6;
+    google.protobuf.Timestamp createdAt = 7;
+    google.protobuf.Timestamp updatedAt = 8;
+}
+
+message GetProjectsRequest {
+    User user = 1;
+}
+
+message GetProjectsResponse {
+    repeated Project projects = 1;
+}
+
+message GetProjectDetailsRequest {
+    User user = 1;
+    int32 projectId = 2;
+}
+
+message ProjectDetails {
+    int32 id = 1;
+    string title = 2;
+    string description = 3;
+    string color = 4;
+    google.protobuf.Timestamp createdAt = 5;
+    google.protobuf.Timestamp updatedAt = 6;
+    int32 userId = 7;
+    int32 numberOfComponents = 8;
+    repeated Component components = 9;
+}
+
+message CreateProjectRequest {
+    User user = 1;
+    CreateProjectDto project = 2;
+}
+
+message CreateProjectDto {
+    string title = 1;
+    string description = 2;
+    string color = 3;
+}
