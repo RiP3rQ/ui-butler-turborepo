@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
-import { and, eq } from 'drizzle-orm';
 import {
   CodeType,
   ComponentType,
@@ -10,10 +9,12 @@ import { generateText, pipeDataStreamToResponse, streamText } from 'ai';
 import { Response } from 'express';
 import { singleGeneratedPrompts } from '@repo/prompts';
 import {
+  and,
   Component,
   components,
   DATABASE_CONNECTION,
   type DrizzleDatabase,
+  eq,
   NewComponent,
   projects,
 } from '@app/database';

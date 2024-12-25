@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+package components;
+
+import "google/protobuf/timestamp.proto";
+
+service ComponentsService {
+    // Get single component
+    rpc GetComponent (GetComponentRequest) returns (Component) {}
+
+    // Save component
+    rpc SaveComponent (SaveComponentRequest) returns (Component) {}
+
+    // Favorite component
+    rpc FavoriteComponent (FavoriteComponentRequest) returns (Component) {}
+
+    // Generate component stream
+    rpc GenerateComponentStream (GenerateRequest) returns (stream GenerateResponse) {}
+
+    // Update component code
+    rpc UpdateComponentCode (UpdateCodeRequest) returns (Component) {}
+
+    // Generate code
+    rpc GenerateCode (GenerateCodeRequest) returns (Component) {}
+}
+
+message User {
+    int32 id = 1;
+    string email = 2;
+}
+
+message Component {
+    int32 id = 1;
+    string title = 2;
+    string code = 3;
+    string e2e_tests = 4;
+    string unit_tests = 5;
+    string mdx_docs = 6;
+    string ts_docs = 7;
+    int32 project_id = 8;
+    google.protobuf.Timestamp created_at = 9;
+    google.protobuf.Timestamp updated_at = 10;
+    string project_name = 11;
+    int32 user_id = 12;
+    bool was_e2e_tested = 13;
+    bool was_unit_tested = 14;
+    bool has_mdx_docs = 15;
+    bool has_typescript_docs = 16;
+}
+
+message GetComponentRequest {
+    User user = 1;
+    int32 project_id = 2;
+    int32 component_id = 3;
+}
+
+message SaveComponentRequest {
+    User user = 1;
+    string title = 2;
+    string code = 3;
+    int32 project_id = 4;
+}
+
+message FavoriteComponentRequest {
+    User user = 1;
+    int32 project_id = 2;
+    int32 component_id = 3;
+    bool favorite_value = 4;
+}
+
+message GenerateRequest {
+    string prompt = 1;
+}
+
+message GenerateResponse {
+    string content = 1;
+}
+
+message UpdateCodeRequest {
+    User user = 1;
+    int32 component_id = 2;
+    CodeType code_type = 3;
+    string content = 4;
+}
+
+message GenerateCodeRequest {
+    User user = 1;
+    int32 component_id = 2;
+    CodeType code_type = 3;
+}
+
+enum CodeType {
+    CODE = 0;
+    TYPESCRIPT_DOCS = 1;
+    UNIT_TESTS = 2;
+    E2E_TESTS = 3;
+    MDX_DOCS = 4;
+}
