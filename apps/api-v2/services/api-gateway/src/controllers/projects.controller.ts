@@ -10,29 +10,15 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
-import { firstValueFrom, Observable } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { CurrentUser, JwtAuthGuard } from '@app/common';
 import { ProjectsProto } from '@app/proto';
 import { handleGrpcError } from '../utils/grpc-error.util';
 
-interface ProjectsServiceClient {
-  getProjectsByUserId(
-    request: ProjectsProto.GetProjectsRequest,
-  ): Observable<ProjectsProto.GetProjectsResponse>;
-
-  getProjectDetails(
-    request: ProjectsProto.GetProjectDetailsRequest,
-  ): Observable<ProjectsProto.ProjectDetails>;
-
-  createProject(
-    request: ProjectsProto.CreateProjectRequest,
-  ): Observable<ProjectsProto.Project>;
-}
-
 @Controller('projects')
 @UseGuards(JwtAuthGuard)
 export class ProjectsController implements OnModuleInit {
-  private projectsService: ProjectsServiceClient;
+  private projectsService: ProjectsProto.ProjectsServiceClient;
 
   constructor(
     @Inject('PROJECTS_SERVICE') private readonly client: ClientGrpc,
@@ -40,7 +26,9 @@ export class ProjectsController implements OnModuleInit {
 
   onModuleInit() {
     this.projectsService =
-      this.client.getService<ProjectsServiceClient>('ProjectsService');
+      this.client.getService<ProjectsProto.ProjectsServiceClient>(
+        'ProjectsService',
+      );
   }
 
   @Get()

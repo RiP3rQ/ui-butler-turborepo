@@ -13,29 +13,15 @@ import { CurrentUser, JwtAuthGuard } from '@app/common';
 import { UsersProto } from '@app/proto';
 import { handleGrpcError } from '../utils/grpc-error.util';
 
-interface UsersServiceClient {
-  getUsers(request: UsersProto.Empty): Promise<UsersProto.GetUsersResponse>;
-
-  getCurrentUser(
-    request: UsersProto.GetCurrentUserRequest,
-  ): Promise<UsersProto.GetCurrentUserResponse>;
-
-  createProfile(
-    request: UsersProto.CreateProfileDto,
-  ): Promise<UsersProto.Profile>;
-
-  createUser(request: UsersProto.CreateUserDto): Promise<UsersProto.User>;
-}
-
 @Controller('users')
 export class UsersController implements OnModuleInit {
-  private usersService: UsersServiceClient;
+  private usersService: UsersProto.UsersServiceClient;
 
   constructor(@Inject('USERS_SERVICE') private readonly client: ClientGrpc) {}
 
   onModuleInit() {
     this.usersService =
-      this.client.getService<UsersServiceClient>('UsersService');
+      this.client.getService<UsersProto.UsersServiceClient>('UsersService');
   }
 
   @Get()

@@ -13,37 +13,12 @@ import { type ClientGrpc } from '@nestjs/microservices';
 import { CurrentUser, JwtAuthGuard } from '@app/common';
 import { AnalyticsProto } from '@app/proto';
 import { handleGrpcError } from '../utils/grpc-error.util';
-
-interface AnalyticsServiceClient {
-  getPeriods(
-    request: AnalyticsProto.GetPeriodsRequest,
-  ): Promise<AnalyticsProto.GetPeriodsResponse>;
-
-  getStatCardsValues(
-    request: AnalyticsProto.StatCardsRequest,
-  ): Promise<AnalyticsProto.StatCardsResponse>;
-
-  getWorkflowExecutionStats(
-    request: AnalyticsProto.WorkflowStatsRequest,
-  ): Promise<AnalyticsProto.WorkflowStatsResponse>;
-
-  getUsedCreditsInPeriod(
-    request: AnalyticsProto.UsedCreditsRequest,
-  ): Promise<AnalyticsProto.UsedCreditsResponse>;
-
-  getDashboardStatCardsValues(
-    request: AnalyticsProto.DashboardStatsRequest,
-  ): Promise<AnalyticsProto.DashboardStatsResponse>;
-
-  getFavoritedTableContent(
-    request: AnalyticsProto.FavoritedContentRequest,
-  ): Promise<AnalyticsProto.FavoritedContentResponse>;
-}
+import { firstValueFrom } from 'rxjs';
 
 @Controller('analytics')
 @UseGuards(JwtAuthGuard)
 export class AnalyticsController implements OnModuleInit {
-  private analyticsService: AnalyticsServiceClient;
+  private analyticsService: AnalyticsProto.AnalyticsServiceClient;
 
   constructor(
     @Inject('ANALYTICS_SERVICE') private readonly client: ClientGrpc,
@@ -51,7 +26,9 @@ export class AnalyticsController implements OnModuleInit {
 
   onModuleInit() {
     this.analyticsService =
-      this.client.getService<AnalyticsServiceClient>('AnalyticsService');
+      this.client.getService<AnalyticsProto.AnalyticsServiceClient>(
+        'AnalyticsService',
+      );
   }
 
   @Get('periods')
@@ -70,7 +47,9 @@ export class AnalyticsController implements OnModuleInit {
         },
       };
 
-      const response = await this.analyticsService.getPeriods(request);
+      const response = await firstValueFrom(
+        this.analyticsService.getPeriods(request),
+      );
       return response.periods;
     } catch (error) {
       handleGrpcError(error);
@@ -103,7 +82,9 @@ export class AnalyticsController implements OnModuleInit {
         year,
       };
 
-      return await this.analyticsService.getStatCardsValues(request);
+      return await firstValueFrom(
+        this.analyticsService.getStatCardsValues(request),
+      );
     } catch (error) {
       handleGrpcError(error);
     }
@@ -135,8 +116,10 @@ export class AnalyticsController implements OnModuleInit {
         year,
       };
 
-      const response =
-        await this.analyticsService.getWorkflowExecutionStats(request);
+      const response = await firstValueFrom(
+        this.analyticsService.getWorkflowExecutionStats(request),
+      );
+
       return response.stats;
     } catch (error) {
       handleGrpcError(error);
@@ -169,8 +152,10 @@ export class AnalyticsController implements OnModuleInit {
         year,
       };
 
-      const response =
-        await this.analyticsService.getUsedCreditsInPeriod(request);
+      const response = await firstValueFrom(
+        this.analyticsService.getUsedCreditsInPeriod(request),
+      );
+
       return response.stats;
     } catch (error) {
       handleGrpcError(error);
@@ -193,7 +178,9 @@ export class AnalyticsController implements OnModuleInit {
         },
       };
 
-      return await this.analyticsService.getDashboardStatCardsValues(request);
+      return await firstValueFrom(
+        this.analyticsService.getDashboardStatCardsValues(request),
+      );
     } catch (error) {
       handleGrpcError(error);
     }
@@ -215,8 +202,10 @@ export class AnalyticsController implements OnModuleInit {
         },
       };
 
-      const response =
-        await this.analyticsService.getFavoritedTableContent(request);
+      const response = await firstValueFrom(
+        this.analyticsService.getFavoritedTableContent(request),
+      );
+
       return response.components;
     } catch (error) {
       handleGrpcError(error);
