@@ -295,6 +295,18 @@ export class AnalyticsService {
           and(eq(components.userId, user.id), eq(components.isFavorite, true)),
         );
 
+      console.log(
+        'TESTS -> ',
+        favoritedComponents.map((component) => ({
+          $type: 'api.analytics.FavoritedComponent',
+          id: component.id,
+          name: component.name,
+          projectName: component.projectName,
+          createdAt: dateToTimestamp(component.createdAt.toISOString()),
+          updatedAt: dateToTimestamp(component.updatedAt.toISOString()),
+        })),
+      );
+
       return favoritedComponents.map((component) => ({
         $type: 'api.analytics.FavoritedComponent',
         id: component.id,

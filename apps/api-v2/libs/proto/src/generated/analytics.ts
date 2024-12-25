@@ -1231,8 +1231,6 @@ export const ANALYTICS_SERVICE_NAME = "AnalyticsService";
 
 export interface MessageFns<T, V extends string> {
   readonly $type: V;
-
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
-
   decode(input: BinaryReader | Uint8Array, length?: number): T;
 }

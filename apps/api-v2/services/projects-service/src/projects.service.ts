@@ -1,15 +1,23 @@
+// projects.service.ts
 import { Inject, Injectable } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
+import { status } from '@grpc/grpc-js';
 import {
+  and,
   components,
   DATABASE_CONNECTION,
   type DrizzleDatabase,
+  eq,
   Project,
   projects,
+  sql,
 } from '@app/database';
-import { CreateProjectDto, User } from '@app/common';
-import { and, eq, sql } from 'drizzle-orm';
-import { ProjectDetailsType, ProjectType } from '@repo/types';
+import { ProjectsProto } from '@app/proto';
+import {
+  convertToGrpcComponent,
+  convertToGrpcProject,
+  dateToTimestamp,
+} from './utils/timestamp.utils';
 
 @Injectable()
 export class ProjectsService {
@@ -18,7 +26,9 @@ export class ProjectsService {
     private readonly database: DrizzleDatabase,
   ) {}
 
-  async getProjectsByUserId(user: User): Promise<ProjectType[]> {
+  async getProjectsByUserId(
+    user: ProjectsProto.User,
+  ): Promise<ProjectsProto.Project[]> {
     try {
       const userProjects = await this.database
         .select({
@@ -39,21 +49,26 @@ export class ProjectsService {
         .groupBy(projects.id);
 
       if (!userProjects) {
-        throw new RpcException('Projects not found');
+        throw new RpcException({
+          code: status.NOT_FOUND,
+          message: 'Projects not found',
+        });
       }
 
-      return userProjects;
+      return userProjects.map((project) => convertToGrpcProject(project));
     } catch (error) {
-      throw new RpcException(
-        error instanceof Error ? error.message : JSON.stringify(error),
-      );
+      if (error instanceof RpcException) throw error;
+      throw new RpcException({
+        code: status.INTERNAL,
+        message: error instanceof Error ? error.message : 'Internal error',
+      });
     }
   }
 
   async getProjectDetails(
-    user: User,
+    user: ProjectsProto.User,
     projectId: number,
-  ): Promise<ProjectDetailsType> {
+  ): Promise<ProjectsProto.ProjectDetails> {
     try {
       const [projectDetails, componentsForProject] = await Promise.all([
         this.database
@@ -74,33 +89,48 @@ export class ProjectsService {
       ]);
 
       if (!projectDetails) {
-        throw new RpcException('Project not found');
+        throw new RpcException({
+          code: status.NOT_FOUND,
+          message: 'Project not found',
+        });
       }
 
       return {
-        ...projectDetails,
+        $type: 'api.projects.ProjectDetails',
+        id: projectDetails.id,
+        title: projectDetails.title,
+        description: projectDetails.description,
+        color: projectDetails.color,
+        userId: projectDetails.userId,
+        createdAt: dateToTimestamp(projectDetails.createdAt),
+        updatedAt: dateToTimestamp(projectDetails.updatedAt),
         numberOfComponents: componentsForProject.length,
-        components: componentsForProject,
+        components: componentsForProject.map((component) =>
+          convertToGrpcComponent(component),
+        ),
       };
     } catch (error) {
-      throw new RpcException(
-        error instanceof Error ? error.message : JSON.stringify(error),
-      );
+      if (error instanceof RpcException) throw error;
+      throw new RpcException({
+        code: status.INTERNAL,
+        message: error instanceof Error ? error.message : 'Internal error',
+      });
     }
   }
 
   async createProject(
-    user: User,
-    createProjectDto: CreateProjectDto,
-  ): Promise<ProjectType> {
+    user: ProjectsProto.User,
+    createProjectDto: ProjectsProto.CreateProjectDto,
+  ): Promise<ProjectsProto.Project> {
     try {
+      const now = new Date();
       const newProjectData: Omit<Project, 'id'> = {
         title: createProjectDto.title,
         description: createProjectDto.description,
         userId: user.id,
         color: createProjectDto.color,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: now,
+        updatedAt: now,
       };
 
       const [newProject] = await this.database
@@ -109,14 +139,22 @@ export class ProjectsService {
         .returning();
 
       if (!newProject) {
-        throw new RpcException('Project not created');
+        throw new RpcException({
+          code: status.INTERNAL,
+          message: 'Project not created',
+        });
       }
 
-      return newProject;
+      return convertToGrpcProject({
+        ...newProject,
+        numberOfComponents: 0,
+      });
     } catch (error) {
-      throw new RpcException(
-        error instanceof Error ? error.message : JSON.stringify(error),
-      );
+      if (error instanceof RpcException) throw error;
+      throw new RpcException({
+        code: status.INTERNAL,
+        message: error instanceof Error ? error.message : 'Internal error',
+      });
     }
   }
 }

@@ -67,6 +67,8 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  console.log("table.getRowModel().rows", table.getRowModel().rows);
+
   return (
     <div>
       {!hideFilterInput && (

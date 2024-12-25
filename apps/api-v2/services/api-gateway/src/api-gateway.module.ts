@@ -149,13 +149,13 @@ import { createGrpcOptions } from './config/grpc.config';
       {
         name: 'PROJECTS_SERVICE',
         imports: [ConfigModule],
-        useFactory: (configService: ConfigService) => ({
-          transport: Transport.TCP,
-          options: {
-            host: configService.get('PROJECTS_SERVICE_HOST', 'localhost'),
-            port: configService.get('PROJECTS_SERVICE_PORT', 3346),
-          },
-        }),
+        useFactory: (configService: ConfigService) =>
+          createGrpcOptions(
+            configService.get('PROJECTS_SERVICE_HOST'),
+            configService.get('PROJECTS_SERVICE_PORT'),
+            'api.projects',
+            'projects',
+          ),
         inject: [ConfigService],
       },
     ]),

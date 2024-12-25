@@ -1,26 +1,40 @@
+// projects.controller.ts
 import { Controller } from '@nestjs/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { GrpcMethod } from '@nestjs/microservices';
 import { ProjectsService } from './projects.service';
-import { CreateProjectDto, User } from '@app/common';
+import { ProjectsProto } from '@app/proto';
 
 @Controller()
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
-  @MessagePattern('projects.get-all')
-  async getProjectsByUserId(@Payload() data: { user: User }) {
-    return this.projectsService.getProjectsByUserId(data.user);
+  @GrpcMethod('ProjectsService', 'GetProjectsByUserId')
+  async getProjectsByUserId(
+    request: ProjectsProto.GetProjectsRequest,
+  ): Promise<ProjectsProto.GetProjectsResponse> {
+    const projects = await this.projectsService.getProjectsByUserId(
+      request.user,
+    );
+    return {
+      $type: 'api.projects.GetProjectsResponse',
+      projects,
+    };
   }
 
-  @MessagePattern('projects.get-details')
-  async getProjectDetails(@Payload() data: { user: User; projectId: number }) {
-    return this.projectsService.getProjectDetails(data.user, data.projectId);
+  @GrpcMethod('ProjectsService', 'GetProjectDetails')
+  async getProjectDetails(
+    request: ProjectsProto.GetProjectDetailsRequest,
+  ): Promise<ProjectsProto.ProjectDetails> {
+    return this.projectsService.getProjectDetails(
+      request.user,
+      request.projectId,
+    );
   }
 
-  @MessagePattern('projects.create')
+  @GrpcMethod('ProjectsService', 'CreateProject')
   async createProject(
-    @Payload() data: { user: User; createProjectDto: CreateProjectDto },
-  ) {
-    return this.projectsService.createProject(data.user, data.createProjectDto);
+    request: ProjectsProto.CreateProjectRequest,
+  ): Promise<ProjectsProto.Project> {
+    return this.projectsService.createProject(request.user, request.project);
   }
 }
