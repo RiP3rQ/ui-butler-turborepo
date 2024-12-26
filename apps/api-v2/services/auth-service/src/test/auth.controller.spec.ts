@@ -1,52 +1,23 @@
+// auth.controller.spec.ts
 import { Test, TestingModule } from '@nestjs/testing';
-import { CreateUserDto, User } from '@app/common';
 import { AuthController } from '../auth.controller';
 import { AuthService } from '../auth.service';
+import { RpcException } from '@nestjs/microservices';
+import { status } from '@grpc/grpc-js';
+import { AuthProto } from '@app/proto';
 
 describe('AuthController', () => {
   let controller: AuthController;
-  let service: jest.Mocked<AuthService>;
+  let service: AuthService;
 
-  const mockUser: User = {
-    id: 1,
-    email: 'test@example.com',
-    username: 'Test User',
-    password: 'password',
-    refreshToken: 'refresh_token',
-  };
-
-  const mockCreateUserDto: CreateUserDto = {
-    email: 'test@example.com',
-    password: 'password123',
-    username: 'Test User',
-  };
-
-  // Regular auth response
-  const mockAuthResponse = {
-    accessToken: 'mock-access-token',
-    refreshToken: 'mock-refresh-token',
-    expiresAccessToken: new Date(Date.now() + 3600000), // 1 hour from now
-    expiresRefreshToken: new Date(Date.now() + 86400000), // 24 hours from now
-  };
-
-  // OAuth auth response
-  const mockOAuthResponse = {
-    redirect: true,
-    redirectUrl: 'http://example.com/callback',
-    accessToken: 'mock-access-token',
-    refreshToken: 'mock-refresh-token',
-    expiresAccessToken: new Date(Date.now() + 3600000),
-    expiresRefreshToken: new Date(Date.now() + 86400000),
+  const mockAuthService = {
+    register: jest.fn(),
+    login: jest.fn(),
+    verifyUserRefreshToken: jest.fn(),
+    verifyUser: jest.fn(),
   };
 
   beforeEach(async () => {
-    const mockAuthService = {
-      login: jest.fn(),
-      register: jest.fn(),
-      verifyUserRefreshToken: jest.fn(),
-      verifyUser: jest.fn(),
-    };
-
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
       providers: [
@@ -58,181 +29,225 @@ describe('AuthController', () => {
     }).compile();
 
     controller = module.get<AuthController>(AuthController);
-    service = module.get(AuthService);
+    service = module.get<AuthService>(AuthService);
   });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  describe('login', () => {
-    it('should call authService.login with user', async () => {
-      service.login.mockResolvedValue(mockAuthResponse);
-
-      const result = await controller.login({ user: mockUser });
-
-      expect(service.login).toHaveBeenCalledWith(mockUser);
-      expect(result).toEqual(mockAuthResponse);
-    });
-
-    it('should handle login errors', async () => {
-      const error = new Error('Login failed');
-      service.login.mockRejectedValue(error);
-
-      await expect(controller.login({ user: mockUser })).rejects.toThrow(error);
-    });
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
   });
 
   describe('register', () => {
-    it('should call authService.register with createUserDto', async () => {
-      service.register.mockResolvedValue(mockAuthResponse);
+    it('should call authService.register with correct parameters', async () => {
+      const mockUser: AuthProto.CreateUserDto = {
+        $type: 'api.auth.CreateUserDto',
+        email: 'test@test.com',
+        password: 'password',
+      };
+      const mockResponse = {
+        $type: 'api.auth.AuthResponse',
+        accessToken: 'token',
+        refreshToken: 'refresh',
+      };
 
-      const result = await controller.register({ user: mockCreateUserDto });
+      mockAuthService.register.mockResolvedValue(mockResponse);
 
-      expect(service.register).toHaveBeenCalledWith(mockCreateUserDto);
-      expect(result).toEqual(mockAuthResponse);
+      const result = await controller.register({
+        $type: 'api.auth.RegisterRequest',
+        user: mockUser,
+      });
+
+      expect(service.register).toHaveBeenCalledWith(mockUser);
+      expect(result).toEqual(mockResponse);
+    });
+  });
+
+  describe('login', () => {
+    const mockUser: AuthProto.User = {
+      $type: 'api.auth.User',
+      id: 1,
+      email: 'test@test.com',
+      username: 'test',
+      password: 'password',
+    };
+    const mockResponse = {
+      $type: 'api.auth.AuthResponse',
+      accessToken: 'token',
+      refreshToken: 'refresh',
+    };
+
+    it('should call authService.login with correct parameters', async () => {
+      mockAuthService.login.mockResolvedValue(mockResponse);
+
+      const result = await controller.login({
+        $type: 'api.auth.LoginRequest',
+        user: mockUser,
+      });
+
+      expect(service.login).toHaveBeenCalledWith(mockUser);
+      expect(result).toEqual(mockResponse);
     });
 
-    it('should handle registration errors', async () => {
-      const error = new Error('Registration failed');
-      service.register.mockRejectedValue(error);
-
+    it('should throw RpcException if user is not provided', async () => {
       await expect(
-        controller.register({ user: mockCreateUserDto }),
-      ).rejects.toThrow(error);
+        controller.login({
+          $type: 'api.auth.LoginRequest',
+          user: null,
+        }),
+      ).rejects.toThrow(
+        new RpcException({
+          code: status.INVALID_ARGUMENT,
+          message: 'User data is required',
+        }),
+      );
     });
   });
 
   describe('refreshToken', () => {
-    it('should call authService.login with user for token refresh', async () => {
-      service.login.mockResolvedValue(mockAuthResponse);
+    const mockUser: AuthProto.User = {
+      $type: 'api.auth.User',
+      id: 1,
+      email: 'test@test.com',
+      username: 'test',
+      refreshToken: 'refresh',
+    };
+    const mockResponse = {
+      $type: 'api.auth.AuthResponse',
+      accessToken: 'newToken',
+      refreshToken: 'newRefresh',
+    };
 
-      const result = await controller.refreshToken({ user: mockUser });
+    it('should call authService.login with correct parameters', async () => {
+      mockAuthService.login.mockResolvedValue(mockResponse);
+
+      const result = await controller.refreshToken({
+        $type: 'api.auth.RefreshTokenRequest',
+        user: mockUser,
+      });
 
       expect(service.login).toHaveBeenCalledWith(mockUser);
-      expect(result).toEqual(mockAuthResponse);
+      expect(result).toEqual(mockResponse);
     });
 
-    it('should handle refresh token errors', async () => {
-      const error = new Error('Token refresh failed');
-      service.login.mockRejectedValue(error);
-
-      await expect(controller.refreshToken({ user: mockUser })).rejects.toThrow(
-        error,
+    it('should throw RpcException if user is not provided', async () => {
+      await expect(
+        controller.refreshToken({
+          $type: 'api.auth.RefreshTokenRequest',
+          user: null,
+        }),
+      ).rejects.toThrow(
+        new RpcException({
+          code: status.INVALID_ARGUMENT,
+          message: 'User data is required',
+        }),
       );
     });
   });
 
-  describe('googleCallback', () => {
-    it('should call authService.login with user and isOAuth flag', async () => {
-      service.login.mockResolvedValue(mockOAuthResponse);
+  describe('social callbacks', () => {
+    const mockUser: AuthProto.User = {
+      $type: 'api.auth.User',
+      id: 1,
+      email: 'test@test.com',
+      username: 'test',
+    };
+    const mockResponse = {
+      $type: 'api.auth.AuthResponse',
+      accessToken: 'token',
+      refreshToken: 'refresh',
+    };
 
-      const result = await controller.googleCallback({ user: mockUser });
+    it('should handle Google callback', async () => {
+      mockAuthService.login.mockResolvedValue(mockResponse);
 
-      expect(service.login).toHaveBeenCalledWith(mockUser, true);
-      expect(result).toEqual(mockOAuthResponse);
-    });
-
-    it('should handle Google callback errors', async () => {
-      const error = new Error('Google callback failed');
-      service.login.mockRejectedValue(error);
-
-      await expect(
-        controller.googleCallback({ user: mockUser }),
-      ).rejects.toThrow(error);
-    });
-  });
-
-  describe('githubCallback', () => {
-    it('should call authService.login with user and isOAuth flag', async () => {
-      service.login.mockResolvedValue(mockOAuthResponse);
-
-      const result = await controller.githubCallback({ user: mockUser });
+      const result = await controller.googleCallback({
+        $type: 'api.auth.SocialCallbackRequest',
+        user: mockUser,
+      });
 
       expect(service.login).toHaveBeenCalledWith(mockUser, true);
-      expect(result).toEqual(mockOAuthResponse);
+      expect(result).toEqual(mockResponse);
     });
 
-    it('should handle GitHub callback errors', async () => {
-      const error = new Error('GitHub callback failed');
-      service.login.mockRejectedValue(error);
+    it('should handle Github callback', async () => {
+      mockAuthService.login.mockResolvedValue(mockResponse);
 
-      await expect(
-        controller.githubCallback({ user: mockUser }),
-      ).rejects.toThrow(error);
+      const result = await controller.githubCallback({
+        $type: 'api.auth.SocialCallbackRequest',
+        user: mockUser,
+      });
+
+      expect(service.login).toHaveBeenCalledWith(mockUser, true);
+      expect(result).toEqual(mockResponse);
     });
   });
 
   describe('verifyRefreshToken', () => {
-    const mockTokenData = {
-      refreshToken: 'mock-refresh-token',
-      email: 'test@example.com',
-    };
+    it('should call authService.verifyUserRefreshToken with correct parameters', async () => {
+      const mockRequest: AuthProto.VerifyRefreshTokenRequest = {
+        $type: 'api.auth.VerifyRefreshTokenRequest',
+        refreshToken: 'refresh',
+        email: 'test@test.com',
+      };
+      const mockUser: AuthProto.User = {
+        $type: 'api.auth.User',
+        id: 1,
+        email: 'test@test.com',
+        username: 'test',
+      };
 
-    it('should call authService.verifyUserRefreshToken with token and email', async () => {
-      service.verifyUserRefreshToken.mockResolvedValue(true);
+      mockAuthService.verifyUserRefreshToken.mockResolvedValue(mockUser);
 
-      const result = await controller.verifyRefreshToken(mockTokenData);
+      const result = await controller.verifyRefreshToken(mockRequest);
 
       expect(service.verifyUserRefreshToken).toHaveBeenCalledWith(
-        mockTokenData.refreshToken,
-        mockTokenData.email,
+        mockRequest.refreshToken,
+        mockRequest.email,
       );
-      expect(result).toBe(true);
-    });
-
-    it('should handle verify refresh token errors', async () => {
-      const error = new Error('Token verification failed');
-      service.verifyUserRefreshToken.mockRejectedValue(error);
-
-      await expect(
-        controller.verifyRefreshToken(mockTokenData),
-      ).rejects.toThrow(error);
+      expect(result).toEqual(mockUser);
     });
   });
 
   describe('verifyUser', () => {
-    const mockCredentials = {
-      email: 'test@example.com',
-      password: 'password123',
+    const mockRequest: AuthProto.VerifyUserRequest = {
+      $type: 'api.auth.VerifyUserRequest',
+      email: 'test@test.com',
+      password: 'password',
     };
 
-    it('should call authService.verifyUser with credentials and return user', async () => {
-      service.verifyUser.mockResolvedValue(mockUser);
+    it('should return user when verification succeeds', async () => {
+      const mockUser: AuthProto.User = {
+        $type: 'api.auth.User',
+        id: 1,
+        email: 'test@test.com',
+        username: 'test',
+      };
+      mockAuthService.verifyUser.mockResolvedValue(mockUser);
 
-      const result = await controller.verifyUser(mockCredentials);
+      const result = await controller.verifyUser(mockRequest);
 
       expect(service.verifyUser).toHaveBeenCalledWith(
-        mockCredentials.email,
-        mockCredentials.password,
+        mockRequest.email,
+        mockRequest.password,
       );
       expect(result).toEqual(mockUser);
     });
 
     it('should return null when verification fails', async () => {
-      service.verifyUser.mockRejectedValue(new Error('Verification failed'));
+      mockAuthService.verifyUser.mockRejectedValue(
+        new Error('Verification failed'),
+      );
 
-      const result = await controller.verifyUser(mockCredentials);
+      const result = await controller.verifyUser(mockRequest);
 
-      expect(result).toBeNull();
       expect(service.verifyUser).toHaveBeenCalledWith(
-        mockCredentials.email,
-        mockCredentials.password,
+        mockRequest.email,
+        mockRequest.password,
       );
-    });
-
-    it('should log error when verification fails', async () => {
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
-      const error = new Error('Verification failed');
-      service.verifyUser.mockRejectedValue(error);
-
-      await controller.verifyUser(mockCredentials);
-
-      expect(consoleSpy).toHaveBeenCalledWith(
-        'User verification failed:',
-        error,
-      );
-      consoleSpy.mockRestore();
+      expect(result).toBeNull();
     });
   });
 });

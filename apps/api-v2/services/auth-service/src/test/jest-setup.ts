@@ -1,3 +1,4 @@
+// jest-setup.ts
 import 'reflect-metadata';
 
 // Mock console methods to prevent noise in test output
@@ -13,13 +14,46 @@ global.console = {
 jest.mock('@nestjs/microservices', () => ({
   MessagePattern: () => jest.fn(),
   Payload: () => jest.fn(),
+  GrpcMethod: () => jest.fn(),
   Transport: {
-    TCP: 'TCP',
+    GRPC: 'GRPC',
   },
   ClientsModule: {
     registerAsync: jest.fn().mockReturnValue({
       module: class MockClientsModule {},
       providers: [],
     }),
+    register: jest.fn().mockReturnValue({
+      module: class MockClientsModule {},
+      providers: [],
+    }),
+  },
+  RpcException: jest.requireActual('@nestjs/microservices').RpcException,
+}));
+
+// Mock grpc-js status codes
+jest.mock('@grpc/grpc-js', () => ({
+  status: {
+    OK: 0,
+    CANCELLED: 1,
+    UNKNOWN: 2,
+    INVALID_ARGUMENT: 3,
+    DEADLINE_EXCEEDED: 4,
+    NOT_FOUND: 5,
+    ALREADY_EXISTS: 6,
+    PERMISSION_DENIED: 7,
+    UNAUTHENTICATED: 16,
+    UNIMPLEMENTED: 12,
+    INTERNAL: 13,
+  },
+  ServiceError: class MockServiceError extends Error {
+    code: number;
+    details: string;
+
+    constructor(code: number, details: string) {
+      super(details);
+      this.code = code;
+      this.details = details;
+    }
   },
 }));
