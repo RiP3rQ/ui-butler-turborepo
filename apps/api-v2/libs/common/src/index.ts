@@ -57,3 +57,6 @@ export * from "./openai/ai";
 export * from "./cryptography/algorythm";
 export * from "./cryptography/symmetric-encryption";
 export * from "./cryptography/symmetric-decryption";
+
+// interceptors
+export * from "./interceptors/grpc.interceptor";

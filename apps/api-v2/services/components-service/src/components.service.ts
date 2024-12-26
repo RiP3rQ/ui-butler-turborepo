@@ -255,8 +255,14 @@ export class ComponentsService {
         throw new RpcException('Component not found');
       }
 
-      const generatedCode = await this.generateCode(codeType, component.code);
-      const updateData = this.createUpdateObject(codeType, generatedCode);
+      const generatedCode = await this.generateCode(
+        codeType as unknown as CodeType,
+        component.code,
+      );
+      const updateData = this.createUpdateObject(
+        codeType as unknown as CodeType,
+        generatedCode,
+      );
 
       const [updatedComponent] = await this.database
         .update(components)

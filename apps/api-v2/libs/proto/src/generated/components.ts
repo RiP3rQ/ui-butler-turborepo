@@ -11,7 +11,7 @@ import { Observable } from "rxjs";
 import { Timestamp } from "./google/protobuf/timestamp";
 import { messageTypeRegistry } from "./typeRegistry";
 
-export const protobufPackage = "components";
+export const protobufPackage = "api.components";
 
 export enum CodeType {
   CODE = 0,
@@ -23,13 +23,13 @@ export enum CodeType {
 }
 
 export interface User {
-  $type: "components.User";
+  $type: "api.components.User";
   id: number;
   email: string;
 }
 
 export interface Component {
-  $type: "components.Component";
+  $type: "api.components.Component";
   id: number;
   title: string;
   code: string;
@@ -49,14 +49,14 @@ export interface Component {
 }
 
 export interface GetComponentRequest {
-  $type: "components.GetComponentRequest";
+  $type: "api.components.GetComponentRequest";
   user?: User | undefined;
   projectId: number;
   componentId: number;
 }
 
 export interface SaveComponentRequest {
-  $type: "components.SaveComponentRequest";
+  $type: "api.components.SaveComponentRequest";
   user?: User | undefined;
   title: string;
   code: string;
@@ -64,7 +64,7 @@ export interface SaveComponentRequest {
 }
 
 export interface FavoriteComponentRequest {
-  $type: "components.FavoriteComponentRequest";
+  $type: "api.components.FavoriteComponentRequest";
   user?: User | undefined;
   projectId: number;
   componentId: number;
@@ -72,17 +72,17 @@ export interface FavoriteComponentRequest {
 }
 
 export interface GenerateRequest {
-  $type: "components.GenerateRequest";
+  $type: "api.components.GenerateRequest";
   prompt: string;
 }
 
 export interface GenerateResponse {
-  $type: "components.GenerateResponse";
+  $type: "api.components.GenerateResponse";
   content: string;
 }
 
 export interface UpdateCodeRequest {
-  $type: "components.UpdateCodeRequest";
+  $type: "api.components.UpdateCodeRequest";
   user?: User | undefined;
   componentId: number;
   codeType: CodeType;
@@ -90,20 +90,20 @@ export interface UpdateCodeRequest {
 }
 
 export interface GenerateCodeRequest {
-  $type: "components.GenerateCodeRequest";
+  $type: "api.components.GenerateCodeRequest";
   user?: User | undefined;
   componentId: number;
   codeType: CodeType;
 }
 
-export const COMPONENTS_PACKAGE_NAME = "components";
+export const API_COMPONENTS_PACKAGE_NAME = "api.components";
 
 function createBaseUser(): User {
-  return { $type: "components.User", id: 0, email: "" };
+  return { $type: "api.components.User", id: 0, email: "" };
 }
 
-export const User: MessageFns<User, "components.User"> = {
-  $type: "components.User" as const,
+export const User: MessageFns<User, "api.components.User"> = {
+  $type: "api.components.User" as const,
 
   encode(
     message: User,
@@ -156,7 +156,7 @@ messageTypeRegistry.set(User.$type, User);
 
 function createBaseComponent(): Component {
   return {
-    $type: "components.Component",
+    $type: "api.components.Component",
     id: 0,
     title: "",
     code: "",
@@ -174,8 +174,8 @@ function createBaseComponent(): Component {
   };
 }
 
-export const Component: MessageFns<Component, "components.Component"> = {
-  $type: "components.Component" as const,
+export const Component: MessageFns<Component, "api.components.Component"> = {
+  $type: "api.components.Component" as const,
 
   encode(
     message: Component,
@@ -382,7 +382,7 @@ messageTypeRegistry.set(Component.$type, Component);
 
 function createBaseGetComponentRequest(): GetComponentRequest {
   return {
-    $type: "components.GetComponentRequest",
+    $type: "api.components.GetComponentRequest",
     projectId: 0,
     componentId: 0,
   };
@@ -390,9 +390,9 @@ function createBaseGetComponentRequest(): GetComponentRequest {
 
 export const GetComponentRequest: MessageFns<
   GetComponentRequest,
-  "components.GetComponentRequest"
+  "api.components.GetComponentRequest"
 > = {
-  $type: "components.GetComponentRequest" as const,
+  $type: "api.components.GetComponentRequest" as const,
 
   encode(
     message: GetComponentRequest,
@@ -459,7 +459,7 @@ messageTypeRegistry.set(GetComponentRequest.$type, GetComponentRequest);
 
 function createBaseSaveComponentRequest(): SaveComponentRequest {
   return {
-    $type: "components.SaveComponentRequest",
+    $type: "api.components.SaveComponentRequest",
     title: "",
     code: "",
     projectId: 0,
@@ -468,9 +468,9 @@ function createBaseSaveComponentRequest(): SaveComponentRequest {
 
 export const SaveComponentRequest: MessageFns<
   SaveComponentRequest,
-  "components.SaveComponentRequest"
+  "api.components.SaveComponentRequest"
 > = {
-  $type: "components.SaveComponentRequest" as const,
+  $type: "api.components.SaveComponentRequest" as const,
 
   encode(
     message: SaveComponentRequest,
@@ -548,7 +548,7 @@ messageTypeRegistry.set(SaveComponentRequest.$type, SaveComponentRequest);
 
 function createBaseFavoriteComponentRequest(): FavoriteComponentRequest {
   return {
-    $type: "components.FavoriteComponentRequest",
+    $type: "api.components.FavoriteComponentRequest",
     projectId: 0,
     componentId: 0,
     favoriteValue: false,
@@ -557,9 +557,9 @@ function createBaseFavoriteComponentRequest(): FavoriteComponentRequest {
 
 export const FavoriteComponentRequest: MessageFns<
   FavoriteComponentRequest,
-  "components.FavoriteComponentRequest"
+  "api.components.FavoriteComponentRequest"
 > = {
-  $type: "components.FavoriteComponentRequest" as const,
+  $type: "api.components.FavoriteComponentRequest" as const,
 
   encode(
     message: FavoriteComponentRequest,
@@ -639,14 +639,14 @@ messageTypeRegistry.set(
 );
 
 function createBaseGenerateRequest(): GenerateRequest {
-  return { $type: "components.GenerateRequest", prompt: "" };
+  return { $type: "api.components.GenerateRequest", prompt: "" };
 }
 
 export const GenerateRequest: MessageFns<
   GenerateRequest,
-  "components.GenerateRequest"
+  "api.components.GenerateRequest"
 > = {
-  $type: "components.GenerateRequest" as const,
+  $type: "api.components.GenerateRequest" as const,
 
   encode(
     message: GenerateRequest,
@@ -687,14 +687,14 @@ export const GenerateRequest: MessageFns<
 messageTypeRegistry.set(GenerateRequest.$type, GenerateRequest);
 
 function createBaseGenerateResponse(): GenerateResponse {
-  return { $type: "components.GenerateResponse", content: "" };
+  return { $type: "api.components.GenerateResponse", content: "" };
 }
 
 export const GenerateResponse: MessageFns<
   GenerateResponse,
-  "components.GenerateResponse"
+  "api.components.GenerateResponse"
 > = {
-  $type: "components.GenerateResponse" as const,
+  $type: "api.components.GenerateResponse" as const,
 
   encode(
     message: GenerateResponse,
@@ -736,7 +736,7 @@ messageTypeRegistry.set(GenerateResponse.$type, GenerateResponse);
 
 function createBaseUpdateCodeRequest(): UpdateCodeRequest {
   return {
-    $type: "components.UpdateCodeRequest",
+    $type: "api.components.UpdateCodeRequest",
     componentId: 0,
     codeType: 0,
     content: "",
@@ -745,9 +745,9 @@ function createBaseUpdateCodeRequest(): UpdateCodeRequest {
 
 export const UpdateCodeRequest: MessageFns<
   UpdateCodeRequest,
-  "components.UpdateCodeRequest"
+  "api.components.UpdateCodeRequest"
 > = {
-  $type: "components.UpdateCodeRequest" as const,
+  $type: "api.components.UpdateCodeRequest" as const,
 
   encode(
     message: UpdateCodeRequest,
@@ -822,7 +822,7 @@ messageTypeRegistry.set(UpdateCodeRequest.$type, UpdateCodeRequest);
 
 function createBaseGenerateCodeRequest(): GenerateCodeRequest {
   return {
-    $type: "components.GenerateCodeRequest",
+    $type: "api.components.GenerateCodeRequest",
     componentId: 0,
     codeType: 0,
   };
@@ -830,9 +830,9 @@ function createBaseGenerateCodeRequest(): GenerateCodeRequest {
 
 export const GenerateCodeRequest: MessageFns<
   GenerateCodeRequest,
-  "components.GenerateCodeRequest"
+  "api.components.GenerateCodeRequest"
 > = {
-  $type: "components.GenerateCodeRequest" as const,
+  $type: "api.components.GenerateCodeRequest" as const,
 
   encode(
     message: GenerateCodeRequest,
@@ -1003,8 +1003,6 @@ export const COMPONENTS_SERVICE_NAME = "ComponentsService";
 
 export interface MessageFns<T, V extends string> {
   readonly $type: V;
-
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
-
   decode(input: BinaryReader | Uint8Array, length?: number): T;
 }

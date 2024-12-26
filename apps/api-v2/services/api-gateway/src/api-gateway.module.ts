@@ -137,13 +137,13 @@ import { createGrpcOptions } from './config/grpc.config';
       {
         name: 'COMPONENTS_SERVICE',
         imports: [ConfigModule],
-        useFactory: (configService: ConfigService) => ({
-          transport: Transport.TCP,
-          options: {
-            host: configService.get('COMPONENTS_SERVICE_HOST', 'localhost'),
-            port: configService.get('COMPONENTS_SERVICE_PORT', 3345),
-          },
-        }),
+        useFactory: (configService: ConfigService) =>
+          createGrpcOptions(
+            configService.get('COMPONENTS_SERVICE_HOST'),
+            configService.get('COMPONENTS_SERVICE_PORT'),
+            'api.components',
+            'components',
+          ),
         inject: [ConfigService],
       },
       {

@@ -1,5 +1,4 @@
 import { Body, Controller, Post, Req, Res } from '@nestjs/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
 import { ComponentsService } from './components.service';
 import {
   FavoriteComponentDto,
@@ -11,15 +10,20 @@ import {
 } from '@app/common';
 import { CodeType } from '@repo/types';
 import { type Response } from 'express';
+import { GrpcMethod } from '@nestjs/microservices';
+// import { Observable } from 'rxjs';
+// import { Metadata, ServerDuplexStream } from '@grpc/grpc-js';
 
 @Controller()
 export class ComponentsController {
   constructor(private readonly componentsService: ComponentsService) {}
 
-  @MessagePattern('components.get')
-  async getComponent(
-    @Payload() data: { user: User; projectId: number; componentId: number },
-  ) {
+  @GrpcMethod('ComponentsService', 'GetComponent')
+  async getComponent(data: {
+    user: User;
+    projectId: number;
+    componentId: number;
+  }) {
     return this.componentsService.getSingleComponent(
       data.user,
       data.projectId,
@@ -27,26 +31,72 @@ export class ComponentsController {
     );
   }
 
-  @MessagePattern('components.save')
-  async saveComponent(
-    @Payload() data: { user: User; saveComponentDto: SaveComponentDto },
-  ) {
+  @GrpcMethod('ComponentsService', 'SaveComponent')
+  async saveComponent(data: {
+    user: User;
+    saveComponentDto: SaveComponentDto;
+  }) {
     return this.componentsService.saveComponent(
       data.user,
       data.saveComponentDto,
     );
   }
 
-  @MessagePattern('components.favorite')
-  async favoriteComponent(
-    @Payload() data: { user: User; favoriteComponentDto: FavoriteComponentDto },
-  ) {
+  @GrpcMethod('ComponentsService', 'FavoriteComponent')
+  async favoriteComponent(data: {
+    user: User;
+    favoriteComponentDto: FavoriteComponentDto;
+  }) {
     return this.componentsService.favoriteComponent(
       data.user,
       data.favoriteComponentDto,
     );
   }
 
+  @GrpcMethod('ComponentsService', 'UpdateComponentCode')
+  async updateComponentCode(data: {
+    user: User;
+    componentId: number;
+    codeType: CodeType;
+    updateComponentCodeDto: UpdateComponentCodeDto;
+  }) {
+    return this.componentsService.updateComponentCode(
+      data.user,
+      data.componentId,
+      data.codeType,
+      data.updateComponentCodeDto,
+    );
+  }
+
+  @GrpcMethod('ComponentsService', 'GenerateCode')
+  async generateCodeBasedOnType(data: {
+    user: User;
+    generateCodeDto: GenerateCodeDto;
+  }) {
+    return this.componentsService.generateCodeFunction(
+      data.user,
+      data.generateCodeDto,
+    );
+  }
+
+  // CAN ALSO BE IMPLEMENTED AS A STREAM METHOD
+  // @GrpcStreamMethod('ComponentsService', 'GenerateComponentStream')
+  // async generateComponentStream(
+  //   data: { prompt: string },
+  //   metadata: Metadata,
+  //   call: ServerDuplexStream<any, any>,
+  // ): Promise<Observable<any>> {
+  //   return new Observable((subscriber) => {
+  //     this.componentsService
+  //       .generateComponentStream(data.prompt, {
+  //         write: (chunk) => subscriber.next({ content: chunk }),
+  //         end: () => subscriber.complete(),
+  //       })
+  //       .catch((error) => subscriber.error(error));
+  //   });
+  // }
+
+  // HTTP Endpoint for generating components (Stream)
   @Post('api/components/generate')
   async generateComponent(
     @Req() req: Request,
@@ -62,33 +112,5 @@ export class ComponentsController {
         error instanceof Error ? error.message : JSON.stringify(error);
       res.status(500).json({ error: errorMessage });
     }
-  }
-
-  @MessagePattern('components.update-code')
-  async updateComponentCode(
-    @Payload()
-    data: {
-      user: User;
-      componentId: number;
-      codeType: CodeType;
-      updateComponentCodeDto: UpdateComponentCodeDto;
-    },
-  ) {
-    return this.componentsService.updateComponentCode(
-      data.user,
-      data.componentId,
-      data.codeType,
-      data.updateComponentCodeDto,
-    );
-  }
-
-  @MessagePattern('components.generate-code')
-  async generateCodeBasedOnType(
-    @Payload() data: { user: User; generateCodeDto: GenerateCodeDto },
-  ) {
-    return this.componentsService.generateCodeFunction(
-      data.user,
-      data.generateCodeDto,
-    );
   }
 }

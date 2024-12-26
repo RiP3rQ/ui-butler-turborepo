@@ -4,6 +4,8 @@ import {
   Controller,
   Get,
   Inject,
+  NotFoundException,
+  OnModuleInit,
   Param,
   ParseEnumPipe,
   ParseIntPipe,
@@ -13,7 +15,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { type ClientGrpc } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import {
   CurrentUser,
@@ -22,38 +24,37 @@ import {
   JwtAuthGuard,
   SaveComponentDto,
   UpdateComponentCodeDto,
-  type User,
 } from '@app/common';
-import { type CodeType, codeTypeValues } from '@repo/types';
+import { codeTypeValues } from '@repo/types';
 import { Throttle } from '@nestjs/throttler';
 import { rateLimitConfigs } from '../config/rate-limit.config';
 import { type Request, type Response } from 'express';
 import HttpProxy from 'http-proxy';
 import { ClientRequest, IncomingMessage } from 'node:http';
+import { ComponentsProto } from '@app/proto';
+import { handleGrpcError } from '../utils/grpc-error.util';
 
 @Controller('components')
 @UseGuards(JwtAuthGuard)
-export class ComponentsController {
+export class ComponentsController implements OnModuleInit {
+  private componentsService: ComponentsProto.ComponentsServiceClient;
   private proxy: HttpProxy;
+
   constructor(
     @Inject('COMPONENTS_SERVICE')
-    private readonly componentsClient: ClientProxy,
+    private readonly client: ClientGrpc,
   ) {
     this.proxy = HttpProxy.createProxyServer();
 
-    // Correctly typed event handler
     this.proxy.on(
       'proxyReq',
       function (proxyReq: ClientRequest, req: IncomingMessage) {
         const originalReq = req as Request;
-
-        // Make sure to forward the authorization header
         const authHeader = originalReq.headers['authorization'];
         if (authHeader) {
           proxyReq.setHeader('Authorization', authHeader);
         }
 
-        // If the request has a body, we need to restream it
         if (originalReq.body) {
           const bodyData = JSON.stringify(originalReq.body);
           proxyReq.setHeader('Content-Type', 'application/json');
@@ -64,46 +65,101 @@ export class ComponentsController {
     );
   }
 
+  onModuleInit() {
+    this.componentsService =
+      this.client.getService<ComponentsProto.ComponentsServiceClient>(
+        'ComponentsService',
+      );
+  }
+
   @Get('/:projectId/:componentId')
   async getComponent(
-    @CurrentUser() user: User,
+    @CurrentUser() user: ComponentsProto.User,
     @Param('projectId', ParseIntPipe) projectId: number,
     @Param('componentId', ParseIntPipe) componentId: number,
   ) {
-    return firstValueFrom(
-      this.componentsClient.send('components.get', {
-        user,
+    if (!user) {
+      throw new NotFoundException('Unauthorized');
+    }
+
+    try {
+      const request: ComponentsProto.GetComponentRequest = {
+        $type: 'api.components.GetComponentRequest',
+        user: {
+          $type: 'api.components.User',
+          id: user.id,
+          email: user.email,
+        },
         projectId,
         componentId,
-      }),
-    );
+      };
+
+      return await firstValueFrom(this.componentsService.getComponent(request));
+    } catch (error) {
+      handleGrpcError(error);
+    }
   }
 
   @Post()
   async saveComponent(
-    @CurrentUser() user: User,
+    @CurrentUser() user: ComponentsProto.User,
     @Body() saveComponentDto: SaveComponentDto,
   ) {
-    console.log('saveComponentDto:', saveComponentDto);
-    return firstValueFrom(
-      this.componentsClient.send('components.save', { user, saveComponentDto }),
-    );
+    if (!user) {
+      throw new NotFoundException('Unauthorized');
+    }
+
+    try {
+      const request: ComponentsProto.SaveComponentRequest = {
+        $type: 'api.components.SaveComponentRequest',
+        user: {
+          $type: 'api.components.User',
+          id: user.id,
+          email: user.email,
+        },
+        title: saveComponentDto.title,
+        code: saveComponentDto.code,
+        projectId: Number(saveComponentDto.projectId),
+      };
+
+      return await firstValueFrom(
+        this.componentsService.saveComponent(request),
+      );
+    } catch (error) {
+      handleGrpcError(error);
+    }
   }
 
   @Post('/favorite')
   async favoriteComponent(
-    @CurrentUser() user: User,
+    @CurrentUser() user: ComponentsProto.User,
     @Body() favoriteComponentDto: FavoriteComponentDto,
   ) {
-    return firstValueFrom(
-      this.componentsClient.send('components.favorite', {
-        user,
-        favoriteComponentDto,
-      }),
-    );
+    if (!user) {
+      throw new NotFoundException('Unauthorized');
+    }
+
+    try {
+      const request: ComponentsProto.FavoriteComponentRequest = {
+        $type: 'api.components.FavoriteComponentRequest',
+        user: {
+          $type: 'api.components.User',
+          id: user.id,
+          email: user.email,
+        },
+        projectId: favoriteComponentDto.projectId,
+        componentId: favoriteComponentDto.componentId,
+        favoriteValue: favoriteComponentDto.favoriteValue,
+      };
+
+      return await firstValueFrom(
+        this.componentsService.favoriteComponent(request),
+      );
+    } catch (error) {
+      handleGrpcError(error);
+    }
   }
 
-  // This is a proxy endpoint because of the streaming response.
   @All('generate')
   async proxyRequest(@Req() req: Request, @Res() res: Response) {
     return new Promise((resolve, reject) => {
@@ -111,7 +167,9 @@ export class ComponentsController {
         req,
         res,
         {
-          target: `http://${process.env.COMPONENTS_SERVICE_HOST || 'localhost'}:${process.env.COMPONENTS_SERVICE_HTTP_PORT || '3348'}`,
+          target: `http://${process.env.COMPONENTS_SERVICE_HOST || 'localhost'}:${
+            process.env.COMPONENTS_SERVICE_HTTP_PORT || '3348'
+          }`,
           changeOrigin: true,
           secure: false,
           ws: true,
@@ -145,33 +203,62 @@ export class ComponentsController {
 
   @Patch('/:componentId/:codeType')
   async updateComponentCode(
-    @CurrentUser() user: User,
+    @CurrentUser() user: ComponentsProto.User,
     @Param('componentId', ParseIntPipe) componentId: number,
-    @Param('codeType', new ParseEnumPipe(codeTypeValues)) codeType: CodeType,
+    @Param('codeType', new ParseEnumPipe(codeTypeValues))
+    codeType: ComponentsProto.CodeType,
     @Body() updateComponentCodeDto: UpdateComponentCodeDto,
   ) {
-    return firstValueFrom(
-      this.componentsClient.send('components.update-code', {
-        user,
+    if (!user) {
+      throw new NotFoundException('Unauthorized');
+    }
+
+    try {
+      const request: ComponentsProto.UpdateCodeRequest = {
+        $type: 'api.components.UpdateCodeRequest',
+        user: {
+          $type: 'api.components.User',
+          id: user.id,
+          email: user.email,
+        },
         componentId,
         codeType,
-        updateComponentCodeDto,
-      }),
-    );
+        content: updateComponentCodeDto.content,
+      };
+
+      return await firstValueFrom(
+        this.componentsService.updateComponentCode(request),
+      );
+    } catch (error) {
+      handleGrpcError(error);
+    }
   }
 
   @Post('/generate-code')
-  // Override default configuration for Rate limiting and duration.
   @Throttle({ ai: rateLimitConfigs.ai })
   async generateCodeBasedOnType(
-    @CurrentUser() user: User,
+    @CurrentUser() user: ComponentsProto.User,
     @Body() generateCodeDto: GenerateCodeDto,
   ) {
-    return firstValueFrom(
-      this.componentsClient.send('components.generate-code', {
-        user,
-        generateCodeDto,
-      }),
-    );
+    if (!user) {
+      throw new NotFoundException('Unauthorized');
+    }
+
+    try {
+      const request: ComponentsProto.GenerateCodeRequest = {
+        $type: 'api.components.GenerateCodeRequest',
+        user: {
+          $type: 'api.components.User',
+          id: user.id,
+          email: user.email,
+        },
+        componentId: generateCodeDto.componentId,
+        codeType: generateCodeDto.codeType,
+      };
+
+      return await firstValueFrom(this.componentsService.generateCode(request));
+    } catch (error) {
+      handleGrpcError(error);
+    }
   }
 }
