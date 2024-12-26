@@ -1,0 +1,162 @@
+syntax = "proto3";
+
+package api.workflows;
+
+service WorkflowsService {
+    rpc GetAllUserWorkflows (GetAllUserWorkflowsRequest) returns (WorkflowsResponse) {}
+    rpc GetWorkflowById (GetWorkflowByIdRequest) returns (WorkflowResponse) {}
+    rpc CreateWorkflow (CreateWorkflowRequest) returns (WorkflowResponse) {}
+    rpc DeleteWorkflow (DeleteWorkflowRequest) returns (WorkflowResponse) {}
+    rpc DuplicateWorkflow (DuplicateWorkflowRequest) returns (WorkflowResponse) {}
+    rpc PublishWorkflow (PublishWorkflowRequest) returns (WorkflowResponse) {}
+    rpc UnpublishWorkflow (UnpublishWorkflowRequest) returns (WorkflowResponse) {}
+    rpc RunWorkflow (RunWorkflowRequest) returns (RunWorkflowResponse) {}
+    rpc UpdateWorkflow (UpdateWorkflowRequest) returns (WorkflowResponse) {}
+    rpc GetHistoricWorkflowExecutions (GetHistoricRequest) returns (WorkflowExecutionsResponse) {}
+    rpc GetWorkflowExecutions (GetExecutionsRequest) returns (WorkflowExecutionDetailResponse) {}
+    rpc GetWorkflowPhase (GetPhaseRequest) returns (PhaseResponse) {}
+}
+
+message User {
+    string id = 1;
+    string email = 2;
+}
+
+message Workflow {
+    int32 id = 1;
+    string name = 2;
+    string description = 3;
+    string userId = 4;
+    string definition = 5;
+    string status = 6;
+    string executionPlan = 7;
+    int32 creditsCost = 8;
+    string createdAt = 9;
+    string updatedAt = 10;
+}
+
+message WorkflowExecution {
+    int32 id = 1;
+    int32 workflowId = 2;
+    string userId = 3;
+    string status = 4;
+    string startedAt = 5;
+    string endedAt = 6;
+    string trigger = 7;
+    string definition = 8;
+    string createdAt = 9;
+}
+
+message ExecutionPhase {
+    int32 id = 1;
+    int32 workflowExecutionId = 2;
+    string userId = 3;
+    string status = 4;
+    int32 number = 5;
+    string node = 6;
+    string name = 7;
+    string startedAt = 8;
+    string endedAt = 9;
+}
+
+message ExecutionLog {
+    int32 id = 1;
+    int32 executionPhaseId = 2;
+    string message = 3;
+    string level = 4;
+    string timestamp = 5;
+}
+
+// Request messages
+message GetAllUserWorkflowsRequest {
+    User user = 1;
+}
+
+message GetWorkflowByIdRequest {
+    User user = 1;
+    int32 workflowId = 2;
+}
+
+message CreateWorkflowRequest {
+    User user = 1;
+    string name = 2;
+    string description = 3;
+}
+
+message DeleteWorkflowRequest {
+    User user = 1;
+    int32 workflowId = 2;
+}
+
+message DuplicateWorkflowRequest {
+    User user = 1;
+    int32 workflowId = 2;
+    string name = 3;
+    string description = 4;
+}
+
+message PublishWorkflowRequest {
+    User user = 1;
+    int32 workflowId = 2;
+    string flowDefinition = 3;
+}
+
+message UnpublishWorkflowRequest {
+    User user = 1;
+    int32 workflowId = 2;
+}
+
+message RunWorkflowRequest {
+    User user = 1;
+    int32 workflowId = 2;
+    string flowDefinition = 3;
+    string componentId = 4;
+}
+
+message UpdateWorkflowRequest {
+    User user = 1;
+    int32 workflowId = 2;
+    string definition = 3;
+}
+
+message GetHistoricRequest {
+    User user = 1;
+    int32 workflowId = 2;
+}
+
+message GetExecutionsRequest {
+    User user = 1;
+    int32 executionId = 2;
+}
+
+message GetPhaseRequest {
+    User user = 1;
+    int32 phaseId = 2;
+}
+
+// Response messages
+message WorkflowsResponse {
+    repeated Workflow workflows = 1;
+}
+
+message WorkflowResponse {
+    Workflow workflow = 1;
+}
+
+message RunWorkflowResponse {
+    string url = 1;
+}
+
+message WorkflowExecutionsResponse {
+    repeated WorkflowExecution executions = 1;
+}
+
+message WorkflowExecutionDetailResponse {
+    WorkflowExecution execution = 1;
+    repeated ExecutionPhase phases = 2;
+}
+
+message PhaseResponse {
+    ExecutionPhase phase = 1;
+    repeated ExecutionLog logs = 2;
+}
