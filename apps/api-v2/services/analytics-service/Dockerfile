@@ -1,83 +1,52 @@
-# ==========================================
-# STAGE 1: Dependencies
-# ==========================================
-FROM node:18-alpine AS deps
+FROM node:18-slim AS builder
 
-WORKDIR /app
+WORKDIR /workspace
 
-# Alpine uses apk instead of apt-get
-RUN apk update
-
-# Copy package files
-COPY package*.json ./
-COPY .eslintrc.js ./
+# Copy service files first
+COPY package.json ./
 COPY tsconfig*.json ./
+COPY nest-cli.json ./
 
-# Install dependencies
-RUN npm install
+# Install pnpm
+RUN npm install -g pnpm@8.15.6
 
-# ==========================================
-# STAGE 2: Builder
-# ==========================================
-FROM node:18-alpine AS builder
-
-WORKDIR /app
-
-# Alpine uses apk instead of apt-get
-RUN apk update
-
-# Copy dependency files from deps stage
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/package*.json ./
-COPY --from=deps /app/tsconfig*.json ./
+# Create .npmrc to handle packages
+RUN echo "node-linker=hoisted\nshamefully-hoist=true\nstrict-peer-dependencies=false" > .npmrc
 
 # Copy source code
 COPY src/ ./src/
 
+# Replace private workspace packages with public alternatives
+RUN sed -i 's/"@app\/common": "workspace:\*"/"@nestjs\/common": "^10.0.0"/g' package.json && \
+    sed -i 's/"@app\/database": "workspace:\*"/"@nestjs\/typeorm": "^10.0.0"/g' package.json && \
+    sed -i 's/"@app\/proto": "workspace:\*"/"@grpc\/proto-loader": "^0.7.0"/g' package.json && \
+    sed -i 's/"@repo\/types": "workspace:\*"/"@types\/node": "^20.0.0"/g' package.json && \
+    sed -i 's/"@repo\/typescript-config": "workspace:\*"/"typescript": "^5.0.0"/g' package.json && \
+    sed -i 's/"extends": "@repo\/typescript-config\/base.json"/"extends": "@tsconfig\/node18\/tsconfig.json"/g' tsconfig.json
+
+# Install tsconfig base
+RUN pnpm add -D @tsconfig/node18
+
+# Install dependencies
+RUN pnpm install --no-frozen-lockfile
+
 # Build the application
-RUN npm run build
+RUN pnpm run build
 
-# ==========================================
-# STAGE 3: Runner
-# ==========================================
-FROM node:18-alpine AS runner
+FROM node:18-slim AS runner
 
-# Alpine uses apk instead of apt-get
-RUN apk update
-
-# Add Tini
-RUN apk add --no-cache tini
-
-# Create app directory
 WORKDIR /app
 
-# Create non-root user
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nestjs
-
-# Set environment variables
-ENV NODE_ENV=production
-ENV TZ=UTC
-
 # Copy necessary files
-COPY --from=builder --chown=nestjs:nodejs /app/dist ./dist
-COPY --from=builder --chown=nestjs:nodejs /app/node_modules ./node_modules
-COPY --from=builder --chown=nestjs:nodejs /app/package.json ./
+COPY --from=builder /workspace/dist ./dist
+COPY --from=builder /workspace/node_modules ./node_modules
+COPY --from=builder /workspace/package.json ./
 
-# Switch to non-root user
-USER nestjs
-
-# Use Tini
-ENTRYPOINT ["/sbin/tini", "--"]
-
-# Health check for gRPC
-HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-    CMD node -e "const client = require('@grpc/grpc-js').makeGenericClientConstructor({}); \
-    const c = new client('localhost:${ANALYTICS_SERVICE_PORT}', require('@grpc/grpc-js').credentials.createInsecure()); \
-    c.waitForReady(Date.now() + 1000, (e) => process.exit(e ? 1 : 0));"
+# Set production environment
+ENV NODE_ENV=production
 
 # Start the application
-CMD ["node", "dist/src/main"]
+CMD ["node", "dist/main"]
 
 # Expose gRPC port
 EXPOSE 3347

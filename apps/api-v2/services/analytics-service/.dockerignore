@@ -1,8 +1,10 @@
 node_modules
-npm-debug.log
 dist
+coverage
 .git
-.gitignore
 .env
 *.md
-coverage
+test
+**/*.spec.ts
+**/*.test.ts
+.turbo
