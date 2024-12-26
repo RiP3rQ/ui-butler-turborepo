@@ -3,6 +3,7 @@ import { DatabaseModule } from '@app/database';
 import { WorkflowsController } from './workflows.controller';
 import { WorkflowsService } from './workflows.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -11,10 +12,14 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     ClientsModule.register([
       {
         name: 'EXECUTIONS_SERVICE',
-        transport: Transport.TCP,
+        transport: Transport.GRPC,
         options: {
-          host: process.env.EXECUTIONS_SERVICE_HOST || 'localhost',
-          port: parseInt(process.env.EXECUTIONS_SERVICES_PORT, 10) || 3343,
+          package: 'api.executions',
+          protoPath: join(
+            __dirname,
+            '../../../libs/proto/src/proto/executions.proto',
+          ),
+          url: `${process.env.EXECUTIONS_SERVICE_HOST || 'localhost'}:${process.env.EXECUTIONS_SERVICES_PORT || '3343'}`,
         },
       },
     ]),

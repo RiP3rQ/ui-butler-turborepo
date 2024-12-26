@@ -1,19 +1,22 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { ClientProxy, RpcException } from '@nestjs/microservices';
-import { and, asc, desc, eq } from 'drizzle-orm';
+import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { type ClientGrpc, RpcException } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
 import {
   AppNode,
   ExecutionPhaseStatus,
   TaskType,
-  WorkflowExecutionPlan,
   WorkflowExecutionStatus,
   WorkflowExecutionTrigger,
   WorkflowStatus,
 } from '@repo/types';
 import { Edge } from '@nestjs/core/inspector/interfaces/edge.interface';
 import {
+  and,
+  asc,
   DATABASE_CONNECTION,
+  desc,
   type DrizzleDatabase,
+  eq,
   executionLog,
   executionPhase,
   NewWorkflow,
@@ -36,15 +39,26 @@ import {
   parseFlowToExecutionPlan,
   ServerTaskRegister,
 } from '@repo/tasks-registry';
+import { ExecutionsProto } from '@app/proto';
 
 @Injectable()
-export class WorkflowsService {
+export class WorkflowsService implements OnModuleInit {
+  private readonly logger = new Logger(WorkflowsService.name);
+  private executionsService: ExecutionsProto.ExecutionsServiceClient;
+
   constructor(
     @Inject('EXECUTIONS_SERVICE')
-    private readonly executionsClient: ClientProxy,
+    private readonly executionsClient: ClientGrpc,
     @Inject(DATABASE_CONNECTION)
     private readonly database: DrizzleDatabase,
   ) {}
+
+  onModuleInit() {
+    this.executionsService =
+      this.executionsClient.getService<ExecutionsProto.ExecutionsServiceClient>(
+        'ExecutionsService',
+      );
+  }
 
   async getAllUserWorkflows(user: User) {
     try {
@@ -305,7 +319,7 @@ export class WorkflowsService {
         throw new RpcException('Workflow not found');
       }
 
-      let executionPlan: WorkflowExecutionPlan;
+      let executionPlan;
       let workflowDefinition = runWorkflowDto.flowDefinition;
 
       if (workflowData.status === WorkflowStatus.PUBLISHED) {
@@ -369,12 +383,13 @@ export class WorkflowsService {
           }
         }
 
-        // Instead of direct workflowExecutionsService call, use the microservice
-        // skip await for async execution
-        this.executionsClient.emit('executions.execute', {
-          workflowExecutionId: execution.id,
-          componentId: runWorkflowDto.componentId,
-        });
+        // Use gRPC call instead of TCP emit
+        await firstValueFrom(
+          this.executionsService.execute({
+            workflowExecutionId: execution.id,
+            componentId: runWorkflowDto.componentId,
+          }),
+        );
 
         return {
           url: `/workflow/runs/${runWorkflowDto.workflowId}/${execution.id}`,
