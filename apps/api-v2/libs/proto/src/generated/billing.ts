@@ -423,8 +423,6 @@ export const BILLING_SERVICE_NAME = "BillingService";
 
 export interface MessageFns<T, V extends string> {
   readonly $type: V;
-
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
-
   decode(input: BinaryReader | Uint8Array, length?: number): T;
 }

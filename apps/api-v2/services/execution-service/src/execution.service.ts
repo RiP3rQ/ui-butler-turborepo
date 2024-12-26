@@ -1,5 +1,6 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+// execution.service.ts
+import { Inject, Injectable } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
 import { Edge } from '@nestjs/core/inspector/interfaces/edge.interface';
 import {
   ApproveChangesRequest,
@@ -9,8 +10,10 @@ import {
   WorkflowExecutionStatus,
 } from '@repo/types';
 import {
+  and,
   DATABASE_CONNECTION,
   type DrizzleDatabase,
+  eq,
   executionPhase,
   workflowExecutions,
 } from '@app/database';
@@ -27,32 +30,38 @@ export class ExecutionsService {
   ) {}
 
   async getPendingChanges(user: User, executionId: number) {
-    const execution = await this.database.query.workflowExecutions.findFirst({
-      where: and(
-        eq(workflowExecutions.id, executionId),
-        eq(workflowExecutions.userId, user.id),
-      ),
-      with: {
-        executionPhases: true,
-      },
-    });
+    try {
+      const execution = await this.database.query.workflowExecutions.findFirst({
+        where: and(
+          eq(workflowExecutions.id, executionId),
+          eq(workflowExecutions.userId, user.id),
+        ),
+        with: {
+          executionPhases: true,
+        },
+      });
 
-    if (!execution) {
-      throw new NotFoundException('Execution not found');
+      if (!execution) {
+        throw new RpcException('Execution not found');
+      }
+
+      const pendingPhase = execution.executionPhases.find(
+        (phase) => phase.status === ExecutionPhaseStatus.WAITING_FOR_APPROVAL,
+      );
+
+      console.log('Pending phase', pendingPhase);
+
+      const parsedTemp = JSON.parse(pendingPhase?.temp || '{}');
+
+      return {
+        pendingApproval: parsedTemp,
+        status: execution.status as IWorkflowExecutionStatus,
+      } satisfies ApproveChangesRequest;
+    } catch (error) {
+      throw new RpcException(
+        error instanceof Error ? error.message : JSON.stringify(error),
+      );
     }
-
-    const pendingPhase = execution.executionPhases.find(
-      (phase) => phase.status === ExecutionPhaseStatus.WAITING_FOR_APPROVAL,
-    );
-
-    console.log('Pending phase', pendingPhase);
-
-    const parsedTemp = JSON.parse(pendingPhase?.temp || '{}');
-
-    return {
-      pendingApproval: parsedTemp,
-      status: execution.status as IWorkflowExecutionStatus,
-    } satisfies ApproveChangesRequest;
   }
 
   async approveChanges(
@@ -60,97 +69,103 @@ export class ExecutionsService {
     executionId: number,
     body: ApproveChangesDto,
   ) {
-    // Get the current execution with all necessary data
-    const execution = await this.database.query.workflowExecutions.findFirst({
-      where: eq(workflowExecutions.id, executionId),
-      with: {
-        workflow: true,
-        executionPhases: true,
-      },
-    });
+    try {
+      // Get the current execution with all necessary data
+      const execution = await this.database.query.workflowExecutions.findFirst({
+        where: eq(workflowExecutions.id, executionId),
+        with: {
+          workflow: true,
+          executionPhases: true,
+        },
+      });
 
-    if (!execution) {
-      throw new NotFoundException('Execution not found');
-    }
+      if (!execution) {
+        throw new RpcException('Execution not found');
+      }
 
-    // Find the current pending phase that requested approval
-    const currentPhase = execution.executionPhases.find(
-      (phase) => phase.status === ExecutionPhaseStatus.WAITING_FOR_APPROVAL,
-    );
+      // Find the current pending phase that requested approval
+      const currentPhase = execution.executionPhases.find(
+        (phase) => phase.status === ExecutionPhaseStatus.WAITING_FOR_APPROVAL,
+      );
 
-    if (!currentPhase) {
-      throw new Error('No pending phase found');
-    }
+      if (!currentPhase) {
+        throw new RpcException('No pending phase found');
+      }
 
-    // Get the remaining phases
-    console.log('execution.executionPhases', execution.executionPhases);
-    const remainingPhases = execution.executionPhases.filter(
-      (phase) => phase.status === ExecutionPhaseStatus.PENDING,
-    );
+      // Get the remaining phases
+      console.log('execution.executionPhases', execution.executionPhases);
+      const remainingPhases = execution.executionPhases.filter(
+        (phase) => phase.status === ExecutionPhaseStatus.PENDING,
+      );
 
-    // Parse edges from the execution definition
-    const edges = (JSON.parse(execution.definition)?.edges ?? []) as Edge[];
+      // Parse edges from the execution definition
+      const edges = (JSON.parse(execution.definition)?.edges ?? []) as Edge[];
 
-    // Parse the current phase outputs to get the pending code
-    const temp = JSON.parse(currentPhase.temp || '{}');
-    const originalCode = temp?.['Original code'] ?? '';
-    const pendingCode = temp?.['Pending code'] ?? '';
-    const componentId = Number(temp?.['Component ID'] ?? '');
+      // Parse the current phase outputs to get the pending code
+      const temp = JSON.parse(currentPhase.temp || '{}');
+      const originalCode = temp?.['Original code'] ?? '';
+      const pendingCode = temp?.['Pending code'] ?? '';
+      const componentId = Number(temp?.['Component ID'] ?? '');
 
-    if (!componentId || isNaN(componentId)) {
-      console.warn('Component ID not found in temp');
-    }
+      if (!componentId || isNaN(componentId)) {
+        console.warn('Component ID not found in temp');
+      }
 
-    // Create environment with the appropriate code context
-    const environment: Environment = {
-      phases: {},
-      // If not approved, use original code, if approved use the modified code
-      code:
-        body.decision === 'approve'
-          ? (pendingCode ?? originalCode)
-          : originalCode,
-      startingCode: originalCode,
-      workflowExecutionId: executionId,
-      componentId,
-    };
+      // Create environment with the appropriate code context
+      const environment: Environment = {
+        phases: {},
+        // If not approved, use original code, if approved use the modified code
+        code:
+          body.decision === 'approve'
+            ? (pendingCode ?? originalCode)
+            : originalCode,
+        startingCode: originalCode,
+        workflowExecutionId: executionId,
+        componentId,
+      };
 
-    console.log('Environment', environment);
-    console.log('Current phase', currentPhase);
-    console.log('remainingPhases', remainingPhases);
+      console.log('Environment', environment);
+      console.log('Current phase', currentPhase);
+      console.log('remainingPhases', remainingPhases);
 
-    // Update execution status to RUNNING
-    await this.database
-      .update(workflowExecutions)
-      .set({
+      // Update execution status to RUNNING
+      await this.database
+        .update(workflowExecutions)
+        .set({
+          status: WorkflowExecutionStatus.RUNNING,
+        })
+        .where(eq(workflowExecutions.id, executionId));
+
+      // Update current phase status to COMPLETED
+      await this.database
+        .update(executionPhase)
+        .set({
+          status: ExecutionPhaseStatus.COMPLETED,
+        })
+        .where(eq(executionPhase.id, currentPhase.id));
+
+      // Continue execution with remaining phases
+      executeWorkflowPhases(
+        this.database,
+        environment,
+        executionId,
+        remainingPhases,
+        edges,
+        execution,
+      );
+
+      return {
+        message:
+          body.decision === 'approve'
+            ? 'Changes approved, workflow execution resumed'
+            : 'Changes rejected, continuing with original code',
         status: WorkflowExecutionStatus.RUNNING,
-      })
-      .where(eq(workflowExecutions.id, executionId));
-
-    // Update current phase status to COMPLETED
-    await this.database
-      .update(executionPhase)
-      .set({
-        status: ExecutionPhaseStatus.COMPLETED,
-      })
-      .where(eq(executionPhase.id, currentPhase.id));
-
-    // Continue execution with remaining phases
-    executeWorkflowPhases(
-      this.database,
-      environment,
-      executionId,
-      remainingPhases,
-      edges,
-      execution,
-    );
-
-    return {
-      message:
-        body.decision === 'approve'
-          ? 'Changes approved, workflow execution resumed'
-          : 'Changes rejected, continuing with original code',
-      status: WorkflowExecutionStatus.RUNNING,
-    };
+      };
+    } catch (error) {
+      throw new RpcException(
+        error instanceof Error ? error.message : JSON.stringify(error),
+      );
+    }
   }
 
   async executeWorkflow(
@@ -158,61 +173,69 @@ export class ExecutionsService {
     componentId: number,
     nextRunAt?: Date,
   ) {
-    // execute workflow
-    console.log('executing workflow', workflowExecutionId);
+    try {
+      // execute workflow
+      console.log('executing workflow', workflowExecutionId);
 
-    const execution = await this.database.query.workflowExecutions.findFirst({
-      where: eq(workflowExecutions.id, workflowExecutionId),
-      with: {
-        workflow: true,
-        executionPhases: true,
-      },
-    });
+      const execution = await this.database.query.workflowExecutions.findFirst({
+        where: eq(workflowExecutions.id, workflowExecutionId),
+        with: {
+          workflow: true,
+          executionPhases: true,
+        },
+      });
 
-    console.log('execution', execution);
+      console.log('execution', execution);
 
-    if (!execution) {
-      throw new Error('Execution not found');
+      if (!execution) {
+        throw new RpcException('Execution not found');
+      }
+
+      const edges = (JSON.parse(execution.definition)?.edges ?? []) as Edge[];
+      const environment: Environment = {
+        phases: {},
+        code: '',
+        startingCode: '',
+        workflowExecutionId: workflowExecutionId,
+        componentId: componentId,
+      };
+
+      // INIT WORKFLOW EXECUTION
+      await initializeWorkflowExecution(
+        this.database,
+        workflowExecutionId,
+        execution.workflowId,
+        nextRunAt,
+      );
+      // INIT PHASES STATUSES
+      await initializeWorkflowPhasesStatuses(
+        this.database,
+        execution.executionPhases,
+      );
+
+      // EXECUTE PHASES
+      await executeWorkflowPhases(
+        this.database,
+        environment,
+        workflowExecutionId,
+        execution.executionPhases,
+        edges,
+        execution,
+      );
+
+      console.log(
+        `Workflow execution ${
+          execution?.status === WorkflowExecutionStatus.WAITING_FOR_APPROVAL
+            ? 'paused'
+            : 'completed'
+        } for workflowId: ${execution.workflowId}`,
+      );
+
+      return {}; // Return empty object for gRPC Empty message
+    } catch (error) {
+      throw new RpcException(
+        error instanceof Error ? error.message : JSON.stringify(error),
+      );
     }
-
-    const edges = (JSON.parse(execution.definition)?.edges ?? []) as Edge[];
-    const environment: Environment = {
-      phases: {},
-      code: '',
-      startingCode: '',
-      workflowExecutionId: workflowExecutionId,
-      componentId: componentId,
-    };
-
-    // INIT WORKFLOW EXECUTION
-    await initializeWorkflowExecution(
-      this.database,
-      workflowExecutionId,
-      execution.workflowId,
-      nextRunAt,
-    );
-    // INIT PHASES STATUSES
-    await initializeWorkflowPhasesStatuses(
-      this.database,
-      execution.executionPhases,
-    );
-
-    // EXECUTE PHASES
-    await executeWorkflowPhases(
-      this.database,
-      environment,
-      workflowExecutionId,
-      execution.executionPhases,
-      edges,
-      execution,
-    );
-
-    console.log(
-      `Workflow execution ${
-        execution?.status === WorkflowExecutionStatus.WAITING_FOR_APPROVAL
-          ? 'paused'
-          : 'completed'
-      } for workflowId: ${execution.workflowId}`,
-    );
   }
 }

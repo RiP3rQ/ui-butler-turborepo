@@ -1,4 +1,4 @@
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ClientsModule } from '@nestjs/microservices';
 import { Module } from '@nestjs/common';
 import { AuthProxyService } from './proxies/auth.proxy.service';
 import { AuthController } from './controllers/auth.controller';
@@ -101,25 +101,25 @@ import { createGrpcOptions } from './config/grpc.config';
       {
         name: 'WORKFLOWS_SERVICE',
         imports: [ConfigModule],
-        useFactory: (configService: ConfigService) => ({
-          transport: Transport.TCP,
-          options: {
-            host: configService.get('WORKFLOW_SERVICE_HOST', 'localhost'),
-            port: configService.get('WORKFLOW_SERVICE_PORT', 3342),
-          },
-        }),
+        useFactory: (configService: ConfigService) =>
+          createGrpcOptions(
+            configService.get('WORKFLOWS_SERVICE_HOST'),
+            configService.get('WORKFLOWS_SERVICE_PORT'),
+            'api.workflows',
+            'workflows',
+          ),
         inject: [ConfigService],
       },
       {
         name: 'EXECUTIONS_SERVICE',
         imports: [ConfigModule],
-        useFactory: (configService: ConfigService) => ({
-          transport: Transport.TCP,
-          options: {
-            host: configService.get('EXECUTIONS_SERVICE_HOST', 'localhost'),
-            port: configService.get('EXECUTIONS_SERVICE_PORT', 3343),
-          },
-        }),
+        useFactory: (configService: ConfigService) =>
+          createGrpcOptions(
+            configService.get('EXECUTION_SERVICE_HOST'),
+            configService.get('EXECUTION_SERVICE_PORT'),
+            'api.execution',
+            'execution',
+          ),
         inject: [ConfigService],
       },
       {

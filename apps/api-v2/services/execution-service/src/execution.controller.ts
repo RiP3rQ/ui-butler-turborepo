@@ -1,57 +1,42 @@
 import { Controller, Logger } from '@nestjs/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
-import { ApproveChangesDto, User } from '@app/common';
+import { GrpcMethod } from '@nestjs/microservices';
 import { ExecutionsService } from './execution.service';
+import { ExecutionProto } from '@app/proto';
 
 @Controller()
 export class ExecutionsController {
   private readonly logger = new Logger(ExecutionsController.name);
+
   constructor(private readonly executionsService: ExecutionsService) {}
 
-  @MessagePattern('executions.pending-changes')
-  async getPendingChanges(
-    @Payload() data: { user: User; executionId: number },
-  ) {
-    this.logger.debug('Getting pending changes', data.executionId);
+  @GrpcMethod('ExecutionsService', 'GetPendingChanges')
+  async getPendingChanges(request: ExecutionProto.GetPendingChangesRequest) {
+    this.logger.debug('Getting pending changes', request.executionId);
     return this.executionsService.getPendingChanges(
-      data.user,
-      data.executionId,
+      request.user,
+      request.executionId,
     );
   }
 
-  @MessagePattern('executions.approve')
-  async approveChanges(
-    @Payload()
-    data: {
-      user: User;
-      executionId: number;
-      body: ApproveChangesDto;
-    },
-  ) {
-    this.logger.debug('Approving changes', JSON.stringify(data));
+  @GrpcMethod('ExecutionsService', 'ApproveChanges')
+  async approveChanges(request: ExecutionProto.ApproveChangesRequest) {
+    this.logger.debug('Approving changes', JSON.stringify(request));
     return this.executionsService.approveChanges(
-      data.user,
-      data.executionId,
-      data.body,
+      request.user,
+      request.executionId,
+      request.body,
     );
   }
 
-  @MessagePattern('executions.execute')
-  async executeWorkflow(
-    @Payload()
-    data: {
-      workflowExecutionId: number;
-      componentId: number;
-      nextRunAt?: Date;
-    },
-  ) {
+  @GrpcMethod('ExecutionsService', 'Execute')
+  async executeWorkflow(request: ExecutionProto.ExecuteWorkflowRequest) {
     this.logger.debug(
-      `Executing workflow ${data.workflowExecutionId} with component ${data.componentId}`,
+      `Executing workflow ${request.workflowExecutionId} with component ${request.componentId}`,
     );
     return this.executionsService.executeWorkflow(
-      data.workflowExecutionId,
-      data.componentId,
-      data.nextRunAt,
+      request.workflowExecutionId,
+      request.componentId,
+      request.nextRunAt ? new Date(request.nextRunAt) : undefined,
     );
   }
 }
