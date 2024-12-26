@@ -31,7 +31,7 @@ export class BillingService {
   ): Promise<UserBasicCredits> {
     try {
       const { data } = await ApiClient.get<UserBasicCredits>(
-        `${this.BASE_PATH}/purchase-pack`,
+        `${this.BASE_PATH}/purchase`,
         {
           params: {
             packId: packId.toString(),

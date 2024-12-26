@@ -3,36 +3,57 @@ import {
   Get,
   Inject,
   NotFoundException,
+  OnModuleInit,
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { type ClientGrpc } from '@nestjs/microservices';
+import { CurrentUser, JwtAuthGuard } from '@app/common';
+import { BillingProto } from '@app/proto';
+import { handleGrpcError } from '../utils/grpc-error.util';
 import { firstValueFrom } from 'rxjs';
-import { CurrentUser, JwtAuthGuard, type User } from '@app/common';
 import { BalancePackId } from '@repo/types';
 
 @Controller('billing')
 @UseGuards(JwtAuthGuard)
-export class BillingController {
-  constructor(
-    @Inject('BILLING_SERVICE') private readonly billingClient: ClientProxy,
-  ) {}
+export class BillingController implements OnModuleInit {
+  private billingService: BillingProto.BillingServiceClient;
+
+  constructor(@Inject('BILLING_SERVICE') private readonly client: ClientGrpc) {}
+
+  onModuleInit() {
+    this.billingService =
+      this.client.getService<BillingProto.BillingServiceClient>(
+        'BillingService',
+      );
+  }
 
   @Get('setup')
-  async setupUser(@CurrentUser() user: User) {
+  async setupUser(@CurrentUser() user: BillingProto.User) {
     if (!user) {
       throw new NotFoundException('Unauthorized');
     }
 
-    return firstValueFrom(
-      this.billingClient.send('billing.setup-user', { user }),
-    );
+    try {
+      const request: BillingProto.SetupUserRequest = {
+        $type: 'api.billing.SetupUserRequest',
+        user: {
+          $type: 'api.billing.User',
+          id: user.id,
+          email: user.email,
+        },
+      };
+
+      return await firstValueFrom(this.billingService.setupUser(request));
+    } catch (error) {
+      handleGrpcError(error);
+    }
   }
 
   @Get('purchase')
   async purchasePack(
     @Query('packId') packId: BalancePackId,
-    @CurrentUser() user: User,
+    @CurrentUser() user: BillingProto.User,
   ) {
     if (!user) {
       throw new NotFoundException('Unauthorized');
@@ -42,19 +63,42 @@ export class BillingController {
       throw new NotFoundException('Invalid pack ID provided');
     }
 
-    return firstValueFrom(
-      this.billingClient.send('billing.purchase-pack', { user, packId }),
-    );
+    try {
+      const request: BillingProto.PurchasePackRequest = {
+        $type: 'api.billing.PurchasePackRequest',
+        user: {
+          $type: 'api.billing.User',
+          id: user.id,
+          email: user.email,
+        },
+        packId,
+      };
+
+      return await firstValueFrom(this.billingService.purchasePack(request));
+    } catch (error) {
+      handleGrpcError(error);
+    }
   }
 
   @Get('credits')
-  async getUserCredits(@CurrentUser() user: User) {
+  async getUserCredits(@CurrentUser() user: BillingProto.User) {
     if (!user) {
       throw new NotFoundException('Unauthorized');
     }
 
-    return firstValueFrom(
-      this.billingClient.send('billing.get-credits', { user }),
-    );
+    try {
+      const request: BillingProto.GetUserCreditsRequest = {
+        $type: 'api.billing.GetUserCreditsRequest',
+        user: {
+          $type: 'api.billing.User',
+          id: user.id,
+          email: user.email,
+        },
+      };
+
+      return await firstValueFrom(this.billingService.getUserCredits(request));
+    } catch (error) {
+      handleGrpcError(error);
+    }
   }
 }

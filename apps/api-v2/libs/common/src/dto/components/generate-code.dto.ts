@@ -1,5 +1,6 @@
 import { IsIn, IsNotEmpty, IsNumber } from "class-validator";
-import { type CodeType, codeTypeValues } from "@repo/types";
+import { codeTypeValues } from "@repo/types";
+import { ComponentsProto } from "@app/proto";
 
 export class GenerateCodeDto {
   @IsNumber()
@@ -10,5 +11,5 @@ export class GenerateCodeDto {
     message: `codeType must be one of: ${codeTypeValues.join(", ")}`,
   })
   @IsNotEmpty()
-  codeType: CodeType;
+  codeType: ComponentsProto.CodeType;
 }

@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package api.billing;
+
+service BillingService {
+    rpc SetupUser (SetupUserRequest) returns (Empty) {}
+    rpc PurchasePack (PurchasePackRequest) returns (UserCreditsResponse) {}
+    rpc GetUserCredits (GetUserCreditsRequest) returns (UserCreditsResponse) {}
+}
+
+message User {
+    string id = 1;
+    string email = 2;
+}
+
+message SetupUserRequest {
+    User user = 1;
+}
+
+message PurchasePackRequest {
+    User user = 1;
+    string packId = 2;
+}
+
+message GetUserCreditsRequest {
+    User user = 1;
+}
+
+message UserCreditsResponse {
+    int32 credits = 1;
+    string userId = 2;
+}
+
+message Empty {}

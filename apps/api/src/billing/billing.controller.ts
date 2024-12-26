@@ -26,8 +26,8 @@ export class BillingController {
     return this.billingService.setupUser(user);
   }
 
-  // GET /billing/purchase-pack?packId=${packId}
-  @Get('/purchase-pack')
+  // GET /billing/purchase?packId=${packId}
+  @Get('/purchase')
   @LogErrors()
   @UseGuards(JwtAuthGuard)
   purchasePack(@CurrentUser() user: User, @Query('packId') packId: string) {

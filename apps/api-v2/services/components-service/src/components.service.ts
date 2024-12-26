@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
-import { and, eq } from 'drizzle-orm';
 import {
   CodeType,
   ComponentType,
@@ -10,10 +9,12 @@ import { generateText, pipeDataStreamToResponse, streamText } from 'ai';
 import { Response } from 'express';
 import { singleGeneratedPrompts } from '@repo/prompts';
 import {
+  and,
   Component,
   components,
   DATABASE_CONNECTION,
   type DrizzleDatabase,
+  eq,
   NewComponent,
   projects,
 } from '@app/database';
@@ -254,8 +255,14 @@ export class ComponentsService {
         throw new RpcException('Component not found');
       }
 
-      const generatedCode = await this.generateCode(codeType, component.code);
-      const updateData = this.createUpdateObject(codeType, generatedCode);
+      const generatedCode = await this.generateCode(
+        codeType as unknown as CodeType,
+        component.code,
+      );
+      const updateData = this.createUpdateObject(
+        codeType as unknown as CodeType,
+        generatedCode,
+      );
 
       const [updatedComponent] = await this.database
         .update(components)

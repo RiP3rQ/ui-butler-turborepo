@@ -70,6 +70,7 @@ async function bootstrap() {
   await app.listen(port);
 
   // Log all registered routes FOR DEBUGGING
+
   // const server = app.getHttpServer();
   // const router = server._events.request._router;
   // console.log('\nRegistered Routes: ');

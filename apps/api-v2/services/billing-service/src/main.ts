@@ -1,15 +1,20 @@
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { BillingModule } from './billing.module';
+import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     BillingModule,
     {
-      transport: Transport.TCP, // or Transport.REDIS, Transport.KAFKA, etc.
+      transport: Transport.GRPC,
       options: {
-        host: 'localhost',
-        port: 3344, // different port for each service
+        package: 'api.billing',
+        protoPath: join(
+          __dirname,
+          '../../../libs/proto/src/proto/billing.proto',
+        ),
+        url: `${process.env.BILLING_SERVICE_HOST || 'localhost'}:${process.env.BILLING_SERVICE_PORT || '3344'}`,
       },
     },
   );

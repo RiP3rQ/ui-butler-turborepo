@@ -34,7 +34,7 @@ export class BillingService {
     // return nothing as the user balance is set up
   }
 
-  // GET /billing/purchase-pack?packId=${packId}
+  // GET /billing/purchase?packId=${packId}
   async purchasePack(user: User, packId: string) {
     const selectedPack = getCreditPackById(packId as BalancePackId);
 
