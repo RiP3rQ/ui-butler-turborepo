@@ -125,13 +125,13 @@ import { createGrpcOptions } from './config/grpc.config';
       {
         name: 'BILLING_SERVICE',
         imports: [ConfigModule],
-        useFactory: (configService: ConfigService) => ({
-          transport: Transport.TCP,
-          options: {
-            host: configService.get('BILLING_SERVICE_HOST', 'localhost'),
-            port: configService.get('BILLING_SERVICE_PORT', 3344),
-          },
-        }),
+        useFactory: (configService: ConfigService) =>
+          createGrpcOptions(
+            configService.get('BILLING_SERVICE_HOST'),
+            configService.get('BILLING_SERVICE_PORT'),
+            'api.billing',
+            'billing',
+          ),
         inject: [ConfigService],
       },
       {

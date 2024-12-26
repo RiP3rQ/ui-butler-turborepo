@@ -5,6 +5,7 @@ export * as UsersProto from "./generated/users";
 export * as AnalyticsProto from "./generated/analytics";
 export * as ProjectsProto from "./generated/projects";
 export * as ComponentsProto from "./generated/components";
+export * as BillingProto from "./generated/billing";
 
 // Export other utilities
 export * from "./constants/grpc.constants";

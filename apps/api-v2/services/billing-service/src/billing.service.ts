@@ -4,11 +4,12 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { eq, sql } from 'drizzle-orm';
 import { User } from '@app/common';
 import {
   DATABASE_CONNECTION,
+  eq,
   type NeonDatabaseType,
+  sql,
   userBalance,
 } from '@app/database';
 import {
