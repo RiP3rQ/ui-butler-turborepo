@@ -7,6 +7,7 @@ import { AuthService } from '../auth.service';
 import { AuthProto, UsersProto } from '@app/proto';
 import { of, throwError } from 'rxjs';
 import * as bcrypt from 'bcryptjs';
+import { status } from '@grpc/grpc-js';
 
 jest.mock('bcryptjs', () => ({
   hash: jest.fn(),
@@ -123,6 +124,19 @@ describe('AuthService', () => {
         'User registration failed',
       );
     });
+
+    it('should handle error logging in register', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      (usersService.createUser as jest.Mock).mockReturnValue(
+        throwError(() => new Error('Registration error')),
+      );
+
+      await expect(service.register(mockCreateUserDto)).rejects.toThrow();
+
+      expect(consoleErrorSpy).toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
+    });
   });
 
   describe('login', () => {
@@ -165,6 +179,44 @@ describe('AuthService', () => {
 
       await expect(service.login(invalidUser)).rejects.toThrow(RpcException);
     });
+
+    it('should handle error logging in login', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+      const mockError = new Error('Test error');
+      mockJwtService.sign.mockImplementation(() => {
+        throw mockError;
+      });
+
+      await expect(service.login(mockUser)).rejects.toThrow(RpcException);
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Error in login:',
+        expect.objectContaining({
+          err: expect.any(Error),
+          user: expect.objectContaining({ email: mockUser.email }),
+          stack: expect.any(String),
+        }),
+      );
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('should handle RpcException propagation in login', async () => {
+      const rpcError = new RpcException({
+        code: status.INTERNAL,
+        message: 'Original RPC error',
+      });
+
+      (usersService.updateUser as jest.Mock).mockReturnValue(
+        throwError(() => rpcError),
+      );
+
+      await expect(service.login(mockUser)).rejects.toThrow(rpcError);
+    });
+
+    it('should handle undefined user in login', async () => {
+      await expect(service.login(undefined)).rejects.toThrow(RpcException);
+    });
   });
 
   describe('refreshToken', () => {
@@ -196,7 +248,6 @@ describe('AuthService', () => {
       expect(result.expiresAccessToken).toBeDefined();
       expect(result.expiresRefreshToken).toBeDefined();
 
-      // Verify user update was called
       expect(usersService.updateUser).toHaveBeenCalledWith(
         expect.objectContaining({
           $type: 'api.users.UpdateUserRequest',
@@ -219,6 +270,38 @@ describe('AuthService', () => {
       await expect(service.refreshToken(mockUser)).rejects.toThrow(
         RpcException,
       );
+    });
+
+    it('should handle console logging in refreshToken', async () => {
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+
+      await service.refreshToken(mockUser);
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Refreshing tokens for user:',
+        expect.objectContaining({ email: mockUser.email }),
+      );
+
+      consoleSpy.mockRestore();
+    });
+
+    it('should handle error logging in refreshToken', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      (usersService.updateUser as jest.Mock).mockReturnValue(
+        throwError(() => new Error('Refresh error')),
+      );
+
+      await expect(service.refreshToken(mockUser)).rejects.toThrow(
+        RpcException,
+      );
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Error refreshing token:',
+        expect.any(Error),
+      );
+
+      consoleErrorSpy.mockRestore();
     });
   });
 
@@ -259,6 +342,64 @@ describe('AuthService', () => {
       await expect(service.verifyUser(mockEmail, mockPassword)).rejects.toThrow(
         RpcException,
       );
+    });
+
+    it('should handle service errors in verifyUser', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+      (usersService.getUserByEmail as jest.Mock).mockReturnValue(
+        throwError(() => new Error('Service error')),
+      );
+
+      await expect(
+        service.verifyUser('test@test.com', 'password'),
+      ).rejects.toThrow(RpcException);
+
+      expect(consoleErrorSpy).toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('should handle error logging in verifyUser', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+      const mockError = new Error('Test error');
+
+      (usersService.getUserByEmail as jest.Mock).mockReturnValue(
+        throwError(() => mockError),
+      );
+
+      try {
+        await service.verifyUser('test@test.com', 'password');
+      } catch (error: unknown) {
+        expect(consoleErrorSpy).toHaveBeenCalledWith('Error in verifyUser:', {
+          message: mockError.message,
+          stack: expect.any(String),
+        });
+      }
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('should handle missing email in verifyUser', async () => {
+      await expect(service.verifyUser(null, 'password')).rejects.toThrow(
+        RpcException,
+      );
+    });
+
+    it('should handle RpcException with correct status code', async () => {
+      (usersService.getUserByEmail as jest.Mock).mockReturnValue(
+        throwError(() => new Error('Service error')),
+      );
+
+      try {
+        await service.verifyUser('test@test.com', 'password');
+      } catch (error: any) {
+        expect(error).toBeInstanceOf(RpcException);
+        expect(error.getError()).toEqual(
+          expect.objectContaining({
+            code: status.INTERNAL,
+            message: 'Internal server error',
+          }),
+        );
+      }
     });
   });
 
@@ -305,6 +446,277 @@ describe('AuthService', () => {
       await expect(
         service.verifyUserRefreshToken(mockRefreshToken, mockEmail),
       ).rejects.toThrow(RpcException);
+    });
+
+    it('should handle console logging in verifyUserRefreshToken', async () => {
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+
+      (usersService.getUserByEmail as jest.Mock).mockReturnValue(of(mockUser));
+      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+
+      await service.verifyUserRefreshToken('refresh-token', 'test@test.com');
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Verifying refresh token for:',
+        expect.objectContaining({ email: 'test@test.com' }),
+      );
+
+      consoleSpy.mockRestore();
+    });
+
+    it('should handle error logging in verifyUserRefreshToken', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      (usersService.getUserByEmail as jest.Mock).mockReturnValue(
+        throwError(() => new Error('Verification error')),
+      );
+
+      await expect(
+        service.verifyUserRefreshToken('refresh-token', 'test@test.com'),
+      ).rejects.toThrow(RpcException);
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Error verifying refresh token:',
+        expect.any(Error),
+      );
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('should handle null refresh token in verifyUserRefreshToken', async () => {
+      const mockUserWithNullToken: UsersProto.User = {
+        ...mockUser,
+        refreshToken: null,
+      };
+
+      (usersService.getUserByEmail as jest.Mock).mockReturnValue(
+        of(mockUserWithNullToken),
+      );
+
+      await expect(
+        service.verifyUserRefreshToken(null, 'test@test.com'),
+      ).rejects.toThrow(RpcException);
+    });
+  });
+
+  describe('dateToTimestamp', () => {
+    it('should convert Date to Timestamp', () => {
+      const date = new Date('2024-01-01T00:00:00Z');
+      const result = (service as any).dateToTimestamp(date);
+
+      expect(result).toEqual({
+        $type: 'google.protobuf.Timestamp',
+        seconds: Math.floor(date.getTime() / 1000),
+        nanos: (date.getTime() % 1000) * 1000000,
+      });
+    });
+  });
+
+  describe('createTokenPayload', () => {
+    let consoleLogSpy: jest.SpyInstance;
+
+    beforeEach(() => {
+      consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
+    });
+
+    afterEach(() => {
+      consoleLogSpy.mockRestore();
+    });
+
+    it('should log and create token payload', () => {
+      const mockUser: AuthProto.User = {
+        $type: 'api.auth.User',
+        id: 1,
+        email: 'test@test.com',
+        username: 'testuser',
+      };
+
+      const result = (service as any).createTokenPayload(mockUser);
+
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        'Creating token payload for user:',
+        expect.objectContaining({ email: mockUser.email }),
+      );
+
+      expect(result).toEqual({
+        $type: 'api.auth.TokenPayload',
+        userId: '1',
+        email: 'test@test.com',
+      });
+    });
+  });
+
+  describe('updateUserRefreshToken', () => {
+    it('should update user refresh token', async () => {
+      const mockTokenPayload: AuthProto.TokenPayload = {
+        $type: 'api.auth.TokenPayload',
+        userId: '1',
+        email: 'test@test.com',
+      };
+      const mockRefreshTokenHash = 'hashed-token';
+
+      (usersService.updateUser as jest.Mock).mockReturnValue(of({}));
+
+      await (service as any).updateUserRefreshToken(
+        mockTokenPayload,
+        mockRefreshTokenHash,
+      );
+
+      expect(usersService.updateUser).toHaveBeenCalledWith({
+        $type: 'api.users.UpdateUserRequest',
+        query: {
+          $type: 'api.users.TokenPayload',
+          userId: mockTokenPayload.userId,
+          email: mockTokenPayload.email,
+        },
+        data: {
+          $type: 'api.users.ReceivedRefreshToken',
+          refreshToken: mockRefreshTokenHash,
+        },
+      });
+    });
+
+    it('should handle update failure', async () => {
+      const mockTokenPayload: AuthProto.TokenPayload = {
+        $type: 'api.auth.TokenPayload',
+        userId: '1',
+        email: 'test@test.com',
+      };
+      const mockRefreshTokenHash = 'hashed-token';
+
+      (usersService.updateUser as jest.Mock).mockReturnValue(
+        throwError(() => new Error('Update failed')),
+      );
+
+      await expect(
+        (service as any).updateUserRefreshToken(
+          mockTokenPayload,
+          mockRefreshTokenHash,
+        ),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe('generateTokens', () => {
+    it('should generate access and refresh tokens', async () => {
+      const mockPayload: AuthProto.TokenPayload = {
+        $type: 'api.auth.TokenPayload',
+        userId: '1',
+        email: 'test@test.com',
+      };
+
+      mockJwtService.sign.mockImplementation((payload, options) => {
+        return options.secret === 'access-secret'
+          ? 'access-token'
+          : 'refresh-token';
+      });
+
+      const result = await (service as any).generateTokens(mockPayload);
+
+      expect(result).toEqual({
+        accessToken: 'access-token',
+        refreshToken: 'refresh-token',
+      });
+
+      expect(jwtService.sign).toHaveBeenCalledTimes(2);
+      expect(jwtService.sign).toHaveBeenCalledWith(
+        { userId: mockPayload.userId, email: mockPayload.email },
+        expect.any(Object),
+      );
+    });
+
+    it('should use correct expiration times for token generation', async () => {
+      const mockPayload: AuthProto.TokenPayload = {
+        $type: 'api.auth.TokenPayload',
+        userId: '1',
+        email: 'test@test.com',
+      };
+
+      await (service as any).generateTokens(mockPayload);
+
+      expect(jwtService.sign).toHaveBeenCalledWith(
+        expect.any(Object),
+        expect.objectContaining({
+          expiresIn: 900, // 15 minutes in seconds
+          secret: 'access-secret',
+        }),
+      );
+
+      expect(jwtService.sign).toHaveBeenCalledWith(
+        expect.any(Object),
+        expect.objectContaining({
+          expiresIn: 604800, // 7 days in seconds
+          secret: 'refresh-secret',
+        }),
+      );
+    });
+
+    it('should handle token generation failure', async () => {
+      const mockPayload: AuthProto.TokenPayload = {
+        $type: 'api.auth.TokenPayload',
+        userId: '1',
+        email: 'test@test.com',
+      };
+
+      mockJwtService.sign.mockImplementation(() => {
+        throw new Error('Token generation failed');
+      });
+
+      await expect(
+        (service as any).generateTokens(mockPayload),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe('getTokenExpirations', () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2024-01-01T00:00:00Z'));
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it('should calculate token expiration timestamps', () => {
+      const result = (service as any).getTokenExpirations();
+
+      expect(result).toHaveProperty('expiresAccessToken');
+      expect(result).toHaveProperty('expiresRefreshToken');
+      expect(result.expiresAccessToken.$type).toBe('google.protobuf.Timestamp');
+      expect(result.expiresRefreshToken.$type).toBe(
+        'google.protobuf.Timestamp',
+      );
+    });
+
+    it('should use correct expiration times from config', () => {
+      const accessTokenExp = 900000; // 15 minutes in milliseconds
+      const refreshTokenExp = 604800000; // 7 days in milliseconds
+      const baseTime = new Date('2024-01-01T00:00:00Z');
+
+      mockConfigService.getOrThrow.mockImplementation((key: string) => {
+        const config = {
+          JWT_ACCESS_TOKEN_EXPIRATION_MS: accessTokenExp.toString(),
+          JWT_REFRESH_TOKEN_EXPIRATION_MS: refreshTokenExp.toString(),
+          JWT_ACCESS_TOKEN_SECRET: 'access-secret',
+          JWT_REFRESH_TOKEN_SECRET: 'refresh-secret',
+          AUTH_UI_REDIRECT: 'http://localhost:3000',
+        };
+        return config[key];
+      });
+
+      const result = (service as any).getTokenExpirations();
+      const baseTimeSeconds = Math.floor(baseTime.getTime() / 1000);
+
+      expect(result.expiresAccessToken.seconds - baseTimeSeconds).toBe(
+        accessTokenExp / 1000,
+      );
+      expect(result.expiresRefreshToken.seconds - baseTimeSeconds).toBe(
+        refreshTokenExp / 1000,
+      );
+
+      expect(result.expiresAccessToken.nanos).toBe(0);
+      expect(result.expiresRefreshToken.nanos).toBe(0);
     });
   });
 });
