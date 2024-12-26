@@ -146,7 +146,7 @@ export default function GenerateComponentPage(): JSX.Element {
           <Form {...form}>
             <form
               className="space-y-6 w-full relative"
-              onSubmit={void form.handleSubmit(handleGenerateComponent)}
+              onSubmit={form.handleSubmit(handleGenerateComponent)}
             >
               <FormField
                 control={form.control}
