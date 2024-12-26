@@ -6,9 +6,8 @@ import {
   WorkflowExecutionStatus,
 } from '@repo/types';
 import { executeWorkflowPhase } from './execute-workflow-phase';
-import { eq } from 'drizzle-orm';
 import { initializeFinalizeExecution } from './initialize-finalize-execution';
-import { DrizzleDatabase, workflowExecutions } from '@app/database';
+import { DrizzleDatabase, eq, workflowExecutions } from '@app/database';
 
 export async function executeWorkflowPhases(
   database: DrizzleDatabase,

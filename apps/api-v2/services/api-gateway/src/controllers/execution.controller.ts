@@ -3,12 +3,13 @@ import {
   Controller,
   Get,
   Inject,
+  OnModuleInit,
   Param,
   ParseIntPipe,
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { type ClientGrpc } from '@nestjs/microservices';
 import {
   ApproveChangesDto,
   CurrentUser,
@@ -16,14 +17,31 @@ import {
   type User,
 } from '@app/common';
 import { firstValueFrom } from 'rxjs';
+import { ExecutionProto } from '@app/proto';
 
 @Controller('executions')
 @UseGuards(JwtAuthGuard)
-export class ExecutionsController {
+export class ExecutionsController implements OnModuleInit {
+  private executionsService: ExecutionProto.ExecutionsServiceClient;
+
   constructor(
-    @Inject('EXECUTIONS_SERVICE')
-    private readonly executionsClient: ClientProxy,
+    @Inject('EXECUTION_SERVICE') private readonly client: ClientGrpc,
   ) {}
+
+  onModuleInit() {
+    this.executionsService =
+      this.client.getService<ExecutionProto.ExecutionsServiceClient>(
+        'ExecutionsService',
+      );
+  }
+
+  private userToProtoUser(user: User): ExecutionProto.User {
+    return {
+      $type: 'api.execution.User',
+      id: String(user.id),
+      email: user.email,
+    };
+  }
 
   @Get(':executionId/pending-changes')
   async getPendingChanges(
@@ -31,12 +49,17 @@ export class ExecutionsController {
     @Param('executionId', ParseIntPipe) executionId: number,
   ) {
     console.log('executionId', executionId);
-    return firstValueFrom(
-      this.executionsClient.send('executions.pending-changes', {
-        user,
+    const response = await firstValueFrom(
+      this.executionsService.getPendingChanges({
+        $type: 'api.execution.GetPendingChangesRequest',
+        user: this.userToProtoUser(user),
         executionId,
       }),
     );
+    return {
+      pendingApproval: response.pendingApproval,
+      status: response.status,
+    };
   }
 
   @Post(':executionId/approve')
@@ -45,12 +68,20 @@ export class ExecutionsController {
     @Param('executionId', ParseIntPipe) executionId: number,
     @Body() body: ApproveChangesDto,
   ) {
-    return firstValueFrom(
-      this.executionsClient.send('executions.approve', {
-        user,
+    const response = await firstValueFrom(
+      this.executionsService.approveChanges({
+        $type: 'api.execution.ApproveChangesRequest',
+        user: this.userToProtoUser(user),
         executionId,
-        body,
+        body: {
+          $type: 'api.execution.ApproveChangesBody',
+          decision: body.decision,
+        },
       }),
     );
+    return {
+      message: response.message,
+      status: response.status,
+    };
   }
 }

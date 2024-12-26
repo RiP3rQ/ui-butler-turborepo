@@ -1,5 +1,4 @@
-// execution.service.ts
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { Edge } from '@nestjs/core/inspector/interfaces/edge.interface';
 import {
@@ -24,6 +23,7 @@ import { initializeWorkflowPhasesStatuses } from './helpers/initialize-workflow-
 
 @Injectable()
 export class ExecutionsService {
+  private readonly logger = new Logger(ExecutionsService.name);
   constructor(
     @Inject(DATABASE_CONNECTION)
     private readonly database: DrizzleDatabase,
@@ -49,7 +49,7 @@ export class ExecutionsService {
         (phase) => phase.status === ExecutionPhaseStatus.WAITING_FOR_APPROVAL,
       );
 
-      console.log('Pending phase', pendingPhase);
+      this.logger.debug('Pending phase', pendingPhase);
 
       const parsedTemp = JSON.parse(pendingPhase?.temp || '{}');
 
@@ -70,7 +70,6 @@ export class ExecutionsService {
     body: ApproveChangesDto,
   ) {
     try {
-      // Get the current execution with all necessary data
       const execution = await this.database.query.workflowExecutions.findFirst({
         where: eq(workflowExecutions.id, executionId),
         with: {
@@ -83,7 +82,6 @@ export class ExecutionsService {
         throw new RpcException('Execution not found');
       }
 
-      // Find the current pending phase that requested approval
       const currentPhase = execution.executionPhases.find(
         (phase) => phase.status === ExecutionPhaseStatus.WAITING_FOR_APPROVAL,
       );
@@ -92,29 +90,23 @@ export class ExecutionsService {
         throw new RpcException('No pending phase found');
       }
 
-      // Get the remaining phases
-      console.log('execution.executionPhases', execution.executionPhases);
       const remainingPhases = execution.executionPhases.filter(
         (phase) => phase.status === ExecutionPhaseStatus.PENDING,
       );
 
-      // Parse edges from the execution definition
       const edges = (JSON.parse(execution.definition)?.edges ?? []) as Edge[];
 
-      // Parse the current phase outputs to get the pending code
       const temp = JSON.parse(currentPhase.temp || '{}');
       const originalCode = temp?.['Original code'] ?? '';
       const pendingCode = temp?.['Pending code'] ?? '';
       const componentId = Number(temp?.['Component ID'] ?? '');
 
       if (!componentId || isNaN(componentId)) {
-        console.warn('Component ID not found in temp');
+        this.logger.warn('Component ID not found in temp');
       }
 
-      // Create environment with the appropriate code context
       const environment: Environment = {
         phases: {},
-        // If not approved, use original code, if approved use the modified code
         code:
           body.decision === 'approve'
             ? (pendingCode ?? originalCode)
@@ -124,11 +116,10 @@ export class ExecutionsService {
         componentId,
       };
 
-      console.log('Environment', environment);
-      console.log('Current phase', currentPhase);
-      console.log('remainingPhases', remainingPhases);
+      this.logger.debug('Environment', environment);
+      this.logger.debug('Current phase', currentPhase);
+      this.logger.debug('remainingPhases', remainingPhases);
 
-      // Update execution status to RUNNING
       await this.database
         .update(workflowExecutions)
         .set({
@@ -136,7 +127,6 @@ export class ExecutionsService {
         })
         .where(eq(workflowExecutions.id, executionId));
 
-      // Update current phase status to COMPLETED
       await this.database
         .update(executionPhase)
         .set({
@@ -144,7 +134,6 @@ export class ExecutionsService {
         })
         .where(eq(executionPhase.id, currentPhase.id));
 
-      // Continue execution with remaining phases
       executeWorkflowPhases(
         this.database,
         environment,
@@ -174,8 +163,7 @@ export class ExecutionsService {
     nextRunAt?: Date,
   ) {
     try {
-      // execute workflow
-      console.log('executing workflow', workflowExecutionId);
+      this.logger.debug('executing workflow', workflowExecutionId);
 
       const execution = await this.database.query.workflowExecutions.findFirst({
         where: eq(workflowExecutions.id, workflowExecutionId),
@@ -185,7 +173,7 @@ export class ExecutionsService {
         },
       });
 
-      console.log('execution', execution);
+      this.logger.debug('execution', execution);
 
       if (!execution) {
         throw new RpcException('Execution not found');
@@ -200,20 +188,18 @@ export class ExecutionsService {
         componentId: componentId,
       };
 
-      // INIT WORKFLOW EXECUTION
       await initializeWorkflowExecution(
         this.database,
         workflowExecutionId,
         execution.workflowId,
         nextRunAt,
       );
-      // INIT PHASES STATUSES
+
       await initializeWorkflowPhasesStatuses(
         this.database,
         execution.executionPhases,
       );
 
-      // EXECUTE PHASES
       await executeWorkflowPhases(
         this.database,
         environment,
@@ -223,7 +209,7 @@ export class ExecutionsService {
         execution,
       );
 
-      console.log(
+      this.logger.debug(
         `Workflow execution ${
           execution?.status === WorkflowExecutionStatus.WAITING_FOR_APPROVAL
             ? 'paused'
@@ -231,7 +217,7 @@ export class ExecutionsService {
         } for workflowId: ${execution.workflowId}`,
       );
 
-      return {}; // Return empty object for gRPC Empty message
+      return {};
     } catch (error) {
       throw new RpcException(
         error instanceof Error ? error.message : JSON.stringify(error),

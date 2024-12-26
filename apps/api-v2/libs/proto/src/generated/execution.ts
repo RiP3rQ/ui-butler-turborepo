@@ -46,7 +46,6 @@ export interface ApproveChangesRequest {
 export interface ApproveChangesBody {
   $type: "api.execution.ApproveChangesBody";
   decision: string;
-  comment: string;
 }
 
 export interface ApproveChangesResponse {
@@ -467,11 +466,7 @@ export const ApproveChangesRequest: MessageFns<
 messageTypeRegistry.set(ApproveChangesRequest.$type, ApproveChangesRequest);
 
 function createBaseApproveChangesBody(): ApproveChangesBody {
-  return {
-    $type: "api.execution.ApproveChangesBody",
-    decision: "",
-    comment: "",
-  };
+  return { $type: "api.execution.ApproveChangesBody", decision: "" };
 }
 
 export const ApproveChangesBody: MessageFns<
@@ -486,9 +481,6 @@ export const ApproveChangesBody: MessageFns<
   ): BinaryWriter {
     if (message.decision !== "") {
       writer.uint32(10).string(message.decision);
-    }
-    if (message.comment !== "") {
-      writer.uint32(18).string(message.comment);
     }
     return writer;
   },
@@ -510,14 +502,6 @@ export const ApproveChangesBody: MessageFns<
           }
 
           message.decision = reader.string();
-          continue;
-        }
-        case 2: {
-          if (tag !== 18) {
-            break;
-          }
-
-          message.comment = reader.string();
           continue;
         }
       }

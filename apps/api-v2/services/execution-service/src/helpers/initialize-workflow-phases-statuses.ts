@@ -1,6 +1,5 @@
 import { ExecutionPhase, ExecutionPhaseStatus } from '@repo/types';
-import { inArray } from 'drizzle-orm/sql/expressions/conditions';
-import { DrizzleDatabase, executionPhase } from '@app/database';
+import { DrizzleDatabase, executionPhase, inArray } from '@app/database';
 
 export async function initializeWorkflowPhasesStatuses(
   database: DrizzleDatabase,

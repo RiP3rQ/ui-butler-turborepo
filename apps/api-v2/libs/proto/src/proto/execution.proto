@@ -31,7 +31,6 @@ message ApproveChangesRequest {
 
 message ApproveChangesBody {
     string decision = 1;
-    string comment = 2;
 }
 
 message ApproveChangesResponse {
