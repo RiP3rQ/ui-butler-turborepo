@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+package api.executions;
+
+service ExecutionsService {
+    rpc GetPendingChanges (GetPendingChangesRequest) returns (PendingChangesResponse) {}
+    rpc ApproveChanges (ApproveChangesRequest) returns (ApproveChangesResponse) {}
+    rpc Execute (ExecuteWorkflowRequest) returns (Empty) {}
+}
+
+message User {
+    string id = 1;
+    string email = 2;
+}
+
+message GetPendingChangesRequest {
+    User user = 1;
+    int32 executionId = 2;
+}
+
+message PendingChangesResponse {
+    map<string, string> pendingApproval = 1;
+    string status = 2;
+}
+
+message ApproveChangesRequest {
+    User user = 1;
+    int32 executionId = 2;
+    ApproveChangesBody body = 3;
+}
+
+message ApproveChangesBody {
+    string decision = 1;
+    string comment = 2;
+}
+
+message ApproveChangesResponse {
+    string message = 1;
+    string status = 2;
+}
+
+message ExecuteWorkflowRequest {
+    int32 workflowExecutionId = 1;
+    int32 componentId = 2;
+    optional string nextRunAt = 3;
+}
+
+message Empty {}
+
+// Additional messages for complex types
+message WorkflowExecution {
+    int32 id = 1;
+    int32 workflowId = 2;
+    string userId = 3;
+    string status = 4;
+    string startedAt = 5;
+    string endedAt = 6;
+    string trigger = 7;
+    string definition = 8;
+    Workflow workflow = 9;
+    repeated ExecutionPhase executionPhases = 10;
+}
+
+message Workflow {
+    int32 id = 1;
+    string name = 2;
+    string description = 3;
+    string userId = 4;
+    string definition = 5;
+    string status = 6;
+    string executionPlan = 7;
+    int32 creditsCost = 8;
+}
+
+message ExecutionPhase {
+    int32 id = 1;
+    int32 workflowExecutionId = 2;
+    string userId = 3;
+    string status = 4;
+    int32 number = 5;
+    string node = 6;
+    string name = 7;
+    string startedAt = 8;
+    string endedAt = 9;
+    string temp = 10;
+}
+
+message Environment {
+    map<string, string> phases = 1;
+    string code = 2;
+    string startingCode = 3;
+    int32 workflowExecutionId = 4;
+    int32 componentId = 5;
+}
