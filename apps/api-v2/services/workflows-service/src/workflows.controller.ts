@@ -7,6 +7,7 @@ import {
   PublishWorkflowDto,
   RunWorkflowDto,
   UpdateWorkflowDto,
+  type User,
 } from '@app/common';
 import { WorkflowsProto } from '@app/proto';
 
@@ -16,13 +17,20 @@ export class WorkflowsController {
 
   constructor(private readonly workflowsService: WorkflowsService) {}
 
+  private protoUserToUser(protoUser: WorkflowsProto.User): User {
+    return {
+      id: Number(protoUser.id),
+      email: protoUser.email,
+    };
+  }
+
   @GrpcMethod('WorkflowsService', 'GetAllUserWorkflows')
   async getAllUserWorkflows(
     request: WorkflowsProto.GetAllUserWorkflowsRequest,
   ) {
     this.logger.debug('Getting all user workflows');
     const workflows = await this.workflowsService.getAllUserWorkflows(
-      request.user,
+      this.protoUserToUser(request.user),
     );
     return { workflows };
   }
@@ -31,7 +39,7 @@ export class WorkflowsController {
   async getWorkflowById(request: WorkflowsProto.GetWorkflowByIdRequest) {
     this.logger.debug(`Getting workflow by ID: ${request.workflowId}`);
     const workflow = await this.workflowsService.getWorkflowById(
-      request.user,
+      this.protoUserToUser(request.user),
       request.workflowId,
     );
     return { workflow };
@@ -45,7 +53,7 @@ export class WorkflowsController {
       description: request.description,
     };
     const workflow = await this.workflowsService.createWorkflow(
-      request.user,
+      this.protoUserToUser(request.user),
       createWorkflowDto,
     );
     return { workflow };
@@ -55,7 +63,7 @@ export class WorkflowsController {
   async deleteWorkflow(request: WorkflowsProto.DeleteWorkflowRequest) {
     this.logger.debug(`Deleting workflow: ${request.workflowId}`);
     const workflow = await this.workflowsService.deleteWorkflow(
-      request.user,
+      this.protoUserToUser(request.user),
       request.workflowId,
     );
     return { workflow };
@@ -70,7 +78,7 @@ export class WorkflowsController {
       description: request.description,
     };
     const workflow = await this.workflowsService.duplicateWorkflow(
-      request.user,
+      this.protoUserToUser(request.user),
       duplicateWorkflowDto,
     );
     return { workflow };
@@ -84,7 +92,7 @@ export class WorkflowsController {
       flowDefinition: request.flowDefinition,
     };
     const workflow = await this.workflowsService.publishWorkflow(
-      request.user,
+      this.protoUserToUser(request.user),
       publishWorkflowDto,
     );
     return { workflow };
@@ -94,7 +102,7 @@ export class WorkflowsController {
   async unpublishWorkflow(request: WorkflowsProto.UnpublishWorkflowRequest) {
     this.logger.debug(`Unpublishing workflow: ${request.workflowId}`);
     const workflow = await this.workflowsService.unpublishWorkflow(
-      request.user,
+      this.protoUserToUser(request.user),
       request.workflowId,
     );
     return { workflow };
@@ -106,10 +114,10 @@ export class WorkflowsController {
     const runWorkflowDto: RunWorkflowDto = {
       workflowId: request.workflowId,
       flowDefinition: request.flowDefinition,
-      componentId: request.componentId,
+      componentId: Number(request.componentId),
     };
     const result = await this.workflowsService.runWorkflow(
-      request.user,
+      this.protoUserToUser(request.user),
       runWorkflowDto,
     );
     return { url: result.url };
@@ -123,7 +131,7 @@ export class WorkflowsController {
       definition: request.definition,
     };
     const workflow = await this.workflowsService.updateWorkflow(
-      request.user,
+      this.protoUserToUser(request.user),
       updateWorkflowDto,
     );
     return { workflow };
@@ -136,7 +144,7 @@ export class WorkflowsController {
     this.logger.debug('Getting historic workflow executions');
     const executions =
       await this.workflowsService.getHistoricWorkflowExecutions(
-        request.user,
+        this.protoUserToUser(request.user),
         request.workflowId,
       );
     return { executions };
@@ -146,7 +154,7 @@ export class WorkflowsController {
   async getWorkflowExecutions(request: WorkflowsProto.GetExecutionsRequest) {
     this.logger.debug('Getting workflow executions');
     const result = await this.workflowsService.getWorkflowExecutions(
-      request.user,
+      this.protoUserToUser(request.user),
       request.executionId,
     );
     return {
@@ -159,7 +167,7 @@ export class WorkflowsController {
   async getWorkflowPhase(request: WorkflowsProto.GetPhaseRequest) {
     this.logger.debug('Getting workflow phase');
     const result = await this.workflowsService.getWorkflowPhase(
-      request.user,
+      this.protoUserToUser(request.user),
       request.phaseId,
     );
     return {

@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Inject,
+  OnModuleInit,
   Param,
   ParseIntPipe,
   Post,
@@ -11,7 +12,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { type ClientGrpc } from '@nestjs/microservices';
 import {
   CreateWorkflowDto,
   CurrentUser,
@@ -23,19 +24,41 @@ import {
   type User,
 } from '@app/common';
 import { firstValueFrom } from 'rxjs';
+import { WorkflowsProto } from '@app/proto';
 
 @Controller('workflows')
 @UseGuards(JwtAuthGuard)
-export class WorkflowsController {
+export class WorkflowsController implements OnModuleInit {
+  private workflowsService: WorkflowsProto.WorkflowsServiceClient;
+
   constructor(
-    @Inject('WORKFLOWS_SERVICE') private readonly workflowsClient: ClientProxy,
+    @Inject('WORKFLOWS_SERVICE') private readonly client: ClientGrpc,
   ) {}
+
+  onModuleInit() {
+    this.workflowsService =
+      this.client.getService<WorkflowsProto.WorkflowsServiceClient>(
+        'WorkflowsService',
+      );
+  }
+
+  private userToProtoUser(user: User): WorkflowsProto.User {
+    return {
+      $type: 'api.workflows.User',
+      id: String(user.id),
+      email: user.email,
+    };
+  }
 
   @Get()
   async getAllUserWorkflows(@CurrentUser() user: User) {
-    return firstValueFrom(
-      this.workflowsClient.send('workflows.get-all', { user }),
+    const response = await firstValueFrom(
+      this.workflowsService.getAllUserWorkflows({
+        $type: 'api.workflows.GetAllUserWorkflowsRequest',
+        user: this.userToProtoUser(user),
+      }),
     );
+    return response.workflows;
   }
 
   @Get('get-by-id/:workflowId')
@@ -43,9 +66,14 @@ export class WorkflowsController {
     @CurrentUser() user: User,
     @Param('workflowId', ParseIntPipe) workflowId: number,
   ) {
-    return firstValueFrom(
-      this.workflowsClient.send('workflows.get-by-id', { user, workflowId }),
+    const response = await firstValueFrom(
+      this.workflowsService.getWorkflowById({
+        $type: 'api.workflows.GetWorkflowByIdRequest',
+        user: this.userToProtoUser(user),
+        workflowId,
+      }),
     );
+    return response.workflow;
   }
 
   @Post()
@@ -53,12 +81,15 @@ export class WorkflowsController {
     @CurrentUser() user: User,
     @Body() createWorkflowDto: CreateWorkflowDto,
   ) {
-    return firstValueFrom(
-      this.workflowsClient.send('workflows.create', {
-        user,
-        createWorkflowDto,
+    const response = await firstValueFrom(
+      this.workflowsService.createWorkflow({
+        $type: 'api.workflows.CreateWorkflowRequest',
+        user: this.userToProtoUser(user),
+        name: createWorkflowDto.name,
+        description: createWorkflowDto.description,
       }),
     );
+    return response.workflow;
   }
 
   @Delete(':id')
@@ -66,9 +97,14 @@ export class WorkflowsController {
     @CurrentUser() user: User,
     @Param('id', ParseIntPipe) workflowId: number,
   ) {
-    return firstValueFrom(
-      this.workflowsClient.send('workflows.delete', { user, workflowId }),
+    const response = await firstValueFrom(
+      this.workflowsService.deleteWorkflow({
+        $type: 'api.workflows.DeleteWorkflowRequest',
+        user: this.userToProtoUser(user),
+        workflowId,
+      }),
     );
+    return response.workflow;
   }
 
   @Post('duplicate')
@@ -76,12 +112,16 @@ export class WorkflowsController {
     @CurrentUser() user: User,
     @Body() duplicateWorkflowDto: DuplicateWorkflowDto,
   ) {
-    return firstValueFrom(
-      this.workflowsClient.send('workflows.duplicate', {
-        user,
-        duplicateWorkflowDto,
+    const response = await firstValueFrom(
+      this.workflowsService.duplicateWorkflow({
+        $type: 'api.workflows.DuplicateWorkflowRequest',
+        user: this.userToProtoUser(user),
+        workflowId: duplicateWorkflowDto.workflowId,
+        name: duplicateWorkflowDto.name,
+        description: duplicateWorkflowDto.description,
       }),
     );
+    return response.workflow;
   }
 
   @Post(':id/publish')
@@ -89,12 +129,15 @@ export class WorkflowsController {
     @CurrentUser() user: User,
     @Body() publishWorkflowDto: PublishWorkflowDto,
   ) {
-    return firstValueFrom(
-      this.workflowsClient.send('workflows.publish', {
-        user,
-        publishWorkflowDto,
+    const response = await firstValueFrom(
+      this.workflowsService.publishWorkflow({
+        $type: 'api.workflows.PublishWorkflowRequest',
+        user: this.userToProtoUser(user),
+        workflowId: publishWorkflowDto.workflowId,
+        flowDefinition: publishWorkflowDto.flowDefinition,
       }),
     );
+    return response.workflow;
   }
 
   @Post(':id/unpublish')
@@ -102,9 +145,14 @@ export class WorkflowsController {
     @CurrentUser() user: User,
     @Param('id', ParseIntPipe) workflowId: number,
   ) {
-    return firstValueFrom(
-      this.workflowsClient.send('workflows.unpublish', { user, workflowId }),
+    const response = await firstValueFrom(
+      this.workflowsService.unpublishWorkflow({
+        $type: 'api.workflows.UnpublishWorkflowRequest',
+        user: this.userToProtoUser(user),
+        workflowId,
+      }),
     );
+    return response.workflow;
   }
 
   @Post('run-workflow')
@@ -112,9 +160,16 @@ export class WorkflowsController {
     @CurrentUser() user: User,
     @Body() runWorkflowDto: RunWorkflowDto,
   ) {
-    return firstValueFrom(
-      this.workflowsClient.send('workflows.run', { user, runWorkflowDto }),
+    const response = await firstValueFrom(
+      this.workflowsService.runWorkflow({
+        $type: 'api.workflows.RunWorkflowRequest',
+        user: this.userToProtoUser(user),
+        workflowId: runWorkflowDto.workflowId,
+        flowDefinition: runWorkflowDto.flowDefinition,
+        componentId: String(runWorkflowDto.componentId),
+      }),
     );
+    return response;
   }
 
   @Put(':id')
@@ -122,12 +177,15 @@ export class WorkflowsController {
     @CurrentUser() user: User,
     @Body() updateWorkflowDto: UpdateWorkflowDto,
   ) {
-    return firstValueFrom(
-      this.workflowsClient.send('workflows.update', {
-        user,
-        updateWorkflowDto,
+    const response = await firstValueFrom(
+      this.workflowsService.updateWorkflow({
+        $type: 'api.workflows.UpdateWorkflowRequest',
+        user: this.userToProtoUser(user),
+        workflowId: updateWorkflowDto.workflowId,
+        definition: updateWorkflowDto.definition,
       }),
     );
+    return response.workflow;
   }
 
   @Get('historic')
@@ -135,9 +193,14 @@ export class WorkflowsController {
     @CurrentUser() user: User,
     @Query('workflowId', ParseIntPipe) workflowId: number,
   ) {
-    return firstValueFrom(
-      this.workflowsClient.send('workflows.historic', { user, workflowId }),
+    const response = await firstValueFrom(
+      this.workflowsService.getHistoricWorkflowExecutions({
+        $type: 'api.workflows.GetHistoricRequest',
+        user: this.userToProtoUser(user),
+        workflowId,
+      }),
     );
+    return response.executions;
   }
 
   @Get('executions')
@@ -145,9 +208,17 @@ export class WorkflowsController {
     @CurrentUser() user: User,
     @Query('executionId') executionId: string | number,
   ) {
-    return firstValueFrom(
-      this.workflowsClient.send('workflows.executions', { user, executionId }),
+    const response = await firstValueFrom(
+      this.workflowsService.getWorkflowExecutions({
+        $type: 'api.workflows.GetExecutionsRequest',
+        user: this.userToProtoUser(user),
+        executionId: Number(executionId),
+      }),
     );
+    return {
+      execution: response.execution,
+      phases: response.phases,
+    };
   }
 
   @Get('phases/:id')
@@ -155,8 +226,16 @@ export class WorkflowsController {
     @CurrentUser() user: User,
     @Param('id', ParseIntPipe) phaseId: number,
   ) {
-    return firstValueFrom(
-      this.workflowsClient.send('workflows.phases', { user, phaseId }),
+    const response = await firstValueFrom(
+      this.workflowsService.getWorkflowPhase({
+        $type: 'api.workflows.GetPhaseRequest',
+        user: this.userToProtoUser(user),
+        phaseId,
+      }),
     );
+    return {
+      phase: response.phase,
+      logs: response.logs,
+    };
   }
 }

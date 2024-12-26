@@ -39,12 +39,12 @@ import {
   parseFlowToExecutionPlan,
   ServerTaskRegister,
 } from '@repo/tasks-registry';
-import { ExecutionsProto } from '@app/proto';
+import { ExecutionProto } from '@app/proto';
 
 @Injectable()
 export class WorkflowsService implements OnModuleInit {
   private readonly logger = new Logger(WorkflowsService.name);
-  private executionsService: ExecutionsProto.ExecutionsServiceClient;
+  private executionsService: ExecutionProto.ExecutionsServiceClient;
 
   constructor(
     @Inject('EXECUTIONS_SERVICE')
@@ -55,7 +55,7 @@ export class WorkflowsService implements OnModuleInit {
 
   onModuleInit() {
     this.executionsService =
-      this.executionsClient.getService<ExecutionsProto.ExecutionsServiceClient>(
+      this.executionsClient.getService<ExecutionProto.ExecutionsServiceClient>(
         'ExecutionsService',
       );
   }
@@ -386,6 +386,7 @@ export class WorkflowsService implements OnModuleInit {
         // Use gRPC call instead of TCP emit
         await firstValueFrom(
           this.executionsService.execute({
+            $type: 'api.execution.ExecuteWorkflowRequest',
             workflowExecutionId: execution.id,
             componentId: runWorkflowDto.componentId,
           }),

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package api.executions;
+package api.execution;
 
 service ExecutionsService {
     rpc GetPendingChanges (GetPendingChangesRequest) returns (PendingChangesResponse) {}

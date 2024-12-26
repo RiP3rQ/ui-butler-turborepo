@@ -14,12 +14,12 @@ import { join } from 'path';
         name: 'EXECUTIONS_SERVICE',
         transport: Transport.GRPC,
         options: {
-          package: 'api.executions',
+          package: 'api.execution',
           protoPath: join(
             __dirname,
-            '../../../libs/proto/src/proto/executions.proto',
+            '../../../libs/proto/src/proto/execution.proto',
           ),
-          url: `${process.env.EXECUTIONS_SERVICE_HOST || 'localhost'}:${process.env.EXECUTIONS_SERVICES_PORT || '3343'}`,
+          url: `${process.env.EXECUTION_SERVICE_HOST || 'localhost'}:${process.env.EXECUTION_SERVICES_PORT || '3343'}`,
         },
       },
     ]),

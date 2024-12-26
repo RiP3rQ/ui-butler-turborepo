@@ -10,65 +10,65 @@ import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
 import { messageTypeRegistry } from "./typeRegistry";
 
-export const protobufPackage = "api.executions";
+export const protobufPackage = "api.execution";
 
 export interface User {
-  $type: "api.executions.User";
+  $type: "api.execution.User";
   id: string;
   email: string;
 }
 
 export interface GetPendingChangesRequest {
-  $type: "api.executions.GetPendingChangesRequest";
+  $type: "api.execution.GetPendingChangesRequest";
   user?: User | undefined;
   executionId: number;
 }
 
 export interface PendingChangesResponse {
-  $type: "api.executions.PendingChangesResponse";
+  $type: "api.execution.PendingChangesResponse";
   pendingApproval: { [key: string]: string };
   status: string;
 }
 
 export interface PendingChangesResponse_PendingApprovalEntry {
-  $type: "api.executions.PendingChangesResponse.PendingApprovalEntry";
+  $type: "api.execution.PendingChangesResponse.PendingApprovalEntry";
   key: string;
   value: string;
 }
 
 export interface ApproveChangesRequest {
-  $type: "api.executions.ApproveChangesRequest";
+  $type: "api.execution.ApproveChangesRequest";
   user?: User | undefined;
   executionId: number;
   body?: ApproveChangesBody | undefined;
 }
 
 export interface ApproveChangesBody {
-  $type: "api.executions.ApproveChangesBody";
+  $type: "api.execution.ApproveChangesBody";
   decision: string;
   comment: string;
 }
 
 export interface ApproveChangesResponse {
-  $type: "api.executions.ApproveChangesResponse";
+  $type: "api.execution.ApproveChangesResponse";
   message: string;
   status: string;
 }
 
 export interface ExecuteWorkflowRequest {
-  $type: "api.executions.ExecuteWorkflowRequest";
+  $type: "api.execution.ExecuteWorkflowRequest";
   workflowExecutionId: number;
   componentId: number;
   nextRunAt?: string | undefined;
 }
 
 export interface Empty {
-  $type: "api.executions.Empty";
+  $type: "api.execution.Empty";
 }
 
 /** Additional messages for complex types */
 export interface WorkflowExecution {
-  $type: "api.executions.WorkflowExecution";
+  $type: "api.execution.WorkflowExecution";
   id: number;
   workflowId: number;
   userId: string;
@@ -82,7 +82,7 @@ export interface WorkflowExecution {
 }
 
 export interface Workflow {
-  $type: "api.executions.Workflow";
+  $type: "api.execution.Workflow";
   id: number;
   name: string;
   description: string;
@@ -94,7 +94,7 @@ export interface Workflow {
 }
 
 export interface ExecutionPhase {
-  $type: "api.executions.ExecutionPhase";
+  $type: "api.execution.ExecutionPhase";
   id: number;
   workflowExecutionId: number;
   userId: string;
@@ -108,7 +108,7 @@ export interface ExecutionPhase {
 }
 
 export interface Environment {
-  $type: "api.executions.Environment";
+  $type: "api.execution.Environment";
   phases: { [key: string]: string };
   code: string;
   startingCode: string;
@@ -117,19 +117,19 @@ export interface Environment {
 }
 
 export interface Environment_PhasesEntry {
-  $type: "api.executions.Environment.PhasesEntry";
+  $type: "api.execution.Environment.PhasesEntry";
   key: string;
   value: string;
 }
 
-export const API_EXECUTIONS_PACKAGE_NAME = "api.executions";
+export const API_EXECUTION_PACKAGE_NAME = "api.execution";
 
 function createBaseUser(): User {
-  return { $type: "api.executions.User", id: "", email: "" };
+  return { $type: "api.execution.User", id: "", email: "" };
 }
 
-export const User: MessageFns<User, "api.executions.User"> = {
-  $type: "api.executions.User" as const,
+export const User: MessageFns<User, "api.execution.User"> = {
+  $type: "api.execution.User" as const,
 
   encode(
     message: User,
@@ -181,14 +181,14 @@ export const User: MessageFns<User, "api.executions.User"> = {
 messageTypeRegistry.set(User.$type, User);
 
 function createBaseGetPendingChangesRequest(): GetPendingChangesRequest {
-  return { $type: "api.executions.GetPendingChangesRequest", executionId: 0 };
+  return { $type: "api.execution.GetPendingChangesRequest", executionId: 0 };
 }
 
 export const GetPendingChangesRequest: MessageFns<
   GetPendingChangesRequest,
-  "api.executions.GetPendingChangesRequest"
+  "api.execution.GetPendingChangesRequest"
 > = {
-  $type: "api.executions.GetPendingChangesRequest" as const,
+  $type: "api.execution.GetPendingChangesRequest" as const,
 
   encode(
     message: GetPendingChangesRequest,
@@ -247,7 +247,7 @@ messageTypeRegistry.set(
 
 function createBasePendingChangesResponse(): PendingChangesResponse {
   return {
-    $type: "api.executions.PendingChangesResponse",
+    $type: "api.execution.PendingChangesResponse",
     pendingApproval: {},
     status: "",
   };
@@ -255,9 +255,9 @@ function createBasePendingChangesResponse(): PendingChangesResponse {
 
 export const PendingChangesResponse: MessageFns<
   PendingChangesResponse,
-  "api.executions.PendingChangesResponse"
+  "api.execution.PendingChangesResponse"
 > = {
-  $type: "api.executions.PendingChangesResponse" as const,
+  $type: "api.execution.PendingChangesResponse" as const,
 
   encode(
     message: PendingChangesResponse,
@@ -266,7 +266,7 @@ export const PendingChangesResponse: MessageFns<
     Object.entries(message.pendingApproval).forEach(([key, value]) => {
       PendingChangesResponse_PendingApprovalEntry.encode(
         {
-          $type: "api.executions.PendingChangesResponse.PendingApprovalEntry",
+          $type: "api.execution.PendingChangesResponse.PendingApprovalEntry",
           key: key as any,
           value,
         },
@@ -326,7 +326,7 @@ messageTypeRegistry.set(PendingChangesResponse.$type, PendingChangesResponse);
 
 function createBasePendingChangesResponse_PendingApprovalEntry(): PendingChangesResponse_PendingApprovalEntry {
   return {
-    $type: "api.executions.PendingChangesResponse.PendingApprovalEntry",
+    $type: "api.execution.PendingChangesResponse.PendingApprovalEntry",
     key: "",
     value: "",
   };
@@ -334,9 +334,9 @@ function createBasePendingChangesResponse_PendingApprovalEntry(): PendingChanges
 
 export const PendingChangesResponse_PendingApprovalEntry: MessageFns<
   PendingChangesResponse_PendingApprovalEntry,
-  "api.executions.PendingChangesResponse.PendingApprovalEntry"
+  "api.execution.PendingChangesResponse.PendingApprovalEntry"
 > = {
-  $type: "api.executions.PendingChangesResponse.PendingApprovalEntry" as const,
+  $type: "api.execution.PendingChangesResponse.PendingApprovalEntry" as const,
 
   encode(
     message: PendingChangesResponse_PendingApprovalEntry,
@@ -394,14 +394,14 @@ messageTypeRegistry.set(
 );
 
 function createBaseApproveChangesRequest(): ApproveChangesRequest {
-  return { $type: "api.executions.ApproveChangesRequest", executionId: 0 };
+  return { $type: "api.execution.ApproveChangesRequest", executionId: 0 };
 }
 
 export const ApproveChangesRequest: MessageFns<
   ApproveChangesRequest,
-  "api.executions.ApproveChangesRequest"
+  "api.execution.ApproveChangesRequest"
 > = {
-  $type: "api.executions.ApproveChangesRequest" as const,
+  $type: "api.execution.ApproveChangesRequest" as const,
 
   encode(
     message: ApproveChangesRequest,
@@ -468,7 +468,7 @@ messageTypeRegistry.set(ApproveChangesRequest.$type, ApproveChangesRequest);
 
 function createBaseApproveChangesBody(): ApproveChangesBody {
   return {
-    $type: "api.executions.ApproveChangesBody",
+    $type: "api.execution.ApproveChangesBody",
     decision: "",
     comment: "",
   };
@@ -476,9 +476,9 @@ function createBaseApproveChangesBody(): ApproveChangesBody {
 
 export const ApproveChangesBody: MessageFns<
   ApproveChangesBody,
-  "api.executions.ApproveChangesBody"
+  "api.execution.ApproveChangesBody"
 > = {
-  $type: "api.executions.ApproveChangesBody" as const,
+  $type: "api.execution.ApproveChangesBody" as const,
 
   encode(
     message: ApproveChangesBody,
@@ -534,7 +534,7 @@ messageTypeRegistry.set(ApproveChangesBody.$type, ApproveChangesBody);
 
 function createBaseApproveChangesResponse(): ApproveChangesResponse {
   return {
-    $type: "api.executions.ApproveChangesResponse",
+    $type: "api.execution.ApproveChangesResponse",
     message: "",
     status: "",
   };
@@ -542,9 +542,9 @@ function createBaseApproveChangesResponse(): ApproveChangesResponse {
 
 export const ApproveChangesResponse: MessageFns<
   ApproveChangesResponse,
-  "api.executions.ApproveChangesResponse"
+  "api.execution.ApproveChangesResponse"
 > = {
-  $type: "api.executions.ApproveChangesResponse" as const,
+  $type: "api.execution.ApproveChangesResponse" as const,
 
   encode(
     message: ApproveChangesResponse,
@@ -600,7 +600,7 @@ messageTypeRegistry.set(ApproveChangesResponse.$type, ApproveChangesResponse);
 
 function createBaseExecuteWorkflowRequest(): ExecuteWorkflowRequest {
   return {
-    $type: "api.executions.ExecuteWorkflowRequest",
+    $type: "api.execution.ExecuteWorkflowRequest",
     workflowExecutionId: 0,
     componentId: 0,
   };
@@ -608,9 +608,9 @@ function createBaseExecuteWorkflowRequest(): ExecuteWorkflowRequest {
 
 export const ExecuteWorkflowRequest: MessageFns<
   ExecuteWorkflowRequest,
-  "api.executions.ExecuteWorkflowRequest"
+  "api.execution.ExecuteWorkflowRequest"
 > = {
-  $type: "api.executions.ExecuteWorkflowRequest" as const,
+  $type: "api.execution.ExecuteWorkflowRequest" as const,
 
   encode(
     message: ExecuteWorkflowRequest,
@@ -676,11 +676,11 @@ export const ExecuteWorkflowRequest: MessageFns<
 messageTypeRegistry.set(ExecuteWorkflowRequest.$type, ExecuteWorkflowRequest);
 
 function createBaseEmpty(): Empty {
-  return { $type: "api.executions.Empty" };
+  return { $type: "api.execution.Empty" };
 }
 
-export const Empty: MessageFns<Empty, "api.executions.Empty"> = {
-  $type: "api.executions.Empty" as const,
+export const Empty: MessageFns<Empty, "api.execution.Empty"> = {
+  $type: "api.execution.Empty" as const,
 
   encode(_: Empty, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     return writer;
@@ -708,7 +708,7 @@ messageTypeRegistry.set(Empty.$type, Empty);
 
 function createBaseWorkflowExecution(): WorkflowExecution {
   return {
-    $type: "api.executions.WorkflowExecution",
+    $type: "api.execution.WorkflowExecution",
     id: 0,
     workflowId: 0,
     userId: "",
@@ -723,9 +723,9 @@ function createBaseWorkflowExecution(): WorkflowExecution {
 
 export const WorkflowExecution: MessageFns<
   WorkflowExecution,
-  "api.executions.WorkflowExecution"
+  "api.execution.WorkflowExecution"
 > = {
-  $type: "api.executions.WorkflowExecution" as const,
+  $type: "api.execution.WorkflowExecution" as const,
 
   encode(
     message: WorkflowExecution,
@@ -868,7 +868,7 @@ messageTypeRegistry.set(WorkflowExecution.$type, WorkflowExecution);
 
 function createBaseWorkflow(): Workflow {
   return {
-    $type: "api.executions.Workflow",
+    $type: "api.execution.Workflow",
     id: 0,
     name: "",
     description: "",
@@ -880,8 +880,8 @@ function createBaseWorkflow(): Workflow {
   };
 }
 
-export const Workflow: MessageFns<Workflow, "api.executions.Workflow"> = {
-  $type: "api.executions.Workflow" as const,
+export const Workflow: MessageFns<Workflow, "api.execution.Workflow"> = {
+  $type: "api.execution.Workflow" as const,
 
   encode(
     message: Workflow,
@@ -1000,7 +1000,7 @@ messageTypeRegistry.set(Workflow.$type, Workflow);
 
 function createBaseExecutionPhase(): ExecutionPhase {
   return {
-    $type: "api.executions.ExecutionPhase",
+    $type: "api.execution.ExecutionPhase",
     id: 0,
     workflowExecutionId: 0,
     userId: "",
@@ -1016,9 +1016,9 @@ function createBaseExecutionPhase(): ExecutionPhase {
 
 export const ExecutionPhase: MessageFns<
   ExecutionPhase,
-  "api.executions.ExecutionPhase"
+  "api.execution.ExecutionPhase"
 > = {
-  $type: "api.executions.ExecutionPhase" as const,
+  $type: "api.execution.ExecutionPhase" as const,
 
   encode(
     message: ExecutionPhase,
@@ -1159,7 +1159,7 @@ messageTypeRegistry.set(ExecutionPhase.$type, ExecutionPhase);
 
 function createBaseEnvironment(): Environment {
   return {
-    $type: "api.executions.Environment",
+    $type: "api.execution.Environment",
     phases: {},
     code: "",
     startingCode: "",
@@ -1168,120 +1168,114 @@ function createBaseEnvironment(): Environment {
   };
 }
 
-export const Environment: MessageFns<
-  Environment,
-  "api.executions.Environment"
-> = {
-  $type: "api.executions.Environment" as const,
+export const Environment: MessageFns<Environment, "api.execution.Environment"> =
+  {
+    $type: "api.execution.Environment" as const,
 
-  encode(
-    message: Environment,
-    writer: BinaryWriter = new BinaryWriter(),
-  ): BinaryWriter {
-    Object.entries(message.phases).forEach(([key, value]) => {
-      Environment_PhasesEntry.encode(
-        {
-          $type: "api.executions.Environment.PhasesEntry",
-          key: key as any,
-          value,
-        },
-        writer.uint32(10).fork(),
-      ).join();
-    });
-    if (message.code !== "") {
-      writer.uint32(18).string(message.code);
-    }
-    if (message.startingCode !== "") {
-      writer.uint32(26).string(message.startingCode);
-    }
-    if (message.workflowExecutionId !== 0) {
-      writer.uint32(32).int32(message.workflowExecutionId);
-    }
-    if (message.componentId !== 0) {
-      writer.uint32(40).int32(message.componentId);
-    }
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): Environment {
-    const reader =
-      input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseEnvironment();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 10) {
-            break;
-          }
-
-          const entry1 = Environment_PhasesEntry.decode(
-            reader,
-            reader.uint32(),
-          );
-          if (entry1.value !== undefined) {
-            message.phases[entry1.key] = entry1.value;
-          }
-          continue;
-        }
-        case 2: {
-          if (tag !== 18) {
-            break;
-          }
-
-          message.code = reader.string();
-          continue;
-        }
-        case 3: {
-          if (tag !== 26) {
-            break;
-          }
-
-          message.startingCode = reader.string();
-          continue;
-        }
-        case 4: {
-          if (tag !== 32) {
-            break;
-          }
-
-          message.workflowExecutionId = reader.int32();
-          continue;
-        }
-        case 5: {
-          if (tag !== 40) {
-            break;
-          }
-
-          message.componentId = reader.int32();
-          continue;
-        }
+    encode(
+      message: Environment,
+      writer: BinaryWriter = new BinaryWriter(),
+    ): BinaryWriter {
+      Object.entries(message.phases).forEach(([key, value]) => {
+        Environment_PhasesEntry.encode(
+          {
+            $type: "api.execution.Environment.PhasesEntry",
+            key: key as any,
+            value,
+          },
+          writer.uint32(10).fork(),
+        ).join();
+      });
+      if (message.code !== "") {
+        writer.uint32(18).string(message.code);
       }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
+      if (message.startingCode !== "") {
+        writer.uint32(26).string(message.startingCode);
       }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-};
+      if (message.workflowExecutionId !== 0) {
+        writer.uint32(32).int32(message.workflowExecutionId);
+      }
+      if (message.componentId !== 0) {
+        writer.uint32(40).int32(message.componentId);
+      }
+      return writer;
+    },
+
+    decode(input: BinaryReader | Uint8Array, length?: number): Environment {
+      const reader =
+        input instanceof BinaryReader ? input : new BinaryReader(input);
+      let end = length === undefined ? reader.len : reader.pos + length;
+      const message = createBaseEnvironment();
+      while (reader.pos < end) {
+        const tag = reader.uint32();
+        switch (tag >>> 3) {
+          case 1: {
+            if (tag !== 10) {
+              break;
+            }
+
+            const entry1 = Environment_PhasesEntry.decode(
+              reader,
+              reader.uint32(),
+            );
+            if (entry1.value !== undefined) {
+              message.phases[entry1.key] = entry1.value;
+            }
+            continue;
+          }
+          case 2: {
+            if (tag !== 18) {
+              break;
+            }
+
+            message.code = reader.string();
+            continue;
+          }
+          case 3: {
+            if (tag !== 26) {
+              break;
+            }
+
+            message.startingCode = reader.string();
+            continue;
+          }
+          case 4: {
+            if (tag !== 32) {
+              break;
+            }
+
+            message.workflowExecutionId = reader.int32();
+            continue;
+          }
+          case 5: {
+            if (tag !== 40) {
+              break;
+            }
+
+            message.componentId = reader.int32();
+            continue;
+          }
+        }
+        if ((tag & 7) === 4 || tag === 0) {
+          break;
+        }
+        reader.skip(tag & 7);
+      }
+      return message;
+    },
+  };
 
 messageTypeRegistry.set(Environment.$type, Environment);
 
 function createBaseEnvironment_PhasesEntry(): Environment_PhasesEntry {
-  return {
-    $type: "api.executions.Environment.PhasesEntry",
-    key: "",
-    value: "",
-  };
+  return { $type: "api.execution.Environment.PhasesEntry", key: "", value: "" };
 }
 
 export const Environment_PhasesEntry: MessageFns<
   Environment_PhasesEntry,
-  "api.executions.Environment.PhasesEntry"
+  "api.execution.Environment.PhasesEntry"
 > = {
-  $type: "api.executions.Environment.PhasesEntry" as const,
+  $type: "api.execution.Environment.PhasesEntry" as const,
 
   encode(
     message: Environment_PhasesEntry,
@@ -1404,8 +1398,6 @@ export const EXECUTIONS_SERVICE_NAME = "ExecutionsService";
 
 export interface MessageFns<T, V extends string> {
   readonly $type: V;
-
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
-
   decode(input: BinaryReader | Uint8Array, length?: number): T;
 }
