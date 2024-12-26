@@ -1,7 +1,6 @@
 import { ExecutionEnvironment } from '@repo/types';
 import { ServerSetCodeContextTaskType } from '@repo/tasks-registry';
-import { eq } from 'drizzle-orm';
-import { components, DrizzleDatabase } from '@app/database';
+import { components, DrizzleDatabase, eq } from '@app/database';
 
 export async function setCodeContextExecutor(
   environment: ExecutionEnvironment<ServerSetCodeContextTaskType>,

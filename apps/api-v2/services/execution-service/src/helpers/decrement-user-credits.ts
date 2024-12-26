@@ -1,6 +1,5 @@
 import { LogCollector } from '@repo/types';
-import { and, eq, gte, sql } from 'drizzle-orm';
-import { DrizzleDatabase, userBalance } from '@app/database';
+import { and, DrizzleDatabase, eq, gte, sql, userBalance } from '@app/database';
 
 export async function decrementUserCredits(
   database: DrizzleDatabase,

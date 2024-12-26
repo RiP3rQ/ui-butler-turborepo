@@ -11,8 +11,7 @@ import { decrementUserCredits } from './decrement-user-credits';
 import { setupPhaseEnvironment } from './setup-phase-environment';
 import { executePhase } from './execute-phase';
 import { finalizeExecutionPhase } from './finalize-execution-phase';
-import { eq } from 'drizzle-orm';
-import { DrizzleDatabase, executionPhase } from '@app/database';
+import { DrizzleDatabase, eq, executionPhase } from '@app/database';
 
 export async function executeWorkflowPhase(
   database: DrizzleDatabase,

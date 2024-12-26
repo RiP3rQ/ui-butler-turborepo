@@ -111,7 +111,7 @@ import { createGrpcOptions } from './config/grpc.config';
         inject: [ConfigService],
       },
       {
-        name: 'EXECUTIONS_SERVICE',
+        name: 'EXECUTION_SERVICE',
         imports: [ConfigModule],
         useFactory: (configService: ConfigService) =>
           createGrpcOptions(

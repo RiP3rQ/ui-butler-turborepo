@@ -1,8 +1,8 @@
 import { WorkflowExecutionStatus } from '@repo/types';
-import { eq } from 'drizzle-orm';
 import { NotFoundException } from '@nestjs/common';
 import {
   DrizzleDatabase,
+  eq,
   workflowExecutions,
   workflows,
   WorkflowUpdate,

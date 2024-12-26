@@ -90,10 +90,15 @@ export function CreateNewComponentDialog(): JSX.Element {
     },
   });
 
-  const onSubmit = form.handleSubmit((values: SaveComponentSchemaType) => {
-    toast.loading("Saving component...", { id: "new-component" });
-    mutate(values);
-  });
+  const onSubmit = async (values: SaveComponentSchemaType) => {
+    try {
+      toast.loading("Saving component...", { id: "new-component" });
+      mutate(values);
+    } catch (error) {
+      console.error("Submit error:", error);
+      toast.error("Failed to save component");
+    }
+  };
 
   return (
     <Dialog
@@ -109,7 +114,10 @@ export function CreateNewComponentDialog(): JSX.Element {
         </DialogHeader>
         <CardContent className="h-fit">
           <Form {...form}>
-            <form onSubmit={void onSubmit} className="space-y-6 w-full">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-6 w-full"
+            >
               <div className="grid grid-cols-2 space-x-3">
                 <FormField
                   control={form.control}
