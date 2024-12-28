@@ -1,0 +1,123 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: apps/api-v2/services/api-gateway/Dockerfile
+    ports:
+      - "3333:3333"
+    env_file:
+      - .env
+    networks:
+      - app-network
+    depends_on:
+      - analytics-service
+      - auth-service
+      - billing-service
+      - components-service
+      - execution-service
+      - projects-service
+      - users-service
+      - workflows-service
+    restart: unless-stopped
+
+  analytics-service:
+    build:
+      context: .
+      dockerfile: apps/api-v2/services/analytics-service/Dockerfile
+    ports:
+      - "3347:3347"
+    env_file:
+      - .env
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: apps/api-v2/services/auth-service/Dockerfile
+    ports:
+      - "3346:3346"
+    env_file:
+      - .env
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  billing-service:
+    build:
+      context: .
+      dockerfile: apps/api-v2/services/billing-service/Dockerfile
+    ports:
+      - "3345:3345"
+    env_file:
+      - .env
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  components-service:
+    build:
+      context: .
+      dockerfile: apps/api-v2/services/components-service/Dockerfile
+    ports:
+      - "3344:3344"
+    env_file:
+      - .env
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  execution-service:
+    build:
+      context: .
+      dockerfile: apps/api-v2/services/execution-service/Dockerfile
+    ports:
+      - "3343:3343"
+    env_file:
+      - .env
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  projects-service:
+    build:
+      context: .
+      dockerfile: apps/api-v2/services/projects-service/Dockerfile
+    ports:
+      - "3342:3342"
+    env_file:
+      - .env
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  users-service:
+    build:
+      context: .
+      dockerfile: apps/api-v2/services/users-service/Dockerfile
+    ports:
+      - "3341:3341"
+    env_file:
+      - .env
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  workflows-service:
+    build:
+      context: .
+      dockerfile: apps/api-v2/services/workflows-service/Dockerfile
+    ports:
+      - "3340:3340"
+    env_file:
+      - .env
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge

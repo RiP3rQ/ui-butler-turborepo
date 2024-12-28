@@ -298,6 +298,9 @@ importers:
       '@types/passport-local':
         specifier: ^1.0.38
         version: 1.0.38
+      typescript:
+        specifier: ^5.7.2
+        version: 5.7.2
 
   apps/api-v2/libs/database:
     dependencies:
@@ -329,6 +332,9 @@ importers:
       drizzle-kit:
         specifier: ^0.28.1
         version: 0.28.1
+      typescript:
+        specifier: ^5.7.2
+        version: 5.7.2
 
   apps/api-v2/libs/proto:
     dependencies:
@@ -538,6 +544,9 @@ importers:
       '@nestjs/throttler':
         specifier: ^6.3.0
         version: 6.3.0(@nestjs/common@10.4.15(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.15)(reflect-metadata@0.2.2)
+      '@repo/types':
+        specifier: workspace:*
+        version: link:../../../../packages/types
       compression:
         specifier: ^1.7.5
         version: 1.7.5
@@ -578,9 +587,6 @@ importers:
       '@nestjs/testing':
         specifier: ^10.4.15
         version: 10.4.15(@nestjs/common@10.4.15(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.15)(@nestjs/microservices@10.4.15)(@nestjs/platform-express@10.4.15)
-      '@repo/types':
-        specifier: workspace:*
-        version: link:../../../../packages/types
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../../../packages/config-typescript
@@ -807,6 +813,9 @@ importers:
       '@app/database':
         specifier: workspace:*
         version: link:../../libs/database
+      '@app/proto':
+        specifier: workspace:*
+        version: link:../../libs/proto
       '@nestjs/common':
         specifier: ^10.4.15
         version: 10.4.15(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -819,6 +828,9 @@ importers:
       '@nestjs/platform-express':
         specifier: ^10.4.15
         version: 10.4.15(@nestjs/common@10.4.15(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.15)
+      '@repo/types':
+        specifier: workspace:*
+        version: link:../../../../packages/types
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -835,9 +847,6 @@ importers:
       '@nestjs/testing':
         specifier: ^10.4.15
         version: 10.4.15(@nestjs/common@10.4.15(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.15)(@nestjs/microservices@10.4.15)(@nestjs/platform-express@10.4.15)
-      '@repo/types':
-        specifier: workspace:*
-        version: link:../../../../packages/types
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../../../packages/config-typescript
@@ -922,6 +931,12 @@ importers:
       '@repo/prompts':
         specifier: workspace:*
         version: link:../../../../packages/prompts
+      '@repo/types':
+        specifier: workspace:*
+        version: link:../../../../packages/types
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../../../../packages/config-typescript
       ai:
         specifier: ^4.0.21
         version: 4.0.21(react@19.0.0-rc-02c0e824-20241028)(zod@3.24.1)
@@ -950,12 +965,6 @@ importers:
       '@nestjs/testing':
         specifier: ^10.4.15
         version: 10.4.15(@nestjs/common@10.4.15(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.15)(@nestjs/microservices@10.4.15)(@nestjs/platform-express@10.4.15)
-      '@repo/types':
-        specifier: workspace:*
-        version: link:../../../../packages/types
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../../../../packages/config-typescript
       '@types/compression':
         specifier: ^1.7.5
         version: 1.7.5
@@ -1046,6 +1055,12 @@ importers:
       '@repo/tasks-registry':
         specifier: workspace:*
         version: link:../../../../packages/tasks-registry
+      '@repo/types':
+        specifier: workspace:*
+        version: link:../../../../packages/types
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../../../../packages/config-typescript
       ai:
         specifier: ^4.0.21
         version: 4.0.21(react@19.0.0-rc-02c0e824-20241028)(zod@3.24.1)
@@ -1068,12 +1083,6 @@ importers:
       '@nestjs/testing':
         specifier: ^10.4.15
         version: 10.4.15(@nestjs/common@10.4.15(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.15)(@nestjs/microservices@10.4.15)(@nestjs/platform-express@10.4.15)
-      '@repo/types':
-        specifier: workspace:*
-        version: link:../../../../packages/types
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../../../../packages/config-typescript
       '@types/express':
         specifier: ^5.0.0
         version: 5.0.0
@@ -1155,6 +1164,12 @@ importers:
       '@nestjs/platform-express':
         specifier: ^10.4.15
         version: 10.4.15(@nestjs/common@10.4.15(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.15)
+      '@repo/types':
+        specifier: workspace:*
+        version: link:../../../../packages/types
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../../../../packages/config-typescript
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -1171,12 +1186,6 @@ importers:
       '@nestjs/testing':
         specifier: ^10.4.15
         version: 10.4.15(@nestjs/common@10.4.15(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.15)(@nestjs/microservices@10.4.15)(@nestjs/platform-express@10.4.15)
-      '@repo/types':
-        specifier: workspace:*
-        version: link:../../../../packages/types
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../../../../packages/config-typescript
       '@types/express':
         specifier: ^5.0.0
         version: 5.0.0
@@ -1261,6 +1270,12 @@ importers:
       '@nestjs/platform-express':
         specifier: ^10.4.15
         version: 10.4.15(@nestjs/common@10.4.15(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.15)
+      '@repo/types':
+        specifier: workspace:*
+        version: link:../../../../packages/types
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../../../../packages/config-typescript
       bcryptjs:
         specifier: ^2.4.3
         version: 2.4.3
@@ -1280,12 +1295,6 @@ importers:
       '@nestjs/testing':
         specifier: ^10.4.15
         version: 10.4.15(@nestjs/common@10.4.15(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.15)(@nestjs/microservices@10.4.15)(@nestjs/platform-express@10.4.15)
-      '@repo/types':
-        specifier: workspace:*
-        version: link:../../../../packages/types
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../../../../packages/config-typescript
       '@types/bcryptjs':
         specifier: ^2.4.6
         version: 2.4.6
@@ -1370,6 +1379,12 @@ importers:
       '@repo/tasks-registry':
         specifier: workspace:*
         version: link:../../../../packages/tasks-registry
+      '@repo/types':
+        specifier: workspace:*
+        version: link:../../../../packages/types
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../../../../packages/config-typescript
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -1386,12 +1401,6 @@ importers:
       '@nestjs/testing':
         specifier: ^10.4.15
         version: 10.4.15(@nestjs/common@10.4.15(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.15)(@nestjs/microservices@10.4.15)(@nestjs/platform-express@10.4.15)
-      '@repo/types':
-        specifier: workspace:*
-        version: link:../../../../packages/types
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../../../../packages/config-typescript
       '@types/express':
         specifier: ^5.0.0
         version: 5.0.0
@@ -13740,8 +13749,8 @@ snapshots:
       '@typescript-eslint/parser': 8.18.1(eslint@8.57.1)(typescript@5.7.2)
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.7.0(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.18.1(eslint@8.57.1)(typescript@5.7.2))(eslint@8.57.1))(eslint@8.57.1)
-      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.18.1(eslint@8.57.1)(typescript@5.7.2))(eslint-import-resolver-typescript@3.7.0(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.18.1(eslint@8.57.1)(typescript@5.7.2))(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1)
+      eslint-import-resolver-typescript: 3.7.0(eslint-plugin-import@2.31.0)(eslint@8.57.1)
+      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.18.1(eslint@8.57.1)(typescript@5.7.2))(eslint-import-resolver-typescript@3.7.0)(eslint@8.57.1)
       eslint-plugin-jsx-a11y: 6.10.2(eslint@8.57.1)
       eslint-plugin-react: 7.37.2(eslint@8.57.1)
       eslint-plugin-react-hooks: 5.1.0(eslint@8.57.1)
@@ -13777,7 +13786,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-import-resolver-typescript@3.7.0(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.18.1(eslint@8.57.1)(typescript@5.7.2))(eslint@8.57.1))(eslint@8.57.1):
+  eslint-import-resolver-typescript@3.7.0(eslint-plugin-import@2.31.0)(eslint@8.57.1):
     dependencies:
       '@nolyfill/is-core-module': 1.0.39
       debug: 4.4.0
@@ -13789,7 +13798,7 @@ snapshots:
       is-glob: 4.0.3
       stable-hash: 0.0.4
     optionalDependencies:
-      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.18.1(eslint@8.57.1)(typescript@5.7.2))(eslint-import-resolver-typescript@3.7.0(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.18.1(eslint@8.57.1)(typescript@5.7.2))(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1)
+      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.18.1(eslint@8.57.1)(typescript@5.7.2))(eslint-import-resolver-typescript@3.7.0)(eslint@8.57.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -13820,14 +13829,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.0(@typescript-eslint/parser@8.18.1(eslint@8.57.1)(typescript@5.7.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.7.0(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.18.1(eslint@8.57.1)(typescript@5.7.2))(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1):
+  eslint-module-utils@2.12.0(@typescript-eslint/parser@8.18.1(eslint@8.57.1)(typescript@5.7.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.7.0)(eslint@8.57.1):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
       '@typescript-eslint/parser': 8.18.1(eslint@8.57.1)(typescript@5.7.2)
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.7.0(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.18.1(eslint@8.57.1)(typescript@5.7.2))(eslint@8.57.1))(eslint@8.57.1)
+      eslint-import-resolver-typescript: 3.7.0(eslint-plugin-import@2.31.0)(eslint@8.57.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -13866,7 +13875,7 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.18.1(eslint@8.57.1)(typescript@5.7.2))(eslint-import-resolver-typescript@3.7.0(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.18.1(eslint@8.57.1)(typescript@5.7.2))(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1):
+  eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.18.1(eslint@8.57.1)(typescript@5.7.2))(eslint-import-resolver-typescript@3.7.0)(eslint@8.57.1):
     dependencies:
       '@rtsao/scc': 1.1.0
       array-includes: 3.1.8
@@ -13877,7 +13886,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.18.1(eslint@8.57.1)(typescript@5.7.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.7.0(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.18.1(eslint@8.57.1)(typescript@5.7.2))(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1)
+      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.18.1(eslint@8.57.1)(typescript@5.7.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.7.0)(eslint@8.57.1)
       hasown: 2.0.2
       is-core-module: 2.16.0
       is-glob: 4.0.3
