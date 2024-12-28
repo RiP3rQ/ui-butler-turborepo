@@ -39,6 +39,18 @@ services:
       - app-network
     restart: unless-stopped
 
+  billing-service:
+    build:
+      context: .
+      dockerfile: apps/api-v2/services/billing-service/Dockerfile
+    ports:
+      - "3345:3345"
+    env_file:
+      - .env
+    networks:
+      - app-network
+    restart: unless-stopped
+
 networks:
   app-network:
     driver: bridge
