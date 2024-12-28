@@ -14,7 +14,17 @@ import { CurrentUser, JwtAuthGuard } from '@app/common';
 import { AnalyticsProto } from '@app/proto';
 import { handleGrpcError } from '../utils/grpc-error.util';
 import { firstValueFrom } from 'rxjs';
+import {
+  ApiBearerAuth,
+  ApiNotFoundResponse,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
+@ApiTags('Analytics')
+@ApiBearerAuth()
 @Controller('analytics')
 @UseGuards(JwtAuthGuard)
 export class AnalyticsController implements OnModuleInit {
@@ -32,6 +42,15 @@ export class AnalyticsController implements OnModuleInit {
   }
 
   @Get('periods')
+  @ApiOperation({
+    summary: 'Get analytics periods',
+    description: 'Retrieves available analytics periods for the current user',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of available analytics periods',
+    type: Array,
+  })
   async getPeriods(@CurrentUser() user: AnalyticsProto.User) {
     if (!user) {
       throw new NotFoundException('Unauthorized');
@@ -57,6 +76,30 @@ export class AnalyticsController implements OnModuleInit {
   }
 
   @Get('stat-cards-values')
+  @ApiOperation({
+    summary: 'Get statistics card values',
+    description:
+      'Retrieves statistical values for dashboard cards for a specific period',
+  })
+  @ApiQuery({
+    name: 'month',
+    type: Number,
+    required: true,
+    description: 'Month number (1-12)',
+  })
+  @ApiQuery({
+    name: 'year',
+    type: Number,
+    required: true,
+    description: 'Year (YYYY)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Statistical card values',
+  })
+  @ApiNotFoundResponse({
+    description: 'Invalid query parameters or unauthorized',
+  })
   async getStatCardsValues(
     @Query('month', new ParseIntPipe()) month: number,
     @Query('year', new ParseIntPipe()) year: number,
@@ -91,6 +134,27 @@ export class AnalyticsController implements OnModuleInit {
   }
 
   @Get('workflow-execution-stats')
+  @ApiOperation({
+    summary: 'Get workflow execution statistics',
+    description:
+      'Retrieves statistics about workflow executions for a specific period',
+  })
+  @ApiQuery({
+    name: 'month',
+    type: Number,
+    required: true,
+    description: 'Month number (1-12)',
+  })
+  @ApiQuery({
+    name: 'year',
+    type: Number,
+    required: true,
+    description: 'Year (YYYY)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Workflow execution statistics',
+  })
   async getWorkflowExecutionStats(
     @Query('month', new ParseIntPipe()) month: number,
     @Query('year', new ParseIntPipe()) year: number,
@@ -127,6 +191,26 @@ export class AnalyticsController implements OnModuleInit {
   }
 
   @Get('used-credits-in-period')
+  @ApiOperation({
+    summary: 'Get used credits for period',
+    description: 'Retrieves the amount of credits used in a specific period',
+  })
+  @ApiQuery({
+    name: 'month',
+    type: Number,
+    required: true,
+    description: 'Month number (1-12)',
+  })
+  @ApiQuery({
+    name: 'year',
+    type: Number,
+    required: true,
+    description: 'Year (YYYY)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Credit usage statistics',
+  })
   async getUsedCreditsInPeriod(
     @Query('month', new ParseIntPipe()) month: number,
     @Query('year', new ParseIntPipe()) year: number,
@@ -163,6 +247,14 @@ export class AnalyticsController implements OnModuleInit {
   }
 
   @Get('dashboard-stat-cards-values')
+  @ApiOperation({
+    summary: 'Get dashboard statistics',
+    description: 'Retrieves statistical values for the main dashboard',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Dashboard statistics',
+  })
   async getDashboardStatCardsValues(@CurrentUser() user: AnalyticsProto.User) {
     if (!user) {
       throw new NotFoundException('Unauthorized');
@@ -187,6 +279,15 @@ export class AnalyticsController implements OnModuleInit {
   }
 
   @Get('favorited-table-content')
+  @ApiOperation({
+    summary: 'Get favorited components',
+    description:
+      'Retrieves a list of favorited components for the current user',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of favorited components',
+  })
   async getFavoritedTableContent(@CurrentUser() user: AnalyticsProto.User) {
     if (!user) {
       throw new NotFoundException('Unauthorized');

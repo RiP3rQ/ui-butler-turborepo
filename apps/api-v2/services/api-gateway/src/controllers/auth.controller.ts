@@ -19,12 +19,45 @@ import {
 } from '@app/common';
 import { AuthProxyService } from '../proxies/auth.proxy.service';
 import { AuthProto } from '@app/proto';
+import {
+  ApiBody,
+  ApiCookieAuth,
+  ApiNotFoundResponse,
+  ApiOAuth2,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
+@ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authProxyService: AuthProxyService) {}
 
   @Post('register')
+  @ApiOperation({
+    summary: 'Register new user',
+    description: 'Create a new user account and return authentication tokens',
+  })
+  @ApiBody({
+    type: 'object',
+    required: true,
+    schema: {
+      properties: {
+        email: { type: 'string', format: 'email' },
+        password: { type: 'string', minLength: 6 },
+        username: { type: 'string', nullable: false },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'User successfully registered',
+  })
+  @ApiNotFoundResponse({
+    description: 'User data not found in request body',
+  })
   async register(
     @Body() userData: AuthProto.CreateUserDto,
     @Res({ passthrough: true }) response: Response,
@@ -48,6 +81,27 @@ export class AuthController {
 
   @Post('login')
   @UseGuards(LocalAuthGuard)
+  @ApiOperation({
+    summary: 'User login',
+    description: 'Authenticate user and return access tokens',
+  })
+  @ApiBody({
+    type: 'object',
+    required: true,
+    schema: {
+      properties: {
+        email: { type: 'string', format: 'email' },
+        password: { type: 'string' },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'User successfully logged in',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Invalid credentials',
+  })
   async login(
     @CurrentUser() user: AuthProto.User,
     @Res({ passthrough: true }) response: Response,
@@ -80,6 +134,18 @@ export class AuthController {
 
   @Post('refresh')
   @UseGuards(JwtRefreshAuthGuard)
+  @ApiOperation({
+    summary: 'Refresh access token',
+    description: 'Get new access token using refresh token',
+  })
+  @ApiCookieAuth('Refresh')
+  @ApiResponse({
+    status: 200,
+    description: 'New access token generated',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Invalid or expired refresh token',
+  })
   async refreshToken(
     @CurrentUser() user: AuthProto.User,
     @Res({ passthrough: true }) response: Response,
@@ -113,10 +179,27 @@ export class AuthController {
 
   @Get('google')
   @UseGuards(GoogleAuthGuard)
+  @ApiOperation({
+    summary: 'Google OAuth login',
+    description: 'Initiate Google OAuth authentication flow',
+  })
+  @ApiOAuth2(['email', 'profile'])
+  @ApiResponse({
+    status: 302,
+    description: 'Redirect to Google login page',
+  })
   loginGoogle() {}
 
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
+  @ApiOperation({
+    summary: 'Google OAuth callback',
+    description: 'Handle Google OAuth callback and authenticate user',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully authenticated with Google',
+  })
   async googleCallback(
     @CurrentUser() user: AuthProto.User,
     @Res({ passthrough: true }) response: Response,
@@ -139,10 +222,27 @@ export class AuthController {
 
   @Get('github')
   @UseGuards(GithubAuthGuard)
+  @ApiOperation({
+    summary: 'GitHub OAuth login',
+    description: 'Initiate GitHub OAuth authentication flow',
+  })
+  @ApiOAuth2(['user:email'])
+  @ApiResponse({
+    status: 302,
+    description: 'Redirect to GitHub login page',
+  })
   loginGithub() {}
 
   @Get('github/callback')
   @UseGuards(GithubAuthGuard)
+  @ApiOperation({
+    summary: 'GitHub OAuth callback',
+    description: 'Handle GitHub OAuth callback and authenticate user',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully authenticated with GitHub',
+  })
   async githubCallback(
     @CurrentUser() user: AuthProto.User,
     @Res({ passthrough: true }) response: Response,
