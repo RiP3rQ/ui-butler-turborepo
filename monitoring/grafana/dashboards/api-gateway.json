@@ -5,6 +5,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
+  "id": null,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -25,7 +26,7 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 0,
+            "fillOpacity": 10,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -38,7 +39,7 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
+            "showPoints": "never",
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -47,19 +48,8 @@
             "thresholdsStyle": {
               "mode": "off"
             }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
           }
-        },
-        "overrides": []
+        }
       },
       "gridPos": {
         "h": 8,
@@ -67,7 +57,6 @@
         "x": 0,
         "y": 0
       },
-      "id": 1,
       "options": {
         "legend": {
           "calcs": [],
@@ -80,14 +69,19 @@
           "sort": "none"
         }
       },
-      "title": "HTTP Request Duration",
-      "type": "timeseries",
       "targets": [
         {
-          "expr": "rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m])",
-          "legendFormat": "{{method}} {{route}}"
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "rate(http_requests_total[5m])",
+          "legendFormat": "{{method}} {{route}}",
+          "refId": "A"
         }
-      ]
+      ],
+      "title": "Request Rate",
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -106,7 +100,7 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 0,
+            "fillOpacity": 10,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -119,7 +113,7 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
+            "showPoints": "never",
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -128,19 +122,8 @@
             "thresholdsStyle": {
               "mode": "off"
             }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
           }
-        },
-        "overrides": []
+        }
       },
       "gridPos": {
         "h": 8,
@@ -148,7 +131,6 @@
         "x": 12,
         "y": 0
       },
-      "id": 2,
       "options": {
         "legend": {
           "calcs": [],
@@ -161,14 +143,19 @@
           "sort": "none"
         }
       },
-      "title": "Request Rate",
-      "type": "timeseries",
       "targets": [
         {
-          "expr": "rate(http_requests_total[5m])",
-          "legendFormat": "{{method}} {{route}}"
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m])",
+          "legendFormat": "{{method}} {{route}}",
+          "refId": "A"
         }
-      ]
+      ],
+      "title": "Average Response Time",
+      "type": "timeseries"
     }
   ],
   "refresh": "5s",
@@ -185,7 +172,7 @@
   "timepicker": {},
   "timezone": "",
   "title": "API Gateway Dashboard",
-  "uid": "api-gateway",
+  "uid": "api_gateway_metrics",
   "version": 1,
   "weekStart": ""
 }
