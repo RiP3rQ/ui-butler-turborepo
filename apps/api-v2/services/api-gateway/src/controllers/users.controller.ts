@@ -12,12 +12,18 @@ import { type ClientGrpc } from '@nestjs/microservices';
 import { CurrentUser, JwtAuthGuard } from '@app/common';
 import { UsersProto } from '@app/proto';
 import { handleGrpcError } from '../utils/grpc-error.util';
+import { CACHE_MANAGER, CacheKey, CacheTTL } from '@nestjs/cache-manager';
+import { type Cache } from 'cache-manager';
 
 @Controller('users')
+@CacheTTL(300) // 5 minutes cache for all routes in this controller
 export class UsersController implements OnModuleInit {
   private usersService: UsersProto.UsersServiceClient;
 
-  constructor(@Inject('USERS_SERVICE') private readonly client: ClientGrpc) {}
+  constructor(
+    @Inject('USERS_SERVICE') private readonly client: ClientGrpc,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
 
   onModuleInit() {
     this.usersService =
@@ -26,6 +32,8 @@ export class UsersController implements OnModuleInit {
 
   @Get()
   @UseGuards(JwtAuthGuard)
+  @CacheKey('users:all')
+  @CacheTTL(30) // Override with 30 seconds for this route
   async getUsers() {
     try {
       const request: UsersProto.Empty = { $type: 'api.users.Empty' };
@@ -36,6 +44,8 @@ export class UsersController implements OnModuleInit {
   }
 
   @Get('current-basic')
+  @CacheKey('users:detail')
+  @CacheTTL(60) // Override with 1 minute for this route
   @UseGuards(JwtAuthGuard)
   async getCurrentUser(@CurrentUser() user: UsersProto.User) {
     try {
