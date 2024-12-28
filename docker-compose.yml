@@ -27,6 +27,18 @@ services:
       - app-network
     restart: unless-stopped
 
+  auth-service:
+    build:
+      context: .
+      dockerfile: apps/api-v2/services/auth-service/Dockerfile
+    ports:
+      - "3346:3346"
+    env_file:
+      - .env
+    networks:
+      - app-network
+    restart: unless-stopped
+
 networks:
   app-network:
     driver: bridge
