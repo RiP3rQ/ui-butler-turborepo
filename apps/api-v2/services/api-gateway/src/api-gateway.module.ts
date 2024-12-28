@@ -31,6 +31,8 @@ import { loggerConfig } from './logging/logger.config';
 import { HealthModule } from './health/health.module';
 import { MetricsModule } from './metrics/metrics.module';
 import { HelmetMiddleware } from './middlewares/helmet.middleware';
+import { PerformanceMetrics } from './metrics/performance.metrics';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -171,6 +173,12 @@ import { HelmetMiddleware } from './middlewares/helmet.middleware';
     HealthModule,
     // PROMETHEUS
     MetricsModule,
+    // CACHING SYSTEM
+    CacheModule.register({
+      ttl: 60 * 1000, // 1 minute default TTL
+      max: 100, // maximum number of items in cache
+      isGlobal: true,
+    }),
   ],
   controllers: [
     // ROUTE CONTROLLERS
@@ -203,6 +211,8 @@ import { HelmetMiddleware } from './middlewares/helmet.middleware';
     JwtRefreshStrategy,
     GoogleStrategy,
     GithubStrategy,
+    // PERFORMANCE METRICS
+    PerformanceMetrics,
   ],
 })
 export class ApiGatewayModule implements NestModule {

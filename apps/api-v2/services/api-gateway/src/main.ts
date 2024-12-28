@@ -10,6 +10,7 @@ import { EnhancedResponseInterceptor } from './interceptors/enhanced-response.in
 import { Logger } from 'nestjs-pino';
 import { MetricsService } from './metrics/metrics.service';
 import { MetricsInterceptor } from './metrics/metrics.interceptor';
+import { PerformanceMetrics } from './metrics/performance.metrics';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApiGatewayModule, { bufferLogs: true });
@@ -23,7 +24,18 @@ async function bootstrap() {
 
   // Security
   // helmet is being handled by the HelmetMiddleware
-  app.use(compression());
+  app.use(
+    compression({
+      filter: (req, res) => {
+        if (req.headers['x-no-compression']) {
+          return false;
+        }
+        return compression.filter(req, res);
+      },
+      level: 6, // compression level (0-9)
+      threshold: 100 * 1024, // only compress responses bigger than 100kb
+    }),
+  );
 
   // API prefix and CORS
   app.setGlobalPrefix('api');
@@ -51,6 +63,14 @@ async function bootstrap() {
   // Add metrics interceptor
   const metricsService = app.get(MetricsService);
   app.useGlobalInterceptors(new MetricsInterceptor(metricsService));
+
+  // Get PerformanceMetrics instance
+  const performanceMetrics = app.get(PerformanceMetrics);
+
+  // Monitor memory usage every 30 seconds
+  setInterval(() => {
+    performanceMetrics.updateMemoryUsage();
+  }, 30000);
 
   // Swagger documentation
   if (configService.get('NODE_ENV') !== 'production') {
