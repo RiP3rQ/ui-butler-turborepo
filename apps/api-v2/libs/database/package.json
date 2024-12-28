@@ -14,7 +14,8 @@
     "migrate": "drizzle-kit push",
     "pull": "drizzle-kit pull",
     "studio": "drizzle-kit studio",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -29,7 +30,8 @@
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@types/pg": "^8.11.10",
-    "drizzle-kit": "^0.28.1"
+    "drizzle-kit": "^0.28.1",
+    "typescript": "^5.7.2"
   },
   "peerDependencies": {
     "@nestjs/common": "^10.4.15"
