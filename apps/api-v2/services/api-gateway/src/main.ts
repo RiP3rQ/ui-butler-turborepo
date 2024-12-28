@@ -23,7 +23,18 @@ async function bootstrap() {
 
   // Security
   // helmet is being handled by the HelmetMiddleware
-  app.use(compression());
+  app.use(
+    compression({
+      filter: (req, res) => {
+        if (req.headers['x-no-compression']) {
+          return false;
+        }
+        return compression.filter(req, res);
+      },
+      level: 6, // compression level (0-9)
+      threshold: 100 * 1024, // only compress responses bigger than 100kb
+    }),
+  );
 
   // API prefix and CORS
   app.setGlobalPrefix('api');
