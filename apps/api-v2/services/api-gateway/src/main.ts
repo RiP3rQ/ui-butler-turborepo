@@ -55,13 +55,29 @@ async function bootstrap() {
   // Swagger documentation
   if (configService.get('NODE_ENV') !== 'production') {
     const config = new DocumentBuilder()
-      .setTitle('API Gateway')
-      .setDescription('API Gateway Documentation')
+      .setTitle('UI Butler API')
+      .setDescription('UI Butler API Gateway Documentation')
       .setVersion('2.0')
+      .addTag('auth', 'Authentication endpoints')
+      .addTag('users', 'User management endpoints')
+      .addTag('billing', 'Billing and subscription endpoints')
+      .addTag('components', 'UI Components endpoints')
+      .addTag('projects', 'Projects management endpoints')
+      .addTag('workflows', 'Workflows management endpoints')
+      .addTag('analytics', 'Analytics endpoints')
+      .addTag('execution', 'Execution endpoints')
       .addBearerAuth()
       .build();
+
     const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('api-docs', app, document);
+    SwaggerModule.setup('api-docs', app, document, {
+      swaggerOptions: {
+        persistAuthorization: true,
+        tagsSorter: 'alpha',
+        operationsSorter: 'alpha',
+      },
+      customSiteTitle: 'UI Butler API Documentation',
+    });
   }
 
   // Graceful shutdown
