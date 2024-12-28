@@ -37,7 +37,6 @@ import { HelmetMiddleware } from './middlewares/helmet.middleware';
     ConfigModule.forRoot({ isGlobal: true }),
     TerminusModule,
     loggerConfig,
-    HealthModule,
     ScheduleModule.forRoot(),
     PassportModule.register({
       defaultStrategy: 'jwt',
@@ -168,6 +167,8 @@ import { HelmetMiddleware } from './middlewares/helmet.middleware';
     ThrottlerModule.forRootAsync({
       useFactory: getRateLimitConfig,
     }),
+    // GRAFANA
+    HealthModule,
     // PROMETHEUS
     MetricsModule,
   ],

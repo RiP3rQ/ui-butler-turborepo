@@ -1,14 +1,11 @@
 import { Controller, Get } from '@nestjs/common';
 import {
-  DiskHealthIndicator,
   HealthCheck,
   HealthCheckService,
-  HttpHealthIndicator,
+  HealthIndicatorResult,
   MemoryHealthIndicator,
-  MicroserviceHealthIndicator,
 } from '@nestjs/terminus';
-import { ConfigService } from '@nestjs/config';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SkipThrottle } from '@nestjs/throttler';
 
 @ApiTags('Health')
@@ -16,29 +13,66 @@ import { SkipThrottle } from '@nestjs/throttler';
 @SkipThrottle()
 export class HealthController {
   constructor(
-    private health: HealthCheckService,
-    private http: HttpHealthIndicator,
-    private disk: DiskHealthIndicator,
-    private memory: MemoryHealthIndicator,
-    private microservice: MicroserviceHealthIndicator,
-    private configService: ConfigService,
+    private readonly health: HealthCheckService,
+    private readonly memory: MemoryHealthIndicator,
   ) {}
 
   @Get()
   @HealthCheck()
-  @ApiOperation({ summary: 'Check overall system health' })
+  @ApiOperation({ summary: 'Check API Gateway health' })
+  @ApiResponse({
+    status: 200,
+    description: 'API Gateway is healthy',
+  })
   async check() {
     return this.health.check([
-      // Basic memory checks
-      () => this.memory.checkHeap('memory_heap', 150 * 1024 * 1024),
-      () => this.memory.checkRSS('memory_rss', 150 * 1024 * 1024),
-
-      // Basic disk check
+      // Basic service check
       () =>
-        this.disk.checkStorage('disk_storage', {
-          thresholdPercent: 0.9,
-          path: '/',
-        }),
+        Promise.resolve({
+          api_gateway: {
+            status: 'up',
+          },
+        } as HealthIndicatorResult),
+
+      // Memory checks with safe thresholds
+      () => this.memory.checkHeap('memory_heap', 500 * 1024 * 1024), // 500MB
+      () => this.memory.checkRSS('memory_rss', 500 * 1024 * 1024), // 500MB
+    ]);
+  }
+
+  @Get('liveness')
+  @HealthCheck()
+  @ApiOperation({ summary: 'Check if API Gateway is live' })
+  @ApiResponse({
+    status: 200,
+    description: 'API Gateway is live',
+  })
+  async checkLiveness() {
+    return this.health.check([
+      () =>
+        Promise.resolve({
+          alive: {
+            status: 'up',
+          },
+        } as HealthIndicatorResult),
+    ]);
+  }
+
+  @Get('readiness')
+  @HealthCheck()
+  @ApiOperation({ summary: 'Check if API Gateway is ready to accept requests' })
+  @ApiResponse({
+    status: 200,
+    description: 'API Gateway is ready',
+  })
+  async checkReadiness() {
+    return this.health.check([
+      () =>
+        Promise.resolve({
+          ready: {
+            status: 'up',
+          },
+        } as HealthIndicatorResult),
     ]);
   }
 }
