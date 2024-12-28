@@ -8,10 +8,6 @@ scrape_configs:
     static_configs:
       - targets: [ 'api-gateway:3333' ]
     scrape_interval: 5s
-    scrape_timeout: 5s
-    scheme: 'http'
-    honor_labels: true
-    honor_timestamps: true
 
   - job_name: 'node'
     static_configs:
