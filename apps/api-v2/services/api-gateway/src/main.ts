@@ -10,6 +10,7 @@ import { EnhancedResponseInterceptor } from './interceptors/enhanced-response.in
 import { Logger } from 'nestjs-pino';
 import { MetricsService } from './metrics/metrics.service';
 import { MetricsInterceptor } from './metrics/metrics.interceptor';
+import { PerformanceMetrics } from './metrics/performance.metrics';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApiGatewayModule, { bufferLogs: true });
@@ -62,6 +63,14 @@ async function bootstrap() {
   // Add metrics interceptor
   const metricsService = app.get(MetricsService);
   app.useGlobalInterceptors(new MetricsInterceptor(metricsService));
+
+  // Get PerformanceMetrics instance
+  const performanceMetrics = app.get(PerformanceMetrics);
+
+  // Monitor memory usage every 30 seconds
+  setInterval(() => {
+    performanceMetrics.updateMemoryUsage();
+  }, 30000);
 
   // Swagger documentation
   if (configService.get('NODE_ENV') !== 'production') {
