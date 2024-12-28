@@ -8,11 +8,13 @@ import compression from 'compression';
 import { ConfigService } from '@nestjs/config';
 import cookieParser from 'cookie-parser';
 import { EnhancedResponseInterceptor } from './interceptors/enhanced-response.interceptor';
+import { Logger } from 'nestjs-pino';
 
 async function bootstrap() {
-  const app = await NestFactory.create(ApiGatewayModule, {
-    logger: ['error', 'warn', 'log', 'debug', 'verbose'],
-  });
+  const app = await NestFactory.create(ApiGatewayModule, { bufferLogs: true });
+
+  app.useLogger(app.get(Logger));
+
   const configService = app.get(ConfigService);
 
   // Cookie-parser
@@ -24,11 +26,6 @@ async function bootstrap() {
 
   // API prefix and CORS
   app.setGlobalPrefix('api');
-  // app.enableCors({
-  //   origin: configService.get('ALLOWED_ORIGINS', '*'),
-  //   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  //   credentials: true,
-  // }); // TODO: FIX THIS CORS
   app.enableCors({
     origin: true, // or specify your frontend URL
     credentials: true,
@@ -70,7 +67,6 @@ async function bootstrap() {
   await app.listen(port);
 
   // Log all registered routes FOR DEBUGGING
-
   // const server = app.getHttpServer();
   // const router = server._events.request._router;
   // console.log('\nRegistered Routes: ');

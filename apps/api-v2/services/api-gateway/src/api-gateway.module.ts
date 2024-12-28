@@ -27,11 +27,15 @@ import {
 } from '@app/common';
 import { AnalyticsController } from './controllers/analytics.controller';
 import { createGrpcOptions } from './config/grpc.config';
+import { loggerConfig } from './logging/logger.config';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TerminusModule,
+    loggerConfig,
+    HealthModule,
     ScheduleModule.forRoot(),
     PassportModule.register({
       defaultStrategy: 'jwt',
@@ -164,6 +168,7 @@ import { createGrpcOptions } from './config/grpc.config';
     }),
   ],
   controllers: [
+    // ROUTE CONTROLLERS
     AnalyticsController,
     AuthController,
     BillingController,
@@ -173,19 +178,15 @@ import { createGrpcOptions } from './config/grpc.config';
     ProjectsController,
     WorkflowsController,
     ExecutionsController,
-    // HEALTH CONTROLLERS
-    // HealthController,
   ],
   providers: [
+    // AUTH PROXY
     AuthProxyService,
     // ERROR INTERCEPTOR
     {
       provide: APP_INTERCEPTOR,
       useClass: ErrorInterceptor,
     },
-    // HEALTH CONTROLLERS
-    // MemoryHealthIndicator,
-    // DiskHealthIndicator,
     // THROTTLER
     {
       provide: APP_GUARD,
