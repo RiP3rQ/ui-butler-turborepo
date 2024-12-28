@@ -3,7 +3,6 @@ import { ApiGatewayModule } from './api-gateway.module';
 import { ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import helmet from 'helmet';
 import compression from 'compression';
 import { ConfigService } from '@nestjs/config';
 import cookieParser from 'cookie-parser';
@@ -23,7 +22,7 @@ async function bootstrap() {
   app.use(cookieParser());
 
   // Security
-  app.use(helmet());
+  // helmet is being handled by the HelmetMiddleware
   app.use(compression());
 
   // API prefix and CORS
@@ -73,18 +72,18 @@ async function bootstrap() {
   await app.listen(port);
 
   // Log all registered routes FOR DEBUGGING
-  // const server = app.getHttpServer();
-  // const router = server._events.request._router;
-  // console.log('\nRegistered Routes: ');
-  // router.stack
-  //   .filter((layer: any) => layer.route)
-  //   .forEach((layer: any) => {
-  //     const path = layer.route?.path;
-  //     const methods = Object.keys(layer.route.methods).map((m) =>
-  //       m.toUpperCase(),
-  //     );
-  //     console.log(`${methods.join(', ')} ${path}`);
-  //   });
+  const server = app.getHttpServer();
+  const router = server._events.request._router;
+  console.log('\nRegistered Routes: ');
+  router.stack
+    .filter((layer: any) => layer.route)
+    .forEach((layer: any) => {
+      const path = layer.route?.path;
+      const methods = Object.keys(layer.route.methods).map((m) =>
+        m.toUpperCase(),
+      );
+      console.log(`${methods.join(', ')} ${path}`);
+    });
 
   console.log(`\nApplication is running on: ${await app.getUrl()}`);
 }

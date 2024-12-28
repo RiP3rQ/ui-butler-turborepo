@@ -1,5 +1,10 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { Counter, Histogram, Registry } from 'prom-client';
+import { Injectable, Logger } from '@nestjs/common';
+import {
+  collectDefaultMetrics,
+  Counter,
+  Histogram,
+  Registry,
+} from 'prom-client';
 import { InjectMetric } from '@willsoto/nestjs-prometheus';
 
 interface HttpMetricLabels {
@@ -17,6 +22,7 @@ interface GrpcMetricLabels {
 @Injectable()
 export class MetricsService {
   private readonly logger = new Logger(MetricsService.name);
+  private readonly registry: Registry;
 
   constructor(
     @InjectMetric('http_request_duration_seconds')
@@ -25,9 +31,17 @@ export class MetricsService {
     private readonly httpRequestsTotal: Counter<string>,
     @InjectMetric('grpc_requests_total')
     private readonly grpcRequestsTotal: Counter<string>,
-    @Inject('PROMETHEUS_REGISTRY')
-    private readonly registry: Registry,
-  ) {}
+  ) {
+    this.registry = new Registry();
+
+    // Register metrics
+    this.registry.registerMetric(this.httpRequestDuration);
+    this.registry.registerMetric(this.httpRequestsTotal);
+    this.registry.registerMetric(this.grpcRequestsTotal);
+
+    // Enable default metrics
+    collectDefaultMetrics({ register: this.registry });
+  }
 
   // Method to get all metrics
   async getMetrics(): Promise<string> {

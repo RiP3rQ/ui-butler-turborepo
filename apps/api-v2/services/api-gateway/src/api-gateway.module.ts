@@ -1,5 +1,5 @@
 import { ClientsModule } from '@nestjs/microservices';
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AuthProxyService } from './proxies/auth.proxy.service';
 import { AuthController } from './controllers/auth.controller';
 import { BillingController } from './controllers/billing.controller';
@@ -30,6 +30,7 @@ import { createGrpcOptions } from './config/grpc.config';
 import { loggerConfig } from './logging/logger.config';
 import { HealthModule } from './health/health.module';
 import { MetricsModule } from './metrics/metrics.module';
+import { HelmetMiddleware } from './middlewares/helmet.middleware';
 
 @Module({
   imports: [
@@ -203,4 +204,8 @@ import { MetricsModule } from './metrics/metrics.module';
     GithubStrategy,
   ],
 })
-export class ApiGatewayModule {}
+export class ApiGatewayModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(HelmetMiddleware).forRoutes('*');
+  }
+}

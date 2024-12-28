@@ -1,14 +1,18 @@
 global:
-  scrape_interval: 15s
-  evaluation_interval: 15s
+  scrape_interval: 5s
+  evaluation_interval: 5s
 
 scrape_configs:
   - job_name: 'api-gateway'
+    metrics_path: '/api/metrics'
     static_configs:
       - targets: [ 'api-gateway:3333' ]
-    metrics_path: '/api/metrics'
     scrape_interval: 5s
+    scrape_timeout: 5s
+    scheme: 'http'
+    honor_labels: true
+    honor_timestamps: true
 
-  - job_name: 'node-exporter'
+  - job_name: 'node'
     static_configs:
       - targets: [ 'node-exporter:9100' ]
