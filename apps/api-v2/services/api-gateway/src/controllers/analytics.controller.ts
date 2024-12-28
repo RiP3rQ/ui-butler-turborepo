@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   Query,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
 import { CurrentUser, JwtAuthGuard } from '@app/common';
@@ -22,10 +23,13 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 
 @ApiTags('Analytics')
 @ApiBearerAuth()
 @Controller('analytics')
+@UseInterceptors(CacheInterceptor)
+@CacheTTL(60000) // 1 minutes cache for all routes in this controller
 @UseGuards(JwtAuthGuard)
 export class AnalyticsController implements OnModuleInit {
   private analyticsService: AnalyticsProto.AnalyticsServiceClient;

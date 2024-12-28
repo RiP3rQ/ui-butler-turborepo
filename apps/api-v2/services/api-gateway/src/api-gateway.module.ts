@@ -31,8 +31,8 @@ import { loggerConfig } from './logging/logger.config';
 import { HealthModule } from './health/health.module';
 import { MetricsModule } from './metrics/metrics.module';
 import { HelmetMiddleware } from './middlewares/helmet.middleware';
-import { PerformanceMetrics } from './metrics/performance.metrics';
-import { CacheModule } from '@nestjs/cache-manager';
+import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
+import { GrpcRetryInterceptor } from './interceptors/grpc-retry.interceptor';
 
 @Module({
   imports: [
@@ -175,8 +175,8 @@ import { CacheModule } from '@nestjs/cache-manager';
     MetricsModule,
     // CACHING SYSTEM
     CacheModule.register({
-      ttl: 60 * 1000, // 1 minute default TTL
-      max: 100, // maximum number of items in cache
+      ttl: 60000, // 1 minute default TTL
+      max: 10, // maximum number of items in cache
       isGlobal: true,
     }),
   ],
@@ -211,8 +211,16 @@ import { CacheModule } from '@nestjs/cache-manager';
     JwtRefreshStrategy,
     GoogleStrategy,
     GithubStrategy,
-    // PERFORMANCE METRICS
-    PerformanceMetrics,
+    // gRPC RETRY INTERCEPTOR
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: GrpcRetryInterceptor,
+    },
+    // CACHING
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInterceptor,
+    },
   ],
 })
 export class ApiGatewayModule implements NestModule {
