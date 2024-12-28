@@ -29,6 +29,7 @@ import { AnalyticsController } from './controllers/analytics.controller';
 import { createGrpcOptions } from './config/grpc.config';
 import { loggerConfig } from './logging/logger.config';
 import { HealthModule } from './health/health.module';
+import { MetricsModule } from './metrics/metrics.module';
 
 @Module({
   imports: [
@@ -166,6 +167,8 @@ import { HealthModule } from './health/health.module';
     ThrottlerModule.forRootAsync({
       useFactory: getRateLimitConfig,
     }),
+    // PROMETHEUS
+    MetricsModule,
   ],
   controllers: [
     // ROUTE CONTROLLERS

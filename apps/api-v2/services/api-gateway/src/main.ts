@@ -9,6 +9,8 @@ import { ConfigService } from '@nestjs/config';
 import cookieParser from 'cookie-parser';
 import { EnhancedResponseInterceptor } from './interceptors/enhanced-response.interceptor';
 import { Logger } from 'nestjs-pino';
+import { MetricsService } from './metrics/metrics.service';
+import { MetricsInterceptor } from './metrics/metrics.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApiGatewayModule, { bufferLogs: true });
@@ -46,6 +48,10 @@ async function bootstrap() {
   // Global filters and interceptors
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(new EnhancedResponseInterceptor());
+
+  // Add metrics interceptor
+  const metricsService = app.get(MetricsService);
+  app.useGlobalInterceptors(new MetricsInterceptor(metricsService));
 
   // Swagger documentation
   if (configService.get('NODE_ENV') !== 'production') {
