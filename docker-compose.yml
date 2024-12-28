@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: apps/api-v2/services/api-gateway/Dockerfile
+    ports:
+      - "3333:3333"
+    env_file:
+      - .env
+    networks:
+      - app-network
+    depends_on:
+      - analytics-service
+    restart: unless-stopped
+
+  analytics-service:
+    build:
+      context: .
+      dockerfile: apps/api-v2/services/analytics-service/Dockerfile
+    ports:
+      - "3347:3347"
+    env_file:
+      - .env
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge
