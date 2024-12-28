@@ -99,6 +99,18 @@ services:
       - app-network
     restart: unless-stopped
 
+  workflows-service:
+    build:
+      context: .
+      dockerfile: apps/api-v2/services/workflows-service/Dockerfile
+    ports:
+      - "3340:3340"
+    env_file:
+      - .env
+    networks:
+      - app-network
+    restart: unless-stopped
+
 networks:
   app-network:
     driver: bridge
