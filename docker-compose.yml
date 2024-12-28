@@ -75,6 +75,18 @@ services:
       - app-network
     restart: unless-stopped
 
+  projects-service:
+    build:
+      context: .
+      dockerfile: apps/api-v2/services/projects-service/Dockerfile
+    ports:
+      - "3342:3342"
+    env_file:
+      - .env
+    networks:
+      - app-network
+    restart: unless-stopped
+
 networks:
   app-network:
     driver: bridge
