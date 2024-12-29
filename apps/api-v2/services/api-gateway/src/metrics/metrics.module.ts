@@ -3,6 +3,8 @@ import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 import { MetricsController } from './metrics.controller';
 import { MetricsService } from './metrics.service';
 import { metricProviders } from './metrics.definitions';
+import { PerformanceMetrics } from './performance.metrics';
+import { Registry } from 'prom-client';
 
 @Module({
   imports: [
@@ -20,7 +22,16 @@ import { metricProviders } from './metrics.definitions';
     }),
   ],
   controllers: [MetricsController],
-  providers: [...metricProviders, MetricsService],
-  exports: [MetricsService],
+  providers: [
+    {
+      provide: Registry,
+      useValue: new Registry(),
+    },
+    ...metricProviders,
+    MetricsService,
+    // PERFORMANCE METRICS
+    PerformanceMetrics,
+  ],
+  exports: [MetricsService, PerformanceMetrics],
 })
 export class MetricsModule {}
