@@ -5,12 +5,16 @@ import { AuthProto } from '@app/proto';
 import { handleGrpcError } from '../utils/grpc-error.util';
 import { firstValueFrom } from 'rxjs';
 import { AuthServiceClient } from '@app/common';
+import { GrpcClientProxy } from './grpc-client.proxy';
 
 @Injectable()
 export class AuthProxyService implements OnModuleInit {
   private authService: AuthServiceClient;
 
-  constructor(@Inject('AUTH_SERVICE') private readonly client: ClientGrpc) {}
+  constructor(
+    @Inject('AUTH_SERVICE') private readonly client: ClientGrpc,
+    private readonly grpcClient: GrpcClientProxy,
+  ) {}
 
   onModuleInit() {
     this.authService = this.client.getService<AuthServiceClient>('AuthService');
@@ -47,9 +51,12 @@ export class AuthProxyService implements OnModuleInit {
       console.log('Proxying refresh token request:', {
         email: request.user.email,
       });
-      const response = await firstValueFrom(
+
+      const response = await this.grpcClient.call(
         this.authService.refreshToken(request),
+        'Auth.refreshToken',
       );
+
       console.log('Refresh token response received');
       return response;
     } catch (error) {

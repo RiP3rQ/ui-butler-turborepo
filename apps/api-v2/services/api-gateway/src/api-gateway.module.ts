@@ -32,7 +32,7 @@ import { HealthModule } from './health/health.module';
 import { MetricsModule } from './metrics/metrics.module';
 import { HelmetMiddleware } from './middlewares/helmet.middleware';
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
-import { GrpcRetryInterceptor } from './interceptors/grpc-retry.interceptor';
+import { GrpcClientProxy } from './proxies/grpc-client.proxy';
 
 @Module({
   imports: [
@@ -211,11 +211,8 @@ import { GrpcRetryInterceptor } from './interceptors/grpc-retry.interceptor';
     JwtRefreshStrategy,
     GoogleStrategy,
     GithubStrategy,
-    // gRPC RETRY INTERCEPTOR
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: GrpcRetryInterceptor,
-    },
+    // gRPC CLIENT PROXY WITH RETRIES
+    GrpcClientProxy,
     // CACHING
     {
       provide: APP_INTERCEPTOR,
