@@ -26,11 +26,11 @@
     "@nestjs/microservices": "^10.4.15",
     "@repo/typescript-config": "workspace:*",
     "@types/google-protobuf": "^3.15.12",
-    "@types/node": "^22.10.2",
+    "@types/node": "^22.10.3",
     "google-proto-files": "^4.2.0",
     "google-protobuf": "^3.21.4",
     "ts-node": "^10.9.2",
-    "ts-proto": "^2.6.0",
+    "ts-proto": "^2.6.1",
     "typescript": "^5.7.2"
   },
   "dependencies": {
