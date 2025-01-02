@@ -11,15 +11,18 @@ import { type ClientGrpc } from '@nestjs/microservices';
 import { CurrentUser, JwtAuthGuard } from '@app/common';
 import { BillingProto } from '@app/proto';
 import { handleGrpcError } from '../utils/grpc-error.util';
-import { firstValueFrom } from 'rxjs';
 import { BalancePackId } from '@repo/types';
+import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 
 @Controller('billing')
 @UseGuards(JwtAuthGuard)
 export class BillingController implements OnModuleInit {
   private billingService: BillingProto.BillingServiceClient;
 
-  constructor(@Inject('BILLING_SERVICE') private readonly client: ClientGrpc) {}
+  constructor(
+    @Inject('BILLING_SERVICE') private readonly client: ClientGrpc,
+    private readonly grpcClient: GrpcClientProxy,
+  ) {}
 
   onModuleInit() {
     this.billingService =
@@ -44,7 +47,10 @@ export class BillingController implements OnModuleInit {
         },
       };
 
-      return await firstValueFrom(this.billingService.setupUser(request));
+      return await this.grpcClient.call(
+        this.billingService.setupUser(request),
+        'Billing.setupUser',
+      );
     } catch (error) {
       handleGrpcError(error);
     }
@@ -74,7 +80,10 @@ export class BillingController implements OnModuleInit {
         packId,
       };
 
-      return await firstValueFrom(this.billingService.purchasePack(request));
+      return await this.grpcClient.call(
+        this.billingService.purchasePack(request),
+        'Billing.purchasePack',
+      );
     } catch (error) {
       handleGrpcError(error);
     }
@@ -96,7 +105,10 @@ export class BillingController implements OnModuleInit {
         },
       };
 
-      return await firstValueFrom(this.billingService.getUserCredits(request));
+      return await this.grpcClient.call(
+        this.billingService.getUserCredits(request),
+        'Billing.getUserCredits',
+      );
     } catch (error) {
       handleGrpcError(error);
     }

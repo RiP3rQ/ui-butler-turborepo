@@ -16,14 +16,34 @@ export const loggerConfig = LoggerModule.forRoot({
     },
     autoLogging: true,
     serializers: {
-      req(req) {
-        req.body = req.raw.body;
-        return req;
-      },
+      req: (req) => ({
+        id: req.id,
+        method: req.method,
+        url: req.url,
+        query: req.query,
+      }),
+      // FOR BODY DEBBUGING
+      // req(req) {
+      //   req.body = req.raw.body;
+      //   return req;
+      // },
+      res: (res) => ({
+        statusCode: res.statusCode,
+      }),
     },
-    customProps: (req, res) => ({
+    customProps: (req, res: any) => ({
       context: 'HTTP',
+      responseTime: res.responseTime ? `${res.responseTime}` : undefined,
     }),
+    redact: {
+      paths: [
+        'req.headers.cookie',
+        'req.headers.authorization',
+        'req.headers["Authentication"]',
+        'req.headers["Refresh"]',
+      ],
+      remove: true,
+    },
     customLogLevel: function (req, res, err) {
       if (res.statusCode >= 400 && res.statusCode < 500) {
         return 'warn';

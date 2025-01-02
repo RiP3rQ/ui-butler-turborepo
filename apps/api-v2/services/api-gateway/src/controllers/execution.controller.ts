@@ -16,8 +16,8 @@ import {
   JwtAuthGuard,
   type User,
 } from '@app/common';
-import { firstValueFrom } from 'rxjs';
 import { ExecutionProto } from '@app/proto';
+import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 
 @Controller('executions')
 @UseGuards(JwtAuthGuard)
@@ -26,6 +26,7 @@ export class ExecutionsController implements OnModuleInit {
 
   constructor(
     @Inject('EXECUTION_SERVICE') private readonly client: ClientGrpc,
+    private readonly grpcClient: GrpcClientProxy,
   ) {}
 
   onModuleInit() {
@@ -48,14 +49,15 @@ export class ExecutionsController implements OnModuleInit {
     @CurrentUser() user: User,
     @Param('executionId', ParseIntPipe) executionId: number,
   ) {
-    console.log('executionId', executionId);
-    const response = await firstValueFrom(
+    const response = await this.grpcClient.call(
       this.executionsService.getPendingChanges({
         $type: 'api.execution.GetPendingChangesRequest',
         user: this.userToProtoUser(user),
         executionId,
       }),
+      'Executions.getPendingChanges',
     );
+
     return {
       pendingApproval: response.pendingApproval,
       status: response.status,
@@ -68,7 +70,7 @@ export class ExecutionsController implements OnModuleInit {
     @Param('executionId', ParseIntPipe) executionId: number,
     @Body() body: ApproveChangesDto,
   ) {
-    const response = await firstValueFrom(
+    const response = await this.grpcClient.call(
       this.executionsService.approveChanges({
         $type: 'api.execution.ApproveChangesRequest',
         user: this.userToProtoUser(user),
@@ -78,6 +80,7 @@ export class ExecutionsController implements OnModuleInit {
           decision: body.decision,
         },
       }),
+      'Executions.approveChanges',
     );
     return {
       message: response.message,

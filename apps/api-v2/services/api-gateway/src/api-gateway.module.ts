@@ -54,8 +54,8 @@ import { GrpcClientProxy } from './proxies/grpc-client.proxy';
         USERS_SERVICE_HOST: Joi.string().default('localhost'),
         USERS_SERVICE_PORT: Joi.number().default(3341),
 
-        WORKFLOW_SERVICE_HOST: Joi.string().default('localhost'),
-        WORKFLOW_SERVICE_PORT: Joi.number().default(3342),
+        WORKFLOWS_SERVICE_HOST: Joi.string().default('localhost'),
+        WORKFLOWS_SERVICE_PORT: Joi.number().default(3342),
 
         EXECUTION_SERVICE_HOST: Joi.string().default('localhost'),
         EXECUTION_SERVICE_PORT: Joi.number().default(3343),

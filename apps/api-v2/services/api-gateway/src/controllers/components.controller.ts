@@ -16,7 +16,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
-import { firstValueFrom } from 'rxjs';
 import {
   CurrentUser,
   FavoriteComponentDto,
@@ -33,6 +32,7 @@ import HttpProxy from 'http-proxy';
 import { ClientRequest, IncomingMessage } from 'node:http';
 import { ComponentsProto } from '@app/proto';
 import { handleGrpcError } from '../utils/grpc-error.util';
+import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 
 @Controller('components')
 @UseGuards(JwtAuthGuard)
@@ -43,6 +43,7 @@ export class ComponentsController implements OnModuleInit {
   constructor(
     @Inject('COMPONENTS_SERVICE')
     private readonly client: ClientGrpc,
+    private readonly grpcClient: GrpcClientProxy,
   ) {
     this.proxy = HttpProxy.createProxyServer();
 
@@ -94,7 +95,10 @@ export class ComponentsController implements OnModuleInit {
         componentId,
       };
 
-      return await firstValueFrom(this.componentsService.getComponent(request));
+      return await this.grpcClient.call(
+        this.componentsService.getComponent(request),
+        'Components.getComponent',
+      );
     } catch (error) {
       handleGrpcError(error);
     }
@@ -122,8 +126,9 @@ export class ComponentsController implements OnModuleInit {
         projectId: Number(saveComponentDto.projectId),
       };
 
-      return await firstValueFrom(
+      return await this.grpcClient.call(
         this.componentsService.saveComponent(request),
+        'Components.saveComponent',
       );
     } catch (error) {
       handleGrpcError(error);
@@ -152,8 +157,9 @@ export class ComponentsController implements OnModuleInit {
         favoriteValue: favoriteComponentDto.favoriteValue,
       };
 
-      return await firstValueFrom(
+      return await this.grpcClient.call(
         this.componentsService.favoriteComponent(request),
+        'Components.favoriteComponent',
       );
     } catch (error) {
       handleGrpcError(error);
@@ -226,8 +232,9 @@ export class ComponentsController implements OnModuleInit {
         content: updateComponentCodeDto.content,
       };
 
-      return await firstValueFrom(
+      return await this.grpcClient.call(
         this.componentsService.updateComponentCode(request),
+        'Components.updateComponentCode',
       );
     } catch (error) {
       handleGrpcError(error);
@@ -256,7 +263,10 @@ export class ComponentsController implements OnModuleInit {
         codeType: generateCodeDto.codeType,
       };
 
-      return await firstValueFrom(this.componentsService.generateCode(request));
+      return await this.grpcClient.call(
+        this.componentsService.generateCode(request),
+        'Components.generateCode',
+      );
     } catch (error) {
       handleGrpcError(error);
     }
