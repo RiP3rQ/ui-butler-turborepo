@@ -4,29 +4,52 @@ import {
   Delete,
   Get,
   Inject,
+  OnModuleInit,
   Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
-import { firstValueFrom } from 'rxjs';
+import { type ClientGrpc } from '@nestjs/microservices';
 import {
   CreateCredentialDto,
   CurrentUser,
   JwtAuthGuard,
   type User,
 } from '@app/common';
+import { UsersProto } from '@app/proto';
+import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 
 @Controller('credentials')
 @UseGuards(JwtAuthGuard)
-export class CredentialsController {
+export class CredentialsController implements OnModuleInit {
+  private usersService: UsersProto.UsersServiceClient;
+
   constructor(
-    @Inject('USERS_SERVICE') private readonly usersClient: ClientProxy,
+    @Inject('USERS_SERVICE') private readonly client: ClientGrpc,
+    private readonly grpcClient: GrpcClientProxy,
   ) {}
+
+  onModuleInit() {
+    this.usersService =
+      this.client.getService<UsersProto.UsersServiceClient>('UsersService');
+  }
 
   @Get()
   async getUserCredentials(@CurrentUser() user: User) {
-    return firstValueFrom(this.usersClient.send('credentials.get', { user }));
+    const request: UsersProto.GetCredentialsRequest = {
+      $type: 'api.users.GetCredentialsRequest',
+      user: {
+        $type: 'api.users.User',
+        id: user.id,
+        email: user.email,
+        username: user.username,
+      },
+    };
+
+    return await this.grpcClient.call(
+      this.usersService.getUserCredentials(request),
+      'Credentials.getUserCredentials',
+    );
   }
 
   @Post()
@@ -34,18 +57,42 @@ export class CredentialsController {
     @CurrentUser() user: User,
     @Body() createCredentialDto: CreateCredentialDto,
   ) {
-    return firstValueFrom(
-      this.usersClient.send('credentials.create', {
-        user,
-        createCredentialDto,
-      }),
+    const request: UsersProto.CreateCredentialRequest = {
+      $type: 'api.users.CreateCredentialRequest',
+      user: {
+        $type: 'api.users.User',
+        id: user.id,
+        email: user.email,
+        username: user.username,
+      },
+      credential: {
+        $type: 'api.users.CreateCredentialDto',
+        ...createCredentialDto,
+      },
+    };
+
+    return await this.grpcClient.call(
+      this.usersService.createCredential(request),
+      'Credentials.createCredential',
     );
   }
 
   @Delete()
   async deleteCredential(@CurrentUser() user: User, @Query('id') id: string) {
-    return firstValueFrom(
-      this.usersClient.send('credentials.delete', { user, id: Number(id) }),
+    const request: UsersProto.DeleteCredentialRequest = {
+      $type: 'api.users.DeleteCredentialRequest',
+      user: {
+        $type: 'api.users.User',
+        id: user.id,
+        email: user.email,
+        username: user.username,
+      },
+      id: Number(id),
+    };
+
+    return await this.grpcClient.call(
+      this.usersService.deleteCredential(request),
+      'Credentials.deleteCredential',
     );
   }
 }
