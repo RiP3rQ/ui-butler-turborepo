@@ -1,7 +1,10 @@
 import { useContext } from "react";
-import { FlowValidationContext } from "@/context/flow-validation-context";
+import {
+  FlowValidationContext,
+  type FlowValidationContextType,
+} from "@/context/flow-validation-context";
 
-const useFlowValidation = () => {
+const useFlowValidation = (): FlowValidationContextType => {
   const context = useContext(FlowValidationContext);
 
   if (!context) {

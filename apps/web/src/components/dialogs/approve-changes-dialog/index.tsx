@@ -27,7 +27,7 @@ export function ApproveChangesDialog({
   executionId,
   open,
   data,
-}: Readonly<ApproveChangesDialogProps>): JSX.Element {
+}: Readonly<ApproveChangesDialogProps>): JSX.Element | null {
   const { mutate, isPending } = useMutation({
     mutationFn: approvePendingChanges,
     onSuccess: () => {

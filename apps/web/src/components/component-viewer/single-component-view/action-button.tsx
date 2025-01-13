@@ -26,7 +26,7 @@ export function ActionButton({
   isGenerating,
   isAnyGenerating,
   onGenerate,
-}: ActionButtonProps): JSX.Element {
+}: ActionButtonProps): JSX.Element | null {
   const {
     setIsModalOpen,
     setIsPending,
