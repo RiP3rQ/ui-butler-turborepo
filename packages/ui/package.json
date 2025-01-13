@@ -31,7 +31,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@hookform/resolvers": "^3.9.1",
+    "@hookform/resolvers": "^3.10.0",
     "@monaco-editor/react": "^4.6.0",
     "@radix-ui/react-accordion": "^1.2.2",
     "@radix-ui/react-alert-dialog": "^1.1.4",
@@ -55,7 +55,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.0",
-    "framer-motion": "^11.15.0",
+    "framer-motion": "^11.17.0",
     "lucide-react": "^0.460.0",
     "react-color": "^2.19.3",
     "react-countup": "^6.5.3",
@@ -65,7 +65,7 @@
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.24.1",
-    "zustand": "^5.0.2"
+    "zustand": "^5.0.3"
   },
   "peerDependencies": {
     "next": "15.0.2",
@@ -80,10 +80,10 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/types": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@types/react": "^19.0.2",
+    "@types/react": "^19.0.6",
     "@types/react-color": "^3.0.13",
     "autoprefixer": "^10.4.20",
-    "postcss": "^8.4.49",
+    "postcss": "^8.5.0",
     "tailwindcss": "^3.4.17",
     "tsup": "^8.3.5",
     "typescript": "5.7.2"
