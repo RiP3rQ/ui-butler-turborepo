@@ -104,7 +104,7 @@ export default function GenerateComponentPage(): JSX.Element {
 
   const handleReset = useCallback(() => {
     stop();
-    void reload();
+    reload();
     toast.success("Form reset successfully");
   }, [stop, reload]);
 
@@ -121,7 +121,7 @@ export default function GenerateComponentPage(): JSX.Element {
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent): void => {
       if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
-        void form.handleSubmit(handleGenerateComponent)();
+        form.handleSubmit(handleGenerateComponent)();
       }
     };
 

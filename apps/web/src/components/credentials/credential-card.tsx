@@ -4,6 +4,7 @@ import { Card } from "@repo/ui/components/ui/card";
 import { type UserCredentials } from "@repo/types";
 import { type JSX } from "react";
 import { DeleteCredentialDialog } from "@/components/credentials/delete-credential-dialog";
+import { protoTimestampToDate } from "@/lib/dates";
 
 interface CredentialCardProps {
   credential: UserCredentials;
@@ -21,7 +22,7 @@ export function CredentialCard({
         <div>
           <p className="font-bold">{credential.name}</p>
           <p className="text-xs text-muted-foreground">
-            {formatDistanceToNow(credential.createdAt, {
+            {formatDistanceToNow(protoTimestampToDate(credential.createdAt), {
               addSuffix: true,
             })}
           </p>

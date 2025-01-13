@@ -46,10 +46,12 @@ export class CredentialsController implements OnModuleInit {
       },
     };
 
-    return await this.grpcClient.call(
+    const response = await this.grpcClient.call(
       this.usersService.getUserCredentials(request),
       'Credentials.getUserCredentials',
     );
+
+    return response.credentials;
   }
 
   @Post()

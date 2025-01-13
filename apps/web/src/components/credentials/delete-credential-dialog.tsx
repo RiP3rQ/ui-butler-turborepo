@@ -37,8 +37,7 @@ export function DeleteCredentialDialog({
     onSuccess: () => {
       toast.success("Credential deleted successfully", { id: credentialId });
       setConfirmText("");
-      // @ts-expect-error Reason: queryClient has no types
-      void queryClient.invalidateQueries("user-credentials");
+      queryClient.invalidateQueries({ queryKey: "user-credentials" });
     },
     onError: () => {
       toast.error("Failed to delete credential", { id: credentialId });

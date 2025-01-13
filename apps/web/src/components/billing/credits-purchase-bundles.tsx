@@ -28,8 +28,7 @@ export function CreditsPurchaseBundles(): JSX.Element {
       toast.success("Credits purchased successfully", {
         id: "purchase-credits",
       });
-      // @ts-expect-error Reason: queryClient has no types
-      void queryClient.invalidateQueries("user-balance");
+      queryClient.invalidateQueries({ queryKey: "user-balance" });
     },
     onError: () => {
       toast.error("Failed to purchase credits", {

@@ -119,7 +119,7 @@ export function SidebarFooterContent(): JSX.Element {
               {/*</DropdownMenuItem>*/}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => void handleUserLogout()}>
+            <DropdownMenuItem onClick={() => handleUserLogout()}>
               <LogOut />
               Log out
             </DropdownMenuItem>

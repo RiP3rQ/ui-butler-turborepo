@@ -44,7 +44,7 @@ function NodeCard({
       return;
     }
 
-    void setCenter(x, y, {
+    setCenter(x, y, {
       zoom: 1,
       duration: 300,
     });

@@ -38,12 +38,11 @@ export function useNewProjectForm(): {
     onSuccess: () => {
       form.reset();
       createNewProjectModal.setIsOpen(false);
-      // @ts-expect-error Reason: queryClient has no types
-      void queryClient.invalidateQueries("user-projects");
-      // @ts-expect-error Reason: queryClient has no types
-      void queryClient.invalidateQueries("dashboard-stat-cards");
-      // @ts-expect-error Reason: queryClient has no types
-      void queryClient.invalidateQueries("dashboard-favorited-components");
+      queryClient.invalidateQueries({ queryKey: "user-projects" });
+      queryClient.invalidateQueries({ queryKey: "dashboard-stat-cards" });
+      queryClient.invalidateQueries({
+        queryKey: "dashboard-favorited-components",
+      });
       toast.success("Created new project successfully!", { id: "new-project" });
     },
     onError: (error) => {

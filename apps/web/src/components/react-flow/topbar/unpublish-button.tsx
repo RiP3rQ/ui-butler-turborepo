@@ -23,7 +23,7 @@ function UnpublishButton({
       toast.success("Workflow unpublished successfully", {
         id: "unpublish-workflow",
       });
-      void queryClient.invalidateQueries({
+      queryClient.invalidateQueries({
         queryKey: ["workflow", workflowId],
       });
     },

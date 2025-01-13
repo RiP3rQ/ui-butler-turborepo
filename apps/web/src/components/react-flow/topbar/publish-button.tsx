@@ -25,7 +25,7 @@ function PublishButton({
       toast.success("Workflow published successfully", {
         id: "publish-workflow",
       });
-      void queryClient.invalidateQueries({
+      queryClient.invalidateQueries({
         queryKey: ["workflow", workflowId],
       });
     },
