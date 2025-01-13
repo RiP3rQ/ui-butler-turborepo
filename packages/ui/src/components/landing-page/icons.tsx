@@ -1,9 +1,6 @@
 import type { LucideProps } from "lucide-react";
-import { JSX } from "react";
 
-type IconType = Record<string, JSX.Element<LucideProps>>;
-
-const Icons: IconType = {
+const Icons = {
   logo: (props: LucideProps) => (
     <svg
       {...props}

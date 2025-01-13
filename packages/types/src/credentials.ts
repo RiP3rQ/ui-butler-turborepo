@@ -1,9 +1,11 @@
+import { ProtoTimestamp } from "./proto";
+
 export interface UserCredentials {
   userId: number;
   id: number;
   name: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: ProtoTimestamp;
+  updatedAt: ProtoTimestamp;
 }
 
 export interface UserDecryptedCredentials extends UserCredentials {

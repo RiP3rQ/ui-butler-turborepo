@@ -48,7 +48,7 @@ export function NewProjectDialog({
         </DialogHeader>
         <Form {...form}>
           <form
-            onSubmit={void form.handleSubmit(handleSubmit)}
+            onSubmit={form.handleSubmit(handleSubmit)}
             className="space-y-2"
           >
             <CreateNewProjectFormFields

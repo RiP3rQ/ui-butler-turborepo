@@ -17,25 +17,25 @@
     "@repo/ui": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "framer-motion": "^11.15.0",
+    "framer-motion": "^11.17.0",
     "lucide-react": "^0.460.0",
-    "next": "15.0.3",
+    "next": "^15.1.4",
     "react": "19.0.0-rc-02c0e824-20241028",
     "react-dom": "19.0.0-rc-02c0e824-20241028",
-    "tailwind-merge": "^2.5.5",
+    "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@repo/config-tailwindcss": "workspace:*",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@types/node": "^22.10.2",
-    "@types/react": "^19.0.2",
+    "@types/node": "^22.10.6",
+    "@types/react": "^19.0.6",
     "@types/react-dom": "^18.3.5",
     "eslint": "^8.57.1",
     "eslint-config-next": "15.0.3",
-    "postcss": "^8.4.49",
+    "postcss": "^8.5.0",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.3"
   }
 }

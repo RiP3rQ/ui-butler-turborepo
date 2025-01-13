@@ -44,7 +44,7 @@ export function CopyButton({ value, className }: CopyButtonProps): JSX.Element {
           copied && "opacity-50",
           className,
         )}
-        onClick={void onCopy}
+        onClick={onCopy}
       >
         <span className="sr-only">{copied ? "Copied!" : "Copy code"}</span>
 

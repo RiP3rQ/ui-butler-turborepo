@@ -53,7 +53,7 @@ export function useComponentCode(projectId: string, componentId: string) {
   });
 
   const invalidateQueries = (): void => {
-    void queryClient.invalidateQueries({
+    queryClient.invalidateQueries({
       queryKey: ["single-component", projectId, componentId],
     });
   };

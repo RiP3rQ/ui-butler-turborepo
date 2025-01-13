@@ -36,7 +36,7 @@ export function DeleteWorkflowDialog({
     onSuccess: () => {
       toast.success("Workflow deleted successfully", { id: workflowId });
       setConfirmText("");
-      void queryClient.invalidateQueries({ queryKey: "workflows" });
+      queryClient.invalidateQueries({ queryKey: "workflows" });
     },
     onError: () => {
       toast.error("Failed to delete executions", { id: workflowId });

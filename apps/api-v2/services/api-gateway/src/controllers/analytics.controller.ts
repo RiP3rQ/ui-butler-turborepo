@@ -24,6 +24,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
+import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 
 @ApiTags('Analytics')
 @ApiBearerAuth()
@@ -36,6 +37,7 @@ export class AnalyticsController implements OnModuleInit {
 
   constructor(
     @Inject('ANALYTICS_SERVICE') private readonly client: ClientGrpc,
+    private readonly grpcClient: GrpcClientProxy,
   ) {}
 
   onModuleInit() {
@@ -274,8 +276,9 @@ export class AnalyticsController implements OnModuleInit {
         },
       };
 
-      return await firstValueFrom(
+      return await this.grpcClient.call(
         this.analyticsService.getDashboardStatCardsValues(request),
+        'Analytics.getDashboardStatCardsValues',
       );
     } catch (error) {
       handleGrpcError(error);

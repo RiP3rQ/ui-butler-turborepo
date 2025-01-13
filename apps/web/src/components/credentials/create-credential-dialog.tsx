@@ -54,8 +54,7 @@ export function CreateCredentialDialog({
       });
       form.reset();
       setIsOpen(false);
-      // @ts-expect-error Reason: queryClient has no types
-      void queryClient.invalidateQueries("user-credentials");
+      queryClient.invalidateQueries({ queryKey: "user-credentials" });
     },
     onError: () => {
       toast.error("Failed to create credential", { id: "create-credential" });
@@ -105,10 +104,7 @@ function CredentialForm({
 }>): JSX.Element {
   return (
     <Form {...form}>
-      <form
-        className="space-y-6 w-full"
-        onSubmit={void form.handleSubmit(onSubmit)}
-      >
+      <form className="space-y-6 w-full" onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
           name="name"

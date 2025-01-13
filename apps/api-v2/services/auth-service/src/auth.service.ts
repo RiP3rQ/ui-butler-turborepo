@@ -5,7 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcryptjs';
 import { type ClientGrpc, RpcException } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
-import { AuthProto, Timestamp, UsersProto } from '@app/proto';
+import { AuthProto, UsersProto } from '@app/proto';
 import { GrpcError } from '@app/common';
 import { status } from '@grpc/grpc-js';
 
@@ -22,14 +22,6 @@ export class AuthService {
       this.usersClient.getService<UsersProto.UsersServiceClient>(
         'UsersService',
       );
-  }
-
-  private dateToTimestamp(date: Date): Timestamp {
-    return {
-      $type: 'google.protobuf.Timestamp',
-      seconds: Math.floor(date.getTime() / 1000),
-      nanos: (date.getTime() % 1000) * 1000000,
-    };
   }
 
   private createTokenPayload(user: AuthProto.User): AuthProto.TokenPayload {

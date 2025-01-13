@@ -3,7 +3,7 @@ import type { AppNodeMissingInputs } from "@repo/types";
 import type { Dispatch, SetStateAction } from "react";
 import { createContext, useState } from "react";
 
-interface FlowValidationContextType {
+export interface FlowValidationContextType {
   invalidInputs: AppNodeMissingInputs[];
   setInvalidInputs: Dispatch<SetStateAction<AppNodeMissingInputs[]>>;
   clearErrors: () => void;

@@ -1,16 +1,19 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Logger } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { CredentialsService } from './credentials.service';
 import { UsersProto } from '@app/proto';
 
 @Controller()
 export class CredentialsController {
+  private readonly logger = new Logger(CredentialsController.name);
+
   constructor(private readonly credentialsService: CredentialsService) {}
 
   @GrpcMethod('UsersService', 'GetUserCredentials')
   async getUserCredentials(
     request: UsersProto.GetCredentialsRequest,
   ): Promise<UsersProto.GetCredentialsResponse> {
+    this.logger.debug('Getting user credentials');
     const credentials = await this.credentialsService.getUserCredentials(
       request.user,
     );
@@ -37,6 +40,7 @@ export class CredentialsController {
   async createCredential(
     request: UsersProto.CreateCredentialRequest,
   ): Promise<UsersProto.Credential> {
+    this.logger.debug('Creating credential');
     const credential = await this.credentialsService.createCredential(
       request.user,
       request.credential,
@@ -61,6 +65,7 @@ export class CredentialsController {
   async deleteCredential(
     request: UsersProto.DeleteCredentialRequest,
   ): Promise<UsersProto.Credential> {
+    this.logger.debug('Deleting credential');
     const credential = await this.credentialsService.deleteCredential(
       request.user,
       request.id,

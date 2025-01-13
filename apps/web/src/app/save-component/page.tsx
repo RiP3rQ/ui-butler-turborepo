@@ -97,7 +97,7 @@ export default function SaveNewComponentPage(): JSX.Element {
           <Form {...form}>
             <form
               className="space-y-6 w-full"
-              onSubmit={void form.handleSubmit(handleSaveAction)}
+              onSubmit={form.handleSubmit(handleSaveAction)}
             >
               <div className="grid grid-cols-2 space-x-4">
                 <FormField

@@ -10,10 +10,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
-import { firstValueFrom } from 'rxjs';
 import { CurrentUser, JwtAuthGuard } from '@app/common';
 import { ProjectsProto } from '@app/proto';
 import { handleGrpcError } from '../utils/grpc-error.util';
+import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 
 @Controller('projects')
 @UseGuards(JwtAuthGuard)
@@ -22,6 +22,7 @@ export class ProjectsController implements OnModuleInit {
 
   constructor(
     @Inject('PROJECTS_SERVICE') private readonly client: ClientGrpc,
+    private readonly grpcClient: GrpcClientProxy,
   ) {}
 
   onModuleInit() {
@@ -44,8 +45,9 @@ export class ProjectsController implements OnModuleInit {
         },
       };
 
-      const response = await firstValueFrom(
+      const response = await this.grpcClient.call(
         this.projectsService.getProjectsByUserId(request),
+        'Projects.getProjectsByUserId',
       );
 
       return response.projects;
@@ -71,8 +73,9 @@ export class ProjectsController implements OnModuleInit {
         projectId,
       };
 
-      return await firstValueFrom(
+      return await this.grpcClient.call(
         this.projectsService.getProjectDetails(request),
+        'Projects.getProjectDetails',
       );
     } catch (error) {
       handleGrpcError(error);
@@ -99,7 +102,10 @@ export class ProjectsController implements OnModuleInit {
         },
       };
 
-      return await firstValueFrom(this.projectsService.createProject(request));
+      return await this.grpcClient.call(
+        this.projectsService.createProject(request),
+        'Projects.createProject',
+      );
     } catch (error) {
       handleGrpcError(error);
     }

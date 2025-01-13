@@ -63,6 +63,7 @@ export class AnalyticsService {
 
       return periods;
     } catch (error) {
+      console.error('Error in getPeriods:', error);
       if (error instanceof RpcException) throw error;
       throw new RpcException({
         code: status.INTERNAL,
@@ -115,6 +116,7 @@ export class AnalyticsService {
         phasesExecuted: phasesInPeriod.length,
       };
     } catch (error) {
+      console.error('Error in getStatCardsValues:', error);
       if (error instanceof RpcException) throw error;
       throw new RpcException({
         code: status.INTERNAL,
@@ -169,6 +171,7 @@ export class AnalyticsService {
         ...stats,
       }));
     } catch (error) {
+      console.error('Error in getWorkflowExecutionStats:', error);
       if (error instanceof RpcException) throw error;
       throw new RpcException({
         code: status.INTERNAL,
@@ -229,6 +232,7 @@ export class AnalyticsService {
         ...stats,
       }));
     } catch (error) {
+      console.error('Error in getUsedCreditsInPeriod:', error);
       if (error instanceof RpcException) throw error;
       throw new RpcException({
         code: status.INTERNAL,
@@ -269,6 +273,7 @@ export class AnalyticsService {
         favoritesComponents: data[0]?.favoritesComponents ?? 0,
       };
     } catch (error) {
+      console.error('Error in getDashboardStatCardsValues:', error);
       if (error instanceof RpcException) throw error;
       throw new RpcException({
         code: status.INTERNAL,
@@ -295,18 +300,6 @@ export class AnalyticsService {
           and(eq(components.userId, user.id), eq(components.isFavorite, true)),
         );
 
-      console.log(
-        'TESTS -> ',
-        favoritedComponents.map((component) => ({
-          $type: 'api.analytics.FavoritedComponent',
-          id: component.id,
-          name: component.name,
-          projectName: component.projectName,
-          createdAt: dateToTimestamp(component.createdAt.toISOString()),
-          updatedAt: dateToTimestamp(component.updatedAt.toISOString()),
-        })),
-      );
-
       return favoritedComponents.map((component) => ({
         $type: 'api.analytics.FavoritedComponent',
         id: component.id,
@@ -316,6 +309,7 @@ export class AnalyticsService {
         updatedAt: dateToTimestamp(component.updatedAt.toISOString()),
       }));
     } catch (error) {
+      console.error('Error in getFavoritedTableContent:', error);
       if (error instanceof RpcException) throw error;
       throw new RpcException({
         code: status.INTERNAL,
