@@ -6,6 +6,7 @@ import {
   Registry,
 } from 'prom-client';
 import { InjectMetric } from '@willsoto/nestjs-prometheus';
+import { DatabaseStatsService } from './database-stats.service';
 
 interface HttpMetricLabels {
   method: string;
@@ -31,6 +32,7 @@ export class MetricsService {
     private readonly httpRequestsTotal: Counter<string>,
     @InjectMetric('grpc_requests_total')
     private readonly grpcRequestsTotal: Counter<string>,
+    private readonly databaseStats: DatabaseStatsService,
   ) {
     this.registry = new Registry();
 
@@ -46,12 +48,26 @@ export class MetricsService {
   // Method to get all metrics
   async getMetrics(): Promise<string> {
     try {
-      return await this.registry.metrics();
+      // Collect both general and database metrics
+      const [generalMetrics, dbMetrics] = await Promise.all([
+        this.registry.metrics(),
+        this.databaseStats.getMetrics(),
+      ]);
+
+      // Combine metrics with proper formatting
+      const combinedMetrics = [
+        '# General metrics',
+        generalMetrics,
+        '# Database metrics',
+        dbMetrics,
+      ].join('\n');
+
+      return combinedMetrics;
     } catch (error) {
-      this.logger.error(
-        'Failed to get metrics',
-        error instanceof Error ? error.message : 'Unknown error',
-      );
+      this.logger.error('Failed to collect metrics', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+      });
       throw error;
     }
   }
@@ -164,5 +180,13 @@ export class MetricsService {
       );
       throw error;
     }
+  }
+
+  // Helper method to format metrics for better readability
+  private formatMetrics(metrics: string): string {
+    return metrics
+      .split('\n')
+      .filter((line) => line.trim() !== '')
+      .join('\n');
   }
 }
