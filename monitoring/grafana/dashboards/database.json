@@ -1,0 +1,109 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "title": "Database Size",
+      "targets": [
+        {
+          "expr": "neon_database_size_bytes{database=\"neondb\"}",
+          "legendFormat": "Database Size",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "color": {
+            "mode": "palette-classic"
+          }
+        }
+      }
+    },
+    {
+      "title": "Active Connections",
+      "targets": [
+        {
+          "expr": "neon_active_connections",
+          "legendFormat": "Active Connections",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Query Statistics",
+      "targets": [
+        {
+          "expr": "neon_query_stats",
+          "legendFormat": "{{type}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Table Rows by Type",
+      "targets": [
+        {
+          "expr": "sum by (type) (neon_table_rows{schema=\"public\"})",
+          "legendFormat": "{{type}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Table Operations",
+      "targets": [
+        {
+          "expr": "sum by (table) (neon_table_rows{schema=\"public\",type=~\"seq_scan|idx_scan\"})",
+          "legendFormat": "{{table}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Transaction Statistics",
+      "targets": [
+        {
+          "expr": "neon_query_stats{type=~\"transactions_committed|transactions_rolled_back\"}",
+          "legendFormat": "{{type}}",
+          "refId": "A"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["postgresql", "database"],
+  "templating": {
+    "list": [
+      {
+        "name": "schema",
+        "type": "query",
+        "query": "label_values(neon_table_rows, schema)",
+        "refresh": 2
+      },
+      {
+        "name": "table",
+        "type": "query",
+        "query": "label_values(neon_table_rows{schema=\"$schema\"}, table)",
+        "refresh": 2
+      }
+    ]
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "refresh": "60s",
+  "timepicker": {},
+  "timezone": "",
+  "title": "PostgreSQL Metrics",
+  "version": 1,
+  "weekStart": ""
+}

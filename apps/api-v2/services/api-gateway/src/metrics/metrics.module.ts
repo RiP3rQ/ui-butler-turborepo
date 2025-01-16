@@ -5,6 +5,7 @@ import { MetricsService } from './metrics.service';
 import { metricProviders } from './metrics.definitions';
 import { PerformanceMetrics } from './performance.metrics';
 import { Registry } from 'prom-client';
+import { DatabaseStatsService } from './database-stats.service';
 
 @Module({
   imports: [
@@ -31,6 +32,8 @@ import { Registry } from 'prom-client';
     MetricsService,
     // PERFORMANCE METRICS
     PerformanceMetrics,
+    // DATABASE METRICS
+    DatabaseStatsService,
   ],
   exports: [MetricsService, PerformanceMetrics],
 })

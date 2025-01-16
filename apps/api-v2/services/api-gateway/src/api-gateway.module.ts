@@ -33,9 +33,11 @@ import { MetricsModule } from './metrics/metrics.module';
 import { HelmetMiddleware } from './middlewares/helmet.middleware';
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import { GrpcClientProxy } from './proxies/grpc-client.proxy';
+import { DatabaseModule } from '@app/database';
 
 @Module({
   imports: [
+    DatabaseModule,
     ConfigModule.forRoot({ isGlobal: true }),
     TerminusModule,
     loggerConfig,
