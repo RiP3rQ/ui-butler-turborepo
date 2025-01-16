@@ -7,23 +7,13 @@ import {
 } from 'prom-client';
 import { InjectMetric } from '@willsoto/nestjs-prometheus';
 import { DatabaseStatsService } from './database-stats.service';
-
-interface HttpMetricLabels {
-  method: string;
-  route: string;
-  status: string;
-}
-
-interface GrpcMetricLabels {
-  service: string;
-  method: string;
-  status: string;
-}
+import { GrpcMetricLabels, HttpMetricLabels, MetricError } from './types';
 
 @Injectable()
 export class MetricsService {
   private readonly logger = new Logger(MetricsService.name);
   private readonly registry: Registry;
+  private readonly DEFAULT_ERROR_MESSAGE = 'Unknown error';
 
   constructor(
     @InjectMetric('http_request_duration_seconds')
@@ -34,159 +24,175 @@ export class MetricsService {
     private readonly grpcRequestsTotal: Counter<string>,
     private readonly databaseStats: DatabaseStatsService,
   ) {
+    // Initialize registry in constructor
     this.registry = new Registry();
+    this.initializeMetrics();
+  }
 
-    // Register metrics
+  /**
+   * Initialize metrics with default metrics and custom metrics
+   */
+  private initializeMetrics(): void {
+    this.registerCustomMetrics();
+    this.enableDefaultMetrics();
+  }
+
+  /**
+   * Register custom metrics with the registry
+   */
+  private registerCustomMetrics(): void {
     this.registry.registerMetric(this.httpRequestDuration);
     this.registry.registerMetric(this.httpRequestsTotal);
     this.registry.registerMetric(this.grpcRequestsTotal);
+  }
 
-    // Enable default metrics
+  /**
+   * Enable default Prometheus metrics
+   */
+  private enableDefaultMetrics(): void {
     collectDefaultMetrics({ register: this.registry });
   }
 
-  // Method to get all metrics
+  /**
+   * Get all metrics including general and database metrics
+   */
   async getMetrics(): Promise<string> {
     try {
-      // Collect both general and database metrics
       const [generalMetrics, dbMetrics] = await Promise.all([
         this.registry.metrics(),
         this.databaseStats.getMetrics(),
       ]);
 
-      // Combine metrics with proper formatting
-      const combinedMetrics = [
-        '# General metrics',
-        generalMetrics,
-        '# Database metrics',
-        dbMetrics,
-      ].join('\n');
-
-      return combinedMetrics;
+      return this.formatCombinedMetrics(generalMetrics, dbMetrics);
     } catch (error) {
-      this.logger.error('Failed to collect metrics', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : undefined,
-      });
-      throw error;
+      this.handleMetricError('Failed to collect metrics', error);
+      throw new MetricError('Failed to collect metrics', error);
     }
   }
 
-  // Record HTTP request duration
-  recordHttpRequestDuration(
-    method: string,
-    route: string,
-    status: number,
-    duration: number,
-  ): void {
-    try {
-      const labels: HttpMetricLabels = {
-        method,
-        route,
-        status: status.toString(),
-      };
-
-      this.httpRequestDuration
-        .labels(labels.method, labels.route, labels.status)
-        .observe(duration);
-    } catch (error) {
-      this.logger.error('Failed to record HTTP request duration', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        method,
-        route,
-        status,
-        duration,
-      });
-    }
-  }
-
-  // Increment HTTP requests counter
-  incrementHttpRequests(method: string, route: string, status: number): void {
-    try {
-      const labels: HttpMetricLabels = {
-        method,
-        route,
-        status: status.toString(),
-      };
-
-      this.httpRequestsTotal
-        .labels(labels.method, labels.route, labels.status)
-        .inc();
-    } catch (error) {
-      this.logger.error('Failed to increment HTTP requests counter', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        method,
-        route,
-        status,
-      });
-    }
-  }
-
-  // Record complete HTTP request (both duration and increment)
+  /**
+   * Record HTTP request metrics
+   */
   recordHttpRequest(
     method: string,
     route: string,
     status: number,
     duration: number,
   ): void {
-    this.recordHttpRequestDuration(method, route, status, duration);
-    this.incrementHttpRequests(method, route, status);
+    const labels = this.createHttpLabels(method, route, status);
+
+    this.safeExecute(
+      () => {
+        this.httpRequestDuration
+          .labels(...Object.values(labels))
+          .observe(duration);
+        this.httpRequestsTotal.labels(...Object.values(labels)).inc();
+      },
+      'Failed to record HTTP request metrics',
+      { method, route, status, duration },
+    );
   }
 
-  // Increment gRPC requests counter
+  /**
+   * Increment gRPC request counter
+   */
   incrementGrpcRequests(service: string, method: string, status: string): void {
-    try {
-      const labels: GrpcMetricLabels = {
-        service,
-        method,
-        status,
-      };
+    const labels = this.createGrpcLabels(service, method, status);
 
-      this.grpcRequestsTotal
-        .labels(labels.service, labels.method, labels.status)
-        .inc();
-    } catch (error) {
-      this.logger.error('Failed to increment gRPC requests counter', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        service,
-        method,
-        status,
-      });
-    }
+    this.safeExecute(
+      () => {
+        this.grpcRequestsTotal.labels(...Object.values(labels)).inc();
+      },
+      'Failed to increment gRPC requests counter',
+      { service, method, status },
+    );
   }
 
-  // Get specific metric
+  /**
+   * Get specific metric by name
+   */
   async getMetric(name: string): Promise<any> {
     try {
       const metric = await this.registry.getSingleMetric(name);
       return metric ? await metric.get() : null;
     } catch (error) {
-      this.logger.error(
-        `Failed to get metric ${name}`,
-        error instanceof Error ? error.message : 'Unknown error',
-      );
-      throw error;
+      this.handleMetricError(`Failed to get metric ${name}`, error);
+      throw new MetricError(`Failed to get metric ${name}`, error);
     }
   }
 
-  // Reset metrics (useful for testing)
+  /**
+   * Reset all metrics (primarily for testing)
+   */
   async resetMetrics(): Promise<void> {
     try {
       await this.registry.resetMetrics();
     } catch (error) {
-      this.logger.error(
-        'Failed to reset metrics',
-        error instanceof Error ? error.message : 'Unknown error',
-      );
-      throw error;
+      this.handleMetricError('Failed to reset metrics', error);
+      throw new MetricError('Failed to reset metrics', error);
     }
   }
 
-  // Helper method to format metrics for better readability
-  private formatMetrics(metrics: string): string {
-    return metrics
+  /**
+   * Helper Methods
+   */
+  private createHttpLabels(
+    method: string,
+    route: string,
+    status: number,
+  ): HttpMetricLabels {
+    return {
+      method,
+      route,
+      status: status.toString(),
+    };
+  }
+
+  private createGrpcLabels(
+    service: string,
+    method: string,
+    status: string,
+  ): GrpcMetricLabels {
+    return { service, method, status };
+  }
+
+  private formatCombinedMetrics(
+    generalMetrics: string,
+    dbMetrics: string,
+  ): string {
+    return [
+      '# General metrics',
+      generalMetrics,
+      '# Database metrics',
+      dbMetrics,
+    ]
+      .filter(Boolean)
+      .join('\n')
       .split('\n')
-      .filter((line) => line.trim() !== '')
+      .filter((line) => line.trim())
       .join('\n');
+  }
+
+  private handleMetricError(message: string, error: unknown): void {
+    const errorMessage =
+      error instanceof Error ? error.message : this.DEFAULT_ERROR_MESSAGE;
+    const errorStack = error instanceof Error ? error.stack : undefined;
+
+    this.logger.error(message, {
+      error: errorMessage,
+      stack: errorStack,
+    });
+  }
+
+  private safeExecute(
+    operation: () => void,
+    errorMessage: string,
+    context: Record<string, unknown>,
+  ): void {
+    try {
+      operation();
+    } catch (error) {
+      this.handleMetricError(errorMessage, error);
+    }
   }
 }

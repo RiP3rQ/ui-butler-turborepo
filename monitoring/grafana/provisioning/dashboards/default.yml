@@ -7,7 +7,8 @@ providers:
     folderUid: ''
     type: file
     disableDeletion: false
-    updateIntervalSeconds: 10
+    updateIntervalSeconds: 15
     allowUiUpdates: true
+    editable: true
     options:
       path: /var/lib/grafana/dashboards

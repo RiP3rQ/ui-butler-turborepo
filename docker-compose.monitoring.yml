@@ -23,6 +23,8 @@ services:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
       - GF_USERS_ALLOW_SIGN_UP=false
+      # Add this to force password reset
+      - GF_SECURITY_ADMIN_PASSWORD_FORCE_RESET=true
     networks:
       - app-network
 
