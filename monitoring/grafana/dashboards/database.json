@@ -9,184 +9,101 @@
   "liveNow": false,
   "panels": [
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 0
-      },
-      "id": 1,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
       "title": "Database Size",
-      "type": "timeseries",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus"
-          },
-          "expr": "postgres_database_size_bytes",
+          "expr": "neon_database_size_bytes{database=\"neondb\"}",
+          "legendFormat": "Database Size",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "color": {
+            "mode": "palette-classic"
+          }
+        }
+      }
+    },
+    {
+      "title": "Active Connections",
+      "targets": [
+        {
+          "expr": "neon_active_connections",
+          "legendFormat": "Active Connections",
           "refId": "A"
         }
       ]
     },
     {
-      "datasource": {
-        "type": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 0
-      },
-      "id": 2,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "title": "Active Connections",
-      "type": "timeseries",
+      "title": "Query Statistics",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus"
-          },
-          "expr": "postgres_connections{state=\"active\"}",
+          "expr": "neon_query_stats",
+          "legendFormat": "{{type}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Table Rows by Type",
+      "targets": [
+        {
+          "expr": "sum by (type) (neon_table_rows{schema=\"public\"})",
+          "legendFormat": "{{type}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Table Operations",
+      "targets": [
+        {
+          "expr": "sum by (table) (neon_table_rows{schema=\"public\",type=~\"seq_scan|idx_scan\"})",
+          "legendFormat": "{{table}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Transaction Statistics",
+      "targets": [
+        {
+          "expr": "neon_query_stats{type=~\"transactions_committed|transactions_rolled_back\"}",
+          "legendFormat": "{{type}}",
           "refId": "A"
         }
       ]
     }
   ],
-  "refresh": "5s",
   "schemaVersion": 38,
   "style": "dark",
-  "tags": [],
+  "tags": ["postgresql", "database"],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "name": "schema",
+        "type": "query",
+        "query": "label_values(neon_table_rows, schema)",
+        "refresh": 2
+      },
+      {
+        "name": "table",
+        "type": "query",
+        "query": "label_values(neon_table_rows{schema=\"$schema\"}, table)",
+        "refresh": 2
+      }
+    ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-1h",
     "to": "now"
   },
+  "refresh": "60s",
   "timepicker": {},
   "timezone": "",
   "title": "PostgreSQL Metrics",
-  "version": 0
+  "version": 1,
+  "weekStart": ""
 }

@@ -7,7 +7,32 @@ import {
 } from 'prom-client';
 import { InjectMetric } from '@willsoto/nestjs-prometheus';
 import { DatabaseStatsService } from './database-stats.service';
-import { GrpcMetricLabels, HttpMetricLabels, MetricError } from './types';
+
+export interface MetricLabels {
+  [key: string]: string;
+}
+
+export interface HttpMetricLabels extends MetricLabels {
+  method: string;
+  route: string;
+  status: string;
+}
+
+export interface GrpcMetricLabels extends MetricLabels {
+  service: string;
+  method: string;
+  status: string;
+}
+
+export class MetricError extends Error {
+  constructor(
+    message: string,
+    public readonly cause?: unknown,
+  ) {
+    super(message);
+    this.name = 'MetricError';
+  }
+}
 
 @Injectable()
 export class MetricsService {
@@ -94,46 +119,6 @@ export class MetricsService {
   }
 
   /**
-   * Increment gRPC request counter
-   */
-  incrementGrpcRequests(service: string, method: string, status: string): void {
-    const labels = this.createGrpcLabels(service, method, status);
-
-    this.safeExecute(
-      () => {
-        this.grpcRequestsTotal.labels(...Object.values(labels)).inc();
-      },
-      'Failed to increment gRPC requests counter',
-      { service, method, status },
-    );
-  }
-
-  /**
-   * Get specific metric by name
-   */
-  async getMetric(name: string): Promise<any> {
-    try {
-      const metric = await this.registry.getSingleMetric(name);
-      return metric ? await metric.get() : null;
-    } catch (error) {
-      this.handleMetricError(`Failed to get metric ${name}`, error);
-      throw new MetricError(`Failed to get metric ${name}`, error);
-    }
-  }
-
-  /**
-   * Reset all metrics (primarily for testing)
-   */
-  async resetMetrics(): Promise<void> {
-    try {
-      await this.registry.resetMetrics();
-    } catch (error) {
-      this.handleMetricError('Failed to reset metrics', error);
-      throw new MetricError('Failed to reset metrics', error);
-    }
-  }
-
-  /**
    * Helper Methods
    */
   private createHttpLabels(
@@ -146,14 +131,6 @@ export class MetricsService {
       route,
       status: status.toString(),
     };
-  }
-
-  private createGrpcLabels(
-    service: string,
-    method: string,
-    status: string,
-  ): GrpcMetricLabels {
-    return { service, method, status };
   }
 
   private formatCombinedMetrics(

@@ -7,7 +7,7 @@ providers:
     folderUid: ''
     type: file
     disableDeletion: false
-    updateIntervalSeconds: 15
+    updateIntervalSeconds: 60
     allowUiUpdates: true
     editable: true
     options:
