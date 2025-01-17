@@ -1,8 +1,9 @@
-import type { UserCredentials } from "@repo/types";
+import type { UserCredentials, UserDecryptedCredentials } from "@repo/types";
 import { ApiClient } from "@/lib/api-client";
 import { getErrorMessage } from "@/lib/get-error-message";
 import type { CreateCredentialSchemaType } from "@/schemas/credential";
 import { type DeleteCredentialRequest } from "@/actions/credentials/types";
+import { log } from "console";
 
 /**
  * Service class for credentials-related API calls
@@ -56,6 +57,24 @@ export class CredentialsService {
       return data;
     } catch (error) {
       console.error("Failed to fetch user credentials:", error);
+      throw new Error(getErrorMessage(error));
+    }
+  }
+
+  /**
+   * Fetches the revealed value of a credential
+   */
+  static async getRevealedCredentialValue(
+    credentialId: number,
+  ): Promise<UserDecryptedCredentials> {
+    try {
+      const { data } = await ApiClient.get<UserDecryptedCredentials>(
+        `${this.BASE_PATH}/${String(credentialId)}/reveal`,
+      );
+      console.log("data", data);
+      return data;
+    } catch (error) {
+      console.error("Failed to fetch revealed credential value:", error);
       throw new Error(getErrorMessage(error));
     }
   }

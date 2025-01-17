@@ -1,6 +1,6 @@
 "use server";
 
-import type { UserCredentials } from "@repo/types";
+import type { UserCredentials, UserDecryptedCredentials } from "@repo/types";
 import {
   type CreateCredentialSchemaType,
   validateCredentialInput,
@@ -33,4 +33,13 @@ export async function deleteCredentialFunction(
  */
 export async function getUserCredentials(): Promise<UserCredentials[]> {
   return CredentialsService.getUserCredentials();
+}
+
+/**
+ * Fetch the revealed value of a credential
+ */
+export async function getRevealedCredentialValue(
+  credentialId: number,
+): Promise<UserDecryptedCredentials> {
+  return CredentialsService.getRevealedCredentialValue(credentialId);
 }

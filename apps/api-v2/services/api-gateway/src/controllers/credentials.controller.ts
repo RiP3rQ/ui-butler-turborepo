@@ -5,6 +5,7 @@ import {
   Get,
   Inject,
   OnModuleInit,
+  Param,
   Post,
   Query,
   UseGuards,
@@ -96,5 +97,29 @@ export class CredentialsController implements OnModuleInit {
       this.usersService.deleteCredential(request),
       'Credentials.deleteCredential',
     );
+  }
+
+  @Get(':id/reveal')
+  async getRevealedCredentialValue(
+    @CurrentUser() user: User,
+    @Param('id') id: string,
+  ) {
+    const request: UsersProto.RevealCredentialRequest = {
+      $type: 'api.users.RevealCredentialRequest',
+      user: {
+        $type: 'api.users.User',
+        id: user.id,
+        email: user.email,
+        username: user.username,
+      },
+      id: Number(id),
+    };
+
+    const response = await this.grpcClient.call(
+      this.usersService.revealCredential(request),
+      'Credentials.RevealCredential',
+    );
+
+    return response;
   }
 }

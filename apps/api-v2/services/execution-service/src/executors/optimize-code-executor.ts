@@ -3,7 +3,7 @@ import { ServerOptimizeCodeTaskType } from '@repo/tasks-registry';
 import { generateObject } from 'ai';
 import { z } from 'zod';
 import { OptimizePerformancePrompt } from '@repo/prompts';
-import { GEMINI_MODEL } from '@app/common';
+import { GET_GEMINI_MODEL } from '@app/common';
 
 export async function optimizeCodeExecutor(
   environment: ExecutionEnvironment<ServerOptimizeCodeTaskType>,
@@ -14,10 +14,18 @@ export async function optimizeCodeExecutor(
       environment.log.ERROR('Code context is empty');
       throw new Error('Code context is empty');
     }
+
+    const credentials = environment.getInput('API key');
+    if (!credentials) {
+      environment.log.WARNING(
+        "We didn't found you AI API credentials. Fallback to UI-Butler's API key",
+      );
+    }
+
     environment.log.INFO('Optimizing code...');
 
     const { object } = await generateObject({
-      model: GEMINI_MODEL,
+      model: GET_GEMINI_MODEL(credentials),
       schema: z.object({
         optimizedCode: z.object({
           code: z.string(),

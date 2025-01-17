@@ -57,6 +57,7 @@ service UsersService {
     rpc GetUserCredentials (GetCredentialsRequest) returns (GetCredentialsResponse);
     rpc CreateCredential (CreateCredentialRequest) returns (Credential);
     rpc DeleteCredential (DeleteCredentialRequest) returns (Credential);
+    rpc RevealCredential (RevealCredentialRequest) returns (RevealedCredential);
 }
 
 message Empty {}
@@ -116,6 +117,20 @@ message CreateCredentialRequest {
 }
 
 message DeleteCredentialRequest {
+    User user = 1;
+    int32 id = 2;
+}
+
+message RevealedCredential {
+    int32 id = 1;
+    string name = 2;
+    string value = 3;
+    int32 userId = 4;
+    google.protobuf.Timestamp createdAt = 5;
+    google.protobuf.Timestamp updatedAt = 6;
+}
+
+message RevealCredentialRequest {
     User user = 1;
     int32 id = 2;
 }

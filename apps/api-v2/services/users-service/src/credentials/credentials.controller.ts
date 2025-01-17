@@ -2,6 +2,7 @@ import { Controller, Logger } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { CredentialsService } from './credentials.service';
 import { UsersProto } from '@app/proto';
+import { log } from 'console';
 
 @Controller()
 export class CredentialsController {
@@ -73,6 +74,32 @@ export class CredentialsController {
     return {
       ...credential,
       $type: 'api.users.Credential',
+      createdAt: {
+        $type: 'google.protobuf.Timestamp',
+        seconds: Math.floor(credential.createdAt.getTime() / 1000),
+        nanos: (credential.createdAt.getTime() % 1000) * 1000000,
+      },
+      updatedAt: {
+        $type: 'google.protobuf.Timestamp',
+        seconds: Math.floor(credential.updatedAt.getTime() / 1000),
+        nanos: (credential.updatedAt.getTime() % 1000) * 1000000,
+      },
+    };
+  }
+
+  @GrpcMethod('UsersService', 'RevealCredential')
+  async revealCredential(
+    request: UsersProto.RevealCredentialRequest,
+  ): Promise<UsersProto.RevealedCredential> {
+    this.logger.debug('Revealing credential');
+    const credential = await this.credentialsService.revealCredential(
+      request.user,
+      request.id,
+    );
+
+    return {
+      ...credential,
+      $type: 'api.users.RevealedCredential',
       createdAt: {
         $type: 'google.protobuf.Timestamp',
         seconds: Math.floor(credential.createdAt.getTime() / 1000),

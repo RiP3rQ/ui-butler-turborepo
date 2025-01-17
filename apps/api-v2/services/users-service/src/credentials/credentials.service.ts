@@ -10,7 +10,7 @@ import {
   NewUserCredential,
   userCredentials,
 } from '@app/database';
-import { symmetricEncrypt } from '@app/common';
+import { symmetricDecrypt, symmetricEncrypt } from '@app/common';
 import { UsersProto } from '@app/proto';
 
 @Injectable()
@@ -20,6 +20,9 @@ export class CredentialsService {
     private readonly database: DrizzleDatabase,
   ) {}
 
+  /**
+   * Fetches the credentials of a user
+   */
   async getUserCredentials(user: UsersProto.User) {
     try {
       const userCredentialsData = await this.database
@@ -95,6 +98,9 @@ export class CredentialsService {
     }
   }
 
+  /**
+   * Deletes a credential
+   */
   async deleteCredential(user: UsersProto.User, id: number) {
     try {
       const [deletedCredential] = await this.database
@@ -113,6 +119,44 @@ export class CredentialsService {
 
       delete deletedCredential.value;
       return deletedCredential;
+    } catch (error) {
+      if (error instanceof RpcException) {
+        throw error;
+      }
+      throw new RpcException({
+        code: status.INTERNAL,
+        message: error instanceof Error ? error.message : JSON.stringify(error),
+      });
+    }
+  }
+
+  /**
+   * Reveals the value of a credential
+   */
+  async revealCredential(user: UsersProto.User, id: number) {
+    try {
+      const [credential] = await this.database
+        .select()
+        .from(userCredentials)
+        .where(
+          and(eq(userCredentials.userId, user.id), eq(userCredentials.id, id)),
+        );
+
+      if (!credential) {
+        throw new RpcException({
+          code: status.NOT_FOUND,
+          message: 'Credential not found',
+        });
+      }
+
+      const decryptedCredentialValue = symmetricDecrypt(credential.value);
+
+      const finalCredential = {
+        ...credential,
+        value: decryptedCredentialValue,
+      };
+
+      return finalCredential;
     } catch (error) {
       if (error instanceof RpcException) {
         throw error;

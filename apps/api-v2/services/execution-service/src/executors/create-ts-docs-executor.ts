@@ -3,7 +3,7 @@ import { ServerCreateTypeScriptDocsTaskType } from '@repo/tasks-registry';
 import { generateObject } from 'ai';
 import { z } from 'zod';
 import { CreateTypescriptDocsPrompt } from '@repo/prompts';
-import { GEMINI_MODEL } from '@app/common';
+import { GET_GEMINI_MODEL } from '@app/common';
 
 export async function createTsDocsExecutor(
   environment: ExecutionEnvironment<ServerCreateTypeScriptDocsTaskType>,
@@ -15,12 +15,19 @@ export async function createTsDocsExecutor(
       throw new Error('Code context is empty');
     }
 
+    const credentials = environment.getInput('API key');
+    if (!credentials) {
+      environment.log.WARNING(
+        "We didn't found you AI API credentials. Fallback to UI-Butler's API key",
+      );
+    }
+
     console.log('codeContext', codeContext);
 
     environment.log.INFO('Generating typescript docs...');
 
     const { object } = await generateObject({
-      model: GEMINI_MODEL,
+      model: GET_GEMINI_MODEL(credentials),
       schema: z.object({
         typescriptDocs: z.string(),
       }),

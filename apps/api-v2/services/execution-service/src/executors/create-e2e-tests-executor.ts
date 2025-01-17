@@ -3,7 +3,7 @@ import { ServerCreateE2ETestsTaskType } from '@repo/tasks-registry';
 import { generateObject } from 'ai';
 import { z } from 'zod';
 import { CreateE2eTestsPrompt } from '@repo/prompts';
-import { GEMINI_MODEL } from '@app/common';
+import { GET_GEMINI_MODEL } from '@app/common';
 
 export async function createE2ETestsExecutor(
   environment: ExecutionEnvironment<ServerCreateE2ETestsTaskType>,
@@ -15,10 +15,18 @@ export async function createE2ETestsExecutor(
       throw new Error('Code context is empty');
     }
 
+    let credentials = environment.getInput('API key');
+
+    if (!credentials) {
+      environment.log.WARNING(
+        `We didn't found you AI API credentials. Fallback to UI-Butler's API key`,
+      );
+    }
+
     environment.log.INFO('Generating E2E tests...');
 
     const { object } = await generateObject({
-      model: GEMINI_MODEL,
+      model: GET_GEMINI_MODEL(credentials),
       schema: z.object({
         e2eTests: z.string(),
       }),

@@ -20,7 +20,7 @@ import {
 } from '@app/database';
 import {
   FavoriteComponentDto,
-  GEMINI_MODEL,
+  GET_GEMINI_MODEL,
   GenerateCodeDto,
   SaveComponentDto,
   UpdateComponentCodeDto,
@@ -162,7 +162,7 @@ export class ComponentsService {
         dataStreamWriter.writeData('initialized call');
 
         const result = streamText({
-          model: GEMINI_MODEL,
+          model: GET_GEMINI_MODEL(),
           prompt: enhancedPrompt,
         });
 
@@ -299,7 +299,7 @@ export class ComponentsService {
 
     try {
       const { text } = await generateText({
-        model: GEMINI_MODEL,
+        model: GET_GEMINI_MODEL(),
         prompt,
       });
 

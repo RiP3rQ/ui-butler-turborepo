@@ -6,6 +6,11 @@ export const ServerOptimizeCodeTask = {
   isEntryPoint: false,
   inputs: [
     {
+      name: "API key",
+      type: TaskParamType.CREDENTIAL,
+      required: true,
+    },
+    {
       name: "Code",
       type: TaskParamType.CODE_INSTANCE,
       required: true,
