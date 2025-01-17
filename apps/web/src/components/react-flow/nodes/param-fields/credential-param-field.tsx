@@ -1,7 +1,7 @@
 "use client";
 
 import type { ParamProps } from "@repo/types";
-import { useId } from "react";
+import { type JSX, useId } from "react";
 import { Label } from "@repo/ui/components/ui/label";
 import {
   Select,
@@ -19,12 +19,12 @@ function CredentialParamField({
   param,
   value,
   updateNodeParamValue,
-}: Readonly<ParamProps>) {
+}: Readonly<ParamProps>): JSX.Element {
   const id = useId();
   const query = useQuery({
     queryKey: ["credentials-for-user"],
     queryFn: getUserCredentials,
-    refetchInterval: 10000,
+    refetchInterval: false,
   });
 
   return (
@@ -35,9 +35,11 @@ function CredentialParamField({
       </Label>
       <Select
         onValueChange={(selectedValue) => {
+          console.log(selectedValue);
           updateNodeParamValue(selectedValue);
         }}
         value={value}
+        defaultValue="DEFAULT_VALUE"
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />

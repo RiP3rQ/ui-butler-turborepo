@@ -38,8 +38,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         email: payload.email,
       };
 
-      console.log("Validating JWT for user:", { email: payload.email });
-
       const user = await firstValueFrom(
         this.usersService.getUserByEmail(request),
       );
