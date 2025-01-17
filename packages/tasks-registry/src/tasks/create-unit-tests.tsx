@@ -1,4 +1,4 @@
-import { LucideProps, TestTubeDiagonalIcon } from "lucide-react";
+import { type LucideProps, TestTubeDiagonalIcon } from "lucide-react";
 import { ServerCreateUnitTestsTask } from "./server/server-create-unit-tests";
 
 export const CreateUnitTestsTask = {

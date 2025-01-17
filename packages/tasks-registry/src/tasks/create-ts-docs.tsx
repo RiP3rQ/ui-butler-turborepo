@@ -1,4 +1,4 @@
-import { BookCheckIcon, LucideProps } from "lucide-react";
+import { BookCheckIcon, type LucideProps } from "lucide-react";
 import { ServerCreateTypeScriptDocsTask } from "./server/server-create-ts-docs";
 
 export const CreateTypeScriptDocsTask = {

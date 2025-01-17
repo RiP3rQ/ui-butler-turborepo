@@ -1,4 +1,4 @@
-import { LucideProps, TabletSmartphoneIcon } from "lucide-react";
+import { type LucideProps, TabletSmartphoneIcon } from "lucide-react";
 import { ServerCreateMDXDocsTask } from "./server/server-create-mdx-docs";
 
 export const CreateMDXDocsTask = {

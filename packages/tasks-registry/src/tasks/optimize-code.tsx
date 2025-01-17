@@ -1,4 +1,4 @@
-import { CircleFadingArrowUpIcon, LucideProps } from "lucide-react";
+import { CircleFadingArrowUpIcon, type LucideProps } from "lucide-react";
 import { ServerOptimizeCodeTask } from "./server/server-optimize-code";
 
 export const OptimizeCodeTask = {

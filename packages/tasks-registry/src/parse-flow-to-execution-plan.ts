@@ -19,7 +19,7 @@ export function parseFlowToExecutionPlan(
 ): FlowToExecutionPlanType {
   // Find entry point
   const entryPoint = nodes.find(
-    (node) => ClientTaskRegister[node.data.type]?.isEntryPoint,
+    (node) => ClientTaskRegister[node.data.type].isEntryPoint,
   );
 
   if (!entryPoint) {
@@ -47,7 +47,7 @@ export function parseFlowToExecutionPlan(
     if (!nodesByLevel.has(level)) {
       nodesByLevel.set(level, []);
     }
-    nodesByLevel.get(level)?.push(node);
+    nodesByLevel.get(level).push(node);
   });
 
   // Create phases based on levels
@@ -80,7 +80,7 @@ function createDependencyMap(edges: Edge[]): Map<string, Set<string>> {
     if (!dependencyMap.has(edge.target)) {
       dependencyMap.set(edge.target, new Set());
     }
-    dependencyMap.get(edge.target)?.add(edge.source);
+    dependencyMap.get(edge.target).add(edge.source);
   });
 
   return dependencyMap;

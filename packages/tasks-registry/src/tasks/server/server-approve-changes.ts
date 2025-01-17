@@ -1,4 +1,4 @@
-import { BaseWorkflowTask, TaskParamType, TaskType } from "@repo/types";
+import { type BaseWorkflowTask, TaskParamType, TaskType } from "@repo/types";
 
 export const ServerApproveChangesTask = {
   type: TaskType.APPROVE_CHANGES,
