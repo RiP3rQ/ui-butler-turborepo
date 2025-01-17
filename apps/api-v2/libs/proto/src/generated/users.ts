@@ -148,11 +148,6 @@ export interface RevealCredentialRequest {
   id: number;
 }
 
-export interface RevealCredentialResponse {
-  $type: "api.users.RevealCredentialResponse";
-  credentials: RevealedCredential[];
-}
-
 export const API_USERS_PACKAGE_NAME = "api.users";
 
 function createBaseUser(): User {
@@ -1533,62 +1528,6 @@ export const RevealCredentialRequest: MessageFns<
 
 messageTypeRegistry.set(RevealCredentialRequest.$type, RevealCredentialRequest);
 
-function createBaseRevealCredentialResponse(): RevealCredentialResponse {
-  return { $type: "api.users.RevealCredentialResponse", credentials: [] };
-}
-
-export const RevealCredentialResponse: MessageFns<
-  RevealCredentialResponse,
-  "api.users.RevealCredentialResponse"
-> = {
-  $type: "api.users.RevealCredentialResponse" as const,
-
-  encode(
-    message: RevealCredentialResponse,
-    writer: BinaryWriter = new BinaryWriter(),
-  ): BinaryWriter {
-    for (const v of message.credentials) {
-      RevealedCredential.encode(v!, writer.uint32(10).fork()).join();
-    }
-    return writer;
-  },
-
-  decode(
-    input: BinaryReader | Uint8Array,
-    length?: number,
-  ): RevealCredentialResponse {
-    const reader =
-      input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseRevealCredentialResponse();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 10) {
-            break;
-          }
-
-          message.credentials.push(
-            RevealedCredential.decode(reader, reader.uint32()),
-          );
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-};
-
-messageTypeRegistry.set(
-  RevealCredentialResponse.$type,
-  RevealCredentialResponse,
-);
-
 /** Users specific messages */
 
 export interface UsersServiceClient {
@@ -1620,7 +1559,7 @@ export interface UsersServiceClient {
 
   revealCredential(
     request: RevealCredentialRequest,
-  ): Observable<RevealCredentialResponse>;
+  ): Observable<RevealedCredential>;
 }
 
 /** Users specific messages */
@@ -1678,9 +1617,9 @@ export interface UsersServiceController {
   revealCredential(
     request: RevealCredentialRequest,
   ):
-    | Promise<RevealCredentialResponse>
-    | Observable<RevealCredentialResponse>
-    | RevealCredentialResponse;
+    | Promise<RevealedCredential>
+    | Observable<RevealedCredential>
+    | RevealedCredential;
 }
 
 export function UsersServiceControllerMethods() {

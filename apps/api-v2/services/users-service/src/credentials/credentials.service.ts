@@ -151,10 +151,12 @@ export class CredentialsService {
 
       const decryptedCredentialValue = symmetricDecrypt(credential.value);
 
-      return {
+      const finalCredential = {
         ...credential,
         value: decryptedCredentialValue,
       };
+
+      return finalCredential;
     } catch (error) {
       if (error instanceof RpcException) {
         throw error;

@@ -57,7 +57,7 @@ service UsersService {
     rpc GetUserCredentials (GetCredentialsRequest) returns (GetCredentialsResponse);
     rpc CreateCredential (CreateCredentialRequest) returns (Credential);
     rpc DeleteCredential (DeleteCredentialRequest) returns (Credential);
-    rpc RevealCredential (RevealCredentialRequest) returns (RevealCredentialResponse);
+    rpc RevealCredential (RevealCredentialRequest) returns (RevealedCredential);
 }
 
 message Empty {}
@@ -133,8 +133,4 @@ message RevealedCredential {
 message RevealCredentialRequest {
     User user = 1;
     int32 id = 2;
-}
-
-message RevealCredentialResponse {
-    repeated RevealedCredential credentials = 1;
 }

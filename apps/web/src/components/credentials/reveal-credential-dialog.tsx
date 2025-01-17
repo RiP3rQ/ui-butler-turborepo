@@ -48,7 +48,7 @@ export function RevealCredentialDialog({
             </div>
           ) : (
             <div className="font-mono text-center p-4 bg-muted rounded-md w-full max-w-xs">
-              {revealedCredentialValue || "No value available"}
+              {revealedCredentialValue?.value || "No value available"}
             </div>
           )}
         </div>
