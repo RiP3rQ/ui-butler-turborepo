@@ -5,6 +5,7 @@ import {
   Get,
   Inject,
   OnModuleInit,
+  Param,
   Post,
   Query,
   UseGuards,
@@ -52,6 +53,28 @@ export class CredentialsController implements OnModuleInit {
     );
 
     return response.credentials;
+  }
+
+  @Get(':id/reveal')
+  async getRevealedCredentialValue(
+    @CurrentUser() user: User,
+    @Param('id') id: string,
+  ) {
+    const request: UsersProto.RevealCredentialRequest = {
+      $type: 'api.users.RevealCredentialRequest',
+      user: {
+        $type: 'api.users.User',
+        id: user.id,
+        email: user.email,
+        username: user.username,
+      },
+      id: Number(id),
+    };
+
+    return await this.grpcClient.call(
+      this.usersService.revealCredential(request),
+      'Credentials.getRevealedCredentialValue',
+    );
   }
 
   @Post()

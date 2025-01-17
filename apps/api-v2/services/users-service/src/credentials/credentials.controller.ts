@@ -85,4 +85,14 @@ export class CredentialsController {
       },
     };
   }
+
+  @GrpcMethod('UsersService', 'RevealCredential')
+  async revealCredential(
+    request: UsersProto.RevealCredentialRequest,
+  ): Promise<UsersProto.RevealCredentialResponse> {
+    return await this.credentialsService.revealCredential(
+      request.user,
+      request.id,
+    );
+  }
 }
