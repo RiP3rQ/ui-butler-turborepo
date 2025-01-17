@@ -1,13 +1,13 @@
 import type { RefObject } from "react";
 import { useEffect } from "react";
 
-function useClickOutside<T extends HTMLElement>(
+export function useClickOutside<T extends HTMLElement>(
   ref: RefObject<T>,
   handler: (event: MouseEvent | TouchEvent) => void,
 ): void {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-      if (!ref || !ref.current || ref.current.contains(event.target as Node)) {
+      if (ref.current.contains(event.target as Node)) {
         return;
       }
 
@@ -23,5 +23,3 @@ function useClickOutside<T extends HTMLElement>(
     };
   }, [ref, handler]);
 }
-
-export default useClickOutside;

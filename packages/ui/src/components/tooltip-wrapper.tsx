@@ -7,16 +7,16 @@ import {
   TooltipTrigger,
 } from "@repo/ui/components/ui/tooltip";
 
-interface Props {
+interface TooltipWrapperProps {
   children: React.ReactNode;
   content: React.ReactNode;
   side?: "top" | "bottom" | "left" | "right";
 }
-function TooltipWrapper({
+export function TooltipWrapper({
   children,
   content,
   side,
-}: Readonly<Props>): React.ReactNode {
+}: Readonly<TooltipWrapperProps>): React.ReactNode {
   if (!content) {
     return <>{children}</>;
   }
@@ -30,4 +30,3 @@ function TooltipWrapper({
     </TooltipProvider>
   );
 }
-export default TooltipWrapper;

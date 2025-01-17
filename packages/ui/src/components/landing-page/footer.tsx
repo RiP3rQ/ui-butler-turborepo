@@ -1,8 +1,9 @@
+import { type JSX } from "react";
 import { Heart } from "lucide-react";
 import Link from "next/link";
-import Icons from "@repo/ui/components/landing-page/icons";
+import { Icons } from "@repo/ui/components/landing-page/icons";
 
-function Footer() {
+export function Footer(): JSX.Element {
   return (
     <footer className="flex flex-col relative items-center justify-center border-t border-border pt-16 pb-8 px-6 lg:px-8 w-full max-w-6xl mx-auto lg:pt-32">
       <div className="hidden lg:block absolute -top-1/3 -right-1/4 bg-primary w-72 h-72 rounded-full -z-10 blur-[14rem]" />
@@ -171,5 +172,3 @@ function Footer() {
     </footer>
   );
 }
-
-export default Footer;

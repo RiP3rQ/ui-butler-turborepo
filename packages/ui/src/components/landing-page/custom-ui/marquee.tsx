@@ -1,3 +1,4 @@
+import { type JSX } from "react";
 import { cn } from "@repo/ui/lib/utils";
 
 interface MarqueeProps {
@@ -7,11 +8,9 @@ interface MarqueeProps {
   children?: React.ReactNode;
   vertical?: boolean;
   repeat?: number;
-
-  [key: string]: any;
 }
 
-export default function Marquee({
+export function Marquee({
   className,
   reverse,
   pauseOnHover = false,
@@ -19,7 +18,7 @@ export default function Marquee({
   vertical = false,
   repeat = 4,
   ...props
-}: MarqueeProps) {
+}: Readonly<MarqueeProps>): JSX.Element {
   return (
     <div
       {...props}

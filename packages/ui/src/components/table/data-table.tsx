@@ -66,8 +66,6 @@ export function DataTable<TData, TValue>({
     },
   });
 
-  console.log("table.getRowModel().rows", table.getRowModel().rows);
-
   return (
     <div>
       {!hideFilterInput && (
@@ -75,7 +73,9 @@ export function DataTable<TData, TValue>({
           <Input
             placeholder={filterKeyPlaceholder}
             value={
-              (table.getColumn(filterKey)?.getFilterValue() as string) ?? ""
+              (table.getColumn(filterKey)?.getFilterValue() as
+                | string
+                | undefined) ?? ""
             }
             onChange={(event) =>
               table.getColumn(filterKey)?.setFilterValue(event.target.value)

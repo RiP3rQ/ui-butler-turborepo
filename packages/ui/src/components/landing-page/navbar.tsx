@@ -1,16 +1,14 @@
 import Link from "next/link";
 import { type JSX } from "react";
 import { buttonVariants } from "@repo/ui/components/ui/button";
-import Container from "@repo/ui/components/landing-page/container";
-import Icons from "@repo/ui/components/landing-page/icons";
+import { Container } from "@repo/ui/components/landing-page/container";
+import { Icons } from "@repo/ui/components/landing-page/icons";
 
-interface Props {
+interface NavbarProps {
   isUserLoggedIn: boolean;
 }
 
-function Navbar({ isUserLoggedIn }: Props): JSX.Element {
-  console.log("Navbar", isUserLoggedIn);
-
+export function Navbar({ isUserLoggedIn }: Readonly<NavbarProps>): JSX.Element {
   return (
     <header className="px-4 h-14 sticky top-0 inset-x-0 w-full bg-background/40 backdrop-blur-lg border-b border-border z-50">
       <Container reverse>
@@ -75,5 +73,3 @@ function Navbar({ isUserLoggedIn }: Props): JSX.Element {
     </header>
   );
 }
-
-export default Navbar;

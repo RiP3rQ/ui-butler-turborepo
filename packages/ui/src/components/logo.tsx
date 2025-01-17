@@ -1,12 +1,15 @@
 import Link from "next/link";
 import { cn } from "@repo/ui/lib/utils";
-import Icons from "@repo/ui/components/landing-page/icons";
+import { Icons } from "@repo/ui/components/landing-page/icons";
 
-interface Props {
+interface LogoProps {
   fontSize?: string;
   iconSize?: number;
 }
-function Logo({ fontSize = "2xl", iconSize = 20 }: Readonly<Props>) {
+export function Logo({
+  fontSize = "2xl",
+  iconSize = 20,
+}: Readonly<LogoProps>): React.ReactNode {
   return (
     <Link
       href="/"
@@ -27,4 +30,3 @@ function Logo({ fontSize = "2xl", iconSize = 20 }: Readonly<Props>) {
     </Link>
   );
 }
-export default Logo;

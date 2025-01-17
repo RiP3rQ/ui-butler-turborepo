@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -30,6 +31,16 @@ export function DataTableColumnHeader<TData, TValue>({
     return <div className={cn(className)}>{title}</div>;
   }
 
+  const renderSortIcon = useMemo(() => {
+    if (column.getIsSorted() === "desc") {
+      return <ArrowDownIcon className="ml-2 h-4 w-4" />;
+    }
+    if (column.getIsSorted() === "asc") {
+      return <ArrowUpIcon className="ml-2 h-4 w-4" />;
+    }
+    return <CaretSortIcon className="ml-2 h-4 w-4" />;
+  }, [column.getIsSorted()]);
+
   return (
     <div className={cn("flex items-center space-x-2", className)}>
       <DropdownMenu>
@@ -40,13 +51,7 @@ export function DataTableColumnHeader<TData, TValue>({
             className="-ml-3 h-8 data-[state=open]:bg-accent"
           >
             <span>{title}</span>
-            {column.getIsSorted() === "desc" ? (
-              <ArrowDownIcon className="ml-2 h-4 w-4" />
-            ) : column.getIsSorted() === "asc" ? (
-              <ArrowUpIcon className="ml-2 h-4 w-4" />
-            ) : (
-              <CaretSortIcon className="ml-2 h-4 w-4" />
-            )}
+            {renderSortIcon}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
