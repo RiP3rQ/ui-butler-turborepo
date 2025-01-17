@@ -3,7 +3,7 @@ import { ServerCreateUnitTestsTaskType } from '@repo/tasks-registry';
 import { generateObject } from 'ai';
 import { z } from 'zod';
 import { CreateUnitTestsPrompt } from '@repo/prompts';
-import { GEMINI_MODEL } from '@app/common';
+import { GET_GEMINI_MODEL } from '@app/common';
 
 export async function createUnitTestsExecutor(
   environment: ExecutionEnvironment<ServerCreateUnitTestsTaskType>,
@@ -15,10 +15,17 @@ export async function createUnitTestsExecutor(
       throw new Error('Code context is empty');
     }
 
+    const credentials = environment.getInput('API key');
+    if (!credentials) {
+      environment.log.WARNING(
+        "We didn't found you AI API credentials. Fallback to UI-Butler's API key",
+      );
+    }
+
     environment.log.INFO('Generating unit tests...');
 
     const { object } = await generateObject({
-      model: GEMINI_MODEL,
+      model: GET_GEMINI_MODEL(credentials),
       schema: z.object({
         unitTests: z.string(),
       }),

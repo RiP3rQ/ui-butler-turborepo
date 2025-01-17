@@ -6,7 +6,7 @@ export const ServerCreateTypeScriptDocsTask = {
   isEntryPoint: false,
   inputs: [
     {
-      name: "OpenAPI key",
+      name: "API key",
       type: TaskParamType.CREDENTIAL,
       required: true,
     },

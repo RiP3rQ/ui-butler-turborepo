@@ -6,7 +6,7 @@ export const ServerCreateE2ETestsTask = {
   isEntryPoint: false,
   inputs: [
     {
-      name: "OpenAPI key",
+      name: "API key",
       type: TaskParamType.CREDENTIAL,
       required: true,
     },
