@@ -1,9 +1,9 @@
+import { log } from "node:console";
 import type { UserCredentials, UserDecryptedCredentials } from "@repo/types";
 import { ApiClient } from "@/lib/api-client";
 import { getErrorMessage } from "@/lib/get-error-message";
 import type { CreateCredentialSchemaType } from "@/schemas/credential";
 import { type DeleteCredentialRequest } from "@/actions/credentials/types";
-import { log } from "console";
 
 /**
  * Service class for credentials-related API calls

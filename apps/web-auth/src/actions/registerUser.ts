@@ -1,9 +1,9 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { type z } from "zod";
 import { getAuthCookie } from "@/lib/auth-cookie";
-import { z } from "zod";
-import { registerFormSchema } from "@/schemas/register-schema";
+import { type registerFormSchema } from "@/schemas/register-schema";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { setResponseCookies } from "@/lib/set-cookies";
 
@@ -12,7 +12,7 @@ export default async function registerUser(
 ) {
   try {
     // Delete confirm password field before sending to the server
-    // @ts-ignore
+    // @ts-expect-error - this is a temporary fix to remove the confirmPassword field
     delete formData["confirmPassword"];
 
     const res = await fetch(

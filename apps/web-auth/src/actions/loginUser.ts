@@ -1,8 +1,8 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { type z } from "zod";
 import { getAuthCookie } from "@/lib/auth-cookie";
-import { z } from "zod";
 import { loginFormSchema } from "@/schemas/login-schema";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { setResponseCookies } from "@/lib/set-cookies";

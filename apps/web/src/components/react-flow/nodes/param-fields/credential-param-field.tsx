@@ -3,7 +3,6 @@
 import type { ParamProps } from "@repo/types";
 import { type JSX, useId } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getUserCredentials } from "@/actions/credentials/server-actions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -23,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/ui/components/ui/select";
+import { getUserCredentials } from "@/actions/credentials/server-actions";
 
 const formSchema = z.object({
   credential: z.string({

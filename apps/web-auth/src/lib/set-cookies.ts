@@ -1,5 +1,5 @@
-import { getAuthCookie } from "@/lib/auth-cookie";
 import { cookies } from "next/headers";
+import { type getAuthCookie } from "@/lib/auth-cookie";
 
 export async function setResponseCookies(
   cookie: ReturnType<typeof getAuthCookie>,

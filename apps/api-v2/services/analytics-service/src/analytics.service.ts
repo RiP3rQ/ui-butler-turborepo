@@ -46,7 +46,7 @@ export class AnalyticsService {
 
       const years = yearsData[0];
       const currentYear = new Date().getFullYear();
-      const minYear = years?.minYear
+      const minYear = years.minYear
         ? new Date(years.minYear).getFullYear()
         : currentYear;
 
@@ -334,12 +334,12 @@ export class AnalyticsService {
   ): Record<string, { successful: number; failed: number }> {
     return eachDayOfInterval({ start: startDate, end: endDate })
       .map((date) => format(date, dateFormat))
-      .reduce(
+      .reduce<Record<string, { successful: number; failed: number }>>(
         (acc, date) => {
           acc[date] = { successful: 0, failed: 0 };
           return acc;
         },
-        {} as Record<string, { successful: number; failed: number }>,
+        {},
       );
   }
 }

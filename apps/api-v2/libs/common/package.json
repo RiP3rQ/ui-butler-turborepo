@@ -19,6 +19,7 @@
     "@nestjs/jwt": "^10.2.0"
   },
   "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
     "@repo/types": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/express": "^5.0.0",

@@ -1,6 +1,6 @@
 "use client";
 
-import { JSX, useState } from "react";
+import { type JSX, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,10 +11,13 @@ import {
 import { Button } from "@repo/ui/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { Copy, Eye, EyeOff, Loader2 } from "lucide-react";
-import { getRevealedCredentialValue } from "~/src/actions/credentials/server-actions";
-import { UserCredentials, UserDecryptedCredentials } from "@repo/types";
+import {
+  type UserCredentials,
+  type UserDecryptedCredentials,
+} from "@repo/types";
 import { cn } from "@repo/ui/lib/utils";
 import { toast } from "sonner";
+import { getRevealedCredentialValue } from "~/src/actions/credentials/server-actions";
 
 interface RevealCredentialDialogProps {
   credential: UserCredentials;
@@ -79,7 +82,9 @@ export function RevealCredentialDialog({
                   size="sm"
                   variant="ghost"
                   className="absolute right-2 top-1/2 -translate-y-1/2"
-                  onClick={() => setIsValueVisible(!isValueVisible)}
+                  onClick={() => {
+                    setIsValueVisible(!isValueVisible);
+                  }}
                 >
                   {isValueVisible ? (
                     <EyeOff className="h-4 w-4" />

@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { type z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -46,10 +46,10 @@ export function useRegisterForm() {
     const errors = form.formState.errors;
 
     const hasValues = Boolean(
-      values.username?.trim() &&
-        values.email?.trim() &&
-        values.password?.trim() &&
-        values.confirmPassword?.trim(),
+      values.username.trim() &&
+        values.email.trim() &&
+        values.password.trim() &&
+        values.confirmPassword.trim(),
     );
 
     const hasNoErrors = Object.keys(errors).length === 0;

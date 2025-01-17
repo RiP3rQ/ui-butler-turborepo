@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
-import { AnalyticsService } from './analytics.service';
 import { AnalyticsProto } from '@app/proto';
+import { AnalyticsService } from './analytics.service';
 
 @Controller()
 export class AnalyticsController {

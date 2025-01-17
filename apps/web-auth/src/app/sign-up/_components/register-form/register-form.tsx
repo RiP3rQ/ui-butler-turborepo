@@ -25,7 +25,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
           />
           <Button
             type="submit"
-            className={"w-full"}
+            className="w-full"
             disabled={isPending || isSubmitButtonBlocked}
           >
             Sign up

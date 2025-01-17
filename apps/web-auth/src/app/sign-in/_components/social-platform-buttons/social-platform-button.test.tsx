@@ -1,14 +1,14 @@
 import { render, screen, fireEvent } from "@testing-library/react";
-import { Mail, Loader2, LucideIcon } from "lucide-react";
+import { Mail, Loader2, type LucideIcon } from "lucide-react";
 import SocialPlatformButton from "@/app/sign-in/_components/social-platform-buttons/social-platform-button";
 
 // Define the props type
-type SocialPlatformButtonProps = {
+interface SocialPlatformButtonProps {
   title: string;
   icon: LucideIcon;
   isLoading: boolean;
   onClick: () => void;
-};
+}
 
 describe("SocialPlatformButton", () => {
   const defaultProps: SocialPlatformButtonProps = {
@@ -43,7 +43,7 @@ describe("SocialPlatformButton", () => {
   });
 
   it("shows loading spinner and disables button when isLoading is true", () => {
-    render(<SocialPlatformButton {...defaultProps} isLoading={true} />);
+    render(<SocialPlatformButton {...defaultProps} isLoading />);
 
     const button = screen.getByRole("button");
     expect(button).toBeDisabled();
@@ -76,7 +76,7 @@ describe("SocialPlatformButton", () => {
   });
 
   it("prevents click events when loading", () => {
-    render(<SocialPlatformButton {...defaultProps} isLoading={true} />);
+    render(<SocialPlatformButton {...defaultProps} isLoading />);
 
     const button = screen.getByRole("button");
     fireEvent.click(button);

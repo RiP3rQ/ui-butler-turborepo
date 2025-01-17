@@ -27,8 +27,7 @@
     "dev": "tsup --watch",
     "lint": "eslint src/",
     "type-check": "tsc --noEmit",
-    "ui": "pnpm dlx shadcn@latest",
-    "clean": "rm -rf dist"
+    "ui": "pnpm dlx shadcn@latest"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

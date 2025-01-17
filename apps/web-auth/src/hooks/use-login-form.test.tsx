@@ -6,12 +6,12 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
-import { useLoginForm } from "@/hooks/use-login-form";
-import { loginFormSchema } from "@/schemas/login-schema";
-import { z } from "zod";
+import { type z } from "zod";
 import { toast } from "sonner";
-import loginUser from "@/actions/loginUser";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useLoginForm } from "@/hooks/use-login-form";
+import { type loginFormSchema } from "@/schemas/login-schema";
+import loginUser from "@/actions/loginUser";
 // Mock the toast and loginUser modules
 jest.mock("sonner", () => ({
   toast: {

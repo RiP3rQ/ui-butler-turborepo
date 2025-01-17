@@ -1,9 +1,9 @@
 // LoginFormFields.test.tsx
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Control } from "react-hook-form";
-import { z } from "zod";
-import { loginFormSchema } from "@/schemas/login-schema";
+import { type Control } from "react-hook-form";
+import { type z } from "zod";
+import { type loginFormSchema } from "@/schemas/login-schema";
 import { LoginFormFields } from "@/app/sign-in/_components/login-form/login-form-fields";
 
 // Define types
@@ -98,7 +98,7 @@ describe("LoginFormFields", () => {
   });
 
   it("applies disabled state correctly", () => {
-    render(<LoginFormFields control={mockControl} isDisabled={true} />);
+    render(<LoginFormFields control={mockControl} isDisabled />);
 
     expect(screen.getByTestId("email")).toBeDisabled();
     expect(screen.getByTestId("password")).toBeDisabled();
@@ -135,7 +135,7 @@ describe("LoginFormFields", () => {
 
     it("prevents tab navigation when disabled", async () => {
       const user = userEvent.setup();
-      render(<LoginFormFields control={mockControl} isDisabled={true} />);
+      render(<LoginFormFields control={mockControl} isDisabled />);
 
       const emailInput = screen.getByTestId("email");
       const passwordInput = screen.getByTestId("password");
@@ -155,7 +155,7 @@ describe("LoginFormFields", () => {
     });
 
     it("applies disabled state correctly", () => {
-      render(<LoginFormFields control={mockControl} isDisabled={true} />);
+      render(<LoginFormFields control={mockControl} isDisabled />);
 
       expect(screen.getByTestId("email")).toBeDisabled();
       expect(screen.getByTestId("password")).toBeDisabled();
@@ -163,7 +163,7 @@ describe("LoginFormFields", () => {
 
     it("prevents input when disabled", async () => {
       const user = userEvent.setup();
-      render(<LoginFormFields control={mockControl} isDisabled={true} />);
+      render(<LoginFormFields control={mockControl} isDisabled />);
 
       const emailInput = screen.getByTestId("email");
       const passwordInput = screen.getByTestId("password");

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Metadata } from "next";
+import { type Metadata } from "next";
 import Icons from "@repo/ui/components/landing-page/icons";
 import { Separator } from "@repo/ui/components/ui/separator";
 import * as React from "react";
@@ -17,7 +17,7 @@ export default function RegisterPage() {
         <div className="absolute inset-0 bg-zinc-900" />
         <div className="relative z-20 flex items-center gap-2">
           <Icons.logo className="size-12" />
-          <span className={"text-4xl font-bold"}>UI-Butler</span>
+          <span className="text-4xl font-bold">UI-Butler</span>
         </div>
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
@@ -56,8 +56,8 @@ export default function RegisterPage() {
             .
           </p>
           <Separator />
-          <div className={"flex flex-col items-center justify-center w-full"}>
-            <p className={"text-muted-foreground"}>Already have an account?</p>
+          <div className="flex flex-col items-center justify-center w-full">
+            <p className="text-muted-foreground">Already have an account?</p>
             <Link href="/sign-in" className="underline hover:text-primary">
               Sign in
             </Link>

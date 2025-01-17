@@ -1,5 +1,5 @@
-import { registerFormSchema } from "@/schemas/register-schema";
 import { ZodError } from "zod";
+import { registerFormSchema } from "@/schemas/register-schema";
 
 describe("registerFormSchema", () => {
   it("should validate correct username, email, password, and confirmPassword", () => {
@@ -188,7 +188,7 @@ describe("registerFormSchema", () => {
   });
 
   it("should throw error for long email", () => {
-    const longEmail = "a".repeat(101) + "@example.com";
+    const longEmail = `${"a".repeat(101)}@example.com`;
     const longEmailData = {
       username: "testuser",
       email: longEmail,

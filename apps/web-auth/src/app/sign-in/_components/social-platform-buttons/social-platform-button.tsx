@@ -1,19 +1,19 @@
 import { Button } from "@repo/ui/components/ui/button";
-import { Loader2, LucideIcon } from "lucide-react";
+import { Loader2, type LucideIcon } from "lucide-react";
 
-type SocialPlatformButtonProps = {
+interface SocialPlatformButtonProps {
   title: string;
   icon: LucideIcon;
   isLoading: boolean;
   onClick: () => void;
-};
+}
 
-const SocialPlatformButton = ({
+function SocialPlatformButton({
   title,
   icon: Icon,
   isLoading,
   onClick,
-}: Readonly<SocialPlatformButtonProps>) => {
+}: Readonly<SocialPlatformButtonProps>) {
   return (
     <Button
       variant="outline"
@@ -30,6 +30,6 @@ const SocialPlatformButton = ({
       {title}
     </Button>
   );
-};
+}
 
 export default SocialPlatformButton;

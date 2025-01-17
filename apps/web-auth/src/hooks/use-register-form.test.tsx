@@ -1,9 +1,9 @@
 import { act, renderHook } from "@testing-library/react";
 import { toast } from "sonner";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useRegisterForm } from "@/hooks/use-register-form";
 import registerUser from "@/actions/registerUser";
 import { getErrorMessage } from "@/lib/get-error-message";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Mock modules
 jest.mock("sonner", () => ({
