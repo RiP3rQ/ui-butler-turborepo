@@ -23,6 +23,7 @@ export const ServerCreateTypeScriptDocsTask = {
     },
   ] as const,
   credits: 1,
+  creditsWithoutApiKey: 6,
 } satisfies BaseWorkflowTask;
 
 export type ServerCreateTypeScriptDocsTaskType =

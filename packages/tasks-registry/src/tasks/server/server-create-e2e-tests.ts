@@ -23,6 +23,7 @@ export const ServerCreateE2ETestsTask = {
     },
   ] as const,
   credits: 3,
+  creditsWithoutApiKey: 10,
 } satisfies BaseWorkflowTask;
 
 export type ServerCreateE2ETestsTaskType = typeof ServerCreateE2ETestsTask;

@@ -19,6 +19,7 @@ export interface BaseWorkflowTask {
   outputs: Readonly<TaskParam[]>;
   temp?: Readonly<TaskParam[]>;
   credits: number;
+  creditsWithoutApiKey?: number;
 }
 
 export interface WorkflowTask extends BaseWorkflowTask {

@@ -23,6 +23,7 @@ export const ServerCreateMDXDocsTask = {
     },
   ] as const,
   credits: 3,
+  creditsWithoutApiKey: 10,
 } satisfies BaseWorkflowTask;
 
 export type ServerCreateMDXDocsTaskType = typeof ServerCreateMDXDocsTask;

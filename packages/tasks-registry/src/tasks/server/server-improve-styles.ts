@@ -23,6 +23,7 @@ export const ServerImproveStylesTask = {
     },
   ] as const,
   credits: 1,
+  creditsWithoutApiKey: 6,
 } satisfies BaseWorkflowTask;
 
 export type ServerImproveStylesTaskType = typeof ServerImproveStylesTask;

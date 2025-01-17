@@ -31,7 +31,7 @@ export const ServerApproveChangesTask = {
       type: TaskParamType.STRING,
     },
   ] as const,
-  credits: 0,
+  credits: 1,
 } satisfies BaseWorkflowTask;
 
 export type ServerApproveChangesTaskType = typeof ServerApproveChangesTask;
