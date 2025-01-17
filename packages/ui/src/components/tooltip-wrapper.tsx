@@ -12,7 +12,11 @@ interface Props {
   content: React.ReactNode;
   side?: "top" | "bottom" | "left" | "right";
 }
-function TooltipWrapper({ children, content, side }: Readonly<Props>) {
+function TooltipWrapper({
+  children,
+  content,
+  side,
+}: Readonly<Props>): React.ReactNode {
   if (!content) {
     return <>{children}</>;
   }

@@ -183,7 +183,7 @@ function SmoothDialogContent({
       }
     } else {
       document.body.classList.remove("overflow-hidden");
-      triggerRef.current?.focus();
+      triggerRef.current.focus();
     }
   }, [isOpen, triggerRef]);
 
@@ -229,7 +229,6 @@ function SmoothDialogContainer({ children }: SmoothDialogContainerProps) {
 
   if (!mounted) return null;
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   return createPortal(
     <AnimatePresence initial={false} mode="sync">
       {isOpen ? (

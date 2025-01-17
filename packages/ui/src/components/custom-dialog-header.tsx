@@ -1,9 +1,9 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
+import { type JSX } from "react";
 import { DialogHeader, DialogTitle } from "@repo/ui/components/ui/dialog";
 import { Separator } from "@repo/ui/components/ui/separator";
-import { JSX } from "react";
 
 interface CustomDialogHeaderProps {
   icon?: LucideIcon;

@@ -2,7 +2,7 @@
 
 import { Toaster } from "@repo/ui/components/ui/sonner";
 
-function ToastProvider() {
+function ToastProvider(): React.ReactNode {
   return <Toaster position="bottom-right" />;
 }
 
