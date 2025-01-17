@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Metadata } from "next";
-import { LoginForm } from "@/app/sign-in/_components/login-form/login-form.tsx";
+import { LoginForm } from "@/app/sign-in/_components/login-form/login-form";
 import Icons from "@repo/ui/components/landing-page/icons";
 import * as React from "react";
 import { Separator } from "@repo/ui/components/ui/separator";

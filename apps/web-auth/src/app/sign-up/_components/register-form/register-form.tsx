@@ -3,10 +3,10 @@
 import { Button } from "@repo/ui/components/ui/button";
 import { cn } from "@repo/ui/lib/utils";
 import React from "react";
-import { Form } from "@/components/ui/form.tsx";
-import { useRegisterForm } from "@/hooks/use-register-form.ts";
-import { RegisterFormFields } from "@/app/sign-up/_components/register-form/register-form-fields.tsx";
-import { SocialLoginButtons } from "@/app/sign-in/_components/social-platform-buttons/social-buttons.tsx";
+import { Form } from "@/components/ui/form";
+import { useRegisterForm } from "@/hooks/use-register-form";
+import { RegisterFormFields } from "@/app/sign-up/_components/register-form/register-form-fields";
+import { SocialLoginButtons } from "@/app/sign-in/_components/social-platform-buttons/social-buttons";
 
 type UserAuthFormProps = React.HTMLAttributes<HTMLDivElement>;
 

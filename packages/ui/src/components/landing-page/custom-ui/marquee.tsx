@@ -1,4 +1,4 @@
-import { cn } from "@repo/ui/lib/utils.ts";
+import { cn } from "@repo/ui/lib/utils";
 
 interface MarqueeProps {
   className?: string;

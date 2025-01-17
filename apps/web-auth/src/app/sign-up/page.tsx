@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import Icons from "@repo/ui/components/landing-page/icons";
 import { Separator } from "@repo/ui/components/ui/separator";
 import * as React from "react";
-import { RegisterForm } from "@/app/sign-up/_components/register-form/register-form.tsx";
+import { RegisterForm } from "@/app/sign-up/_components/register-form/register-form";
 
 export const metadata: Metadata = {
   title: "Register - UI-Butler",

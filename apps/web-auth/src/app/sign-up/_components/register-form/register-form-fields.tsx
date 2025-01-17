@@ -9,9 +9,9 @@ import {
 } from "@repo/ui/components/ui/form";
 import { Input } from "@repo/ui/components/ui/input";
 import { Separator } from "@repo/ui/components/ui/separator";
-import { FormDescription } from "@/components/ui/form.tsx";
+import { FormDescription } from "@/components/ui/form";
 import React from "react";
-import { registerFormSchema } from "@/schemas/register-schema.ts";
+import { registerFormSchema } from "@/schemas/register-schema";
 
 interface RegisterFormFieldsProps {
   control: Control<z.infer<typeof registerFormSchema>>;

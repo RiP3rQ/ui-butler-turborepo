@@ -15,6 +15,7 @@
     "pull": "drizzle-kit pull",
     "studio": "drizzle-kit studio",
     "dev": "tsc --watch",
+    "type-check": "tsc --noEmit",
     "build": "tsc"
   },
   "keywords": [],

@@ -14,7 +14,7 @@ type MockSocialPlatformButtonProps = {
 };
 
 jest.mock(
-  "@/app/sign-in/_components/social-platform-buttons/social-platform-button.tsx",
+  "@/app/sign-in/_components/social-platform-buttons/social-platform-button",
   () => {
     return function MockSocialPlatformButton({
       title,

@@ -21,9 +21,9 @@ import Footer from "@repo/ui/components/landing-page/footer";
 import { Input } from "@repo/ui/components/ui/input";
 import Icons from "@repo/ui/components/landing-page/icons";
 import Navbar from "@repo/ui/components/landing-page/navbar";
-import type { TODO_TYPE } from "@/types/todo.ts";
+import type { TODO_TYPE } from "@/types/todo";
 import { features, perks, pricingCards, reviews } from "@/constants";
-import { isUserLoggerIn } from "@/helpers/logged-in-user.ts";
+import { isUserLoggerIn } from "@/helpers/logged-in-user";
 
 export default async function Home() {
   const firstRow = reviews.slice(0, reviews.length / 2);

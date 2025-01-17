@@ -6,9 +6,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useMemo } from "react";
-import { registerFormSchema } from "@/schemas/register-schema.ts";
-import registerUser from "@/actions/registerUser.ts";
-import { getErrorMessage } from "@/lib/get-error-message.ts";
+import { registerFormSchema } from "@/schemas/register-schema";
+import registerUser from "@/actions/registerUser";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 export function useRegisterForm() {
   const form = useForm<z.infer<typeof registerFormSchema>>({

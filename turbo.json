@@ -11,9 +11,12 @@
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
     "lint": {
+      "cache": false,
       "outputs": []
     },
-    "type-check": {},
+    "type-check": {
+      "cache": false
+    },
     "dev": {
       "cache": false,
       "persistent": true

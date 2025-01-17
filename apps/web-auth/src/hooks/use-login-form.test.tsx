@@ -10,7 +10,7 @@ import { useLoginForm } from "@/hooks/use-login-form";
 import { loginFormSchema } from "@/schemas/login-schema";
 import { z } from "zod";
 import { toast } from "sonner";
-import loginUser from "@/actions/loginUser.ts";
+import loginUser from "@/actions/loginUser";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 // Mock the toast and loginUser modules
 jest.mock("sonner", () => ({
@@ -20,7 +20,7 @@ jest.mock("sonner", () => ({
     loading: jest.fn(),
   },
 }));
-jest.mock("@/actions/loginUser.ts", () => jest.fn());
+jest.mock("@/actions/loginUser", () => jest.fn());
 
 const queryClient = new QueryClient();
 

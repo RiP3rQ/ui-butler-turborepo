@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { Control } from "react-hook-form";
 import { z } from "zod";
 import { loginFormSchema } from "@/schemas/login-schema";
-import { LoginFormFields } from "@/app/sign-in/_components/login-form/login-form-fields.tsx";
+import { LoginFormFields } from "@/app/sign-in/_components/login-form/login-form-fields";
 
 // Define types
 type LoginFormData = z.infer<typeof loginFormSchema>;

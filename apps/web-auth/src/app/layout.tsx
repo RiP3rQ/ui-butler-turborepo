@@ -3,7 +3,7 @@ import "@repo/ui/globals.css";
 import ThemeProvider from "@repo/ui/providers/theme-provider";
 import type { Metadata } from "next";
 import { SITE_CONFIG } from "@/config";
-import { QueryProvider } from "@/components/query-provider.tsx";
+import { QueryProvider } from "@/components/query-provider";
 import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = localFont({

@@ -1,12 +1,12 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useLoginForm } from "@/hooks/use-login-form";
-import { LoginForm } from "@/app/sign-in/_components/login-form/login-form.tsx";
+import { LoginForm } from "@/app/sign-in/_components/login-form/login-form";
 
 // Mock dependencies
 jest.mock("@/hooks/use-login-form");
 jest.mock("sonner");
-jest.mock("@/app/sign-in/_components/login-form/login-form-fields.tsx", () => ({
+jest.mock("@/app/sign-in/_components/login-form/login-form-fields", () => ({
   LoginFormFields: ({ isDisabled }: { isDisabled: boolean }) => (
     <div data-testid="login-form-fields" aria-disabled={isDisabled}>
       <input type="email" data-testid="email-input" disabled={isDisabled} />
@@ -20,7 +20,7 @@ jest.mock("@/app/sign-in/_components/login-form/login-form-fields.tsx", () => ({
 }));
 
 jest.mock(
-  "@/app/sign-in/_components/social-platform-buttons/social-buttons.tsx",
+  "@/app/sign-in/_components/social-platform-buttons/social-buttons",
   () => ({
     SocialLoginButtons: ({ isDisabled }: { isDisabled: boolean }) => (
       <div data-testid="social-buttons" aria-disabled={isDisabled} />

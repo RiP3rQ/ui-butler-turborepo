@@ -14,7 +14,7 @@ import { AnimatePresence, motion, MotionConfig } from "framer-motion";
 import { createPortal } from "react-dom";
 import { XIcon } from "lucide-react";
 import { cn } from "@repo/ui/lib/utils";
-import useClickOutside from "@repo/ui/hooks/use-click-outside.tsx";
+import useClickOutside from "@repo/ui/hooks/use-click-outside";
 
 interface SmoothDialogContextType {
   isOpen: boolean;
@@ -56,6 +56,7 @@ function SmoothDialogProvider({
   );
 
   return (
+    // @ts-expect-error - libs error
     <SmoothDialogContext.Provider value={contextValue}>
       <MotionConfig transition={transition}>{children}</MotionConfig>
     </SmoothDialogContext.Provider>
@@ -186,6 +187,7 @@ function SmoothDialogContent({
     }
   }, [isOpen, triggerRef]);
 
+  // @ts-expect-error - libs error
   useClickOutside(containerRef, () => {
     if (isOpen) {
       setIsOpen(false);

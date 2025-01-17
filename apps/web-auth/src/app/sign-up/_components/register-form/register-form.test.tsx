@@ -2,7 +2,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useRegisterForm } from "@/hooks/use-register-form";
-import { RegisterForm } from "@/app/sign-up/_components/register-form/register-form.tsx";
+import { RegisterForm } from "@/app/sign-up/_components/register-form/register-form";
 
 // Mock dependencies
 jest.mock("@/hooks/use-register-form");

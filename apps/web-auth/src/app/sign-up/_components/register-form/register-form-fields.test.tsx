@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { Control } from "react-hook-form";
 import { z } from "zod";
 import { registerFormSchema } from "@/schemas/register-schema";
-import { RegisterFormFields } from "@/app/sign-up/_components/register-form/register-form-fields.tsx";
+import { RegisterFormFields } from "@/app/sign-up/_components/register-form/register-form-fields";
 
 // Mock UI components
 jest.mock("@repo/ui/components/ui/form", () => ({
