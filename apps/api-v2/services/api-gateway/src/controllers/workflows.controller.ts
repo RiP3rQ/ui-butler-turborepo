@@ -7,6 +7,7 @@ import {
   OnModuleInit,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Put,
   Query,
@@ -25,6 +26,7 @@ import {
 } from '@app/common';
 import { WorkflowsProto } from '@app/proto';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
+import { log } from 'node:console';
 
 @Controller('workflows')
 @UseGuards(JwtAuthGuard)
@@ -180,11 +182,12 @@ export class WorkflowsController implements OnModuleInit {
     );
   }
 
-  @Put(':id')
+  @Patch('')
   async updateWorkflow(
     @CurrentUser() user: User,
     @Body() updateWorkflowDto: UpdateWorkflowDto,
   ) {
+    console.log('updateWorkflowDto', updateWorkflowDto);
     const response = await this.grpcClient.call(
       this.workflowsService.updateWorkflow({
         $type: 'api.workflows.UpdateWorkflowRequest',
