@@ -12,7 +12,7 @@ interface UserCredentialsProps {
   initialData: UserCredentials[];
 }
 
-export function UserCredendials({
+export function UserCredentials({
   initialData,
 }: Readonly<UserCredentialsProps>): JSX.Element {
   const { data } = useQuery({

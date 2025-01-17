@@ -34,3 +34,12 @@ export async function deleteCredentialFunction(
 export async function getUserCredentials(): Promise<UserCredentials[]> {
   return CredentialsService.getUserCredentials();
 }
+
+/**
+ * Fetch the revealed value of a credential
+ */
+export async function getRevealedCredentialValue(
+  credentialId: number,
+): Promise<string> {
+  return CredentialsService.getRevealedCredentialValue(credentialId);
+}

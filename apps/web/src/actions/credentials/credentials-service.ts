@@ -59,4 +59,21 @@ export class CredentialsService {
       throw new Error(getErrorMessage(error));
     }
   }
+
+  /**
+   * Fetches the revealed value of a credential
+   */
+  static async getRevealedCredentialValue(
+    credentialId: number,
+  ): Promise<string> {
+    try {
+      const { data } = await ApiClient.get<string>(
+        `${this.BASE_PATH}/${String(credentialId)}/reveal`,
+      );
+      return data;
+    } catch (error) {
+      console.error("Failed to fetch revealed credential value:", error);
+      throw new Error(getErrorMessage(error));
+    }
+  }
 }
