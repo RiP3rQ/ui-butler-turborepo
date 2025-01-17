@@ -36,7 +36,7 @@ export function CredentialCard({
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <RevealCredentialDialog credentialId={credential.id}>
+        <RevealCredentialDialog credential={credential}>
           <Button variant="ghost" size="sm" className="gap-2">
             <EyeIcon size={16} />
             Reveal
