@@ -28,20 +28,33 @@ async function generateProtos() {
 
   // Use protoc from node_modules
   const protocPath = path.join(
-    process.cwd(),
+    "../../../..", // Navigate up to monorepo root,
     "node_modules",
     "protoc",
     "protoc",
     "bin",
-    "protoc.exe",
+    process.platform === "win32" ? "protoc.exe" : "protoc",
   );
 
   const tsProtoPath = path.join(
-    process.cwd(),
+    "../../../..", // Navigate up to monorepo root,
     "node_modules",
     ".bin",
-    "protoc-gen-ts_proto.cmd",
+    process.platform === "win32"
+      ? "protoc-gen-ts_proto.cmd"
+      : "protoc-gen-ts_proto",
   );
+
+  // Add path existence checks
+  if (!fs.existsSync(protocPath)) {
+    console.error(`protoc not found at: ${protocPath}`);
+    process.exit(1);
+  }
+
+  if (!fs.existsSync(tsProtoPath)) {
+    console.error(`protoc-gen-ts_proto not found at: ${tsProtoPath}`);
+    process.exit(1);
+  }
 
   const command = [
     `"${protocPath}"`,
