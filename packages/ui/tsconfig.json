@@ -3,18 +3,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@repo/ui/*": [
-        "./src/*"
-      ]
+      "@repo/ui/*": ["./src/*"]
     }
   },
-  "include": [
-    "src",
-    ".",
-  ],
-  "exclude": [
-    "dist",
-    "build",
-    "node_modules"
-  ]
+  "include": ["src", "."],
+  "exclude": ["dist", "build", "node_modules"]
 }
