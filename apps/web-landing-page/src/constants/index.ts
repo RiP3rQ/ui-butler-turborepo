@@ -1,55 +1,55 @@
-import Icons from "@repo/ui/components/landing-page/icons";
+import { Icons } from "@repo/ui/components/landing-page/icons";
 
 export const perks = [
   {
-    icon: Icons.auth,
+    Icon: Icons.auth,
     title: "Get Started",
     info: "Create your free account to start organizing your UI components with UI-Butler.",
   },
   {
-    icon: Icons.customize,
+    Icon: Icons.customize,
     title: "Organize",
     info: "Categorize and manage your components for easy access and reuse.",
   },
   {
-    icon: Icons.launch,
+    Icon: Icons.launch,
     title: "Build",
     info: "Leverage your organized components to build projects faster and more efficiently.",
   },
-];
+] as const;
 
 export const features = [
   {
-    icon: Icons.bolt,
+    Icon: Icons.bolt,
     title: "Quick Setup",
     info: "Set up your component library in minutes with our intuitive interface.",
   },
   {
-    icon: Icons.palette,
+    Icon: Icons.palette,
     title: "Component Customization",
     info: "Easily customize components to fit your project's needs.",
   },
   {
-    icon: Icons.seo,
+    Icon: Icons.seo,
     title: "Component Documentation",
     info: "Automatically generate documentation for your components.",
   },
   {
-    icon: Icons.monitor,
+    Icon: Icons.monitor,
     title: "Responsive Design",
     info: "Ensure your components look great on all devices.",
   },
   {
-    icon: Icons.shop,
+    Icon: Icons.shop,
     title: "Component Testing",
     info: "Test your components in various environments directly within UI-Butler.",
   },
   {
-    icon: Icons.server,
+    Icon: Icons.server,
     title: "Secure Storage",
     info: "Keep your components safe with secure and reliable cloud storage.",
   },
-];
+] as const;
 
 export const pricingCards = [
   {
@@ -119,7 +119,7 @@ export const bentoCards = [
     imgSrc: "/assets/bento1.svg", // Rocket launching or project deployment icon
     alt: "Deploy your projects",
   },
-];
+] as const;
 
 export const reviews = [
   {
@@ -152,4 +152,4 @@ export const reviews = [
     username: "@frank",
     body: "The secure storage gives me peace of mind knowing my components are safe and always accessible.",
   },
-];
+] as const;

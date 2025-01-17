@@ -1,11 +1,11 @@
 import Image from "next/image";
 import { ArrowRight, ChevronRight, UserIcon, Zap } from "lucide-react";
-import Wrapper from "@repo/ui/components/landing-page/wrapper";
-import Container from "@repo/ui/components/landing-page/container";
+import { Wrapper } from "@repo/ui/components/landing-page/wrapper";
+import { Container } from "@repo/ui/components/landing-page/container";
 import Link from "next/link";
 import { Button } from "@repo/ui/components/ui/button";
 import { BorderBeam } from "@repo/ui/components/landing-page/custom-ui/border-beam";
-import SectionBadge from "@repo/ui/components/landing-page/custom-ui/section-badge";
+import { SectionBadge } from "@repo/ui/components/landing-page/custom-ui/section-badge";
 import { cn } from "@repo/ui/lib/utils";
 import {
   Card,
@@ -15,17 +15,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/components/ui/card";
-import Marquee from "@repo/ui/components/landing-page/custom-ui/marquee";
+import { Marquee } from "@repo/ui/components/landing-page/custom-ui/marquee";
 import { LampContainer } from "@repo/ui/components/landing-page/custom-ui/lamp";
-import Footer from "@repo/ui/components/landing-page/footer";
+import { Footer } from "@repo/ui/components/landing-page/footer";
 import { Input } from "@repo/ui/components/ui/input";
-import Icons from "@repo/ui/components/landing-page/icons";
-import Navbar from "@repo/ui/components/landing-page/navbar";
-import type { TODO_TYPE } from "@/types/todo";
-import { features, perks, pricingCards, reviews } from "@/constants";
-import { isUserLoggerIn } from "@/helpers/logged-in-user";
+import { Icons } from "@repo/ui/components/landing-page/icons";
+import { Navbar } from "@repo/ui/components/landing-page/navbar";
+import { features, perks, pricingCards, reviews } from "../constants";
+import { isUserLoggerIn } from "../helpers/logged-in-user";
+import {
+  type Perk,
+  type Feature,
+  type PricingCard,
+  type Review,
+} from "../types";
 
-export default async function Home() {
+export default async function Home(): Promise<React.ReactNode> {
   const firstRow = reviews.slice(0, reviews.length / 2);
   const secondRow = reviews.slice(reviews.length / 2);
 
@@ -122,13 +127,13 @@ export default async function Home() {
           <Container>
             <div className="flex flex-col items-center justify-center py-10 md:py-20 w-full">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full divide-x-0 md:divide-x divide-y md:divide-y-0 divide-gray-900 first:border-l-2 lg:first:border-none first:border-gray-900">
-                {perks.map((perk: TODO_TYPE) => (
+                {perks.map((perk: Perk) => (
                   <div
                     className="flex flex-col items-start px-4 md:px-6 lg:px-8 lg:py-6 py-4"
                     key={perk.title}
                   >
                     <div className="flex items-center justify-center">
-                      <perk.icon className="w-8 h-8" />
+                      <perk.Icon className="w-8 h-8" />
                     </div>
                     <h3 className="text-lg font-medium mt-4">{perk.title}</h3>
                     <p className="text-muted-foreground mt-2 text-start lg:text-start">
@@ -165,13 +170,13 @@ export default async function Home() {
           <Container>
             <div className="flex flex-col items-center justify-center py-10 md:py-20 w-full">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full gap-8">
-                {features.map((feature: TODO_TYPE) => (
+                {features.map((feature: Feature) => (
                   <div
                     className="flex flex-col items-start lg:items-start px-0 md:px-0"
                     key={feature.title}
                   >
                     <div className="flex items-center justify-center">
-                      <feature.icon className="w-8 h-8" />
+                      <feature.Icon className="w-8 h-8" />
                     </div>
                     <h3 className="text-lg font-medium mt-4">
                       {feature.title}
@@ -203,7 +208,7 @@ export default async function Home() {
           </Container>
           <Container className="flex items-center justify-center">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 w-full md:gap-8 py-10 md:py-20 flex-wrap max-w-4xl">
-              {pricingCards.map((card: TODO_TYPE) => (
+              {pricingCards.map((card: PricingCard) => (
                 <Card
                   className={cn(
                     "flex flex-col w-full border-neutral-700",
@@ -225,7 +230,7 @@ export default async function Home() {
                     <CardDescription>{card.description}</CardDescription>
                   </CardHeader>
                   <CardContent className="pt-6 space-y-3">
-                    {card.features.map((feature: TODO_TYPE) => (
+                    {card.features.map((feature: string) => (
                       <div className="flex items-center gap-2" key={feature}>
                         <Zap className="w-4 h-4 fill-primary text-primary" />
                         <p>{feature}</p>
@@ -269,7 +274,7 @@ export default async function Home() {
             <div className="py-10 md:py-20 w-full">
               <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden py-10">
                 <Marquee className="[--duration:20s] select-none" pauseOnHover>
-                  {firstRow.map((review: TODO_TYPE) => (
+                  {firstRow.map((review: Review) => (
                     <figure
                       className={cn(
                         "relative w-64 cursor-pointer overflow-hidden rounded-xl border p-4",
@@ -299,7 +304,7 @@ export default async function Home() {
                   pauseOnHover
                   reverse
                 >
-                  {secondRow.map((review: TODO_TYPE) => (
+                  {secondRow.map((review: Review) => (
                     <figure
                       className={cn(
                         "relative w-64 cursor-pointer overflow-hidden rounded-xl border p-4",

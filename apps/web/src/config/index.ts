@@ -25,5 +25,5 @@ export const SITE_CONFIG: Metadata = {
       },
     ],
   },
-  metadataBase: new URL("http://localhost:3002/"),
+  metadataBase: new URL("http://localhost:3001/"),
 };

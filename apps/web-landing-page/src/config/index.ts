@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const SITE_CONFIG: Metadata = {
   title: {
     default: "UI-Butler | AI Powered Components Organizer",
-    template: `%s | UI-Bulter`,
+    template: `%s | UI-Butler`,
   },
   description:
     "UI-Butler is an AI powered components organizer that helps you build your next project faster. Test and document your components in one place.",
@@ -25,5 +25,5 @@ export const SITE_CONFIG: Metadata = {
       },
     ],
   },
-  metadataBase: new URL("http://localhost:3002/"),
+  metadataBase: new URL("http://localhost:3000/"),
 };
