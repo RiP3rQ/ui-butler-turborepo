@@ -1,8 +1,8 @@
-import { BaseWorkflowTask } from "./workflow";
-import { LogCollector } from "./logCollector";
-import { TaskParam } from "./task";
+import { type BaseWorkflowTask } from "./workflow";
+import { type LogCollector } from "./log-collector";
+import { type TaskParam } from "./task";
 
-export type Environment = {
+export interface Environment {
   workflowExecutionId: number;
   componentId?: number;
   code?: string;
@@ -20,38 +20,41 @@ export type Environment = {
       temp: Record<string, string>;
     }
   >;
-};
+}
 
 export type InputOutputNames<T extends readonly TaskParam[]> =
   T[number]["name"];
 
-export type ExecutionEnvironment<T extends BaseWorkflowTask> = {
-  getComponentId(): number | undefined;
+export interface ExecutionEnvironment<T extends BaseWorkflowTask> {
+  getComponentId: () => number | undefined;
 
-  getStartingCode(): string;
-  setStartingCode(code: string): void;
+  getStartingCode: () => string;
+  setStartingCode: (code: string) => void;
 
-  getCode(): string | undefined;
-  setCode(code: string): void;
+  getCode: () => string | undefined;
+  setCode: (code: string) => void;
 
-  getInput(name: InputOutputNames<T["inputs"]>): string;
-  setOutput(name: InputOutputNames<T["outputs"]>, value: string): void;
+  getInput: (name: InputOutputNames<T["inputs"]>) => string;
+  setOutput: (name: InputOutputNames<T["outputs"]>, value: string) => void;
 
-  getTemp(name: InputOutputNames<NonNullable<T["temp"]>>): string;
-  setTemp(name: InputOutputNames<NonNullable<T["temp"]>>, value: string): void;
+  getTemp: (name: InputOutputNames<NonNullable<T["temp"]>>) => string;
+  setTemp: (
+    name: InputOutputNames<NonNullable<T["temp"]>>,
+    value: string,
+  ) => void;
 
   // Generated codes
-  getTsDocs(): string;
-  setTsDocs(tsDocs: string): void;
+  getTsDocs: () => string;
+  setTsDocs: (tsDocs: string) => void;
 
-  getMdxDocs(): string;
-  setMdxDocs(mdxDocs: string): void;
+  getMdxDocs: () => string;
+  setMdxDocs: (mdxDocs: string) => void;
 
-  getUnitTests(): string;
-  setUnitTests(unitTests: string): void;
+  getUnitTests: () => string;
+  setUnitTests: (unitTests: string) => void;
 
-  getE2ETests(): string;
-  setE2ETests(e2eTests: string): void;
+  getE2ETests: () => string;
+  setE2ETests: (e2eTests: string) => void;
 
   log: LogCollector;
-};
+}

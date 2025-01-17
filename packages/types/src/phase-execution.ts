@@ -1,4 +1,4 @@
-import { IWorkflowExecutionStatus } from "./workflow";
+import { type IWorkflowExecutionStatus } from "./workflow";
 
 export interface ExecutionPhase {
   number: number;

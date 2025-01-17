@@ -1,7 +1,7 @@
 import type { LucideProps } from "lucide-react";
+import { type Viewport } from "@xyflow/react";
 import type { TaskParam, TaskType } from "./task";
-import type { AppEdge, AppNode, AppNodeMissingInputs } from "./appNode";
-import { Viewport } from "@xyflow/react";
+import type { AppEdge, AppNode, AppNodeMissingInputs } from "./app-node";
 
 export const WorkflowStatus = {
   DRAFT: "DRAFT",
@@ -15,9 +15,9 @@ export interface BaseWorkflowTask {
   label: string;
   type: TaskType;
   isEntryPoint?: boolean;
-  inputs: Readonly<TaskParam[]>;
-  outputs: Readonly<TaskParam[]>;
-  temp?: Readonly<TaskParam[]>;
+  inputs: readonly TaskParam[];
+  outputs: readonly TaskParam[];
+  temp?: readonly TaskParam[];
   credits: number;
   creditsWithoutApiKey?: number;
 }

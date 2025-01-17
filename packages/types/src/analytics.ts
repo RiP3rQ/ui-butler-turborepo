@@ -1,16 +1,16 @@
-export type Period = {
+export interface Period {
   year: number;
   month: number;
-};
+}
 
-export type StatCardsValuesResponse = {
+export interface StatCardsValuesResponse {
   workflowExecutions: number;
   creditsConsumed: number;
   phasesExecuted: number;
-};
+}
 
-export type UsedCreditsInPeriodResponse = {
+export interface UsedCreditsInPeriodResponse {
   successful: number;
   failed: number;
   date: string;
-};
+}
