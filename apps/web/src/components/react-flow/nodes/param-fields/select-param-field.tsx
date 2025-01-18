@@ -22,7 +22,7 @@ function SelectParamField({
   param,
   value,
   updateNodeParamValue,
-}: Readonly<ParamProps>) {
+}: Readonly<ParamProps>): JSX.Element {
   const id = useId();
   return (
     <div className="flex flex-col gap-1 w-full">

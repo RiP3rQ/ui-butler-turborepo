@@ -30,7 +30,7 @@ interface ExecutionsTableProps {
 function ExecutionsTable({
   initialData,
   workflowId,
-}: Readonly<ExecutionsTableProps>) {
+}: Readonly<ExecutionsTableProps>): JSX.Element {
   const router = useRouter();
 
   const query = useQuery({
@@ -54,7 +54,7 @@ function ExecutionsTable({
           </TableRow>
         </TableHeader>
         <TableBody className="gap-2 h-full overflow-auto">
-          {query.data.map((execution, index) => {
+          {query.data.map((execution) => {
             const duration = dateToDurationString(
               new Date(execution.startedAt).toISOString(),
               new Date(execution.completedAt).toISOString(),
@@ -66,7 +66,7 @@ function ExecutionsTable({
             return (
               <TableRow
                 className="cursor-pointer"
-                key={execution.id + index}
+                key={execution.id}
                 onClick={() => {
                   router.push(
                     `/workflow/runs/${workflowId.toString()}/${String(execution.id)}`,

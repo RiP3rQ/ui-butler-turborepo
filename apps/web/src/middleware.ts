@@ -1,3 +1,4 @@
+import { type ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { cookies } from "next/headers";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
@@ -36,8 +37,8 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
       const authCookies = getAuthCookie(refreshRes);
       if (authCookies?.accessToken && authCookies.refreshToken) {
         const response = NextResponse.redirect(request.url);
-        response.cookies.set(authCookies.accessToken);
-        response.cookies.set(authCookies.refreshToken);
+        response.cookies.set(authCookies.accessToken as ResponseCookie);
+        response.cookies.set(authCookies.refreshToken as ResponseCookie);
         return response;
       }
     }

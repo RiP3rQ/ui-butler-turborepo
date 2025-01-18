@@ -52,7 +52,7 @@ export function useNewProjectForm(): {
     },
   });
 
-  const handleSubmit = (values: CreateNewProjectSchemaType) => {
+  const handleSubmit = (values: CreateNewProjectSchemaType): void => {
     try {
       toast.loading("Creating new project...", { id: "new-project" });
       mutate(values);

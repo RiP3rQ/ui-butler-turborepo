@@ -1,4 +1,4 @@
-import React, { type JSX } from "react";
+import { type JSX } from "react";
 import { WorkflowIcon } from "lucide-react";
 
 function ExecutionRunPhasesHeader(): JSX.Element {

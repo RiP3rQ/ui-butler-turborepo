@@ -22,7 +22,7 @@ export class ExecutionsService {
     decision,
   }: Readonly<ApprovePendingChangesRequest>): Promise<void> {
     try {
-      await ApiClient.post<{ decision: string }, void>(
+      await ApiClient.post<{ decision: string }, unknown>(
         `${this.EXECUTIONS_PATH}/${executionId.toString()}/approve`,
         {
           body: { decision },

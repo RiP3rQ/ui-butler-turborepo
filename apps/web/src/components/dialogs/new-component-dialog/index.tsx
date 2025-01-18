@@ -90,7 +90,7 @@ export function CreateNewComponentDialog(): JSX.Element {
     },
   });
 
-  const onSubmit = async (values: SaveComponentSchemaType) => {
+  const onSubmit = async (values: SaveComponentSchemaType): void => {
     try {
       toast.loading("Saving component...", { id: "new-component" });
       mutate(values);

@@ -1,4 +1,3 @@
-import { log } from "node:console";
 import type { UserCredentials, UserDecryptedCredentials } from "@repo/types";
 import { ApiClient } from "@/lib/api-client";
 import { getErrorMessage } from "@/lib/get-error-message";

@@ -12,7 +12,6 @@ import {
   useNodesState,
   useReactFlow,
 } from "@xyflow/react";
-
 import "@xyflow/react/dist/style.css";
 import {
   type AppEdge,
@@ -135,7 +134,10 @@ function FlowEditor({ workflow }: Readonly<FlowEditorProps>): JSX.Element {
         return false;
       }
 
-      const hasCycle = (node: AppNode, visited = new Set()) => {
+      const hasCycle = (
+        node: AppNode,
+        visited = new Set<string>(),
+      ): boolean => {
         if (visited.has(node.id)) return true;
         visited.add(node.id);
 

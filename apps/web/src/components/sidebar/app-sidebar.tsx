@@ -75,7 +75,8 @@ interface AdditionalAppSidebarProps {
 
 export function AppSidebar({
   ...props
-}: React.ComponentProps<typeof Sidebar> & AdditionalAppSidebarProps) {
+}: React.ComponentProps<typeof Sidebar> &
+  AdditionalAppSidebarProps): JSX.Element {
   const { userProjects, ...slicedProps } = props;
 
   const mainContentData = useMemo(() => {

@@ -1,4 +1,3 @@
-// constants/accordion-items.ts
 import {
   BookOpenIcon,
   FileCode2Icon,

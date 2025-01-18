@@ -13,7 +13,7 @@ interface ExecutionPhaseStatusBadgeProps {
 
 function ExecutionPhaseStatusBadge({
   status,
-}: Readonly<ExecutionPhaseStatusBadgeProps>) {
+}: Readonly<ExecutionPhaseStatusBadgeProps>): JSX.Element {
   switch (status) {
     case ExecutionPhaseStatus.PENDING:
       return <CircleDashedIcon className="stroke-muted-foreground" size={20} />;

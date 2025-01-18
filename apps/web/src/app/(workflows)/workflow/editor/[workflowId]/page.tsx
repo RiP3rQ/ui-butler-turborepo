@@ -1,4 +1,4 @@
-import React, { type JSX } from "react";
+import { type JSX } from "react";
 import { redirect } from "next/navigation";
 import Editor from "@/components/react-flow/editor";
 import { getWorkflowByIdFunction } from "@/actions/workflows/server-actions";

@@ -7,7 +7,9 @@ import { Tabs, TabsList, TabsTrigger } from "@repo/ui/components/ui/tabs";
 interface NavigationTabsProps {
   workflowId: number;
 }
-function NavigationTabs({ workflowId }: Readonly<NavigationTabsProps>) {
+function NavigationTabs({
+  workflowId,
+}: Readonly<NavigationTabsProps>): JSX.Element {
   const pathname = usePathname();
   const activeValue = pathname.split("/")[2];
 
