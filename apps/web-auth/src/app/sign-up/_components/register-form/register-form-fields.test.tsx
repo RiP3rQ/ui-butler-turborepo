@@ -41,11 +41,11 @@ jest.mock("@repo/ui/components/ui/input", () => ({
     name?: string;
   }) => (
     <input
-      type={type || "text"}
+      type={type ?? "text"}
       placeholder={placeholder}
       disabled={disabled}
       name={name}
-      data-testid={`input-${name || placeholder}`}
+      data-testid={`input-${name ?? placeholder}`}
       {...props}
     />
   ),

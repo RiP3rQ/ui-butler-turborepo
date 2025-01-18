@@ -1,3 +1,4 @@
+import { type JSX } from "react";
 import { type Control } from "react-hook-form";
 import { type z } from "zod";
 import {
@@ -9,7 +10,6 @@ import {
 } from "@repo/ui/components/ui/form";
 import { Input } from "@repo/ui/components/ui/input";
 import { Separator } from "@repo/ui/components/ui/separator";
-import React from "react";
 import { FormDescription } from "@/components/ui/form";
 import { type registerFormSchema } from "@/schemas/register-schema";
 
@@ -21,7 +21,7 @@ interface RegisterFormFieldsProps {
 export function RegisterFormFields({
   control,
   isDisabled,
-}: Readonly<RegisterFormFieldsProps>) {
+}: Readonly<RegisterFormFieldsProps>): JSX.Element {
   return (
     <>
       <FormField

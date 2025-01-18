@@ -1,3 +1,4 @@
+import { type JSX } from "react";
 import { type Control } from "react-hook-form";
 import { type z } from "zod";
 import {
@@ -19,7 +20,7 @@ interface LoginFormFieldsProps {
 export function LoginFormFields({
   control,
   isDisabled,
-}: Readonly<LoginFormFieldsProps>) {
+}: Readonly<LoginFormFieldsProps>): JSX.Element {
   return (
     <>
       <FormField

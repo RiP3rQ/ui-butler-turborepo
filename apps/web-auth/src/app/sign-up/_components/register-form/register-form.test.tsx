@@ -15,17 +15,17 @@ jest.mock("@repo/ui/components/ui/button", () => ({
     children,
     disabled,
     className,
-    type,
+    type = "submit",
   }: {
     children: React.ReactNode;
     disabled?: boolean;
     className?: string;
-    type?: "submit" | "button";
+    type?: "submit" | "button" | "reset";
   }) => (
     <button
       type={type}
       disabled={disabled}
-      className={className || ""}
+      className={className ?? ""}
       data-testid="submit-button"
     >
       {children}

@@ -17,7 +17,7 @@ import {
 } from "@repo/types";
 import { cn } from "@repo/ui/lib/utils";
 import { toast } from "sonner";
-import { getRevealedCredentialValue } from "~/src/actions/credentials/server-actions";
+import { getRevealedCredentialValue } from "@/actions/credentials/server-actions";
 
 interface RevealCredentialDialogProps {
   credential: UserCredentials;

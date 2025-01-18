@@ -21,7 +21,7 @@ function createMockResponse(headers: Record<string, string>): MockResponse {
   return {
     headers: {
       get(name: string) {
-        return headers[name] || null;
+        return headers[name] ?? null;
       },
     },
   };

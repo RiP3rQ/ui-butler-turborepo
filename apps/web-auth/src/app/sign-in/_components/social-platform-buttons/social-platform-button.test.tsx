@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from "@testing-library/react";
-import { Mail, Loader2, type LucideIcon } from "lucide-react";
+import { Mail, type LucideIcon } from "lucide-react";
 import SocialPlatformButton from "@/app/sign-in/_components/social-platform-buttons/social-platform-button";
 
 // Define the props type

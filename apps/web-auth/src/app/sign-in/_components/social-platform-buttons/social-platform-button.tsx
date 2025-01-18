@@ -1,3 +1,4 @@
+import { type JSX } from "react";
 import { Button } from "@repo/ui/components/ui/button";
 import { Loader2, type LucideIcon } from "lucide-react";
 
@@ -13,7 +14,7 @@ function SocialPlatformButton({
   icon: Icon,
   isLoading,
   onClick,
-}: Readonly<SocialPlatformButtonProps>) {
+}: SocialPlatformButtonProps): JSX.Element {
   return (
     <Button
       variant="outline"

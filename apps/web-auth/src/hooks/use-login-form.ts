@@ -6,11 +6,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useMemo } from "react";
-import loginUser from "~/src/actions/login-user";
+import loginUser from "@/actions/login-user";
 import { loginFormSchema } from "@/schemas/login-schema";
 import { getErrorMessage } from "@/lib/get-error-message";
 
-export function useLoginForm() {
+export function useLoginForm(): {
+  form: ReturnType<typeof useForm<z.infer<typeof loginFormSchema>>>;
+  isPending: boolean;
+  handleSubmit: (values: z.infer<typeof loginFormSchema>) => void;
+  isSubmitDisabled: boolean;
+} {
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
@@ -32,7 +37,9 @@ export function useLoginForm() {
     },
   });
 
-  const handleSubmit = async (values: z.infer<typeof loginFormSchema>) => {
+  const handleSubmit = async (
+    values: z.infer<typeof loginFormSchema>,
+  ): Promise<void> => {
     toast.loading("Logging in...", { id: "login" });
     mutate(values);
   };

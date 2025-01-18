@@ -1,3 +1,4 @@
+import { type JSX } from "react";
 import {
   act,
   fireEvent,
@@ -11,7 +12,7 @@ import { toast } from "sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useLoginForm } from "@/hooks/use-login-form";
 import { type loginFormSchema } from "@/schemas/login-schema";
-import loginUser from "~/src/actions/login-user";
+import loginUser from "@/actions/login-user";
 // Mock the toast and loginUser modules
 jest.mock("sonner", () => ({
   toast: {
@@ -34,7 +35,7 @@ describe("useLoginForm", () => {
     jest.restoreAllMocks(); // Restore all mocks after each test
   });
 
-  function TestComponent() {
+  function TestComponent(): JSX.Element {
     const { form, isSubmitDisabled, handleSubmit } = useLoginForm();
 
     return (
@@ -60,7 +61,11 @@ describe("useLoginForm", () => {
     );
   }
 
-  const wrapper = ({ children }: { children: React.ReactNode }) => (
+  const wrapper = ({
+    children,
+  }: {
+    children: React.ReactNode;
+  }): JSX.Element => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 

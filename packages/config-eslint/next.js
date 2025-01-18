@@ -1,3 +1,7 @@
+const { resolve } = require("node:path");
+
+const project = resolve(process.cwd(), "tsconfig.json");
+
 /*
  * This is a custom ESLint configuration for use with
  * Next.js apps.
@@ -19,17 +23,24 @@ module.exports = {
     "turbo",
   ],
   parserOptions: {
-    // Remove the project reference here - it will be provided by the consuming service
-    sourceType: "module",
+    project,
   },
   globals: {
     React: true,
     JSX: true,
   },
   settings: {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"],
+    },
     "import/resolver": {
       typescript: {
-        // Remove the project reference here - it will be provided by the consuming service
+        alwaysTryTypes: true,
+      },
+    },
+    "import/resolver": {
+      typescript: {
+        project,
       },
       node: {
         extensions: [".mjs", ".js", ".jsx", ".ts", ".tsx"],
@@ -39,12 +50,12 @@ module.exports = {
       rootDir: ["apps/*/"],
     },
   },
-  ignorePatterns: ["node_modules/", "dist/", "**/*.css"],
+  ignorePatterns: ["node_modules/", "dist/"],
   // add rules configurations here
   rules: {
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/dot-notation": "off",
     "import/no-default-export": "off",
-    "import/no-unresolved": "warn",
   },
+  plugins: ["import"],
 };

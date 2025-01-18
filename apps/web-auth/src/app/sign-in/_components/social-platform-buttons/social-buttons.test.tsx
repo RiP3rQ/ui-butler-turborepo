@@ -23,6 +23,7 @@ jest.mock(
     }: MockSocialPlatformButtonProps) {
       return (
         <button
+          type="button"
           onClick={onClick}
           disabled={isLoading}
           data-testid={`social-button-${title.toLowerCase()}`}

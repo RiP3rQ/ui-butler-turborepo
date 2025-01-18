@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getAuthCookie } from "@/lib/auth-cookie";
-import registerUser from "~/src/actions/register-user";
+import registerUser from "@/actions/register-user";
 import { setResponseCookies } from "@/lib/set-cookies";
 import { getErrorMessage } from "@/lib/get-error-message";
 
@@ -26,7 +26,9 @@ jest.mock("@/lib/set-cookies", () => ({
 jest.mock("@/lib/get-error-message", () => ({
   getErrorMessage: jest
     .fn()
-    .mockImplementation((error) => error.message || JSON.stringify(error)),
+    .mockImplementation((error) =>
+      error instanceof Error ? error.message : JSON.stringify(error),
+    ),
 }));
 
 global.fetch = jest.fn();

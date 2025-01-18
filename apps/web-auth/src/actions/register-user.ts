@@ -6,23 +6,22 @@ import { getAuthCookie } from "@/lib/auth-cookie";
 import { type registerFormSchema } from "@/schemas/register-schema";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { setResponseCookies } from "@/lib/set-cookies";
+import { getApiUrl, getMainAppUrl } from "@/lib/utils";
 
 export default async function registerUser(
   formData: z.infer<typeof registerFormSchema>,
-) {
+): Promise<void> {
   try {
     // Delete confirm password field before sending to the server
     // @ts-expect-error - this is a temporary fix to remove the confirmPassword field
     delete formData["confirmPassword"];
 
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      },
-    );
+    const apiUrl = getApiUrl();
+    const res = await fetch(`${apiUrl}/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
 
     if (!res.ok) {
       throw new Error("Registration failed");
@@ -34,5 +33,5 @@ export default async function registerUser(
     const errorMessage = getErrorMessage(error);
     throw new Error(errorMessage);
   }
-  redirect(`${process.env.NEXT_PUBLIC_MAIN_APP_URL}`);
+  redirect(getMainAppUrl());
 }

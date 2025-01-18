@@ -2,7 +2,7 @@ import { act, renderHook } from "@testing-library/react";
 import { toast } from "sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useRegisterForm } from "@/hooks/use-register-form";
-import registerUser from "~/src/actions/register-user";
+import registerUser from "@/actions/register-user";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 // Mock modules

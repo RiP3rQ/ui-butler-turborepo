@@ -1,5 +1,6 @@
 "use client";
 
+import { type JSX } from "react";
 import { Form } from "@repo/ui/components/ui/form";
 import { cn } from "@repo/ui/lib/utils";
 import { Button } from "@repo/ui/components/ui/button";
@@ -10,7 +11,7 @@ import { useLoginForm } from "@/hooks/use-login-form";
 export function LoginForm({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: React.HTMLAttributes<HTMLDivElement>): JSX.Element {
   const { form, isPending, handleSubmit, isSubmitDisabled } = useLoginForm();
   const isFormDisabled = isPending || form.formState.isSubmitting;
 

@@ -1,5 +1,6 @@
 import { cookies as getCookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
+import { type ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { AUTH_COOKIE, getAuthCookie, REFRESH_COOKIE } from "./lib/auth-cookie";
 
 const unauthenticatedRoutes = ["/sign-up", "/sign-in", "/auth/google"];
@@ -30,7 +31,7 @@ export async function middleware(
     const authCookies = getAuthCookie(refreshRes);
     if (authCookies?.accessToken) {
       const response = NextResponse.redirect(request.url);
-      response.cookies.set(authCookies.accessToken);
+      response.cookies.set(authCookies.accessToken as ResponseCookie);
       return response;
     }
   }
