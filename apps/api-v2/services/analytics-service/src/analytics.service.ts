@@ -28,11 +28,11 @@ export class AnalyticsService {
     private readonly database: NeonDatabaseType,
   ) {}
 
-  async getPeriods(
+  public async getPeriods(
     user: AnalyticsProto.User,
   ): Promise<AnalyticsProto.Period[]> {
     try {
-      const yearsData = await this.database
+      const [yearsData] = await this.database
         .select({ minYear: min(workflowExecutions.startedAt) })
         .from(workflowExecutions)
         .where(eq(workflowExecutions.userId, user.id));
@@ -44,7 +44,7 @@ export class AnalyticsService {
         });
       }
 
-      const years = yearsData[0];
+      const years = yearsData;
       const currentYear = new Date().getFullYear();
       const minYear = years.minYear
         ? new Date(years.minYear).getFullYear()
@@ -72,7 +72,7 @@ export class AnalyticsService {
     }
   }
 
-  async getStatCardsValues(
+  public async getStatCardsValues(
     user: AnalyticsProto.User,
     month: number,
     year: number,
@@ -125,7 +125,7 @@ export class AnalyticsService {
     }
   }
 
-  async getWorkflowExecutionStats(
+  public async getWorkflowExecutionStats(
     user: AnalyticsProto.User,
     month: number,
     year: number,
@@ -158,10 +158,13 @@ export class AnalyticsService {
         if (!execution.startedAt) return;
 
         const date = format(execution.startedAt, dateFormat);
+        const stats = statsDates[date];
+        if (!stats) return;
+
         if (execution.status === 'COMPLETED') {
-          statsDates[date].successful++;
+          stats.successful++;
         } else if (execution.status === 'FAILED') {
-          statsDates[date].failed++;
+          stats.failed++;
         }
       });
 
@@ -180,7 +183,7 @@ export class AnalyticsService {
     }
   }
 
-  async getUsedCreditsInPeriod(
+  public async getUsedCreditsInPeriod(
     user: AnalyticsProto.User,
     month: number,
     year: number,
@@ -216,10 +219,13 @@ export class AnalyticsService {
 
         try {
           const date = format(new Date(phase.startedAt), dateFormat);
+          const stats = statsDates[date];
+          if (!stats) return;
+
           if (phase.status === 'COMPLETED') {
-            statsDates[date].successful += phase.creditsCost ?? 0;
+            stats.successful += phase.creditsCost ?? 0;
           } else if (phase.status === 'FAILED') {
-            statsDates[date].failed += phase.creditsCost ?? 0;
+            stats.failed += phase.creditsCost ?? 0;
           }
         } catch (error) {
           console.error('Invalid date format:', phase.startedAt);
@@ -241,7 +247,7 @@ export class AnalyticsService {
     }
   }
 
-  async getDashboardStatCardsValues(
+  public async getDashboardStatCardsValues(
     user: AnalyticsProto.User,
   ): Promise<AnalyticsProto.DashboardStatsResponse> {
     try {
@@ -282,7 +288,7 @@ export class AnalyticsService {
     }
   }
 
-  async getFavoritedTableContent(
+  public async getFavoritedTableContent(
     user: AnalyticsProto.User,
   ): Promise<AnalyticsProto.FavoritedComponent[]> {
     try {
@@ -304,7 +310,7 @@ export class AnalyticsService {
         $type: 'api.analytics.FavoritedComponent',
         id: component.id,
         name: component.name,
-        projectName: component.projectName,
+        projectName: component.projectName ?? 'Untitled Project',
         createdAt: dateToTimestamp(component.createdAt.toISOString()),
         updatedAt: dateToTimestamp(component.updatedAt.toISOString()),
       }));

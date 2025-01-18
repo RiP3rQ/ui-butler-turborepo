@@ -8,38 +8,45 @@ export class AnalyticsController {
   constructor(private readonly analyticsService: AnalyticsService) {}
 
   @GrpcMethod('AnalyticsService', 'GetPeriods')
-  async getPeriods(
+  public async getPeriods(
     request: AnalyticsProto.GetPeriodsRequest,
   ): Promise<AnalyticsProto.GetPeriodsResponse> {
+    if (!request.user) {
+      throw new Error('User is required');
+    }
     const periods = await this.analyticsService.getPeriods(request.user);
     return {
       $type: 'api.analytics.GetPeriodsResponse',
       periods: periods.map((period) => ({
-        $type: 'api.analytics.Period',
         ...period,
       })),
     };
   }
 
   @GrpcMethod('AnalyticsService', 'GetStatCardsValues')
-  async getStatCardsValues(
+  public async getStatCardsValues(
     request: AnalyticsProto.StatCardsRequest,
   ): Promise<AnalyticsProto.StatCardsResponse> {
+    if (!request.user) {
+      throw new Error('User is required');
+    }
     const stats = await this.analyticsService.getStatCardsValues(
       request.user,
       request.month,
       request.year,
     );
     return {
-      $type: 'api.analytics.StatCardsResponse',
       ...stats,
     };
   }
 
   @GrpcMethod('AnalyticsService', 'GetWorkflowExecutionStats')
-  async getWorkflowExecutionStats(
+  public async getWorkflowExecutionStats(
     request: AnalyticsProto.WorkflowStatsRequest,
   ): Promise<AnalyticsProto.WorkflowStatsResponse> {
+    if (!request.user) {
+      throw new Error('User is required');
+    }
     const stats = await this.analyticsService.getWorkflowExecutionStats(
       request.user,
       request.month,
@@ -48,16 +55,18 @@ export class AnalyticsController {
     return {
       $type: 'api.analytics.WorkflowStatsResponse',
       stats: stats.map((stat) => ({
-        $type: 'api.analytics.DailyStats',
         ...stat,
       })),
     };
   }
 
   @GrpcMethod('AnalyticsService', 'GetUsedCreditsInPeriod')
-  async getUsedCreditsInPeriod(
+  public async getUsedCreditsInPeriod(
     request: AnalyticsProto.UsedCreditsRequest,
   ): Promise<AnalyticsProto.UsedCreditsResponse> {
+    if (!request.user) {
+      throw new Error('User is required');
+    }
     const stats = await this.analyticsService.getUsedCreditsInPeriod(
       request.user,
       request.month,
@@ -66,29 +75,33 @@ export class AnalyticsController {
     return {
       $type: 'api.analytics.UsedCreditsResponse',
       stats: stats.map((stat) => ({
-        $type: 'api.analytics.DailyStats',
         ...stat,
       })),
     };
   }
 
   @GrpcMethod('AnalyticsService', 'GetDashboardStatCardsValues')
-  async getDashboardStatCardsValues(
+  public async getDashboardStatCardsValues(
     request: AnalyticsProto.DashboardStatsRequest,
   ): Promise<AnalyticsProto.DashboardStatsResponse> {
+    if (!request.user) {
+      throw new Error('User is required');
+    }
     const stats = await this.analyticsService.getDashboardStatCardsValues(
       request.user,
     );
     return {
-      $type: 'api.analytics.DashboardStatsResponse',
       ...stats,
     };
   }
 
   @GrpcMethod('AnalyticsService', 'GetFavoritedTableContent')
-  async getFavoritedTableContent(
+  public async getFavoritedTableContent(
     request: AnalyticsProto.FavoritedContentRequest,
   ): Promise<AnalyticsProto.FavoritedContentResponse> {
+    if (!request.user) {
+      throw new Error('User is required');
+    }
     const components = await this.analyticsService.getFavoritedTableContent(
       request.user,
     );

@@ -12,7 +12,7 @@ async function bootstrap() {
         __dirname,
         '../../../libs/proto/src/proto/analytics.proto',
       ),
-      url: `${process.env.ANALYTICS_SERVICE_HOST || 'localhost'}:${process.env.ANALYTICS_SERVICE_PORT || '3347'}`,
+      url: `${process.env.ANALYTICS_SERVICE_HOST ?? 'localhost'}:${process.env.ANALYTICS_SERVICE_PORT ?? '3347'}`,
     },
   });
 
@@ -20,4 +20,9 @@ async function bootstrap() {
   console.log('Analytics  Microservice is listening on gRPC');
 }
 
-bootstrap();
+bootstrap().catch((error: unknown) => {
+  console.error(
+    `Error starting Analytics Microservice: ${JSON.stringify(error)}`,
+  );
+  process.exit(1);
+});
