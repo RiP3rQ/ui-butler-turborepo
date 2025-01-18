@@ -24,7 +24,14 @@ export function useComponentCode(
     Error,
     UpdateComponentCodeRequest
   >;
-  generateMutation: UseMutationResult<void, Error, { codeType: CodeType }>;
+  generateMutation: UseMutationResult<
+    ComponentType,
+    Error,
+    {
+      componentId: number;
+      codeType: CodeType;
+    }
+  >;
 } {
   const queryClient = useQueryClient();
   const [updating, setUpdating] = useState<CodeType | null>(null);

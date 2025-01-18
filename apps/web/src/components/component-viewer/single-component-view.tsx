@@ -1,4 +1,3 @@
-// components/SingleComponentView.tsx
 import { type JSX, useCallback } from "react";
 import {
   Accordion,

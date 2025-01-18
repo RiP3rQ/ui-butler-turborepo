@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Tabs, TabsList, TabsTrigger } from "@repo/ui/components/ui/tabs";
+import { type JSX } from "react";
 
 interface NavigationTabsProps {
   workflowId: number;

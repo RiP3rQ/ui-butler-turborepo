@@ -14,6 +14,7 @@ import {
 } from "@repo/ui/components/ui/table";
 import { Badge } from "@repo/ui/components/ui/badge";
 import type { IWorkflowExecutionStatus } from "@repo/types";
+import { type JSX } from "react";
 import { dateToDurationString } from "@/lib/dates";
 import { ExecutionStatusIndicator } from "@/components/execution-viewer/execution-status-indicator";
 import { getHistoricWorkflowExecutions } from "@/actions/workflows/server-actions";

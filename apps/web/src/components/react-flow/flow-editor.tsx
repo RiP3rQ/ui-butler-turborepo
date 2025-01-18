@@ -145,6 +145,7 @@ function FlowEditor({ workflow }: Readonly<FlowEditorProps>): JSX.Element {
           if (outgoer.id === connection.source) return true;
           if (hasCycle(outgoer, visited)) return true;
         }
+        return false;
       };
 
       const detectedCycle = hasCycle(targetNode);

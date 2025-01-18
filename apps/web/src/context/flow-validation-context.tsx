@@ -1,7 +1,7 @@
 "use client";
 
 import type { AppNodeMissingInputs } from "@repo/types";
-import type { Dispatch, SetStateAction } from "react";
+import type { JSX, Dispatch, SetStateAction } from "react";
 import { createContext, useState } from "react";
 
 export interface FlowValidationContextType {

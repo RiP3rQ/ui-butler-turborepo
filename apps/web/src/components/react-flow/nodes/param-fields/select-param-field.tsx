@@ -1,7 +1,7 @@
 "use client";
 
 import type { ParamProps } from "@repo/types";
-import { useId } from "react";
+import { type JSX, useId } from "react";
 import { Label } from "@repo/ui/components/ui/label";
 import {
   Select,
