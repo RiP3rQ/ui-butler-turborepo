@@ -24,7 +24,7 @@ import {
   DialogTrigger,
 } from "@repo/ui/components/ui/dialog";
 import { Button } from "@repo/ui/components/ui/button";
-import CustomDialogHeader from "@repo/ui/components/custom-dialog-header";
+import { CustomDialogHeader } from "@repo/ui/components/custom-dialog-header";
 import {
   createCredentialSchema,
   type CreateCredentialSchemaType,

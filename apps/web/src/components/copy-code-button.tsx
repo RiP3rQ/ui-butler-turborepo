@@ -3,7 +3,7 @@ import { type JSX, useCallback, useState } from "react";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
 import { cn } from "@repo/ui/lib/utils";
-import TooltipWrapper from "@repo/ui/components/tooltip-wrapper";
+import { TooltipWrapper } from "@repo/ui/components/tooltip-wrapper";
 
 interface CopyButtonProps {
   value: string;

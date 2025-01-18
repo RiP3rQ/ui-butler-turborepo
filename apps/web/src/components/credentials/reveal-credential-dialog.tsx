@@ -1,6 +1,6 @@
 "use client";
 
-import { type JSX, useState } from "react";
+import { type JSX, useCallback, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -42,7 +42,7 @@ export function RevealCredentialDialog({
       enabled: isOpen,
     });
 
-  const handleCopyToClipboard = async () => {
+  const handleCopyToClipboard = useCallback(async () => {
     if (revealedCredential?.value) {
       await navigator.clipboard.writeText(revealedCredential.value);
       toast.success("Copied to clipboard", {
@@ -50,7 +50,7 @@ export function RevealCredentialDialog({
         duration: 2000,
       });
     }
-  };
+  }, [revealedCredential?.value]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -76,7 +76,7 @@ export function RevealCredentialDialog({
                     !isValueVisible && "blur-sm select-none",
                   )}
                 >
-                  {revealedCredential?.value || "No value available"}
+                  {revealedCredential?.value ?? "No value available"}
                 </div>
                 <Button
                   size="sm"
