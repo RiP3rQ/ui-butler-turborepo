@@ -13,7 +13,6 @@ import {
 import { type ClientGrpc } from '@nestjs/microservices';
 import { CurrentUser, JwtAuthGuard } from '@app/common';
 import { AnalyticsProto } from '@app/proto';
-import { handleGrpcError } from '../utils/grpc-error.util';
 import { firstValueFrom } from 'rxjs';
 import {
   ApiBearerAuth,
@@ -24,6 +23,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
+import { handleGrpcError } from '../utils/grpc-error.util';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 
 @ApiTags('Analytics')
@@ -40,7 +40,7 @@ export class AnalyticsController implements OnModuleInit {
     private readonly grpcClient: GrpcClientProxy,
   ) {}
 
-  onModuleInit() {
+  public onModuleInit(): void {
     this.analyticsService =
       this.client.getService<AnalyticsProto.AnalyticsServiceClient>(
         'AnalyticsService',
@@ -57,8 +57,10 @@ export class AnalyticsController implements OnModuleInit {
     description: 'List of available analytics periods',
     type: Array,
   })
-  async getPeriods(@CurrentUser() user: AnalyticsProto.User) {
-    if (!user) {
+  public async getPeriods(
+    @CurrentUser() user: AnalyticsProto.User,
+  ): Promise<AnalyticsProto.Period[]> {
+    if (typeof user === 'undefined') {
       throw new NotFoundException('Unauthorized');
     }
 
@@ -106,12 +108,12 @@ export class AnalyticsController implements OnModuleInit {
   @ApiNotFoundResponse({
     description: 'Invalid query parameters or unauthorized',
   })
-  async getStatCardsValues(
+  public async getStatCardsValues(
     @Query('month', new ParseIntPipe()) month: number,
     @Query('year', new ParseIntPipe()) year: number,
     @CurrentUser() user: AnalyticsProto.User,
-  ) {
-    if (!user) {
+  ): Promise<AnalyticsProto.StatCardsResponse> {
+    if (typeof user === 'undefined') {
       throw new NotFoundException('Unauthorized');
     }
 
@@ -161,12 +163,12 @@ export class AnalyticsController implements OnModuleInit {
     status: 200,
     description: 'Workflow execution statistics',
   })
-  async getWorkflowExecutionStats(
+  public async getWorkflowExecutionStats(
     @Query('month', new ParseIntPipe()) month: number,
     @Query('year', new ParseIntPipe()) year: number,
     @CurrentUser() user: AnalyticsProto.User,
-  ) {
-    if (!user) {
+  ): Promise<AnalyticsProto.WorkflowStatsResponse['stats']> {
+    if (typeof user === 'undefined') {
       throw new NotFoundException('Unauthorized');
     }
 
@@ -217,12 +219,12 @@ export class AnalyticsController implements OnModuleInit {
     status: 200,
     description: 'Credit usage statistics',
   })
-  async getUsedCreditsInPeriod(
+  public async getUsedCreditsInPeriod(
     @Query('month', new ParseIntPipe()) month: number,
     @Query('year', new ParseIntPipe()) year: number,
     @CurrentUser() user: AnalyticsProto.User,
-  ) {
-    if (!user) {
+  ): Promise<AnalyticsProto.UsedCreditsResponse['stats']> {
+    if (typeof user === 'undefined') {
       throw new NotFoundException('Unauthorized');
     }
 
@@ -261,8 +263,10 @@ export class AnalyticsController implements OnModuleInit {
     status: 200,
     description: 'Dashboard statistics',
   })
-  async getDashboardStatCardsValues(@CurrentUser() user: AnalyticsProto.User) {
-    if (!user) {
+  public async getDashboardStatCardsValues(
+    @CurrentUser() user: AnalyticsProto.User,
+  ): Promise<AnalyticsProto.DashboardStatsResponse> {
+    if (typeof user === 'undefined') {
       throw new NotFoundException('Unauthorized');
     }
 
@@ -295,8 +299,10 @@ export class AnalyticsController implements OnModuleInit {
     status: 200,
     description: 'List of favorited components',
   })
-  async getFavoritedTableContent(@CurrentUser() user: AnalyticsProto.User) {
-    if (!user) {
+  public async getFavoritedTableContent(
+    @CurrentUser() user: AnalyticsProto.User,
+  ): Promise<AnalyticsProto.FavoritedContentResponse['components']> {
+    if (typeof user === 'undefined') {
       throw new NotFoundException('Unauthorized');
     }
 

@@ -1,22 +1,4 @@
-import { ClientsModule } from '@nestjs/microservices';
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { AuthProxyService } from './proxies/auth.proxy.service';
-import { AuthController } from './controllers/auth.controller';
-import { BillingController } from './controllers/billing.controller';
-import { UsersController } from './controllers/users.controller';
-import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import { ErrorInterceptor } from './interceptors/error.interceptor';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import Joi from 'joi';
-import { ComponentsController } from './controllers/components.controller';
-import { CredentialsController } from './controllers/credentials.controller';
-import { ProjectsController } from './controllers/projects.controller';
-import { WorkflowsController } from './controllers/workflows.controller';
-import { ExecutionsController } from './controllers/execution.controller';
-import { TerminusModule } from '@nestjs/terminus';
-import { ScheduleModule } from '@nestjs/schedule';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { getRateLimitConfig } from './config/rate-limit.config';
 import { PassportModule } from '@nestjs/passport';
 import {
   GithubStrategy,
@@ -25,15 +7,33 @@ import {
   JwtStrategy,
   LocalStrategy,
 } from '@app/common';
+import Joi from 'joi';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
+import { TerminusModule } from '@nestjs/terminus';
+import { ScheduleModule } from '@nestjs/schedule';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { ClientsModule } from '@nestjs/microservices';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { DatabaseModule } from '@app/database';
+import { AuthProxyService } from './proxies/auth.proxy.service';
+import { AuthController } from './controllers/auth.controller';
+import { BillingController } from './controllers/billing.controller';
+import { UsersController } from './controllers/users.controller';
+import { ErrorInterceptor } from './interceptors/error.interceptor';
+import { ComponentsController } from './controllers/components.controller';
+import { CredentialsController } from './controllers/credentials.controller';
+import { ProjectsController } from './controllers/projects.controller';
+import { WorkflowsController } from './controllers/workflows.controller';
+import { ExecutionsController } from './controllers/execution.controller';
+import { getRateLimitConfig } from './config/rate-limit.config';
 import { AnalyticsController } from './controllers/analytics.controller';
 import { createGrpcOptions } from './config/grpc.config';
 import { loggerConfig } from './logging/logger.config';
 import { HealthModule } from './health/health.module';
 import { MetricsModule } from './metrics/metrics.module';
 import { HelmetMiddleware } from './middlewares/helmet.middleware';
-import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import { GrpcClientProxy } from './proxies/grpc-client.proxy';
-import { DatabaseModule } from '@app/database';
 
 @Module({
   imports: [
@@ -76,8 +76,8 @@ import { DatabaseModule } from '@app/database';
         imports: [ConfigModule],
         useFactory: (configService: ConfigService) =>
           createGrpcOptions(
-            configService.get('AUTH_SERVICE_HOST'),
-            configService.get('AUTH_SERVICE_PORT'),
+            configService.getOrThrow('AUTH_SERVICE_HOST'),
+            configService.getOrThrow('AUTH_SERVICE_PORT'),
             'api.auth',
             'auth',
           ),
@@ -88,8 +88,8 @@ import { DatabaseModule } from '@app/database';
         imports: [ConfigModule],
         useFactory: (configService: ConfigService) =>
           createGrpcOptions(
-            configService.get('USERS_SERVICE_HOST'),
-            configService.get('USERS_SERVICE_PORT'),
+            configService.getOrThrow('USERS_SERVICE_HOST'),
+            configService.getOrThrow('USERS_SERVICE_PORT'),
             'api.users',
             'users',
           ),
@@ -100,8 +100,8 @@ import { DatabaseModule } from '@app/database';
         imports: [ConfigModule],
         useFactory: (configService: ConfigService) =>
           createGrpcOptions(
-            configService.get('ANALYTICS_SERVICE_HOST'),
-            configService.get('ANALYTICS_SERVICE_PORT'),
+            configService.getOrThrow('ANALYTICS_SERVICE_HOST'),
+            configService.getOrThrow('ANALYTICS_SERVICE_PORT'),
             'api.analytics',
             'analytics',
           ),
@@ -112,8 +112,8 @@ import { DatabaseModule } from '@app/database';
         imports: [ConfigModule],
         useFactory: (configService: ConfigService) =>
           createGrpcOptions(
-            configService.get('WORKFLOWS_SERVICE_HOST'),
-            configService.get('WORKFLOWS_SERVICE_PORT'),
+            configService.getOrThrow('WORKFLOWS_SERVICE_HOST'),
+            configService.getOrThrow('WORKFLOWS_SERVICE_PORT'),
             'api.workflows',
             'workflows',
           ),
@@ -124,8 +124,8 @@ import { DatabaseModule } from '@app/database';
         imports: [ConfigModule],
         useFactory: (configService: ConfigService) =>
           createGrpcOptions(
-            configService.get('EXECUTION_SERVICE_HOST'),
-            configService.get('EXECUTION_SERVICE_PORT'),
+            configService.getOrThrow('EXECUTION_SERVICE_HOST'),
+            configService.getOrThrow('EXECUTION_SERVICE_PORT'),
             'api.execution',
             'execution',
           ),
@@ -136,8 +136,8 @@ import { DatabaseModule } from '@app/database';
         imports: [ConfigModule],
         useFactory: (configService: ConfigService) =>
           createGrpcOptions(
-            configService.get('BILLING_SERVICE_HOST'),
-            configService.get('BILLING_SERVICE_PORT'),
+            configService.getOrThrow('BILLING_SERVICE_HOST'),
+            configService.getOrThrow('BILLING_SERVICE_PORT'),
             'api.billing',
             'billing',
           ),
@@ -148,8 +148,8 @@ import { DatabaseModule } from '@app/database';
         imports: [ConfigModule],
         useFactory: (configService: ConfigService) =>
           createGrpcOptions(
-            configService.get('COMPONENTS_SERVICE_HOST'),
-            configService.get('COMPONENTS_SERVICE_PORT'),
+            configService.getOrThrow('COMPONENTS_SERVICE_HOST'),
+            configService.getOrThrow('COMPONENTS_SERVICE_PORT'),
             'api.components',
             'components',
           ),
@@ -160,8 +160,8 @@ import { DatabaseModule } from '@app/database';
         imports: [ConfigModule],
         useFactory: (configService: ConfigService) =>
           createGrpcOptions(
-            configService.get('PROJECTS_SERVICE_HOST'),
-            configService.get('PROJECTS_SERVICE_PORT'),
+            configService.getOrThrow('PROJECTS_SERVICE_HOST'),
+            configService.getOrThrow('PROJECTS_SERVICE_PORT'),
             'api.projects',
             'projects',
           ),
@@ -223,7 +223,7 @@ import { DatabaseModule } from '@app/database';
   ],
 })
 export class ApiGatewayModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
+  public configure(consumer: MiddlewareConsumer) {
     consumer.apply(HelmetMiddleware).forRoutes('*');
   }
 }

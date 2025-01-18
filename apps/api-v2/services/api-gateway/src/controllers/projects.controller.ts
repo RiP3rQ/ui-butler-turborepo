@@ -25,7 +25,7 @@ export class ProjectsController implements OnModuleInit {
     private readonly grpcClient: GrpcClientProxy,
   ) {}
 
-  onModuleInit() {
+  public onModuleInit(): void {
     this.projectsService =
       this.client.getService<ProjectsProto.ProjectsServiceClient>(
         'ProjectsService',
@@ -33,7 +33,9 @@ export class ProjectsController implements OnModuleInit {
   }
 
   @Get()
-  async getProjectsByUserId(@CurrentUser() user: ProjectsProto.User) {
+  public async getProjectsByUserId(
+    @CurrentUser() user: ProjectsProto.User,
+  ): Promise<ProjectsProto.Project[]> {
     try {
       const request: ProjectsProto.GetProjectsRequest = {
         $type: 'api.projects.GetProjectsRequest',
@@ -57,10 +59,10 @@ export class ProjectsController implements OnModuleInit {
   }
 
   @Get(':projectId')
-  async getProjectDetails(
+  public async getProjectDetails(
     @CurrentUser() user: ProjectsProto.User,
     @Param('projectId', ParseIntPipe) projectId: number,
-  ) {
+  ): Promise<ProjectsProto.ProjectDetails> {
     try {
       const request: ProjectsProto.GetProjectDetailsRequest = {
         $type: 'api.projects.GetProjectDetailsRequest',
@@ -83,10 +85,10 @@ export class ProjectsController implements OnModuleInit {
   }
 
   @Post()
-  async createProject(
+  public async createProject(
     @CurrentUser() user: ProjectsProto.User,
     @Body() createProjectDto: ProjectsProto.CreateProjectDto,
-  ) {
+  ): Promise<ProjectsProto.Project> {
     try {
       const request: ProjectsProto.CreateProjectRequest = {
         $type: 'api.projects.CreateProjectRequest',
@@ -97,7 +99,6 @@ export class ProjectsController implements OnModuleInit {
           username: user.username,
         },
         project: {
-          $type: 'api.projects.CreateProjectDto',
           ...createProjectDto,
         },
       };

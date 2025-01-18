@@ -1,9 +1,8 @@
-// auth.proxy.service.ts
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
+import { AuthServiceClient } from '@app/common';
 import { AuthProto } from '@app/proto';
 import { handleGrpcError } from '../utils/grpc-error.util';
-import { AuthServiceClient } from '@app/common';
 import { GrpcClientProxy } from './grpc-client.proxy';
 
 @Injectable()
@@ -15,11 +14,11 @@ export class AuthProxyService implements OnModuleInit {
     private readonly grpcClient: GrpcClientProxy,
   ) {}
 
-  onModuleInit() {
+  public onModuleInit(): void {
     this.authService = this.client.getService<AuthServiceClient>('AuthService');
   }
 
-  async register(
+  public async register(
     request: AuthProto.RegisterRequest,
   ): Promise<AuthProto.AuthResponse> {
     try {
@@ -33,11 +32,11 @@ export class AuthProxyService implements OnModuleInit {
     }
   }
 
-  async login(
+  public async login(
     request: AuthProto.LoginRequest,
   ): Promise<AuthProto.AuthResponse> {
     try {
-      console.log('Proxying login request:', { email: request.user.email });
+      console.log('Proxying login request:', { email: request.user?.email });
       return await this.grpcClient.call(
         this.authService.login(request),
         'AuthProxyService.login',
@@ -48,12 +47,12 @@ export class AuthProxyService implements OnModuleInit {
     }
   }
 
-  async refreshToken(
+  public async refreshToken(
     request: AuthProto.RefreshTokenRequest,
   ): Promise<AuthProto.AuthResponse> {
     try {
       console.log('Proxying refresh token request:', {
-        email: request.user.email,
+        email: request.user?.email,
       });
 
       const response = await this.grpcClient.call(
@@ -69,7 +68,7 @@ export class AuthProxyService implements OnModuleInit {
     }
   }
 
-  async verifyRefreshToken(
+  public async verifyRefreshToken(
     request: AuthProto.VerifyRefreshTokenRequest,
   ): Promise<AuthProto.User> {
     try {
@@ -86,12 +85,12 @@ export class AuthProxyService implements OnModuleInit {
     }
   }
 
-  async googleCallback(
+  public async googleCallback(
     request: AuthProto.SocialCallbackRequest,
   ): Promise<AuthProto.AuthResponse> {
     try {
       console.log('Proxying Google callback request:', {
-        email: request.user.email,
+        email: request.user?.email,
       });
       return await this.grpcClient.call(
         this.authService.googleCallback(request),
@@ -103,12 +102,12 @@ export class AuthProxyService implements OnModuleInit {
     }
   }
 
-  async githubCallback(
+  public async githubCallback(
     request: AuthProto.SocialCallbackRequest,
   ): Promise<AuthProto.AuthResponse> {
     try {
       console.log('Proxying GitHub callback request:', {
-        email: request.user.email,
+        email: request.user?.email,
       });
       return await this.grpcClient.call(
         this.authService.githubCallback(request),
@@ -120,7 +119,7 @@ export class AuthProxyService implements OnModuleInit {
     }
   }
 
-  async verifyUser(
+  public async verifyUser(
     request: AuthProto.VerifyUserRequest,
   ): Promise<AuthProto.User> {
     try {

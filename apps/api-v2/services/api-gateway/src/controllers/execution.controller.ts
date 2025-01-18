@@ -29,7 +29,7 @@ export class ExecutionsController implements OnModuleInit {
     private readonly grpcClient: GrpcClientProxy,
   ) {}
 
-  onModuleInit() {
+  public onModuleInit(): void {
     this.executionsService =
       this.client.getService<ExecutionProto.ExecutionsServiceClient>(
         'ExecutionsService',
@@ -45,10 +45,13 @@ export class ExecutionsController implements OnModuleInit {
   }
 
   @Get(':executionId/pending-changes')
-  async getPendingChanges(
+  public async getPendingChanges(
     @CurrentUser() user: User,
     @Param('executionId', ParseIntPipe) executionId: number,
-  ) {
+  ): Promise<{
+    pendingApproval: ExecutionProto.PendingChangesResponse['pendingApproval'];
+    status: string;
+  }> {
     const response = await this.grpcClient.call(
       this.executionsService.getPendingChanges({
         $type: 'api.execution.GetPendingChangesRequest',
@@ -65,11 +68,14 @@ export class ExecutionsController implements OnModuleInit {
   }
 
   @Post(':executionId/approve')
-  async approveChanges(
+  public async approveChanges(
     @CurrentUser() user: User,
     @Param('executionId', ParseIntPipe) executionId: number,
     @Body() body: ApproveChangesDto,
-  ) {
+  ): Promise<{
+    message: string;
+    status: string;
+  }> {
     const response = await this.grpcClient.call(
       this.executionsService.approveChanges({
         $type: 'api.execution.ApproveChangesRequest',
