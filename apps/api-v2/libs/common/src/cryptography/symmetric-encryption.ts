@@ -1,4 +1,4 @@
-import crypto from "crypto";
+import crypto from "node:crypto";
 import { ALG } from "./algorythm";
 
 /**
@@ -6,11 +6,11 @@ import { ALG } from "./algorythm";
  * Requires ENCRYPTION_KEY env variable (32-byte hex).
  * Returns format: "iv:encryptedData" in hex.
  *
- * @param {string} value - Text to encrypt
- * @returns {string} Encrypted hex string
- * @throws {Error} If ENCRYPTION_KEY is not set
+ * @param value - Text to encrypt
+ * @returns Encrypted hex string
+ * @throws If ENCRYPTION_KEY is not set
  */
-export const symmetricEncrypt = (value: string) => {
+export const symmetricEncrypt = (value: string): string => {
   // Get encryption key from environment variables
   const key = process.env.ENCRYPTION_KEY;
   if (!key) {
@@ -30,5 +30,5 @@ export const symmetricEncrypt = (value: string) => {
   encrypted = Buffer.concat([encrypted, cipher.final()]);
 
   // Return IV and encrypted data as hex strings, separated by colon
-  return iv.toString("hex") + ":" + encrypted.toString("hex");
+  return `${iv.toString("hex")}:${encrypted.toString("hex")}`;
 };

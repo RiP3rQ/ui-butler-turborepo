@@ -7,5 +7,5 @@ export interface ThrottleOptions {
   ttl: number;
 }
 
-export const Throttle = (options: ThrottleOptions) =>
+export const Throttle = (options: ThrottleOptions): MethodDecorator =>
   SetMetadata(THROTTLE_LIMIT_KEY, options);

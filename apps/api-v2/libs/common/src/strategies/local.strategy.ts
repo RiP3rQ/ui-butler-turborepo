@@ -3,9 +3,9 @@ import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-local";
 import { type ClientGrpc } from "@nestjs/microservices";
-import { AuthServiceClient } from "../types/grpc-clients.interface";
 import { AuthProto } from "@app/proto";
 import { firstValueFrom } from "rxjs";
+import { AuthServiceClient } from "../types/grpc-clients.interface";
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -17,11 +17,11 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  onModuleInit() {
+  onModuleInit(): void {
     this.authService = this.client.getService<AuthServiceClient>("AuthService");
   }
 
-  async validate(email: string, password: string) {
+  async validate(email: string, password: string): Promise<AuthProto.User> {
     try {
       if (!email || !password) {
         throw new UnauthorizedException("Email and password are required");
@@ -40,7 +40,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 
       console.log("User verified:", user);
 
-      if (!user || !user.id || !user.email) {
+      if (!user.id || !user.email) {
         throw new UnauthorizedException("Invalid credentials");
       }
 

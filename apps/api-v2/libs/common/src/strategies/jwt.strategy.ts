@@ -3,12 +3,12 @@ import { ConfigService } from "@nestjs/config";
 import { PassportStrategy } from "@nestjs/passport";
 import { Request } from "express";
 import { ExtractJwt, Strategy } from "passport-jwt";
-import { TokenPayload } from "../types/token-payload.interface";
 import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { type ClientGrpc } from "@nestjs/microservices";
-import { UsersServiceClient } from "../types/grpc-clients.interface";
 import { UsersProto } from "@app/proto";
 import { firstValueFrom } from "rxjs";
+import { UsersServiceClient } from "../types/grpc-clients.interface";
+import { TokenPayload } from "../types/token-payload.interface";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -20,18 +20,18 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (request: Request) => request.cookies?.Authentication,
+        (request: Request) => String(request.cookies.Authentication),
       ]),
-      secretOrKey: configService.getOrThrow("JWT_ACCESS_TOKEN_SECRET"),
+      secretOrKey: String(configService.getOrThrow("JWT_ACCESS_TOKEN_SECRET")),
     });
   }
 
-  onModuleInit() {
+  onModuleInit(): void {
     this.usersService =
       this.client.getService<UsersServiceClient>("UsersService");
   }
 
-  async validate(payload: TokenPayload) {
+  async validate(payload: TokenPayload): Promise<UsersProto.User> {
     try {
       const request: UsersProto.GetUserByEmailRequest = {
         $type: "api.users.GetUserByEmailRequest",
@@ -42,7 +42,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         this.usersService.getUserByEmail(request),
       );
 
-      if (!user) {
+      if (typeof user === "undefined") {
         throw new UnauthorizedException("User not found");
       }
 
