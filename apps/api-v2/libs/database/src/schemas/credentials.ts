@@ -35,7 +35,7 @@ export const userCredentials = pgTable(
 
 export const userCredentialsRelations = relations(
   userCredentials,
-  ({ many, one }) => ({
+  ({ one }) => ({
     users: one(users, {
       fields: [userCredentials.userId],
       references: [users.id],

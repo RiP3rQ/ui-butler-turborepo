@@ -14,4 +14,5 @@ module.exports = {
   rules: {
     "no-console": "off",
   },
+  ignorePatterns: ["dist/**/*", "node_modules/**/*"],
 };

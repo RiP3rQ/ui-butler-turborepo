@@ -6,8 +6,8 @@ import {
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
-import { users } from "./users";
 import { relations } from "drizzle-orm";
+import { users } from "./users";
 import { projects } from "./projects";
 
 export const components = pgTable("components", {
