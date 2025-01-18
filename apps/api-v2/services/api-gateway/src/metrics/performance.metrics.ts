@@ -75,7 +75,7 @@ export class PerformanceMetrics {
   }
 
   // Metric recording methods
-  recordResponseTime(
+  public recordResponseTime(
     method: string,
     route: string,
     statusCode: number,
@@ -86,30 +86,34 @@ export class PerformanceMetrics {
       .observe(duration);
   }
 
-  incrementRequestCount(method: string, route: string, statusCode: number) {
+  public incrementRequestCount(
+    method: string,
+    route: string,
+    statusCode: number,
+  ) {
     this.requestCounter.labels(method, route, statusCode.toString()).inc();
   }
 
-  incrementErrorCount(method: string, route: string, errorCode: string) {
+  public incrementErrorCount(method: string, route: string, errorCode: string) {
     this.errorCounter.labels(method, route, errorCode).inc();
   }
 
-  incrementCacheHits(cacheType: string) {
+  public incrementCacheHits(cacheType: string) {
     this.cacheHitsCounter.labels(cacheType).inc();
   }
 
-  incrementCacheMisses(cacheType: string) {
+  public incrementCacheMisses(cacheType: string) {
     this.cacheMissesCounter.labels(cacheType).inc();
   }
 
-  updateMemoryUsage() {
+  public updateMemoryUsage() {
     const used = process.memoryUsage();
     this.memoryGauge.labels('heap_total').set(used.heapTotal);
     this.memoryGauge.labels('heap_used').set(used.heapUsed);
     this.memoryGauge.labels('rss').set(used.rss);
   }
 
-  setActiveConnections(count: number) {
+  public setActiveConnections(count: number) {
     this.activeConnectionsGauge.set(count);
   }
 }

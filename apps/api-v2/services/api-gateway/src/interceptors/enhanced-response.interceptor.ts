@@ -64,7 +64,7 @@ export class EnhancedResponseInterceptor<T>
     this.startTime = Date.now();
   }
 
-  intercept(
+  public intercept(
     context: ExecutionContext,
     next: CallHandler,
   ): Observable<ApiResponse<T>> {
@@ -74,7 +74,7 @@ export class EnhancedResponseInterceptor<T>
     const requestStartTime = Date.now();
 
     return next.handle().pipe(
-      map((data) => {
+      map((data: T) => {
         // Collect debug information
         const debugInfo = this.collectDebugInfo(
           request,
@@ -86,7 +86,7 @@ export class EnhancedResponseInterceptor<T>
         this.logDebugInfo(debugInfo);
 
         // Only return the data to the client
-        return { data };
+        return { data } satisfies ApiResponse<T>;
       }),
     );
   }
@@ -97,26 +97,28 @@ export class EnhancedResponseInterceptor<T>
     startTime: number,
   ): DebugRequestInfo {
     const clientInfo = this.getClientInfo(request);
-    const timeElapsed = `${Date.now() - startTime}ms`;
+    const timeElapsed = `${String(Date.now() - startTime)}ms`;
+
+    const host = request.get('host') ?? 'unknown';
 
     return {
       timestamp: new Date().toISOString(),
       requestId: this.generateRequestId(),
-      correlationId: request.get('X-Correlation-ID') || 'not-set',
+      correlationId: request.get('X-Correlation-ID') ?? 'not-set',
       method: request.method,
       path: request.path,
-      fullUrl: `${request.protocol}://${request.get('host')}${request.originalUrl}`,
+      fullUrl: `${request.protocol}://${host}${request.originalUrl}`,
       timeElapsed,
       statusCode: response.statusCode,
       client: clientInfo,
-      environment: process.env.NODE_ENV || 'development',
-      apiVersion: process.env.API_VERSION || '1.0',
+      environment: process.env.NODE_ENV ?? 'development',
+      apiVersion: process.env.API_VERSION ?? '1.0',
     };
   }
 
   private getClientInfo(request: Request): DebugClientInfo {
-    const ip = requestIp.getClientIp(request) || 'unknown';
-    const userAgentString = request.get('user-agent') || '';
+    const ip = requestIp.getClientIp(request) ?? 'unknown';
+    const userAgentString = request.get('user-agent') ?? '';
     const agent = useragent.parse(userAgentString);
     const geo = this.getGeoLocation(ip);
 
@@ -172,6 +174,14 @@ export class EnhancedResponseInterceptor<T>
       timeElapsed: requestInfo.timeElapsed,
     });
 
+    const getDeviceType = (device: { isMobile: boolean; isBot: boolean }) => {
+      if (device.isMobile) return 'Mobile';
+      if (device.isBot) return 'Bot';
+      return 'Desktop';
+    };
+
+    const deviceType = getDeviceType(client.device);
+
     if (
       client.ip !== 'unknown' &&
       client.ip !== '127.0.0.1' &&
@@ -184,11 +194,7 @@ export class EnhancedResponseInterceptor<T>
         browser: `${client.userAgent.browser} ${client.userAgent.version}`,
         os: client.userAgent.os,
         platform: client.userAgent.platform,
-        deviceType: client.device.isMobile
-          ? 'Mobile'
-          : client.device.isBot
-            ? 'Bot'
-            : 'Desktop',
+        deviceType,
       });
     }
 
@@ -204,7 +210,7 @@ export class EnhancedResponseInterceptor<T>
   }
 
   private isMobileDevice(userAgent: string): boolean {
-    return /Mobile|Android|iP(hone|od|ad)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(
+    return /Mobile|Android|iP(?:hone|od|ad)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(?:hpw|web)OS|Opera M(?:obi|ini)/.test(
       userAgent,
     );
   }
@@ -220,6 +226,6 @@ export class EnhancedResponseInterceptor<T>
   }
 
   private generateRequestId(): string {
-    return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `req_${Date.now().toString()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 }

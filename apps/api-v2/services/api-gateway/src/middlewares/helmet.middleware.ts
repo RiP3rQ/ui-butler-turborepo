@@ -4,7 +4,7 @@ import helmet from 'helmet';
 
 @Injectable()
 export class HelmetMiddleware implements NestMiddleware {
-  use(req: Request, res: Response, next: NextFunction) {
+  public use(req: Request, res: Response, next: NextFunction) {
     // Skip Helmet for metrics endpoint
     if (req.path === '/api/metrics') {
       next();

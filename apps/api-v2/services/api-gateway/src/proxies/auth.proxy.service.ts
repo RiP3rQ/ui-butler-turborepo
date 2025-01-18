@@ -1,6 +1,6 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
-import { AuthServiceClient } from '@app/common';
+import { AuthServiceClient, GrpcError } from '@app/common';
 import { AuthProto } from '@app/proto';
 import { handleGrpcError } from '../utils/grpc-error.util';
 import { GrpcClientProxy } from './grpc-client.proxy';
@@ -41,9 +41,9 @@ export class AuthProxyService implements OnModuleInit {
         this.authService.login(request),
         'AuthProxyService.login',
       );
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error in auth proxy login:', error);
-      handleGrpcError(error);
+      handleGrpcError(error as GrpcError);
     }
   }
 
@@ -62,9 +62,9 @@ export class AuthProxyService implements OnModuleInit {
 
       console.log('Refresh token response received');
       return response;
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error in auth proxy refreshToken:', error);
-      handleGrpcError(error);
+      handleGrpcError(error as GrpcError);
     }
   }
 
@@ -79,9 +79,9 @@ export class AuthProxyService implements OnModuleInit {
         this.authService.verifyRefreshToken(request),
         'AuthProxyService.verifyRefreshToken',
       );
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error in auth proxy verifyRefreshToken:', error);
-      handleGrpcError(error);
+      handleGrpcError(error as GrpcError);
     }
   }
 
@@ -96,9 +96,9 @@ export class AuthProxyService implements OnModuleInit {
         this.authService.googleCallback(request),
         'AuthProxyService.googleCallback',
       );
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error in auth proxy googleCallback:', error);
-      handleGrpcError(error);
+      handleGrpcError(error as GrpcError);
     }
   }
 
@@ -113,9 +113,9 @@ export class AuthProxyService implements OnModuleInit {
         this.authService.githubCallback(request),
         'AuthProxyService.githubCallback',
       );
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error in auth proxy githubCallback:', error);
-      handleGrpcError(error);
+      handleGrpcError(error as GrpcError);
     }
   }
 
@@ -128,9 +128,9 @@ export class AuthProxyService implements OnModuleInit {
         this.authService.verifyUser(request),
         'AuthProxyService.verifyUser',
       );
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error in auth proxy verifyUser:', error);
-      handleGrpcError(error);
+      handleGrpcError(error as GrpcError);
     }
   }
 }

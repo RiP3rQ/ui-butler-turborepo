@@ -8,9 +8,7 @@ import {
 import { InjectMetric } from '@willsoto/nestjs-prometheus';
 import { DatabaseStatsService } from './database-stats.service';
 
-export interface MetricLabels {
-  [key: string]: string;
-}
+export type MetricLabels = Record<string, string>;
 
 export interface HttpMetricLabels extends MetricLabels {
   method: string;
@@ -42,11 +40,11 @@ export class MetricsService {
 
   constructor(
     @InjectMetric('http_request_duration_seconds')
-    private readonly httpRequestDuration: Histogram<string>,
+    private readonly httpRequestDuration: Histogram,
     @InjectMetric('http_requests_total')
-    private readonly httpRequestsTotal: Counter<string>,
+    private readonly httpRequestsTotal: Counter,
     @InjectMetric('grpc_requests_total')
-    private readonly grpcRequestsTotal: Counter<string>,
+    private readonly grpcRequestsTotal: Counter,
     private readonly databaseStats: DatabaseStatsService,
   ) {
     // Initialize registry in constructor
@@ -81,7 +79,7 @@ export class MetricsService {
   /**
    * Get all metrics including general and database metrics
    */
-  async getMetrics(): Promise<string> {
+  public async getMetrics(): Promise<string> {
     try {
       const [generalMetrics, dbMetrics] = await Promise.all([
         this.registry.metrics(),
@@ -98,7 +96,7 @@ export class MetricsService {
   /**
    * Record HTTP request metrics
    */
-  recordHttpRequest(
+  public recordHttpRequest(
     method: string,
     route: string,
     status: number,
@@ -106,16 +104,12 @@ export class MetricsService {
   ): void {
     const labels = this.createHttpLabels(method, route, status);
 
-    this.safeExecute(
-      () => {
-        this.httpRequestDuration
-          .labels(...Object.values(labels))
-          .observe(duration);
-        this.httpRequestsTotal.labels(...Object.values(labels)).inc();
-      },
-      'Failed to record HTTP request metrics',
-      { method, route, status, duration },
-    );
+    this.safeExecute(() => {
+      this.httpRequestDuration
+        .labels(...Object.values(labels))
+        .observe(duration);
+      this.httpRequestsTotal.labels(...Object.values(labels)).inc();
+    }, 'Failed to record HTTP request metrics');
   }
 
   /**
@@ -161,11 +155,7 @@ export class MetricsService {
     });
   }
 
-  private safeExecute(
-    operation: () => void,
-    errorMessage: string,
-    context: Record<string, unknown>,
-  ): void {
+  private safeExecute(operation: () => void, errorMessage: string): void {
     try {
       operation();
     } catch (error) {
