@@ -16,7 +16,8 @@
     "generate": "protoc --plugin=protoc-gen-ts_proto=.\\node_modules\\.bin\\protoc-gen-ts_proto.cmd --ts_proto_out=./src/generated --ts_proto_opt=nestJs=true --proto_path=./src/proto-definitions v1/*.proto",
     "proto:generate": "ts-node scripts/generate-protos.ts",
     "proto:clean": "rimraf src/generated",
-    "proto:build": "pnpm run proto:clean && pnpm run proto:generate"
+    "proto:build": "pnpm run proto:clean && pnpm run proto:generate",
+    "lint": "eslint ./src --max-warnings 0 --fix"
   },
   "keywords": [],
   "author": "",
