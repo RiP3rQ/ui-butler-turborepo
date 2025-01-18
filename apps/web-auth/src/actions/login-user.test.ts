@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getAuthCookie } from "@/lib/auth-cookie";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { setResponseCookies } from "@/lib/set-cookies";
-import loginUser from "./loginUser";
+import loginUser from "./login-user";
 
 // Mock dependencies
 jest.mock("next/navigation", () => ({

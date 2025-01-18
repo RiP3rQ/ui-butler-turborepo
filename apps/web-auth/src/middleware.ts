@@ -1,27 +1,32 @@
-import { cookies } from "next/headers";
+import { cookies as getCookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
-import { AUTH_COOKIE, getAuthCookie, REFRESH_COOKIE } from "@/lib/auth-cookie";
+import { AUTH_COOKIE, getAuthCookie, REFRESH_COOKIE } from "./lib/auth-cookie";
 
 const unauthenticatedRoutes = ["/sign-up", "/sign-in", "/auth/google"];
 
-export async function middleware(request: NextRequest) {
-  const authenticated = Boolean((await cookies()).get(AUTH_COOKIE)?.value);
+export async function middleware(
+  request: NextRequest,
+): Promise<NextResponse | Response | undefined> {
+  const cookiesStore = await getCookies();
+  const authenticated = Boolean(cookiesStore.get(AUTH_COOKIE)?.value);
 
   if (authenticated) {
+    const mainAppUrl =
+      process.env.NEXT_PUBLIC_MAIN_APP_URL ?? "http://localhost:3001/dashboard";
+
     // redirect to main page if authenticated
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_MAIN_APP_URL}`);
+    return NextResponse.redirect(mainAppUrl);
   }
 
-  if (!authenticated && (await cookies()).get(REFRESH_COOKIE)) {
-    const refreshRes = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`,
-      {
-        headers: {
-          Cookie: cookies().toString(),
-        },
-        method: "POST",
+  if (cookiesStore.get(REFRESH_COOKIE)) {
+    const apiUrl =
+      process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333/api";
+    const refreshRes = await fetch(`${apiUrl}/auth/refresh`, {
+      headers: {
+        Cookie: cookiesStore.toString(),
       },
-    );
+      method: "POST",
+    });
     const authCookies = getAuthCookie(refreshRes);
     if (authCookies?.accessToken) {
       const response = NextResponse.redirect(request.url);
@@ -31,12 +36,11 @@ export async function middleware(request: NextRequest) {
   }
 
   if (
-    !authenticated &&
     !unauthenticatedRoutes.some((route) =>
       request.nextUrl.pathname.startsWith(route),
     )
   ) {
-    return Response.redirect(new URL(unauthenticatedRoutes[0]!, request.url));
+    return Response.redirect(new URL("/sign-up", request.url));
   }
 }
 

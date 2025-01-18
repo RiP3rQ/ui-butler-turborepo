@@ -1,16 +1,16 @@
 import Link from "next/link";
 import { type Metadata } from "next";
-import Icons from "@repo/ui/components/landing-page/icons";
+import { Icons } from "@repo/ui/components/landing-page/icons";
 import { Separator } from "@repo/ui/components/ui/separator";
 import * as React from "react";
-import { RegisterForm } from "@/app/sign-up/_components/register-form/register-form";
+import { RegisterForm } from "./_components/register-form/register-form";
 
 export const metadata: Metadata = {
   title: "Register - UI-Butler",
   description: "Register your new UI-Butler account.",
 };
 
-export default function RegisterPage() {
+export default function RegisterPage(): React.ReactNode {
   return (
     <div className="container relative hidden h-[800px] flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
       <div className="relative hidden min-h-screen flex-col bg-muted p-10 text-white dark:border-r lg:flex">

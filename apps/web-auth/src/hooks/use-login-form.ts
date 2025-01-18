@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useMemo } from "react";
-import loginUser from "@/actions/loginUser";
+import loginUser from "~/src/actions/login-user";
 import { loginFormSchema } from "@/schemas/login-schema";
 import { getErrorMessage } from "@/lib/get-error-message";
 

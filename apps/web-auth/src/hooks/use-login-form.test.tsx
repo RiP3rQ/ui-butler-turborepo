@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useLoginForm } from "@/hooks/use-login-form";
 import { type loginFormSchema } from "@/schemas/login-schema";
-import loginUser from "@/actions/loginUser";
+import loginUser from "~/src/actions/login-user";
 // Mock the toast and loginUser modules
 jest.mock("sonner", () => ({
   toast: {

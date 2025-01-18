@@ -7,7 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useMemo } from "react";
 import { registerFormSchema } from "@/schemas/register-schema";
-import registerUser from "@/actions/registerUser";
+import registerUser from "~/src/actions/register-user";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 export function useRegisterForm() {

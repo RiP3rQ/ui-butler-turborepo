@@ -1,16 +1,16 @@
 import Link from "next/link";
 import { type Metadata } from "next";
-import Icons from "@repo/ui/components/landing-page/icons";
+import { Icons } from "@repo/ui/components/landing-page/icons";
 import * as React from "react";
 import { Separator } from "@repo/ui/components/ui/separator";
-import { LoginForm } from "@/app/sign-in/_components/login-form/login-form";
+import { LoginForm } from "./_components/login-form/login-form";
 
 export const metadata: Metadata = {
   title: "Login - UI-Butler",
   description: "Login to your UI-Butler account.",
 };
 
-export default function LoginPage() {
+export default function LoginPage(): React.ReactNode {
   return (
     <div className="container relative hidden h-[800px] flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
       <div className="relative hidden min-h-screen flex-col bg-muted p-10 text-white dark:border-r lg:flex">

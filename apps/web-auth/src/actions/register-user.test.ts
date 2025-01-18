@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getAuthCookie } from "@/lib/auth-cookie";
-import registerUser from "@/actions/registerUser";
+import registerUser from "~/src/actions/register-user";
 import { setResponseCookies } from "@/lib/set-cookies";
 import { getErrorMessage } from "@/lib/get-error-message";
 
