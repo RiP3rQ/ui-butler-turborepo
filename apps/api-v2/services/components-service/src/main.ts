@@ -11,9 +11,11 @@ async function bootstrap() {
   const app = await NestFactory.create(ComponentsModule);
 
   // Configure ports
-  const HTTP_PORT =
-    parseInt(process.env.COMPONENTS_SERVICE_HTTP_PORT, 10) || 3348;
-  const GRPC_PORT = parseInt(process.env.COMPONENTS_SERVICE_PORT, 10) || 3345;
+  const HTTP_PORT = parseInt(
+    process.env.COMPONENTS_SERVICE_HTTP_PORT ?? '3348',
+    10,
+  );
+  const GRPC_PORT = parseInt(process.env.COMPONENTS_SERVICE_PORT ?? '3345', 10);
 
   // Add microservice capabilities
   app.connectMicroservice({
@@ -24,7 +26,7 @@ async function bootstrap() {
         __dirname,
         '../../../libs/proto/src/proto/components.proto',
       ),
-      url: `${process.env.COMPONENTS_SERVICE_HOST || 'localhost'}:${GRPC_PORT || '3345'}`,
+      url: `${process.env.COMPONENTS_SERVICE_HOST ?? 'localhost'}:${GRPC_PORT}`,
     },
   });
 

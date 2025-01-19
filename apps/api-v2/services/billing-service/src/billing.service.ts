@@ -25,7 +25,7 @@ export class BillingService {
     private readonly database: NeonDatabaseType,
   ) {}
 
-  async setupUser(user: User): Promise<void> {
+  public async setupUser(user: User): Promise<void> {
     const [balance] = await this.database
       .insert(userBalance)
       .values({
@@ -39,7 +39,7 @@ export class BillingService {
     }
   }
 
-  async purchasePack(
+  public async purchasePack(
     user: User,
     packId: BalancePackId,
   ): Promise<UserBasicCredits> {
@@ -68,7 +68,7 @@ export class BillingService {
     };
   }
 
-  async getUserCredits(user: User): Promise<UserBasicCredits> {
+  public async getUserCredits(user: User): Promise<UserBasicCredits> {
     const [credits] = await this.database
       .select()
       .from(userBalance)
