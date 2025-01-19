@@ -62,6 +62,7 @@ export function NewProjectDialog({
                   createNewProjectModal.setIsOpen(false);
                   form.reset();
                 }}
+                disabled={isFormDisabled}
               >
                 Cancel
               </Button>
