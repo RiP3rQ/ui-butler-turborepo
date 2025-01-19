@@ -1,4 +1,4 @@
-import { ImageUpIcon, LucideProps } from "lucide-react";
+import { ImageUpIcon, type LucideProps } from "lucide-react";
 import { ServerImproveStylesTask } from "./server/server-improve-styles";
 
 export const ImproveStylesTask = {

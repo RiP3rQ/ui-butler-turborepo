@@ -1,14 +1,13 @@
 // auth.controller.spec.ts
-import { Test, TestingModule } from '@nestjs/testing';
+import { type AuthProto } from '@app/proto';
+import { RpcException } from '@nestjs/microservices';
+import { Test, type TestingModule } from '@nestjs/testing';
+import { status } from '@grpc/grpc-js';
 import { AuthController } from '../auth.controller';
 import { AuthService } from '../auth.service';
-import { RpcException } from '@nestjs/microservices';
-import { status } from '@grpc/grpc-js';
-import { AuthProto } from '@app/proto';
 
 describe('AuthController', () => {
   let controller: AuthController;
-  let service: AuthService;
 
   const mockAuthService = {
     register: jest.fn(),
@@ -29,7 +28,6 @@ describe('AuthController', () => {
     }).compile();
 
     controller = module.get<AuthController>(AuthController);
-    service = module.get<AuthService>(AuthService);
   });
 
   afterEach(() => {
@@ -47,7 +45,7 @@ describe('AuthController', () => {
         email: 'test@test.com',
         password: 'password',
       };
-      const mockResponse = {
+      const mockResponse: AuthProto.AuthResponse = {
         $type: 'api.auth.AuthResponse',
         accessToken: 'token',
         refreshToken: 'refresh',
@@ -60,7 +58,7 @@ describe('AuthController', () => {
         user: mockUser,
       });
 
-      expect(service.register).toHaveBeenCalledWith(mockUser);
+      expect(mockAuthService.register).toHaveBeenCalledWith(mockUser);
       expect(result).toEqual(mockResponse);
     });
   });
@@ -73,7 +71,7 @@ describe('AuthController', () => {
       username: 'test',
       password: 'password',
     };
-    const mockResponse = {
+    const mockResponse: AuthProto.AuthResponse = {
       $type: 'api.auth.AuthResponse',
       accessToken: 'token',
       refreshToken: 'refresh',
@@ -87,7 +85,7 @@ describe('AuthController', () => {
         user: mockUser,
       });
 
-      expect(service.login).toHaveBeenCalledWith(mockUser);
+      expect(mockAuthService.login).toHaveBeenCalledWith(mockUser);
       expect(result).toEqual(mockResponse);
     });
 
@@ -95,7 +93,7 @@ describe('AuthController', () => {
       await expect(
         controller.login({
           $type: 'api.auth.LoginRequest',
-          user: null,
+          user: undefined,
         }),
       ).rejects.toThrow(
         new RpcException({
@@ -114,7 +112,7 @@ describe('AuthController', () => {
       username: 'test',
       refreshToken: 'refresh',
     };
-    const mockResponse = {
+    const mockResponse: AuthProto.AuthResponse = {
       $type: 'api.auth.AuthResponse',
       accessToken: 'newToken',
       refreshToken: 'newRefresh',
@@ -128,7 +126,7 @@ describe('AuthController', () => {
         user: mockUser,
       });
 
-      expect(service.login).toHaveBeenCalledWith(mockUser);
+      expect(mockAuthService.login).toHaveBeenCalledWith(mockUser);
       expect(result).toEqual(mockResponse);
     });
 
@@ -136,7 +134,7 @@ describe('AuthController', () => {
       await expect(
         controller.refreshToken({
           $type: 'api.auth.RefreshTokenRequest',
-          user: null,
+          user: undefined,
         }),
       ).rejects.toThrow(
         new RpcException({
@@ -154,7 +152,7 @@ describe('AuthController', () => {
       email: 'test@test.com',
       username: 'test',
     };
-    const mockResponse = {
+    const mockResponse: AuthProto.AuthResponse = {
       $type: 'api.auth.AuthResponse',
       accessToken: 'token',
       refreshToken: 'refresh',
@@ -168,7 +166,7 @@ describe('AuthController', () => {
         user: mockUser,
       });
 
-      expect(service.login).toHaveBeenCalledWith(mockUser, true);
+      expect(mockAuthService.login).toHaveBeenCalledWith(mockUser, true);
       expect(result).toEqual(mockResponse);
     });
 
@@ -180,7 +178,7 @@ describe('AuthController', () => {
         user: mockUser,
       });
 
-      expect(service.login).toHaveBeenCalledWith(mockUser, true);
+      expect(mockAuthService.login).toHaveBeenCalledWith(mockUser, true);
       expect(result).toEqual(mockResponse);
     });
   });
@@ -203,7 +201,7 @@ describe('AuthController', () => {
 
       const result = await controller.verifyRefreshToken(mockRequest);
 
-      expect(service.verifyUserRefreshToken).toHaveBeenCalledWith(
+      expect(mockAuthService.verifyUserRefreshToken).toHaveBeenCalledWith(
         mockRequest.refreshToken,
         mockRequest.email,
       );
@@ -229,7 +227,7 @@ describe('AuthController', () => {
 
       const result = await controller.verifyUser(mockRequest);
 
-      expect(service.verifyUser).toHaveBeenCalledWith(
+      expect(mockAuthService.verifyUser).toHaveBeenCalledWith(
         mockRequest.email,
         mockRequest.password,
       );
@@ -243,7 +241,7 @@ describe('AuthController', () => {
 
       const result = await controller.verifyUser(mockRequest);
 
-      expect(service.verifyUser).toHaveBeenCalledWith(
+      expect(mockAuthService.verifyUser).toHaveBeenCalledWith(
         mockRequest.email,
         mockRequest.password,
       );

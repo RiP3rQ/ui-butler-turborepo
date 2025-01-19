@@ -1,5 +1,6 @@
 // jest-setup.ts
 import 'reflect-metadata';
+import { type RpcException } from '@nestjs/microservices';
 
 // Mock console methods to prevent noise in test output
 global.console = {
@@ -28,7 +29,9 @@ jest.mock('@nestjs/microservices', () => ({
       providers: [],
     }),
   },
-  RpcException: jest.requireActual('@nestjs/microservices').RpcException,
+  RpcException: jest.requireActual<{ RpcException: typeof RpcException }>(
+    '@nestjs/microservices',
+  ).RpcException,
 }));
 
 // Mock grpc-js status codes
@@ -47,8 +50,8 @@ jest.mock('@grpc/grpc-js', () => ({
     INTERNAL: 13,
   },
   ServiceError: class MockServiceError extends Error {
-    code: number;
-    details: string;
+    public code: number;
+    public details: string;
 
     constructor(code: number, details: string) {
       super(details);

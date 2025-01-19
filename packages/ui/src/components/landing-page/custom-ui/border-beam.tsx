@@ -1,4 +1,4 @@
-import { cn } from "@repo/ui/lib/utils.ts";
+import { cn } from "@repo/ui/lib/utils";
 
 interface BorderBeamProps {
   className?: string;
@@ -41,7 +41,7 @@ export function BorderBeam({
           "--border-width": borderWidth,
           "--color-from": colorFrom,
           "--color-to": colorTo,
-          "--delay": `-${delay}s`,
+          "--delay": `-${delay.toString()}s`,
         } as React.CSSProperties
       }
     />

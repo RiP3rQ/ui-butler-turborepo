@@ -1,9 +1,8 @@
 "use client";
 
 import type { ParamProps } from "@repo/types";
-import { type JSX, useId } from "react";
+import { type JSX } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getUserCredentials } from "@/actions/credentials/server-actions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -23,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/ui/components/ui/select";
+import { getUserCredentials } from "@/actions/credentials/server-actions";
 
 const formSchema = z.object({
   credential: z.string({
@@ -37,7 +37,6 @@ function CredentialParamField({
   value,
   updateNodeParamValue,
 }: Readonly<ParamProps>): JSX.Element {
-  const id = useId();
   const query = useQuery({
     queryKey: ["credentials-for-user"],
     queryFn: getUserCredentials,
@@ -51,7 +50,7 @@ function CredentialParamField({
     },
   });
 
-  function onSubmit(data: FormValues) {
+  function onSubmit(data: FormValues): void {
     updateNodeParamValue(data.credential);
   }
 
@@ -82,7 +81,7 @@ function CredentialParamField({
                     <SelectGroup>
                       <SelectLabel>Credentials</SelectLabel>
                       <SelectItem value="UI-Butler's API key (will cost extra credits)">
-                        UI-Butler's API key (will cost extra credits)
+                        UI-Butler&apos;s API key (will cost extra credits)
                       </SelectItem>
                       {query.data?.map((credential) => (
                         <SelectItem

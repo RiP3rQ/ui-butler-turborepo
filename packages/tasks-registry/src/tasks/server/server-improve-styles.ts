@@ -1,4 +1,4 @@
-import { BaseWorkflowTask, TaskParamType, TaskType } from "@repo/types";
+import { type BaseWorkflowTask, TaskParamType, TaskType } from "@repo/types";
 
 export const ServerImproveStylesTask = {
   type: TaskType.IMPROVE_STYLES,
@@ -23,6 +23,7 @@ export const ServerImproveStylesTask = {
     },
   ] as const,
   credits: 1,
+  creditsWithoutApiKey: 6,
 } satisfies BaseWorkflowTask;
 
 export type ServerImproveStylesTaskType = typeof ServerImproveStylesTask;

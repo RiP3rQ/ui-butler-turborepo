@@ -1,3 +1,4 @@
+import { type JSX } from "react";
 import {
   act,
   fireEvent,
@@ -6,12 +7,12 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
-import { useLoginForm } from "@/hooks/use-login-form";
-import { loginFormSchema } from "@/schemas/login-schema";
-import { z } from "zod";
+import { type z } from "zod";
 import { toast } from "sonner";
-import loginUser from "@/actions/loginUser.ts";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useLoginForm } from "@/hooks/use-login-form";
+import { type loginFormSchema } from "@/schemas/login-schema";
+import loginUser from "@/actions/login-user";
 // Mock the toast and loginUser modules
 jest.mock("sonner", () => ({
   toast: {
@@ -20,7 +21,7 @@ jest.mock("sonner", () => ({
     loading: jest.fn(),
   },
 }));
-jest.mock("@/actions/loginUser.ts", () => jest.fn());
+jest.mock("@/actions/loginUser", () => jest.fn());
 
 const queryClient = new QueryClient();
 
@@ -34,7 +35,7 @@ describe("useLoginForm", () => {
     jest.restoreAllMocks(); // Restore all mocks after each test
   });
 
-  function TestComponent() {
+  function TestComponent(): JSX.Element {
     const { form, isSubmitDisabled, handleSubmit } = useLoginForm();
 
     return (
@@ -60,7 +61,11 @@ describe("useLoginForm", () => {
     );
   }
 
-  const wrapper = ({ children }: { children: React.ReactNode }) => (
+  const wrapper = ({
+    children,
+  }: {
+    children: React.ReactNode;
+  }): JSX.Element => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 

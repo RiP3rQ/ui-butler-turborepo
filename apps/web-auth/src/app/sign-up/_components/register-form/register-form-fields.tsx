@@ -1,5 +1,6 @@
-import { Control } from "react-hook-form";
-import { z } from "zod";
+import { type JSX } from "react";
+import { type Control } from "react-hook-form";
+import { type z } from "zod";
 import {
   FormControl,
   FormField,
@@ -9,9 +10,8 @@ import {
 } from "@repo/ui/components/ui/form";
 import { Input } from "@repo/ui/components/ui/input";
 import { Separator } from "@repo/ui/components/ui/separator";
-import { FormDescription } from "@/components/ui/form.tsx";
-import React from "react";
-import { registerFormSchema } from "@/schemas/register-schema.ts";
+import { FormDescription } from "@/components/ui/form";
+import { type registerFormSchema } from "@/schemas/register-schema";
 
 interface RegisterFormFieldsProps {
   control: Control<z.infer<typeof registerFormSchema>>;
@@ -21,7 +21,7 @@ interface RegisterFormFieldsProps {
 export function RegisterFormFields({
   control,
   isDisabled,
-}: Readonly<RegisterFormFieldsProps>) {
+}: Readonly<RegisterFormFieldsProps>): JSX.Element {
   return (
     <>
       <FormField
@@ -34,7 +34,7 @@ export function RegisterFormFields({
             <FormControl>
               <Input placeholder="SuperUser" {...field} />
             </FormControl>
-            <FormDescription className={"text-xs"}>
+            <FormDescription className="text-xs">
               Type your username that will be displayed to other users.
             </FormDescription>
             <FormMessage />
@@ -65,7 +65,7 @@ export function RegisterFormFields({
             <FormLabel>Password</FormLabel>
             <FormControl>
               <Input
-                type={"password"}
+                type="password"
                 placeholder="Super safe password"
                 {...field}
               />
@@ -83,12 +83,12 @@ export function RegisterFormFields({
             <FormLabel>Confirm Password</FormLabel>
             <FormControl>
               <Input
-                type={"password"}
+                type="password"
                 placeholder="Super safe password"
                 {...field}
               />
             </FormControl>
-            <FormDescription className={"text-xs"}>
+            <FormDescription className="text-xs">
               Confirm your password by typing it again.
             </FormDescription>
             <FormMessage />

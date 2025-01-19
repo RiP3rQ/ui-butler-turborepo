@@ -1,27 +1,27 @@
+import { jwtDecode } from "jwt-decode";
 import {
   AUTH_COOKIE,
   decodeToken,
   getAuthCookie,
   REFRESH_COOKIE,
-} from "./auth-cookie.ts";
-import { jwtDecode } from "jwt-decode";
+} from "./auth-cookie";
 
 // Mock `jwtDecode` to return a fixed expiration
 jest.mock("jwt-decode", () => ({
   jwtDecode: jest.fn(() => ({ exp: 1700000000 })),
 }));
 
-type MockResponse = {
+interface MockResponse {
   headers: {
-    get(name: string): string | null;
+    get: (name: string) => string | null;
   };
-};
+}
 
 function createMockResponse(headers: Record<string, string>): MockResponse {
   return {
     headers: {
       get(name: string) {
-        return headers[name] || null;
+        return headers[name] ?? null;
       },
     },
   };

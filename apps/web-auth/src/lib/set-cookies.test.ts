@@ -1,5 +1,5 @@
-import { setResponseCookies } from "@/lib/set-cookies";
 import { cookies } from "next/headers";
+import { setResponseCookies } from "@/lib/set-cookies";
 
 // Mock dependencies
 jest.mock("next/headers", () => ({

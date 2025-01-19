@@ -1,6 +1,6 @@
 import type { LucideProps } from "lucide-react";
 
-const Icons = {
+export const Icons = {
   logo: (props: LucideProps) => (
     <svg
       {...props}
@@ -929,5 +929,3 @@ const Icons = {
     </svg>
   ),
 } as const;
-
-export default Icons;

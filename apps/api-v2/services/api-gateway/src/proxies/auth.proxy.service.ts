@@ -1,9 +1,8 @@
-// auth.proxy.service.ts
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
+import { AuthServiceClient, GrpcError } from '@app/common';
 import { AuthProto } from '@app/proto';
 import { handleGrpcError } from '../utils/grpc-error.util';
-import { AuthServiceClient } from '@app/common';
 import { GrpcClientProxy } from './grpc-client.proxy';
 
 @Injectable()
@@ -15,11 +14,11 @@ export class AuthProxyService implements OnModuleInit {
     private readonly grpcClient: GrpcClientProxy,
   ) {}
 
-  onModuleInit() {
+  public onModuleInit(): void {
     this.authService = this.client.getService<AuthServiceClient>('AuthService');
   }
 
-  async register(
+  public async register(
     request: AuthProto.RegisterRequest,
   ): Promise<AuthProto.AuthResponse> {
     try {
@@ -33,27 +32,27 @@ export class AuthProxyService implements OnModuleInit {
     }
   }
 
-  async login(
+  public async login(
     request: AuthProto.LoginRequest,
   ): Promise<AuthProto.AuthResponse> {
     try {
-      console.log('Proxying login request:', { email: request.user.email });
+      console.log('Proxying login request:', { email: request.user?.email });
       return await this.grpcClient.call(
         this.authService.login(request),
         'AuthProxyService.login',
       );
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error in auth proxy login:', error);
-      handleGrpcError(error);
+      handleGrpcError(error as GrpcError);
     }
   }
 
-  async refreshToken(
+  public async refreshToken(
     request: AuthProto.RefreshTokenRequest,
   ): Promise<AuthProto.AuthResponse> {
     try {
       console.log('Proxying refresh token request:', {
-        email: request.user.email,
+        email: request.user?.email,
       });
 
       const response = await this.grpcClient.call(
@@ -63,13 +62,13 @@ export class AuthProxyService implements OnModuleInit {
 
       console.log('Refresh token response received');
       return response;
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error in auth proxy refreshToken:', error);
-      handleGrpcError(error);
+      handleGrpcError(error as GrpcError);
     }
   }
 
-  async verifyRefreshToken(
+  public async verifyRefreshToken(
     request: AuthProto.VerifyRefreshTokenRequest,
   ): Promise<AuthProto.User> {
     try {
@@ -80,47 +79,47 @@ export class AuthProxyService implements OnModuleInit {
         this.authService.verifyRefreshToken(request),
         'AuthProxyService.verifyRefreshToken',
       );
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error in auth proxy verifyRefreshToken:', error);
-      handleGrpcError(error);
+      handleGrpcError(error as GrpcError);
     }
   }
 
-  async googleCallback(
+  public async googleCallback(
     request: AuthProto.SocialCallbackRequest,
   ): Promise<AuthProto.AuthResponse> {
     try {
       console.log('Proxying Google callback request:', {
-        email: request.user.email,
+        email: request.user?.email,
       });
       return await this.grpcClient.call(
         this.authService.googleCallback(request),
         'AuthProxyService.googleCallback',
       );
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error in auth proxy googleCallback:', error);
-      handleGrpcError(error);
+      handleGrpcError(error as GrpcError);
     }
   }
 
-  async githubCallback(
+  public async githubCallback(
     request: AuthProto.SocialCallbackRequest,
   ): Promise<AuthProto.AuthResponse> {
     try {
       console.log('Proxying GitHub callback request:', {
-        email: request.user.email,
+        email: request.user?.email,
       });
       return await this.grpcClient.call(
         this.authService.githubCallback(request),
         'AuthProxyService.githubCallback',
       );
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error in auth proxy githubCallback:', error);
-      handleGrpcError(error);
+      handleGrpcError(error as GrpcError);
     }
   }
 
-  async verifyUser(
+  public async verifyUser(
     request: AuthProto.VerifyUserRequest,
   ): Promise<AuthProto.User> {
     try {
@@ -129,9 +128,9 @@ export class AuthProxyService implements OnModuleInit {
         this.authService.verifyUser(request),
         'AuthProxyService.verifyUser',
       );
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error in auth proxy verifyUser:', error);
-      handleGrpcError(error);
+      handleGrpcError(error as GrpcError);
     }
   }
 }

@@ -40,7 +40,7 @@ export const workflows = pgTable(
   }),
 );
 export type Workflow = typeof workflows.$inferSelect;
-export type NewWorkflow = {
+export interface NewWorkflow {
   userId: number;
   name: string;
   description?: string;
@@ -50,8 +50,8 @@ export type NewWorkflow = {
   status?: string;
   createdAt?: Date;
   updatedAt?: Date;
-};
-export type WorkflowUpdate = {
+}
+export interface WorkflowUpdate {
   name?: string;
   description?: string;
   definition?: string;
@@ -63,7 +63,7 @@ export type WorkflowUpdate = {
   lastRunStatus?: string;
   nextRunAt?: Date;
   updatedAt?: Date;
-};
+}
 
 export const workflowRelations = relations(workflows, ({ one, many }) => ({
   users: one(users, {

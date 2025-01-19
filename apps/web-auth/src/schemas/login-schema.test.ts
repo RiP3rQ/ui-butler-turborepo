@@ -1,5 +1,5 @@
-import { loginFormSchema } from "@/schemas/login-schema";
 import { ZodError } from "zod";
+import { loginFormSchema } from "@/schemas/login-schema";
 
 describe("loginFormSchema", () => {
   it("should validate correct email and password", () => {

@@ -1,8 +1,8 @@
+import { join } from 'node:path';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { Transport } from '@nestjs/microservices';
-import { join } from 'path';
 import { AuthModule } from './auth.module';
-import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice(AuthModule, {
@@ -10,7 +10,7 @@ async function bootstrap() {
     options: {
       package: 'api.auth',
       protoPath: join(__dirname, '../../../libs/proto/src/proto/auth.proto'),
-      url: `${process.env.AUTH_SERVICE_HOST || 'localhost'}:${process.env.AUTH_SERVICE_PORT || '3340'}`,
+      url: `${process.env.AUTH_SERVICE_HOST ?? 'localhost'}:${process.env.AUTH_SERVICE_PORT ?? '3340'}`,
     },
   });
 
@@ -32,4 +32,7 @@ async function bootstrap() {
   console.log('Auth Microservice is listening on gRPC');
 }
 
-bootstrap();
+bootstrap().catch((error: unknown) => {
+  console.error('Error starting Auth Microservice:', error);
+  process.exit(1);
+});

@@ -1,16 +1,19 @@
 "use client";
 
+import { type JSX } from "react";
 import { Button } from "@repo/ui/components/ui/button";
 import { cn } from "@repo/ui/lib/utils";
-import React from "react";
-import { Form } from "@/components/ui/form.tsx";
-import { useRegisterForm } from "@/hooks/use-register-form.ts";
-import { RegisterFormFields } from "@/app/sign-up/_components/register-form/register-form-fields.tsx";
-import { SocialLoginButtons } from "@/app/sign-in/_components/social-platform-buttons/social-buttons.tsx";
+import { Form } from "@/components/ui/form";
+import { useRegisterForm } from "@/hooks/use-register-form";
+import { RegisterFormFields } from "@/app/sign-up/_components/register-form/register-form-fields";
+import { SocialLoginButtons } from "@/app/sign-in/_components/social-platform-buttons/social-buttons";
 
 type UserAuthFormProps = React.HTMLAttributes<HTMLDivElement>;
 
-export function RegisterForm({ className, ...props }: UserAuthFormProps) {
+export function RegisterForm({
+  className,
+  ...props
+}: Readonly<UserAuthFormProps>): JSX.Element {
   const { form, isPending, onSubmit, isSubmitButtonBlocked } =
     useRegisterForm();
   const isFormDisabled = isPending || form.formState.isSubmitting;
@@ -25,7 +28,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
           />
           <Button
             type="submit"
-            className={"w-full"}
+            className="w-full"
             disabled={isPending || isSubmitButtonBlocked}
           >
             Sign up

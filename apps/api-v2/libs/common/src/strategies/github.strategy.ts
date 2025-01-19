@@ -4,9 +4,9 @@ import { ConfigService } from "@nestjs/config";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-github2";
 import { type ClientGrpc } from "@nestjs/microservices";
-import { UsersServiceClient } from "../types/grpc-clients.interface";
 import { UsersProto } from "@app/proto";
 import { firstValueFrom } from "rxjs";
+import { UsersServiceClient } from "../types/grpc-clients.interface";
 
 @Injectable()
 export class GithubStrategy extends PassportStrategy(Strategy, "github") {
@@ -17,14 +17,16 @@ export class GithubStrategy extends PassportStrategy(Strategy, "github") {
     @Inject("USERS_SERVICE") private readonly client: ClientGrpc,
   ) {
     super({
-      clientID: configService.getOrThrow("GITHUB_AUTH_CLIENT_ID"),
-      clientSecret: configService.getOrThrow("GITHUB_AUTH_CLIENT_SECRET"),
-      callbackURL: configService.getOrThrow("GITHUB_AUTH_REDIRECT_URI"),
+      clientID: String(configService.getOrThrow("GITHUB_AUTH_CLIENT_ID")),
+      clientSecret: String(
+        configService.getOrThrow("GITHUB_AUTH_CLIENT_SECRET"),
+      ),
+      callbackURL: String(configService.getOrThrow("GITHUB_AUTH_REDIRECT_URI")),
       scope: ["user:email"],
     });
   }
 
-  onModuleInit() {
+  onModuleInit(): void {
     this.usersService =
       this.client.getService<UsersServiceClient>("UsersService");
   }
@@ -37,8 +39,8 @@ export class GithubStrategy extends PassportStrategy(Strategy, "github") {
       avatar_url: string;
       emails: { value: string }[];
     },
-  ) {
-    const email = profile.emails?.[0]?.value;
+  ): Promise<UsersProto.User> {
+    const email = profile.emails[0]?.value;
 
     if (!email) {
       throw new UnauthorizedException("Email not provided by GitHub");
@@ -54,11 +56,11 @@ export class GithubStrategy extends PassportStrategy(Strategy, "github") {
 
       console.log("Creating/Getting GitHub user:", { email });
 
-      const user = await firstValueFrom(
+      const user: UsersProto.User | undefined = await firstValueFrom(
         this.usersService.getOrCreateUser(createUserDto),
       );
 
-      if (!user) {
+      if (typeof user === "undefined") {
         throw new Error("Failed to create/get user");
       }
 

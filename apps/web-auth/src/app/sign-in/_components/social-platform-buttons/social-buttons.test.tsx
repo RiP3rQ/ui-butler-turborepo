@@ -1,20 +1,20 @@
 // SocialLoginButtons.test.tsx
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { type LucideIcon } from "lucide-react";
 import { SocialLoginButtons } from "@/app/sign-in/_components/social-platform-buttons/social-buttons";
-import { LucideIcon } from "lucide-react";
 
 // Mock the SocialPlatformButton component
 // Types for the mock component
-type MockSocialPlatformButtonProps = {
+interface MockSocialPlatformButtonProps {
   title: string;
   isLoading: boolean;
   onClick: () => void;
   icon?: LucideIcon; // Optional because we don't use it in the mock
-};
+}
 
 jest.mock(
-  "@/app/sign-in/_components/social-platform-buttons/social-platform-button.tsx",
+  "@/app/sign-in/_components/social-platform-buttons/social-platform-button",
   () => {
     return function MockSocialPlatformButton({
       title,
@@ -23,6 +23,7 @@ jest.mock(
     }: MockSocialPlatformButtonProps) {
       return (
         <button
+          type="button"
           onClick={onClick}
           disabled={isLoading}
           data-testid={`social-button-${title.toLowerCase()}`}
@@ -66,7 +67,7 @@ describe("SocialLoginButtons", () => {
   });
 
   it("passes correct props to SocialPlatformButtons", () => {
-    render(<SocialLoginButtons isDisabled={true} />);
+    render(<SocialLoginButtons isDisabled />);
 
     const googleButton = screen.getByTestId("social-button-google");
     const githubButton = screen.getByTestId("social-button-github");
@@ -94,7 +95,7 @@ describe("SocialLoginButtons", () => {
   });
 
   it("prevents navigation when buttons are disabled", () => {
-    render(<SocialLoginButtons isDisabled={true} />);
+    render(<SocialLoginButtons isDisabled />);
 
     const googleButton = screen.getByTestId("social-button-google");
     const githubButton = screen.getByTestId("social-button-github");
@@ -184,7 +185,7 @@ describe("SocialLoginButtons", () => {
 
   describe("loading states", () => {
     it("shows correct loading state for all buttons", () => {
-      render(<SocialLoginButtons isDisabled={true} />);
+      render(<SocialLoginButtons isDisabled />);
 
       const buttons = screen.getAllByRole("button");
       buttons.forEach((button) => {

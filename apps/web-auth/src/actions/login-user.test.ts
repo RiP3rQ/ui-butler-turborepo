@@ -1,8 +1,9 @@
-import loginUser from "./loginUser";
-import { getAuthCookie } from "@/lib/auth-cookie";
 import { redirect } from "next/navigation";
+import { getAuthCookie } from "@/lib/auth-cookie";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { setResponseCookies } from "@/lib/set-cookies";
+import { getMainAppUrl } from "@/lib/utils";
+import loginUser from "./login-user";
 
 // Mock dependencies
 jest.mock("next/navigation", () => ({
@@ -26,7 +27,9 @@ jest.mock("@/lib/set-cookies", () => ({
 jest.mock("@/lib/get-error-message", () => ({
   getErrorMessage: jest
     .fn()
-    .mockImplementation((error) => error.message || JSON.stringify(error)),
+    .mockImplementation((error) =>
+      error instanceof Error ? error.message : JSON.stringify(error),
+    ),
 }));
 
 describe("loginUser", () => {
@@ -58,7 +61,7 @@ describe("loginUser", () => {
     // Mock fetch to return a successful response
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
-      json: async () => apiResponse,
+      json: () => Promise.resolve(apiResponse),
     });
 
     // Mock the return value of getAuthCookie
@@ -75,7 +78,7 @@ describe("loginUser", () => {
     await loginUser(formData);
 
     expect(global.fetch).toHaveBeenCalledWith(
-      `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+      `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333/api"}/auth/login`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -93,9 +96,8 @@ describe("loginUser", () => {
   it("should redirect to main app URL when login is successful", async () => {
     await loginUser(formData);
 
-    expect(redirect).toHaveBeenCalledWith(
-      `${process.env.NEXT_PUBLIC_MAIN_APP_URL}`,
-    );
+    const mainAppUrl = getMainAppUrl();
+    expect(redirect).toHaveBeenCalledWith(mainAppUrl);
   });
 
   it("should throw an error when credentials are invalid", async () => {

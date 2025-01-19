@@ -91,14 +91,14 @@ const SidebarProvider = React.forwardRef<
         }
 
         // This sets the cookie to keep the sidebar state.
-        document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
+        document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState.toString()}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE.toString()}`;
       },
       [setOpenProp, open],
     );
 
     // Helper to toggle the sidebar.
     const toggleSidebar = React.useCallback(() => {
-      isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open);
+      isMobile ? setOpenMobile((sOpen) => !sOpen) : setOpen((sOpen) => !sOpen);
     }, [isMobile, setOpen, setOpenMobile]);
 
     // Adds a keyboard shortcut to toggle the sidebar.
@@ -609,7 +609,7 @@ const SidebarMenuButton = React.forwardRef<
       currentRoute = false,
       variant = "default",
       size = "default",
-      tooltip,
+      tooltip: tooltipProp,
       className,
       ...props
     },
@@ -617,6 +617,9 @@ const SidebarMenuButton = React.forwardRef<
   ) => {
     const Comp = asChild ? Slot : "button";
     const { isMobile, state } = useSidebar();
+
+    const tooltipContent =
+      typeof tooltipProp === "string" ? { children: tooltipProp } : tooltipProp;
 
     const button = (
       <Comp
@@ -629,14 +632,8 @@ const SidebarMenuButton = React.forwardRef<
       />
     );
 
-    if (!tooltip) {
+    if (!tooltipContent) {
       return button;
-    }
-
-    if (typeof tooltip === "string") {
-      tooltip = {
-        children: tooltip,
-      };
     }
 
     return (
@@ -646,7 +643,7 @@ const SidebarMenuButton = React.forwardRef<
           align="center"
           hidden={state !== "collapsed" || isMobile}
           side="right"
-          {...tooltip}
+          {...tooltipContent}
         />
       </Tooltip>
     );
@@ -714,7 +711,7 @@ const SidebarMenuSkeleton = React.forwardRef<
 >(({ className, showIcon = false, ...props }, ref) => {
   // Random width between 50 to 90%.
   const width = React.useMemo(() => {
-    return `${Math.floor(Math.random() * 40) + 50}%`;
+    return `${String(Math.floor(Math.random() * 40) + 50)}%`;
   }, []);
 
   return (

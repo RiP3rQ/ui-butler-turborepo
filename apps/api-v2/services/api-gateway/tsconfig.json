@@ -1,6 +1,7 @@
 {
   "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
+    "strictNullChecks": true,
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -11,18 +12,14 @@
     "outDir": "./dist",
     "jsx": "react-jsx",
     "baseUrl": "./",
-    "paths": {
-      "@repo/*": ["../../../packages/*"],
-      "@app/*": ["../../libs/*"]
-    },
     "incremental": true,
     "skipLibCheck": true,
-    "strictNullChecks": false,
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext"
-  }
+    "allowImportingTsExtensions": false
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

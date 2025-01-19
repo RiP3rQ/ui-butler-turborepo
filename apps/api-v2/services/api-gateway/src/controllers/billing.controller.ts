@@ -10,8 +10,8 @@ import {
 import { type ClientGrpc } from '@nestjs/microservices';
 import { CurrentUser, JwtAuthGuard } from '@app/common';
 import { BillingProto } from '@app/proto';
-import { handleGrpcError } from '../utils/grpc-error.util';
 import { BalancePackId } from '@repo/types';
+import { handleGrpcError } from '../utils/grpc-error.util';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 
 @Controller('billing')
@@ -24,7 +24,7 @@ export class BillingController implements OnModuleInit {
     private readonly grpcClient: GrpcClientProxy,
   ) {}
 
-  onModuleInit() {
+  public onModuleInit(): void {
     this.billingService =
       this.client.getService<BillingProto.BillingServiceClient>(
         'BillingService',
@@ -32,8 +32,8 @@ export class BillingController implements OnModuleInit {
   }
 
   @Get('setup')
-  async setupUser(@CurrentUser() user: BillingProto.User) {
-    if (!user) {
+  public async setupUser(@CurrentUser() user: BillingProto.User) {
+    if (typeof user === 'undefined') {
       throw new NotFoundException('Unauthorized');
     }
 
@@ -57,15 +57,15 @@ export class BillingController implements OnModuleInit {
   }
 
   @Get('purchase')
-  async purchasePack(
+  public async purchasePack(
     @Query('packId') packId: BalancePackId,
     @CurrentUser() user: BillingProto.User,
-  ) {
-    if (!user) {
+  ): Promise<BillingProto.UserCreditsResponse> {
+    if (typeof user === 'undefined') {
       throw new NotFoundException('Unauthorized');
     }
 
-    if (!packId) {
+    if (typeof packId === 'undefined') {
       throw new NotFoundException('Invalid pack ID provided');
     }
 
@@ -90,8 +90,8 @@ export class BillingController implements OnModuleInit {
   }
 
   @Get('credits')
-  async getUserCredits(@CurrentUser() user: BillingProto.User) {
-    if (!user) {
+  public async getUserCredits(@CurrentUser() user: BillingProto.User) {
+    if (typeof user === 'undefined') {
       throw new NotFoundException('Unauthorized');
     }
 

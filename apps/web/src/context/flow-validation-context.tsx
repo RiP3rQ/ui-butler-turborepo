@@ -1,6 +1,7 @@
 "use client";
+
 import type { AppNodeMissingInputs } from "@repo/types";
-import type { Dispatch, SetStateAction } from "react";
+import type { JSX, Dispatch, SetStateAction } from "react";
 import { createContext, useState } from "react";
 
 export interface FlowValidationContextType {
@@ -16,12 +17,12 @@ export function FlowValidationContextProvider({
   children,
 }: {
   children: React.ReactNode;
-}) {
+}): JSX.Element {
   const [invalidInputs, setInvalidInputs] = useState<AppNodeMissingInputs[]>(
     [],
   );
 
-  const clearErrors = () => {
+  const clearErrors = (): void => {
     setInvalidInputs([]);
   };
 

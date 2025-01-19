@@ -1,4 +1,4 @@
-import { ListCheckIcon, LucideProps } from "lucide-react";
+import { ListCheckIcon, type LucideProps } from "lucide-react";
 import { ServerApproveChangesTask } from "./server/server-approve-changes";
 
 export const ApproveChangesTask = {

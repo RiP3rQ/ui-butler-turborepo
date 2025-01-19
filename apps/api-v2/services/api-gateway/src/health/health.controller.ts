@@ -24,7 +24,7 @@ export class HealthController {
     status: 200,
     description: 'API Gateway is healthy',
   })
-  async check() {
+  public async check() {
     return this.health.check([
       // Basic service check
       () =>
@@ -47,7 +47,7 @@ export class HealthController {
     status: 200,
     description: 'API Gateway is live',
   })
-  async checkLiveness() {
+  public async checkLiveness() {
     return this.health.check([
       () =>
         Promise.resolve({
@@ -65,7 +65,7 @@ export class HealthController {
     status: 200,
     description: 'API Gateway is ready',
   })
-  async checkReadiness() {
+  public async checkReadiness() {
     return this.health.check([
       () =>
         Promise.resolve({

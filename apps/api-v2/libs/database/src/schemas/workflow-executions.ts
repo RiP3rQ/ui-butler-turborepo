@@ -1,4 +1,3 @@
-import { workflows } from "./workflows";
 import { relations } from "drizzle-orm";
 import {
   index,
@@ -8,6 +7,7 @@ import {
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
+import { workflows } from "./workflows";
 import { users } from "./users";
 
 export const workflowExecutions = pgTable(

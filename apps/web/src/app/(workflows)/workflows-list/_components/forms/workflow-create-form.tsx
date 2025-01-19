@@ -17,7 +17,7 @@ import { type JSX } from "react";
 import type {
   createWorkflowSchema,
   CreateWorkflowSchemaType,
-} from "@/schemas/workflow.ts";
+} from "@/schemas/workflow";
 
 interface WorkflowCreateFormProps {
   form: UseFormReturn<z.infer<typeof createWorkflowSchema>>;

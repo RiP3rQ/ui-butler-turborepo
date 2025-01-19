@@ -1,5 +1,5 @@
-import { Edge, Node } from "@xyflow/react";
-import { TaskParam, TaskType } from "./task";
+import { type Edge, type Node } from "@xyflow/react";
+import { type TaskParam, type TaskType } from "./task";
 
 export interface AppNodeData {
   type: TaskType;
@@ -23,17 +23,17 @@ export interface ParamProps {
   disabled: boolean;
 }
 
-export type AppNodeMissingInputs = {
+export interface AppNodeMissingInputs {
   nodeId: string;
   inputs: string[];
-};
+}
 
-export interface AppEdge extends Edge {}
+export type AppEdge = Edge;
 
-export type ServerSaveEdge = {
+export interface ServerSaveEdge {
   id: string;
   source: string;
   target: string;
   sourceHandle?: string;
   targetHandle?: string;
-};
+}

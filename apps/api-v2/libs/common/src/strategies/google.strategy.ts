@@ -3,9 +3,9 @@ import { ConfigService } from "@nestjs/config";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-google-oauth20";
 import { type ClientGrpc } from "@nestjs/microservices";
-import { UsersServiceClient } from "../types/grpc-clients.interface";
 import { UsersProto } from "@app/proto";
 import { firstValueFrom } from "rxjs";
+import { UsersServiceClient } from "../types/grpc-clients.interface";
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy) {
@@ -16,14 +16,16 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
     @Inject("USERS_SERVICE") private readonly client: ClientGrpc,
   ) {
     super({
-      clientID: configService.getOrThrow("GOOGLE_AUTH_CLIENT_ID"),
-      clientSecret: configService.getOrThrow("GOOGLE_AUTH_CLIENT_SECRET"),
-      callbackURL: configService.getOrThrow("GOOGLE_AUTH_REDIRECT_URI"),
+      clientID: String(configService.getOrThrow("GOOGLE_AUTH_CLIENT_ID")),
+      clientSecret: String(
+        configService.getOrThrow("GOOGLE_AUTH_CLIENT_SECRET"),
+      ),
+      callbackURL: String(configService.getOrThrow("GOOGLE_AUTH_REDIRECT_URI")),
       scope: ["profile", "email"],
     });
   }
 
-  onModuleInit() {
+  onModuleInit(): void {
     this.usersService =
       this.client.getService<UsersServiceClient>("UsersService");
   }
@@ -36,11 +38,11 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
       emails: { value: string }[];
       photos: { value: string }[];
     },
-  ) {
+  ): Promise<UsersProto.User> {
     try {
       const createUserDto: UsersProto.CreateUserDto = {
         $type: "api.users.CreateUserDto",
-        email: profile.emails[0]?.value || "",
+        email: profile.emails[0]?.value ?? "",
         password: "",
         username: profile.displayName,
       };
@@ -49,11 +51,11 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
         email: createUserDto.email,
       });
 
-      const user = await firstValueFrom(
+      const user: UsersProto.User | undefined = await firstValueFrom(
         this.usersService.getOrCreateUser(createUserDto),
       );
 
-      if (!user) {
+      if (typeof user === "undefined") {
         throw new Error("Failed to create/get user");
       }
 

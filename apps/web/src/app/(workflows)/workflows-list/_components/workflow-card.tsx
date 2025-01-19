@@ -6,7 +6,7 @@ import { Card, CardContent } from "@repo/ui/components/ui/card";
 import { cn } from "@repo/ui/lib/utils";
 import { FileIcon, PlayIcon } from "lucide-react";
 import Link from "next/link";
-import TooltipWrapper from "@repo/ui/components/tooltip-wrapper";
+import { TooltipWrapper } from "@repo/ui/components/tooltip-wrapper";
 import { type JSX } from "react";
 import { DuplicateWorkflowDialog } from "@/app/(workflows)/workflows-list/_components/duplicate-workflow-dialog";
 import { RunWorkflowButton } from "@/app/(workflows)/workflows-list/_components/run-workflow-button";

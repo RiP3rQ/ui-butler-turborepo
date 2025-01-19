@@ -1,4 +1,4 @@
-import { BaseWorkflowTask, TaskParamType, TaskType } from "@repo/types";
+import { type BaseWorkflowTask, TaskParamType, TaskType } from "@repo/types";
 
 export const ServerCreateTypeScriptDocsTask = {
   type: TaskType.CREATE_TYPESCRIPT_DOCUMENTATION,
@@ -23,6 +23,7 @@ export const ServerCreateTypeScriptDocsTask = {
     },
   ] as const,
   credits: 1,
+  creditsWithoutApiKey: 6,
 } satisfies BaseWorkflowTask;
 
 export type ServerCreateTypeScriptDocsTaskType =

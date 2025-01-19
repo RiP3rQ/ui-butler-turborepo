@@ -3,14 +3,19 @@
 import { motion } from "framer-motion";
 import { cn } from "@repo/ui/lib/utils";
 
-interface Props {
+interface ContainerProps {
   className?: string;
   children: React.ReactNode;
   delay?: number;
   reverse?: boolean;
 }
 
-function Container({ children, className, delay = 0.2, reverse }: Props) {
+export function Container({
+  children,
+  className,
+  delay = 0.2,
+  reverse,
+}: Readonly<ContainerProps>): React.ReactNode {
   return (
     <motion.div
       className={cn("w-full h-full", className)}
@@ -23,5 +28,3 @@ function Container({ children, className, delay = 0.2, reverse }: Props) {
     </motion.div>
   );
 }
-
-export default Container;

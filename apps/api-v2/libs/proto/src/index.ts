@@ -13,7 +13,6 @@ export * as ExecutionProto from "./generated/execution";
 export * from "./constants/grpc.constants";
 export * from "./interfaces/grpc-options.interface";
 export * from "./interfaces/service-definitions.interface";
-export * from "./services/base-grpc.service";
 export * from "./utils/type-converter.util";
 export * from "./interceptors/grpc-validation.interceptor";
 export * from "./decorators/grpc-method.decorator";

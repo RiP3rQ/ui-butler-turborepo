@@ -2,8 +2,8 @@
 
 import * as React from "react";
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
-import { cn } from "@repo/ui/lib/utils";
 import { DotFilledIcon } from "@radix-ui/react-icons";
+import { cn } from "@repo/ui/lib/utils";
 
 const RadioGroup = React.forwardRef<
   React.ElementRef<typeof RadioGroupPrimitive.Root>,

@@ -1,4 +1,4 @@
-import { ProtoTimestamp } from "./proto";
+import { type ProtoTimestamp } from "./proto";
 
 export interface UserCredentials {
   userId: number;

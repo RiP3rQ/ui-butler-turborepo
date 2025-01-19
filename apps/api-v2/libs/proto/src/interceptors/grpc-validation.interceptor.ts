@@ -20,7 +20,6 @@ export class GrpcValidationInterceptor implements NestInterceptor {
   ): Promise<Observable<any>> {
     const rpcContext = context.switchToRpc();
     const data = rpcContext.getData();
-    const metadata = rpcContext.getContext();
     const handler = context.getHandler();
 
     // Get the expected DTO class from handler metadata
@@ -67,7 +66,7 @@ export class GrpcValidationInterceptor implements NestInterceptor {
 
   private formatValidationErrors(errors: ValidationError[]): string {
     return errors
-      .map((error) => Object.values(error.constraints || {}))
+      .map((error) => Object.values(error.constraints ?? {}))
       .flat()
       .join(", ");
   }

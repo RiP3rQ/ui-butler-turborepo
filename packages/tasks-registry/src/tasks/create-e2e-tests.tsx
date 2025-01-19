@@ -1,4 +1,4 @@
-import { FlaskConicalIcon, LucideProps } from "lucide-react";
+import { FlaskConicalIcon, type LucideProps } from "lucide-react";
 import { ServerCreateE2ETestsTask } from "./server/server-create-e2e-tests";
 
 export const CreateE2ETestsTask = {

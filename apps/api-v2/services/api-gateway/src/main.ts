@@ -1,13 +1,13 @@
 import { NestFactory } from '@nestjs/core';
-import { ApiGatewayModule } from './api-gateway.module';
 import { ValidationPipe } from '@nestjs/common';
-import { HttpExceptionFilter } from './filters/http-exception.filter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import compression from 'compression';
 import { ConfigService } from '@nestjs/config';
 import cookieParser from 'cookie-parser';
-import { EnhancedResponseInterceptor } from './interceptors/enhanced-response.interceptor';
 import { Logger } from 'nestjs-pino';
+import { ApiGatewayModule } from './api-gateway.module';
+import { HttpExceptionFilter } from './filters/http-exception.filter';
+import { EnhancedResponseInterceptor } from './interceptors/enhanced-response.interceptor';
 import { MetricsService } from './metrics/metrics.service';
 import { MetricsInterceptor } from './metrics/metrics.interceptor';
 import { PerformanceMetrics } from './metrics/performance.metrics';
@@ -96,7 +96,7 @@ async function bootstrap() {
   app.enableShutdownHooks();
 
   // Start server
-  const port = configService.get('PORT', 3333);
+  const port = Number(configService.getOrThrow('PORT', 3333));
   await app.listen(port);
 
   // Log all registered routes FOR DEBUGGING
@@ -116,4 +116,7 @@ async function bootstrap() {
   console.log(`\nApplication is running on: ${await app.getUrl()}`);
 }
 
-bootstrap();
+bootstrap().catch((error: unknown) => {
+  console.error('Error starting api-gateway:', error);
+  process.exit(1);
+});

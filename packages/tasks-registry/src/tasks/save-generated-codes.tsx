@@ -1,4 +1,4 @@
-import { DownloadIcon, LucideProps } from "lucide-react";
+import { DownloadIcon, type LucideProps } from "lucide-react";
 import { ServerSaveGeneratedCodesTask } from "./server/server-save-generated-codes";
 
 export const SaveGeneratedCodesTask = {

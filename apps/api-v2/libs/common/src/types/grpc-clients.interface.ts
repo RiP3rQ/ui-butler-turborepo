@@ -1,54 +1,61 @@
-import { AuthProto, UsersProto } from "@app/proto";
-import { Observable } from "rxjs";
+import { type AuthProto, type UsersProto } from "@app/proto";
+import { type Observable } from "rxjs";
 
 export interface AuthServiceClient {
-  register(
+  register: (
     request: AuthProto.RegisterRequest,
-  ): Observable<AuthProto.AuthResponse>;
-  login(request: AuthProto.LoginRequest): Observable<AuthProto.AuthResponse>;
-  refreshToken(
+  ) => Observable<AuthProto.AuthResponse>;
+  login: (
+    request: AuthProto.LoginRequest,
+  ) => Observable<AuthProto.AuthResponse>;
+  refreshToken: (
     request: AuthProto.RefreshTokenRequest,
-  ): Observable<AuthProto.AuthResponse>;
+  ) => Observable<AuthProto.AuthResponse>;
 
-  googleCallback(
+  googleCallback: (
     request: AuthProto.SocialCallbackRequest,
-  ): Observable<AuthProto.AuthResponse>;
+  ) => Observable<AuthProto.AuthResponse>;
 
-  githubCallback(
+  githubCallback: (
     request: AuthProto.SocialCallbackRequest,
-  ): Observable<AuthProto.AuthResponse>;
+  ) => Observable<AuthProto.AuthResponse>;
 
-  verifyUser(request: AuthProto.VerifyUserRequest): Observable<AuthProto.User>;
-
-  verifyRefreshToken(
+  verifyRefreshToken: (
     request: AuthProto.VerifyRefreshTokenRequest,
-  ): Observable<AuthProto.User>;
+  ) => Observable<AuthProto.User>;
 
-  verifyUser(request: AuthProto.VerifyUserRequest): Promise<AuthProto.User>;
+  verifyUser: ((
+    request: AuthProto.VerifyUserRequest,
+  ) => Observable<AuthProto.User>) &
+    ((request: AuthProto.VerifyUserRequest) => Promise<AuthProto.User>);
 }
 
 export interface UsersServiceClient {
-  getUsers(request: UsersProto.Empty): Observable<UsersProto.GetUsersResponse>;
+  getUsers: (
+    request: UsersProto.Empty,
+  ) => Observable<UsersProto.GetUsersResponse>;
 
-  getCurrentUser(
+  getCurrentUser: (
     request: UsersProto.GetCurrentUserRequest,
-  ): Observable<UsersProto.GetCurrentUserResponse>;
+  ) => Observable<UsersProto.GetCurrentUserResponse>;
 
-  createProfile(
+  createProfile: (
     request: UsersProto.CreateProfileDto,
-  ): Observable<UsersProto.Profile>;
+  ) => Observable<UsersProto.Profile>;
 
-  createUser(request: UsersProto.CreateUserDto): Observable<UsersProto.User>;
-
-  getOrCreateUser(
+  createUser: (
     request: UsersProto.CreateUserDto,
-  ): Observable<UsersProto.User>;
+  ) => Observable<UsersProto.User>;
 
-  getUserByEmail(
+  getOrCreateUser: (
+    request: UsersProto.CreateUserDto,
+  ) => Observable<UsersProto.User>;
+
+  getUserByEmail: (
     request: UsersProto.GetUserByEmailRequest,
-  ): Observable<UsersProto.User>;
+  ) => Observable<UsersProto.User>;
 
-  updateUser(
+  updateUser: (
     request: UsersProto.UpdateUserRequest,
-  ): Observable<UsersProto.User>;
+  ) => Observable<UsersProto.User>;
 }

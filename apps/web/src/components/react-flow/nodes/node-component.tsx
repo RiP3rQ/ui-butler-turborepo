@@ -28,13 +28,20 @@ const NodeComponent = memo(function NodeComponent(props: Readonly<NodeProps>) {
       {DEV_MODE ? <Badge>{props.id}</Badge> : null}
       <NodeHeader nodeId={props.id} taskType={nodeData.type} />
       <NodeInputs>
-        {task.inputs.map((input, index) => (
-          <NodeInput input={input} key={index} nodeId={props.id} />
+        {task.inputs.map((input) => (
+          <NodeInput
+            input={input}
+            key={`${props.id}-input-${input.name}`}
+            nodeId={props.id}
+          />
         ))}
       </NodeInputs>
       <NodeOutputs>
-        {task.outputs.map((output, index) => (
-          <NodeOutput key={index} output={output} />
+        {task.outputs.map((output) => (
+          <NodeOutput
+            key={`${props.id}-output-${output.name}`}
+            output={output}
+          />
         ))}
       </NodeOutputs>
     </NodeCard>

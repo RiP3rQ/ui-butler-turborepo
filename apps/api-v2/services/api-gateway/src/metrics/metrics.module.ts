@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { PrometheusModule } from '@willsoto/nestjs-prometheus';
+import { Registry } from 'prom-client';
 import { MetricsController } from './metrics.controller';
 import { MetricsService } from './metrics.service';
 import { metricProviders } from './metrics.definitions';
 import { PerformanceMetrics } from './performance.metrics';
-import { Registry } from 'prom-client';
 import { DatabaseStatsService } from './database-stats.service';
 
 @Module({

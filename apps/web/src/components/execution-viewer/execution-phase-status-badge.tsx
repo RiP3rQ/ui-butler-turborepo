@@ -6,6 +6,7 @@ import {
   CircleXIcon,
   Loader2Icon,
 } from "lucide-react";
+import { type JSX } from "react";
 
 interface ExecutionPhaseStatusBadgeProps {
   status: IExecutionPhaseStatus;
@@ -13,7 +14,7 @@ interface ExecutionPhaseStatusBadgeProps {
 
 function ExecutionPhaseStatusBadge({
   status,
-}: Readonly<ExecutionPhaseStatusBadgeProps>) {
+}: Readonly<ExecutionPhaseStatusBadgeProps>): JSX.Element {
   switch (status) {
     case ExecutionPhaseStatus.PENDING:
       return <CircleDashedIcon className="stroke-muted-foreground" size={20} />;

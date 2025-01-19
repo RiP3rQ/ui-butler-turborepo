@@ -1,12 +1,15 @@
 import React from "react";
 import { cn } from "@repo/ui/lib/utils";
 
-interface Props {
+interface WrapperProps {
   className?: string;
   children: React.ReactNode;
 }
 
-function Wrapper({ children, className }: Props) {
+export function Wrapper({
+  children,
+  className,
+}: Readonly<WrapperProps>): React.ReactNode {
   return (
     <div
       className={cn(
@@ -18,5 +21,3 @@ function Wrapper({ children, className }: Props) {
     </div>
   );
 }
-
-export default Wrapper;

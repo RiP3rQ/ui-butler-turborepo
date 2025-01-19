@@ -25,10 +25,9 @@
   "scripts": {
     "build": "tailwindcss -i src/globals.css -o ./dist/index.css",
     "dev": "tsup --watch",
-    "lint": "eslint src/",
+    "lint": "eslint src/ --fix",
     "type-check": "tsc --noEmit",
-    "ui": "pnpm dlx shadcn@latest",
-    "clean": "rm -rf dist"
+    "ui": "pnpm dlx shadcn@latest"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

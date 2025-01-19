@@ -19,7 +19,7 @@ export function parseFlowToExecutionPlan(
 ): FlowToExecutionPlanType {
   // Find entry point
   const entryPoint = nodes.find(
-    (node) => ClientTaskRegister[node.data.type]?.isEntryPoint,
+    (node) => ClientTaskRegister[node.data.type].isEntryPoint,
   );
 
   if (!entryPoint) {

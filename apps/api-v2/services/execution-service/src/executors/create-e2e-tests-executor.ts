@@ -15,7 +15,7 @@ export async function createE2ETestsExecutor(
       throw new Error('Code context is empty');
     }
 
-    let credentials = environment.getInput('API key');
+    const credentials = environment.getInput('API key');
 
     if (!credentials) {
       environment.log.WARNING(

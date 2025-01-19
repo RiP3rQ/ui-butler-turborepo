@@ -14,6 +14,7 @@ import {
 } from "@repo/ui/components/ui/table";
 import { Badge } from "@repo/ui/components/ui/badge";
 import type { IWorkflowExecutionStatus } from "@repo/types";
+import { type JSX } from "react";
 import { dateToDurationString } from "@/lib/dates";
 import { ExecutionStatusIndicator } from "@/components/execution-viewer/execution-status-indicator";
 import { getHistoricWorkflowExecutions } from "@/actions/workflows/server-actions";
@@ -30,7 +31,7 @@ interface ExecutionsTableProps {
 function ExecutionsTable({
   initialData,
   workflowId,
-}: Readonly<ExecutionsTableProps>) {
+}: Readonly<ExecutionsTableProps>): JSX.Element {
   const router = useRouter();
 
   const query = useQuery({
@@ -54,7 +55,7 @@ function ExecutionsTable({
           </TableRow>
         </TableHeader>
         <TableBody className="gap-2 h-full overflow-auto">
-          {query.data.map((execution, index) => {
+          {query.data.map((execution) => {
             const duration = dateToDurationString(
               new Date(execution.startedAt).toISOString(),
               new Date(execution.completedAt).toISOString(),
@@ -66,7 +67,7 @@ function ExecutionsTable({
             return (
               <TableRow
                 className="cursor-pointer"
-                key={execution.id + index}
+                key={execution.id}
                 onClick={() => {
                   router.push(
                     `/workflow/runs/${workflowId.toString()}/${String(execution.id)}`,

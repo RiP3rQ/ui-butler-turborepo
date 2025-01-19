@@ -1,20 +1,22 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { type z } from "zod";
 import { getAuthCookie } from "@/lib/auth-cookie";
-import { z } from "zod";
 import { loginFormSchema } from "@/schemas/login-schema";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { setResponseCookies } from "@/lib/set-cookies";
+import { getApiUrl, getMainAppUrl } from "@/lib/utils";
 
 export default async function loginUser(
   formData: z.infer<typeof loginFormSchema>,
-) {
+): Promise<void> {
   try {
     // Validate the form data
     loginFormSchema.parse(formData);
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+    const apiUrl = getApiUrl();
+    const res = await fetch(`${apiUrl}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
@@ -32,5 +34,5 @@ export default async function loginUser(
     throw new Error(errorMessage);
   }
 
-  redirect(`${process.env.NEXT_PUBLIC_MAIN_APP_URL}`);
+  redirect(getMainAppUrl());
 }

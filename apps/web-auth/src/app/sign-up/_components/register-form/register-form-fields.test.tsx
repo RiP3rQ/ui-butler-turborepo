@@ -1,9 +1,9 @@
 // RegisterFormFields.test.tsx
 import { render, screen } from "@testing-library/react";
-import { Control } from "react-hook-form";
-import { z } from "zod";
-import { registerFormSchema } from "@/schemas/register-schema";
-import { RegisterFormFields } from "@/app/sign-up/_components/register-form/register-form-fields.tsx";
+import { type Control } from "react-hook-form";
+import { type z } from "zod";
+import { type registerFormSchema } from "@/schemas/register-schema";
+import { RegisterFormFields } from "@/app/sign-up/_components/register-form/register-form-fields";
 
 // Mock UI components
 jest.mock("@repo/ui/components/ui/form", () => ({
@@ -41,11 +41,11 @@ jest.mock("@repo/ui/components/ui/input", () => ({
     name?: string;
   }) => (
     <input
-      type={type || "text"}
+      type={type ?? "text"}
       placeholder={placeholder}
       disabled={disabled}
       name={name}
-      data-testid={`input-${name || placeholder}`}
+      data-testid={`input-${name ?? placeholder}`}
       {...props}
     />
   ),
@@ -97,7 +97,7 @@ describe("RegisterFormFields", () => {
   });
 
   it("applies disabled state to all inputs", () => {
-    render(<RegisterFormFields control={mockControl} isDisabled={true} />);
+    render(<RegisterFormFields control={mockControl} isDisabled />);
 
     const inputs = [
       screen.getByTestId("input-username"),
@@ -211,7 +211,7 @@ describe("RegisterFormFields", () => {
     });
 
     it("maintains disabled state consistency", () => {
-      render(<RegisterFormFields control={mockControl} isDisabled={true} />);
+      render(<RegisterFormFields control={mockControl} isDisabled />);
 
       const inputs = [
         screen.getByTestId("input-username"),

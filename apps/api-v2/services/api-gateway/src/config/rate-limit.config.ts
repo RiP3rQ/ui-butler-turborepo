@@ -1,5 +1,4 @@
-// rate-limit.config.ts
-import { ThrottlerModuleOptions } from '@nestjs/throttler';
+import { type ThrottlerModuleOptions } from '@nestjs/throttler';
 
 export const getRateLimitConfig = (): ThrottlerModuleOptions => ({
   throttlers: [
@@ -16,7 +15,7 @@ export interface RateLimitConfig {
   limit: number;
 }
 
-export const rateLimitConfigs: Record<string, RateLimitConfig> = {
+export const rateLimitConfigs = {
   default: {
     ttl: 60000, // 60 seconds
     limit: 100, // 10 requests per minute for defaults endpoints

@@ -1,4 +1,4 @@
-import { ComponentType } from "./components";
+import { type ComponentType } from "./components";
 
 export interface ProjectType {
   id: number;

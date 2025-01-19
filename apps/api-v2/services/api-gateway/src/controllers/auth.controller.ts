@@ -17,7 +17,6 @@ import {
   JwtRefreshAuthGuard,
   LocalAuthGuard,
 } from '@app/common';
-import { AuthProxyService } from '../proxies/auth.proxy.service';
 import { AuthProto } from '@app/proto';
 import {
   ApiBody,
@@ -29,6 +28,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { AuthProxyService } from '../proxies/auth.proxy.service';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -58,11 +58,11 @@ export class AuthController {
   @ApiNotFoundResponse({
     description: 'User data not found in request body',
   })
-  async register(
+  public async register(
     @Body() userData: AuthProto.CreateUserDto,
     @Res({ passthrough: true }) response: Response,
-  ) {
-    if (!userData) {
+  ): Promise<AuthProto.AuthResponse> {
+    if (typeof userData === 'undefined') {
       throw new NotFoundException('User not found in request body');
     }
 
@@ -102,11 +102,11 @@ export class AuthController {
   @ApiUnauthorizedResponse({
     description: 'Invalid credentials',
   })
-  async login(
+  public async login(
     @CurrentUser() user: AuthProto.User,
     @Res({ passthrough: true }) response: Response,
-  ) {
-    if (!user) {
+  ): Promise<AuthProto.AuthResponse> {
+    if (typeof user === 'undefined') {
       throw new UnauthorizedException('No user data provided');
     }
 
@@ -122,7 +122,7 @@ export class AuthController {
 
     try {
       const result = await this.authProxyService.login(loginRequest);
-      if (result) {
+      if (typeof result !== 'undefined') {
         this.setCookies(response, result);
       }
       return result;
@@ -146,10 +146,10 @@ export class AuthController {
   @ApiUnauthorizedResponse({
     description: 'Invalid or expired refresh token',
   })
-  async refreshToken(
+  public async refreshToken(
     @CurrentUser() user: AuthProto.User,
     @Res({ passthrough: true }) response: Response,
-  ) {
+  ): Promise<AuthProto.AuthResponse> {
     try {
       console.log('Refresh token request for user:', { email: user.email });
 
@@ -165,7 +165,7 @@ export class AuthController {
 
       const result = await this.authProxyService.refreshToken(refreshRequest);
 
-      if (!result) {
+      if (typeof result === 'undefined') {
         throw new UnauthorizedException('Token refresh failed');
       }
 
@@ -188,7 +188,7 @@ export class AuthController {
     status: 302,
     description: 'Redirect to Google login page',
   })
-  loginGoogle() {}
+  public loginGoogle(): void {}
 
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
@@ -200,10 +200,10 @@ export class AuthController {
     status: 200,
     description: 'Successfully authenticated with Google',
   })
-  async googleCallback(
+  public async googleCallback(
     @CurrentUser() user: AuthProto.User,
     @Res({ passthrough: true }) response: Response,
-  ) {
+  ): Promise<AuthProto.AuthResponse> {
     const callbackRequest: AuthProto.SocialCallbackRequest = {
       $type: 'api.auth.SocialCallbackRequest',
       user: {
@@ -214,7 +214,7 @@ export class AuthController {
 
     const result = await this.authProxyService.googleCallback(callbackRequest);
     this.setCookies(response, result);
-    if (result.redirect) {
+    if (typeof result.redirectUrl !== 'undefined') {
       response.redirect(result.redirectUrl);
     }
     return result;
@@ -231,7 +231,7 @@ export class AuthController {
     status: 302,
     description: 'Redirect to GitHub login page',
   })
-  loginGithub() {}
+  public loginGithub(): void {}
 
   @Get('github/callback')
   @UseGuards(GithubAuthGuard)
@@ -243,10 +243,10 @@ export class AuthController {
     status: 200,
     description: 'Successfully authenticated with GitHub',
   })
-  async githubCallback(
+  public async githubCallback(
     @CurrentUser() user: AuthProto.User,
     @Res({ passthrough: true }) response: Response,
-  ) {
+  ): Promise<AuthProto.AuthResponse> {
     const callbackRequest: AuthProto.SocialCallbackRequest = {
       $type: 'api.auth.SocialCallbackRequest',
       user: {
@@ -257,14 +257,17 @@ export class AuthController {
 
     const result = await this.authProxyService.githubCallback(callbackRequest);
     this.setCookies(response, result);
-    if (result.redirect) {
+    if (typeof result.redirectUrl !== 'undefined') {
       response.redirect(result.redirectUrl);
     }
     return result;
   }
 
   private setCookies(response: Response, authData: AuthProto.AuthResponse) {
-    if (!authData?.expiresAccessToken || !authData?.expiresRefreshToken) {
+    if (
+      typeof authData.expiresAccessToken === 'undefined' ||
+      typeof authData.expiresRefreshToken === 'undefined'
+    ) {
       console.error('Invalid auth data received:', authData);
       return;
     }

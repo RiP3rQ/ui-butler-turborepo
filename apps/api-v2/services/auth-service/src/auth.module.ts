@@ -1,8 +1,8 @@
+import { join } from 'node:path';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { JwtModule } from '@nestjs/jwt';
-import { join } from 'path';
 import Joi from 'joi';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -33,7 +33,7 @@ import { ENV_VARS } from './constants';
         useFactory: (configService: ConfigService) => ({
           transport: Transport.GRPC,
           options: {
-            url: `${configService.get(ENV_VARS.USERS_SERVICE.HOST)}:${configService.get(ENV_VARS.USERS_SERVICE.PORT)}`,
+            url: `${String(configService.get(ENV_VARS.USERS_SERVICE.HOST))}:${String(configService.get(ENV_VARS.USERS_SERVICE.PORT))}`,
             package: 'api.users',
             protoPath: join(
               __dirname,

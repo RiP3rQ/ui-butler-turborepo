@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import { type JSX } from "react";
 import { useMemo } from "react";
 import {
   AirplayIcon,
@@ -75,7 +75,8 @@ interface AdditionalAppSidebarProps {
 
 export function AppSidebar({
   ...props
-}: React.ComponentProps<typeof Sidebar> & AdditionalAppSidebarProps) {
+}: React.ComponentProps<typeof Sidebar> &
+  AdditionalAppSidebarProps): JSX.Element {
   const { userProjects, ...slicedProps } = props;
 
   const mainContentData = useMemo(() => {

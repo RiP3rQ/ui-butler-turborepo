@@ -1,9 +1,9 @@
 import { act, renderHook } from "@testing-library/react";
 import { toast } from "sonner";
-import { useRegisterForm } from "@/hooks/use-register-form";
-import registerUser from "@/actions/registerUser.ts";
-import { getErrorMessage } from "@/lib/get-error-message.ts";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useRegisterForm } from "@/hooks/use-register-form";
+import registerUser from "@/actions/register-user";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 // Mock modules
 jest.mock("sonner", () => ({
@@ -14,8 +14,8 @@ jest.mock("sonner", () => ({
   },
 }));
 
-jest.mock("@/actions/registerUser.ts", () => jest.fn());
-jest.mock("@/lib/get-error-message.ts", () => ({
+jest.mock("@/actions/registerUser", () => jest.fn());
+jest.mock("@/lib/get-error-message", () => ({
   getErrorMessage: jest.fn(),
 }));
 

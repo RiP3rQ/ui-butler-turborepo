@@ -3,13 +3,13 @@ import { IsNotEmpty, IsString } from "class-validator";
 export class SaveComponentDto {
   @IsString()
   @IsNotEmpty()
-  title: string = "";
+  title = "";
 
   @IsString()
   @IsNotEmpty()
-  projectId: string = "";
+  projectId = "";
 
   @IsString()
   @IsNotEmpty()
-  code: string = "";
+  code = "";
 }

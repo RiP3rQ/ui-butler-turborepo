@@ -9,7 +9,6 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -26,7 +25,6 @@ import {
 } from '@app/common';
 import { WorkflowsProto } from '@app/proto';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
-import { log } from 'node:console';
 
 @Controller('workflows')
 @UseGuards(JwtAuthGuard)
@@ -38,7 +36,7 @@ export class WorkflowsController implements OnModuleInit {
     private readonly grpcClient: GrpcClientProxy,
   ) {}
 
-  onModuleInit() {
+  public onModuleInit(): void {
     this.workflowsService =
       this.client.getService<WorkflowsProto.WorkflowsServiceClient>(
         'WorkflowsService',
@@ -54,7 +52,9 @@ export class WorkflowsController implements OnModuleInit {
   }
 
   @Get()
-  async getAllUserWorkflows(@CurrentUser() user: User) {
+  public async getAllUserWorkflows(
+    @CurrentUser() user: User,
+  ): Promise<WorkflowsProto.WorkflowsResponse['workflows']> {
     const response = await this.grpcClient.call(
       this.workflowsService.getAllUserWorkflows({
         $type: 'api.workflows.GetAllUserWorkflowsRequest',
@@ -66,10 +66,10 @@ export class WorkflowsController implements OnModuleInit {
   }
 
   @Get('get-by-id/:workflowId')
-  async getWorkflowById(
+  public async getWorkflowById(
     @CurrentUser() user: User,
     @Param('workflowId', ParseIntPipe) workflowId: number,
-  ) {
+  ): Promise<WorkflowsProto.WorkflowResponse['workflow']> {
     const response = await this.grpcClient.call(
       this.workflowsService.getWorkflowById({
         $type: 'api.workflows.GetWorkflowByIdRequest',
@@ -82,10 +82,10 @@ export class WorkflowsController implements OnModuleInit {
   }
 
   @Post()
-  async createWorkflow(
+  public async createWorkflow(
     @CurrentUser() user: User,
     @Body() createWorkflowDto: CreateWorkflowDto,
-  ) {
+  ): Promise<WorkflowsProto.WorkflowResponse['workflow']> {
     const response = await this.grpcClient.call(
       this.workflowsService.createWorkflow({
         $type: 'api.workflows.CreateWorkflowRequest',
@@ -99,10 +99,10 @@ export class WorkflowsController implements OnModuleInit {
   }
 
   @Delete(':id')
-  async deleteWorkflow(
+  public async deleteWorkflow(
     @CurrentUser() user: User,
     @Param('id', ParseIntPipe) workflowId: number,
-  ) {
+  ): Promise<WorkflowsProto.WorkflowResponse['workflow']> {
     const response = await this.grpcClient.call(
       this.workflowsService.deleteWorkflow({
         $type: 'api.workflows.DeleteWorkflowRequest',
@@ -115,10 +115,10 @@ export class WorkflowsController implements OnModuleInit {
   }
 
   @Post('duplicate')
-  async duplicateWorkflow(
+  public async duplicateWorkflow(
     @CurrentUser() user: User,
     @Body() duplicateWorkflowDto: DuplicateWorkflowDto,
-  ) {
+  ): Promise<WorkflowsProto.WorkflowResponse['workflow']> {
     const response = await this.grpcClient.call(
       this.workflowsService.duplicateWorkflow({
         $type: 'api.workflows.DuplicateWorkflowRequest',
@@ -133,10 +133,10 @@ export class WorkflowsController implements OnModuleInit {
   }
 
   @Post(':id/publish')
-  async publishWorkflow(
+  public async publishWorkflow(
     @CurrentUser() user: User,
     @Body() publishWorkflowDto: PublishWorkflowDto,
-  ) {
+  ): Promise<WorkflowsProto.WorkflowResponse['workflow']> {
     const response = await this.grpcClient.call(
       this.workflowsService.publishWorkflow({
         $type: 'api.workflows.PublishWorkflowRequest',
@@ -150,10 +150,10 @@ export class WorkflowsController implements OnModuleInit {
   }
 
   @Post(':id/unpublish')
-  async unpublishWorkflow(
+  public async unpublishWorkflow(
     @CurrentUser() user: User,
     @Param('id', ParseIntPipe) workflowId: number,
-  ) {
+  ): Promise<WorkflowsProto.WorkflowResponse['workflow']> {
     const response = await this.grpcClient.call(
       this.workflowsService.unpublishWorkflow({
         $type: 'api.workflows.UnpublishWorkflowRequest',
@@ -166,16 +166,16 @@ export class WorkflowsController implements OnModuleInit {
   }
 
   @Post('run-workflow')
-  async runWorkflow(
+  public async runWorkflow(
     @CurrentUser() user: User,
     @Body() runWorkflowDto: RunWorkflowDto,
-  ) {
+  ): Promise<WorkflowsProto.RunWorkflowResponse> {
     return await this.grpcClient.call(
       this.workflowsService.runWorkflow({
         $type: 'api.workflows.RunWorkflowRequest',
         user: this.userToProtoUser(user),
         workflowId: runWorkflowDto.workflowId,
-        flowDefinition: runWorkflowDto.flowDefinition,
+        flowDefinition: runWorkflowDto.flowDefinition ?? '',
         componentId: String(runWorkflowDto.componentId),
       }),
       'WorkflowsController.runWorkflow',
@@ -183,10 +183,10 @@ export class WorkflowsController implements OnModuleInit {
   }
 
   @Patch('')
-  async updateWorkflow(
+  public async updateWorkflow(
     @CurrentUser() user: User,
     @Body() updateWorkflowDto: UpdateWorkflowDto,
-  ) {
+  ): Promise<WorkflowsProto.WorkflowResponse['workflow']> {
     console.log('updateWorkflowDto', updateWorkflowDto);
     const response = await this.grpcClient.call(
       this.workflowsService.updateWorkflow({
@@ -201,10 +201,10 @@ export class WorkflowsController implements OnModuleInit {
   }
 
   @Get('historic')
-  async getHistoricWorkflowExecutions(
+  public async getHistoricWorkflowExecutions(
     @CurrentUser() user: User,
     @Query('workflowId', ParseIntPipe) workflowId: number,
-  ) {
+  ): Promise<WorkflowsProto.WorkflowExecutionsResponse['executions']> {
     const response = await this.grpcClient.call(
       this.workflowsService.getHistoricWorkflowExecutions({
         $type: 'api.workflows.GetHistoricRequest',
@@ -217,10 +217,13 @@ export class WorkflowsController implements OnModuleInit {
   }
 
   @Get('executions')
-  async getWorkflowExecutions(
+  public async getWorkflowExecutions(
     @CurrentUser() user: User,
     @Query('executionId') executionId: string | number,
-  ) {
+  ): Promise<{
+    execution: WorkflowsProto.WorkflowExecutionDetailResponse['execution'];
+    phases: WorkflowsProto.WorkflowExecutionDetailResponse['phases'];
+  }> {
     const response = await this.grpcClient.call(
       this.workflowsService.getWorkflowExecutions({
         $type: 'api.workflows.GetExecutionsRequest',
@@ -236,10 +239,13 @@ export class WorkflowsController implements OnModuleInit {
   }
 
   @Get('phases/:id')
-  async getWorkflowPhase(
+  public async getWorkflowPhase(
     @CurrentUser() user: User,
     @Param('id', ParseIntPipe) phaseId: number,
-  ) {
+  ): Promise<{
+    phase: WorkflowsProto.PhaseResponse['phase'];
+    logs: WorkflowsProto.PhaseResponse['logs'];
+  }> {
     const response = await this.grpcClient.call(
       this.workflowsService.getWorkflowPhase({
         $type: 'api.workflows.GetPhaseRequest',

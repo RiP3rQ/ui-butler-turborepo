@@ -5,9 +5,9 @@ import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { Request } from "express";
 import { type ClientGrpc } from "@nestjs/microservices";
-import { AuthServiceClient } from "../types/grpc-clients.interface";
 import { AuthProto } from "@app/proto";
 import { firstValueFrom } from "rxjs";
+import { AuthServiceClient } from "../types/grpc-clients.interface";
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(
@@ -22,27 +22,30 @@ export class JwtRefreshStrategy extends PassportStrategy(
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (request: Request) => request.cookies?.Refresh,
+        (request: Request) => request.cookies.Refresh as string,
       ]),
-      secretOrKey: configService.getOrThrow("JWT_REFRESH_TOKEN_SECRET"),
+      secretOrKey: String(configService.getOrThrow("JWT_REFRESH_TOKEN_SECRET")),
       passReqToCallback: true,
     });
   }
 
-  onModuleInit() {
+  onModuleInit(): void {
     this.authService = this.client.getService<AuthServiceClient>("AuthService");
   }
 
-  async validate(request: Request, payload: any) {
+  async validate(
+    request: Request,
+    payload: { email: string },
+  ): Promise<AuthProto.User> {
     try {
       console.log("Validating refresh token:", {
         email: payload.email,
-        refreshToken: request.cookies?.Refresh?.substring(0, 20) + "...",
+        refreshToken: `${String(request.cookies.Refresh).slice(0, 20)}...`,
       });
 
       const verifyRequest: AuthProto.VerifyRefreshTokenRequest = {
         $type: "api.auth.VerifyRefreshTokenRequest",
-        refreshToken: request.cookies?.Refresh,
+        refreshToken: String(request.cookies.Refresh),
         email: payload.email,
       };
 
@@ -50,7 +53,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
         this.authService.verifyRefreshToken(verifyRequest),
       );
 
-      if (!user || !user.id || !user.email) {
+      if (!user.id || !user.email) {
         throw new UnauthorizedException("Invalid refresh token");
       }
 

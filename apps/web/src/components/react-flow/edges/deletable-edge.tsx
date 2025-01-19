@@ -7,8 +7,9 @@ import {
 } from "@xyflow/react";
 import { Button } from "@repo/ui/components/ui/button";
 import { XIcon } from "lucide-react";
+import { type JSX } from "react";
 
-function DeletableEdge(props: Readonly<EdgeProps>) {
+function DeletableEdge(props: Readonly<EdgeProps>): JSX.Element {
   const [edgePath, labelX, labelY] = getSmoothStepPath(props);
   const { setEdges } = useReactFlow();
 

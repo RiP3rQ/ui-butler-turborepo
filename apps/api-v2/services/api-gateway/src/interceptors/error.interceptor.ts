@@ -1,3 +1,4 @@
+import { IncomingHttpHeaders } from 'node:http';
 import {
   CallHandler,
   ExecutionContext,
@@ -9,17 +10,28 @@ import {
 } from '@nestjs/common';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { Request as ExpressRequest } from 'express';
+
+interface TypedRequest extends ExpressRequest {
+  body: Record<string, unknown>;
+  headers: IncomingHttpHeaders;
+}
+
+type SanitizedData = Record<string, string>;
 
 @Injectable()
 export class ErrorInterceptor implements NestInterceptor {
   private readonly logger = new Logger(ErrorInterceptor.name);
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const request = context.switchToHttp().getRequest();
+  public intercept(
+    context: ExecutionContext,
+    next: CallHandler,
+  ): Observable<unknown> {
+    const request = context.switchToHttp().getRequest<TypedRequest>();
     const { method, url, body, headers } = request;
 
     return next.handle().pipe(
-      catchError((err) => {
+      catchError((err: Error | HttpException) => {
         this.logger.error(`Error in ${method} ${url}`, {
           error: err.message,
           stack: err.stack,
@@ -38,7 +50,13 @@ export class ErrorInterceptor implements NestInterceptor {
     );
   }
 
-  private mapError(err: any): HttpException {
+  private mapError(
+    err: Error & {
+      code?: string;
+      name?: string;
+      errors?: Record<string, unknown>;
+    },
+  ): HttpException {
     if (err.code === 'ECONNREFUSED') {
       return new HttpException(
         'Service unavailable',
@@ -62,20 +80,24 @@ export class ErrorInterceptor implements NestInterceptor {
     );
   }
 
-  private sanitizeBody(body: any): any {
-    if (!body) return body;
-    const sanitized = { ...body };
+  private sanitizeBody(
+    body: Record<string, unknown> | undefined,
+  ): SanitizedData {
+    if (!body) return {};
+    const sanitized = { ...body } as SanitizedData;
     ['password', 'token', 'secret'].forEach((key) => {
-      if (sanitized[key]) sanitized[key] = '***';
+      if (key in sanitized) sanitized[key] = '***';
     });
     return sanitized;
   }
 
-  private sanitizeHeaders(headers: any): any {
-    if (!headers) return headers;
-    const sanitized = { ...headers };
+  private sanitizeHeaders(
+    headers: Record<string, unknown> | undefined,
+  ): SanitizedData {
+    if (!headers) return {};
+    const sanitized = { ...headers } as SanitizedData;
     ['authorization', 'cookie'].forEach((key) => {
-      if (sanitized[key]) sanitized[key] = '***';
+      if (key in sanitized) sanitized[key] = '***';
     });
     return sanitized;
   }

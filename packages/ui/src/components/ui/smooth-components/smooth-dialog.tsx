@@ -1,6 +1,7 @@
 "use client";
 
 import React, {
+  createContext,
   useCallback,
   useContext,
   useEffect,
@@ -13,8 +14,8 @@ import type { Transition, Variant } from "framer-motion";
 import { AnimatePresence, motion, MotionConfig } from "framer-motion";
 import { createPortal } from "react-dom";
 import { XIcon } from "lucide-react";
+import { useClickOutside } from "@repo/ui/hooks/use-click-outside";
 import { cn } from "@repo/ui/lib/utils";
-import useClickOutside from "@repo/ui/hooks/use-click-outside.tsx";
 
 interface SmoothDialogContextType {
   isOpen: boolean;
@@ -23,9 +24,7 @@ interface SmoothDialogContextType {
   triggerRef: React.RefObject<HTMLDivElement>;
 }
 
-const SmoothDialogContext = React.createContext<SmoothDialogContextType | null>(
-  null,
-);
+const SmoothDialogContext = createContext<SmoothDialogContextType | null>(null);
 
 function useSmoothDialog() {
   const context = useContext(SmoothDialogContext);
@@ -56,6 +55,7 @@ function SmoothDialogProvider({
   );
 
   return (
+    // @ts-expect-error - libs error
     <SmoothDialogContext.Provider value={contextValue}>
       <MotionConfig transition={transition}>{children}</MotionConfig>
     </SmoothDialogContext.Provider>
@@ -182,10 +182,11 @@ function SmoothDialogContent({
       }
     } else {
       document.body.classList.remove("overflow-hidden");
-      triggerRef.current?.focus();
+      triggerRef.current.focus();
     }
   }, [isOpen, triggerRef]);
 
+  // @ts-expect-error - libs error
   useClickOutside(containerRef, () => {
     if (isOpen) {
       setIsOpen(false);
@@ -227,7 +228,6 @@ function SmoothDialogContainer({ children }: SmoothDialogContainerProps) {
 
   if (!mounted) return null;
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   return createPortal(
     <AnimatePresence initial={false} mode="sync">
       {isOpen ? (
@@ -396,7 +396,7 @@ function SmoothDialogClose({
       type="button"
       variants={variants}
     >
-      {children || <XIcon size={24} />}
+      {children ?? <XIcon size={24} />}
     </motion.button>
   );
 }

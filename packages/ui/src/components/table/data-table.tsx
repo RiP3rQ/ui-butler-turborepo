@@ -2,18 +2,17 @@
 
 import * as React from "react";
 import {
-  ColumnDef,
-  ColumnFiltersState,
+  type ColumnDef,
+  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  SortingState,
+  type SortingState,
   useReactTable,
-  VisibilityState,
+  type VisibilityState,
 } from "@tanstack/react-table";
-
 import {
   Table,
   TableBody,
@@ -67,8 +66,6 @@ export function DataTable<TData, TValue>({
     },
   });
 
-  console.log("table.getRowModel().rows", table.getRowModel().rows);
-
   return (
     <div>
       {!hideFilterInput && (
@@ -76,7 +73,9 @@ export function DataTable<TData, TValue>({
           <Input
             placeholder={filterKeyPlaceholder}
             value={
-              (table.getColumn(filterKey)?.getFilterValue() as string) ?? ""
+              (table.getColumn(filterKey)?.getFilterValue() as
+                | string
+                | undefined) ?? ""
             }
             onChange={(event) =>
               table.getColumn(filterKey)?.setFilterValue(event.target.value)
@@ -106,7 +105,7 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -135,7 +134,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className={"mt-5"}>
+      <div className="mt-5">
         <DataTablePagination table={table} />
       </div>
     </div>

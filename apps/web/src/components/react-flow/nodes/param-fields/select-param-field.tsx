@@ -1,7 +1,7 @@
 "use client";
 
 import type { ParamProps } from "@repo/types";
-import { useId } from "react";
+import { type JSX, useId } from "react";
 import { Label } from "@repo/ui/components/ui/label";
 import {
   Select,
@@ -22,7 +22,7 @@ function SelectParamField({
   param,
   value,
   updateNodeParamValue,
-}: Readonly<ParamProps>) {
+}: Readonly<ParamProps>): JSX.Element {
   const id = useId();
   return (
     <div className="flex flex-col gap-1 w-full">

@@ -1,16 +1,21 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { type z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useMemo } from "react";
-import { registerFormSchema } from "@/schemas/register-schema.ts";
-import registerUser from "@/actions/registerUser.ts";
-import { getErrorMessage } from "@/lib/get-error-message.ts";
+import { registerFormSchema } from "@/schemas/register-schema";
+import { getErrorMessage } from "@/lib/get-error-message";
+import registerUser from "@/actions/register-user";
 
-export function useRegisterForm() {
+export function useRegisterForm(): {
+  form: ReturnType<typeof useForm<z.infer<typeof registerFormSchema>>>;
+  isPending: boolean;
+  onSubmit: (values: z.infer<typeof registerFormSchema>) => void;
+  isSubmitButtonBlocked: boolean;
+} {
   const form = useForm<z.infer<typeof registerFormSchema>>({
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
@@ -36,20 +41,22 @@ export function useRegisterForm() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof registerFormSchema>) {
+  const onSubmit = async (
+    values: z.infer<typeof registerFormSchema>,
+  ): Promise<void> => {
     toast.loading("Registering...", { id: "register" });
     mutate(values);
-  }
+  };
 
   const isSubmitButtonBlocked = useMemo(() => {
     const values = form.watch();
     const errors = form.formState.errors;
 
     const hasValues = Boolean(
-      values.username?.trim() &&
-        values.email?.trim() &&
-        values.password?.trim() &&
-        values.confirmPassword?.trim(),
+      values.username.trim() &&
+        values.email.trim() &&
+        values.password.trim() &&
+        values.confirmPassword.trim(),
     );
 
     const hasNoErrors = Object.keys(errors).length === 0;

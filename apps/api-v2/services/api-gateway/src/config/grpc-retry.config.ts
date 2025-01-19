@@ -5,11 +5,11 @@ import { ConfigService } from '@nestjs/config';
 export class GrpcRetryConfig {
   constructor(private configService: ConfigService) {}
 
-  get maxRetries(): number {
-    return this.configService.get('GRPC_MAX_RETRIES', 3);
+  public get maxRetries(): number {
+    return this.configService.getOrThrow('GRPC_MAX_RETRIES', 3);
   }
 
-  get delayMs(): number {
-    return this.configService.get('GRPC_RETRY_DELAY_MS', 1000);
+  public get delayMs(): number {
+    return this.configService.getOrThrow('GRPC_RETRY_DELAY_MS', 1000);
   }
 }

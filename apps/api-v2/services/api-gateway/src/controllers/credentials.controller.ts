@@ -30,20 +30,20 @@ export class CredentialsController implements OnModuleInit {
     private readonly grpcClient: GrpcClientProxy,
   ) {}
 
-  onModuleInit() {
+  public onModuleInit(): void {
     this.usersService =
       this.client.getService<UsersProto.UsersServiceClient>('UsersService');
   }
 
   @Get()
-  async getUserCredentials(@CurrentUser() user: User) {
+  public async getUserCredentials(@CurrentUser() user: User) {
     const request: UsersProto.GetCredentialsRequest = {
       $type: 'api.users.GetCredentialsRequest',
       user: {
         $type: 'api.users.User',
         id: user.id,
         email: user.email,
-        username: user.username,
+        username: user.username ?? '',
       },
     };
 
@@ -56,17 +56,17 @@ export class CredentialsController implements OnModuleInit {
   }
 
   @Post()
-  async createCredential(
+  public async createCredential(
     @CurrentUser() user: User,
     @Body() createCredentialDto: CreateCredentialDto,
-  ) {
+  ): Promise<UsersProto.Credential> {
     const request: UsersProto.CreateCredentialRequest = {
       $type: 'api.users.CreateCredentialRequest',
       user: {
         $type: 'api.users.User',
         id: user.id,
         email: user.email,
-        username: user.username,
+        username: user.username ?? '',
       },
       credential: {
         $type: 'api.users.CreateCredentialDto',
@@ -81,14 +81,17 @@ export class CredentialsController implements OnModuleInit {
   }
 
   @Delete()
-  async deleteCredential(@CurrentUser() user: User, @Query('id') id: string) {
+  public async deleteCredential(
+    @CurrentUser() user: User,
+    @Query('id') id: string,
+  ): Promise<UsersProto.Credential> {
     const request: UsersProto.DeleteCredentialRequest = {
       $type: 'api.users.DeleteCredentialRequest',
       user: {
         $type: 'api.users.User',
         id: user.id,
         email: user.email,
-        username: user.username,
+        username: user.username ?? '',
       },
       id: Number(id),
     };
@@ -100,17 +103,17 @@ export class CredentialsController implements OnModuleInit {
   }
 
   @Get(':id/reveal')
-  async getRevealedCredentialValue(
+  public async getRevealedCredentialValue(
     @CurrentUser() user: User,
     @Param('id') id: string,
-  ) {
+  ): Promise<UsersProto.RevealedCredential> {
     const request: UsersProto.RevealCredentialRequest = {
       $type: 'api.users.RevealCredentialRequest',
       user: {
         $type: 'api.users.User',
         id: user.id,
         email: user.email,
-        username: user.username,
+        username: user.username ?? '',
       },
       id: Number(id),
     };

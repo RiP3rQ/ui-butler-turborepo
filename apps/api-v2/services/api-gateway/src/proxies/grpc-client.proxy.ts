@@ -3,6 +3,7 @@ import { firstValueFrom, Observable, throwError, timer } from 'rxjs';
 import { mergeMap, retryWhen } from 'rxjs/operators';
 import { status } from '@grpc/grpc-js';
 import { ConfigService } from '@nestjs/config';
+import { GrpcError } from '@app/common';
 
 @Injectable()
 export class GrpcClientProxy {
@@ -15,14 +16,17 @@ export class GrpcClientProxy {
     this.delayMs = this.configService.get('GRPC_RETRY_DELAY_MS', 1000);
   }
 
-  async call<T>(serviceCall: Observable<T>, context: string): Promise<T> {
+  public async call<T>(
+    serviceCall: Observable<T>,
+    context: string,
+  ): Promise<T> {
     let retries = 0;
 
     return firstValueFrom(
       serviceCall.pipe(
         retryWhen((errors) =>
           errors.pipe(
-            mergeMap((error) => {
+            mergeMap((error: GrpcError) => {
               this.logger.debug(`Received error in ${context}:`, error);
 
               if (!this.isRetryableError(error)) {
@@ -33,13 +37,13 @@ export class GrpcClientProxy {
 
               if (retries >= this.maxRetries) {
                 this.logger.error(
-                  `${context} failed after ${retries} attempts: ${error.message}`,
+                  `${context} failed after ${String(retries)} attempts: ${error.message}`,
                 );
                 return throwError(() => error);
               }
 
               this.logger.warn(
-                `${context} failed, attempt ${retries}/${this.maxRetries}. Retrying in ${this.delayMs}ms: ${error.message}`,
+                `${context} failed, attempt ${String(retries)}/${String(this.maxRetries)}. Retrying in ${String(this.delayMs)}ms: ${error.message}`,
               );
 
               return timer(this.delayMs);
@@ -50,7 +54,7 @@ export class GrpcClientProxy {
     );
   }
 
-  private isRetryableError(error: any): boolean {
+  private isRetryableError(error: GrpcError): boolean {
     const retryableCodes = [
       status.UNAVAILABLE,
       status.DEADLINE_EXCEEDED,
@@ -59,13 +63,13 @@ export class GrpcClientProxy {
     ];
 
     const isRetryable =
-      error?.code !== undefined &&
+      error.code !== undefined &&
       retryableCodes.includes(error.code) &&
-      error?.details !== undefined;
+      error.details !== undefined;
 
     this.logger.debug('Error details:', {
-      code: error?.code,
-      details: error?.details,
+      code: error.code,
+      details: error.details,
       isRetryable,
     });
 

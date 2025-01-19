@@ -10,18 +10,22 @@ import {
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
 import { CurrentUser, JwtAuthGuard } from '@app/common';
-import { UsersProto } from '@app/proto';
-import { handleGrpcError } from '../utils/grpc-error.util';
 import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
+import { UsersProto } from '@app/proto';
+import { GrpcClientProxy } from 'src/proxies/grpc-client.proxy';
+import { handleGrpcError } from '../utils/grpc-error.util';
 
 @Controller('users')
 @UseInterceptors(CacheInterceptor)
 export class UsersController implements OnModuleInit {
   private usersService: UsersProto.UsersServiceClient;
 
-  constructor(@Inject('USERS_SERVICE') private readonly client: ClientGrpc) {}
+  constructor(
+    @Inject('USERS_SERVICE') private readonly client: ClientGrpc,
+    private readonly grpcClient: GrpcClientProxy,
+  ) {}
 
-  onModuleInit() {
+  public onModuleInit(): void {
     this.usersService =
       this.client.getService<UsersProto.UsersServiceClient>('UsersService');
   }
@@ -30,10 +34,16 @@ export class UsersController implements OnModuleInit {
   @UseGuards(JwtAuthGuard)
   @CacheKey('users:all')
   @CacheTTL(30000) // Cache expiration time in milliseconds
-  async getUsers() {
+  public async getUsers(): Promise<UsersProto.GetUsersResponse> {
     try {
       const request: UsersProto.Empty = { $type: 'api.users.Empty' };
-      return this.usersService.getUsers(request);
+
+      const response = await this.grpcClient.call<UsersProto.GetUsersResponse>(
+        this.usersService.getUsers(request),
+        'Users.getUsers',
+      );
+
+      return response;
     } catch (e) {
       handleGrpcError(e);
     }
@@ -43,7 +53,9 @@ export class UsersController implements OnModuleInit {
   @CacheKey('users:detail')
   @CacheTTL(60000) // Cache expiration time in milliseconds
   @UseGuards(JwtAuthGuard)
-  async getCurrentUser(@CurrentUser() user: UsersProto.User) {
+  public async getCurrentUser(
+    @CurrentUser() user: UsersProto.User,
+  ): Promise<UsersProto.GetCurrentUserResponse> {
     try {
       const request: UsersProto.GetCurrentUserRequest = {
         $type: 'api.users.GetCurrentUserRequest',
@@ -52,33 +64,55 @@ export class UsersController implements OnModuleInit {
           $type: 'api.users.User',
         },
       };
-      return this.usersService.getCurrentUser(request);
+
+      const response =
+        await this.grpcClient.call<UsersProto.GetCurrentUserResponse>(
+          this.usersService.getCurrentUser(request),
+          'Users.getCurrentUser',
+        );
+
+      return response;
     } catch (e) {
       handleGrpcError(e);
     }
   }
 
   @Post('profile')
-  async createProfile(@Body() createProfileDto: UsersProto.CreateProfileDto) {
+  public async createProfile(
+    @Body() createProfileDto: UsersProto.CreateProfileDto,
+  ): Promise<UsersProto.Profile> {
     try {
       const request: UsersProto.CreateProfileDto = {
-        $type: 'api.users.CreateProfileDto',
         ...createProfileDto,
       };
-      return this.usersService.createProfile(request);
+
+      const response = await this.grpcClient.call<UsersProto.Profile>(
+        this.usersService.createProfile(request),
+        'Users.createProfile',
+      );
+
+      return response;
     } catch (e) {
       handleGrpcError(e);
     }
   }
 
   @Post()
-  async createUser(@Body() createUserDto: UsersProto.CreateUserDto) {
+  public async createUser(
+    @Body() createUserDto: UsersProto.CreateUserDto,
+  ): Promise<UsersProto.User> {
     try {
       const request: UsersProto.CreateUserDto = {
-        $type: 'api.users.CreateUserDto',
         ...createUserDto,
+        $type: 'api.users.CreateUserDto',
       };
-      return this.usersService.createUser(request);
+
+      const response = await this.grpcClient.call<UsersProto.User>(
+        this.usersService.createUser(request),
+        'Users.createUser',
+      );
+
+      return response;
     } catch (e) {
       handleGrpcError(e);
     }

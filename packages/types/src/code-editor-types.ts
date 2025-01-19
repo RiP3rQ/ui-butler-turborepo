@@ -1,5 +1,8 @@
 import type { LucideIcon } from "lucide-react";
-import { CodeType, SingleComponentApiResponseType } from "./components";
+import {
+  type CodeType,
+  type SingleComponentApiResponseType,
+} from "./components";
 
 export interface EditorActionsType {
   title: string;

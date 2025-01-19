@@ -1,7 +1,3 @@
-const { resolve } = require("node:path");
-
-const project = resolve(process.cwd(), "tsconfig.json");
-
 /*
  * This is a custom ESLint configuration for use a library
  * that utilizes React.
@@ -18,7 +14,8 @@ module.exports = {
     "@vercel/style-guide/eslint/react",
   ].map(require.resolve),
   parserOptions: {
-    project,
+    // Remove the project reference here - it will be provided by the consuming service
+    sourceType: "module",
   },
   globals: {
     JSX: true,
@@ -26,7 +23,7 @@ module.exports = {
   settings: {
     "import/resolver": {
       typescript: {
-        project,
+        // Remove the project reference here - it will be provided by the consuming service
       },
       node: {
         extensions: [".mjs", ".js", ".jsx", ".ts", ".tsx"],

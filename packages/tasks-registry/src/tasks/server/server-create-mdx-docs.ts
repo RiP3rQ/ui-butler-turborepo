@@ -1,4 +1,4 @@
-import { BaseWorkflowTask, TaskParamType, TaskType } from "@repo/types";
+import { type BaseWorkflowTask, TaskParamType, TaskType } from "@repo/types";
 
 export const ServerCreateMDXDocsTask = {
   type: TaskType.CREATE_MDX_DOCUMENTATION,
@@ -23,6 +23,7 @@ export const ServerCreateMDXDocsTask = {
     },
   ] as const,
   credits: 3,
+  creditsWithoutApiKey: 10,
 } satisfies BaseWorkflowTask;
 
 export type ServerCreateMDXDocsTaskType = typeof ServerCreateMDXDocsTask;

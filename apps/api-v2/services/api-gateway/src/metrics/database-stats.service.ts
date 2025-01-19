@@ -28,10 +28,10 @@ export class DatabaseStatsService {
   private readonly logger = new Logger(DatabaseStatsService.name);
   private readonly registry: Registry;
 
-  private dbSizeGauge: Gauge<string>;
-  private activeConnectionsGauge: Gauge<string>;
-  private queryStatsGauge: Gauge<string>;
-  private tableRowsGauge: Gauge<string>;
+  private dbSizeGauge: Gauge;
+  private activeConnectionsGauge: Gauge;
+  private queryStatsGauge: Gauge;
+  private tableRowsGauge: Gauge;
 
   constructor(
     @Inject(DATABASE_CONNECTION)
@@ -70,7 +70,7 @@ export class DatabaseStatsService {
     });
   }
 
-  async collectDatabaseMetrics(): Promise<void> {
+  public async collectDatabaseMetrics(): Promise<void> {
     try {
       const startTime = Date.now();
 
@@ -82,7 +82,9 @@ export class DatabaseStatsService {
       ]);
 
       const duration = Date.now() - startTime;
-      this.logger.debug(`Metrics collection completed in ${duration}ms`);
+      this.logger.debug(
+        `Metrics collection completed in ${String(duration)}ms`,
+      );
     } catch (error) {
       this.logger.error('Failed to collect Neon database metrics', {
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -97,10 +99,10 @@ export class DatabaseStatsService {
         SELECT pg_database_size(current_database()) as size;
       `);
 
-      if (result?.rows?.[0]?.size) {
+      if (result.rows[0]?.size) {
         const size = this.parseMetricValue(result.rows[0].size);
         this.dbSizeGauge.set({ database: 'neondb' }, size);
-        this.logger.debug(`Database size collected: ${size} bytes`);
+        this.logger.debug(`Database size collected: ${String(size)} bytes`);
       }
     } catch (error) {
       this.logger.warn('Failed to collect database size', {
@@ -117,10 +119,12 @@ export class DatabaseStatsService {
           WHERE datname = current_database();
       `);
 
-      if (result?.rows?.[0]?.numbackends) {
+      if (result.rows[0]?.numbackends) {
         const connections = this.parseMetricValue(result.rows[0].numbackends);
         this.activeConnectionsGauge.set(connections);
-        this.logger.debug(`Active connections collected: ${connections}`);
+        this.logger.debug(
+          `Active connections collected: ${String(connections)}`,
+        );
       }
     } catch (error) {
       this.logger.warn('Failed to collect active connections', {
@@ -141,7 +145,7 @@ export class DatabaseStatsService {
           FROM pg_stat_user_tables;
       `);
 
-      if (result?.rows) {
+      if (result.rows.length > 0) {
         result.rows.forEach((row: Record<string, unknown>) => {
           // Type assertion after validation
           if (this.isTableRow(row)) {
@@ -195,8 +199,8 @@ export class DatabaseStatsService {
           WHERE datname = current_database();
       `);
 
-      if (result?.rows?.[0]) {
-        const row = result.rows[0] as Record<string, unknown>;
+      if (result.rows[0]) {
+        const row = result.rows[0];
         if (this.isQueryStats(row)) {
           const metrics = {
             transactions_committed: row.xact_commit,
@@ -259,7 +263,7 @@ export class DatabaseStatsService {
     return isNaN(parsed) ? 0 : parsed;
   }
 
-  async getMetrics(): Promise<string> {
+  public async getMetrics(): Promise<string> {
     try {
       await this.collectDatabaseMetrics();
       const metrics = await this.registry.metrics();

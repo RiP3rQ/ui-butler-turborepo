@@ -1,23 +1,23 @@
 import Link from "next/link";
-import { Metadata } from "next";
-import Icons from "@repo/ui/components/landing-page/icons";
+import { type Metadata } from "next";
+import { Icons } from "@repo/ui/components/landing-page/icons";
 import { Separator } from "@repo/ui/components/ui/separator";
 import * as React from "react";
-import { RegisterForm } from "@/app/sign-up/_components/register-form/register-form.tsx";
+import { RegisterForm } from "./_components/register-form/register-form";
 
 export const metadata: Metadata = {
   title: "Register - UI-Butler",
   description: "Register your new UI-Butler account.",
 };
 
-export default function RegisterPage() {
+export default function RegisterPage(): React.ReactNode {
   return (
     <div className="container relative hidden h-[800px] flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
       <div className="relative hidden min-h-screen flex-col bg-muted p-10 text-white dark:border-r lg:flex">
         <div className="absolute inset-0 bg-zinc-900" />
         <div className="relative z-20 flex items-center gap-2">
           <Icons.logo className="size-12" />
-          <span className={"text-4xl font-bold"}>UI-Butler</span>
+          <span className="text-4xl font-bold">UI-Butler</span>
         </div>
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
@@ -56,8 +56,8 @@ export default function RegisterPage() {
             .
           </p>
           <Separator />
-          <div className={"flex flex-col items-center justify-center w-full"}>
-            <p className={"text-muted-foreground"}>Already have an account?</p>
+          <div className="flex flex-col items-center justify-center w-full">
+            <p className="text-muted-foreground">Already have an account?</p>
             <Link href="/sign-in" className="underline hover:text-primary">
               Sign in
             </Link>

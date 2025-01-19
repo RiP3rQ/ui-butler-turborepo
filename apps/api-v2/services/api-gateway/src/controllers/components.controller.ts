@@ -1,3 +1,4 @@
+import { ClientRequest, IncomingMessage } from 'node:http';
 import {
   All,
   Body,
@@ -25,12 +26,11 @@ import {
   UpdateComponentCodeDto,
 } from '@app/common';
 import { codeTypeValues } from '@repo/types';
-import { Throttle } from '@nestjs/throttler';
-import { rateLimitConfigs } from '../config/rate-limit.config';
 import { type Request, type Response } from 'express';
 import HttpProxy from 'http-proxy';
-import { ClientRequest, IncomingMessage } from 'node:http';
+import { Throttle } from '@nestjs/throttler';
 import { ComponentsProto } from '@app/proto';
+import { rateLimitConfigs } from '../config/rate-limit.config';
 import { handleGrpcError } from '../utils/grpc-error.util';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 
@@ -49,9 +49,9 @@ export class ComponentsController implements OnModuleInit {
 
     this.proxy.on(
       'proxyReq',
-      function (proxyReq: ClientRequest, req: IncomingMessage) {
+      (proxyReq: ClientRequest, req: IncomingMessage) => {
         const originalReq = req as Request;
-        const authHeader = originalReq.headers['authorization'];
+        const authHeader = originalReq.headers.authorization;
         if (authHeader) {
           proxyReq.setHeader('Authorization', authHeader);
         }
@@ -66,7 +66,7 @@ export class ComponentsController implements OnModuleInit {
     );
   }
 
-  onModuleInit() {
+  public onModuleInit(): void {
     this.componentsService =
       this.client.getService<ComponentsProto.ComponentsServiceClient>(
         'ComponentsService',
@@ -74,12 +74,12 @@ export class ComponentsController implements OnModuleInit {
   }
 
   @Get('/:projectId/:componentId')
-  async getComponent(
+  public async getComponent(
     @CurrentUser() user: ComponentsProto.User,
     @Param('projectId', ParseIntPipe) projectId: number,
     @Param('componentId', ParseIntPipe) componentId: number,
-  ) {
-    if (!user) {
+  ): Promise<ComponentsProto.Component> {
+    if (typeof user === 'undefined') {
       throw new NotFoundException('Unauthorized');
     }
 
@@ -105,11 +105,11 @@ export class ComponentsController implements OnModuleInit {
   }
 
   @Post()
-  async saveComponent(
+  public async saveComponent(
     @CurrentUser() user: ComponentsProto.User,
     @Body() saveComponentDto: SaveComponentDto,
-  ) {
-    if (!user) {
+  ): Promise<ComponentsProto.Component> {
+    if (typeof user === 'undefined') {
       throw new NotFoundException('Unauthorized');
     }
 
@@ -136,11 +136,11 @@ export class ComponentsController implements OnModuleInit {
   }
 
   @Post('/favorite')
-  async favoriteComponent(
+  public async favoriteComponent(
     @CurrentUser() user: ComponentsProto.User,
     @Body() favoriteComponentDto: FavoriteComponentDto,
-  ) {
-    if (!user) {
+  ): Promise<ComponentsProto.Component> {
+    if (typeof user === 'undefined') {
       throw new NotFoundException('Unauthorized');
     }
 
@@ -167,23 +167,23 @@ export class ComponentsController implements OnModuleInit {
   }
 
   @All('generate')
-  async proxyRequest(@Req() req: Request, @Res() res: Response) {
+  public async proxyRequest(@Req() req: Request, @Res() res: Response) {
     return new Promise((resolve, reject) => {
       this.proxy.web(
         req,
         res,
         {
-          target: `http://${process.env.COMPONENTS_SERVICE_HOST || 'localhost'}:${
-            process.env.COMPONENTS_SERVICE_HTTP_PORT || '3348'
+          target: `http://${process.env.COMPONENTS_SERVICE_HOST ?? 'localhost'}:${
+            process.env.COMPONENTS_SERVICE_HTTP_PORT ?? '3348'
           }`,
           changeOrigin: true,
           secure: false,
           ws: true,
         },
-        (err) => {
+        (err: Error | null) => {
           if (err) {
             console.error('Proxy error:', err);
-            res.status(500).json({ error: 'Proxy error: ' + err.message });
+            res.status(500).json({ error: `Proxy error: ${err.message}` });
             reject(err);
           }
         },
@@ -192,7 +192,7 @@ export class ComponentsController implements OnModuleInit {
       this.proxy.on('error', (err) => {
         console.error('Proxy error:', err);
         if (!res.headersSent) {
-          res.status(500).json({ error: 'Proxy error: ' + err.message });
+          res.status(500).json({ error: `Proxy error: ${err.message}` });
         }
         reject(err);
       });
@@ -208,14 +208,14 @@ export class ComponentsController implements OnModuleInit {
   }
 
   @Patch('/:componentId/:codeType')
-  async updateComponentCode(
+  public async updateComponentCode(
     @CurrentUser() user: ComponentsProto.User,
     @Param('componentId', ParseIntPipe) componentId: number,
     @Param('codeType', new ParseEnumPipe(codeTypeValues))
     codeType: ComponentsProto.CodeType,
     @Body() updateComponentCodeDto: UpdateComponentCodeDto,
-  ) {
-    if (!user) {
+  ): Promise<ComponentsProto.Component> {
+    if (typeof user === 'undefined') {
       throw new NotFoundException('Unauthorized');
     }
 
@@ -241,13 +241,13 @@ export class ComponentsController implements OnModuleInit {
     }
   }
 
-  @Post('/generate-code')
   @Throttle({ ai: rateLimitConfigs.ai })
-  async generateCodeBasedOnType(
+  @Post('/generate-code')
+  public async generateCodeBasedOnType(
     @CurrentUser() user: ComponentsProto.User,
     @Body() generateCodeDto: GenerateCodeDto,
-  ) {
-    if (!user) {
+  ): Promise<ComponentsProto.Component> {
+    if (typeof user === 'undefined') {
       throw new NotFoundException('Unauthorized');
     }
 

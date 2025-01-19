@@ -4,9 +4,9 @@ import { Card } from "@repo/ui/components/ui/card";
 import { Button } from "@repo/ui/components/ui/button";
 import { type UserCredentials } from "@repo/types";
 import { type JSX } from "react";
+import { protoTimestampToDate } from "@/lib/dates";
 import { DeleteCredentialDialog } from "./delete-credential-dialog";
 import { RevealCredentialDialog } from "./reveal-credential-dialog";
-import { protoTimestampToDate } from "@/lib/dates";
 
 interface CredentialCardProps {
   credential: UserCredentials;

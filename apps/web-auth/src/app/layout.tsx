@@ -1,10 +1,10 @@
 import localFont from "next/font/local";
 import "@repo/ui/globals.css";
-import ThemeProvider from "@repo/ui/providers/theme-provider";
+import { ThemeProvider } from "@repo/ui/providers/theme-provider";
 import type { Metadata } from "next";
-import { SITE_CONFIG } from "@/config";
-import { QueryProvider } from "@/components/query-provider.tsx";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@repo/ui/components/ui/sonner";
+import { SITE_CONFIG } from "../config";
+import { QueryProvider } from "../components/query-provider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -23,7 +23,7 @@ export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>): React.ReactNode {
   return (
     <html lang="en" suppressHydrationWarning>
       <body

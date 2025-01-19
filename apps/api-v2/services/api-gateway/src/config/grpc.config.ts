@@ -1,5 +1,5 @@
-import { ClientOptions, Transport } from '@nestjs/microservices';
-import { join } from 'path';
+import { join } from 'node:path';
+import { type ClientOptions, Transport } from '@nestjs/microservices';
 
 export const createGrpcOptions = (
   host: string,
@@ -14,7 +14,7 @@ export const createGrpcOptions = (
       __dirname,
       `../../../../libs/proto/src/proto/${proto_name}.proto`,
     ),
-    url: `${host}:${port}`,
+    url: `${host}:${String(port)}`,
     loader: {
       keepCase: true,
       longs: String,

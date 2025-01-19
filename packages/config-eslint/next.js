@@ -30,6 +30,14 @@ module.exports = {
     JSX: true,
   },
   settings: {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"],
+    },
+    "import/resolver": {
+      typescript: {
+        alwaysTryTypes: true,
+      },
+    },
     "import/resolver": {
       typescript: {
         project,
@@ -49,4 +57,5 @@ module.exports = {
     "@typescript-eslint/dot-notation": "off",
     "import/no-default-export": "off",
   },
+  plugins: ["import"],
 };

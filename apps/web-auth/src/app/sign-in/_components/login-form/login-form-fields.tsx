@@ -1,6 +1,6 @@
-import { Control } from "react-hook-form";
-import { z } from "zod";
-import { loginFormSchema } from "@/schemas/login-schema";
+import { type JSX } from "react";
+import { type Control } from "react-hook-form";
+import { type z } from "zod";
 import {
   FormControl,
   FormField,
@@ -10,6 +10,7 @@ import {
 } from "@repo/ui/components/ui/form";
 import { Input } from "@repo/ui/components/ui/input";
 import { Separator } from "@repo/ui/components/ui/separator";
+import { type loginFormSchema } from "@/schemas/login-schema";
 
 interface LoginFormFieldsProps {
   control: Control<z.infer<typeof loginFormSchema>>;
@@ -19,7 +20,7 @@ interface LoginFormFieldsProps {
 export function LoginFormFields({
   control,
   isDisabled,
-}: Readonly<LoginFormFieldsProps>) {
+}: Readonly<LoginFormFieldsProps>): JSX.Element {
   return (
     <>
       <FormField

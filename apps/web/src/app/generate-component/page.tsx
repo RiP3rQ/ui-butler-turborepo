@@ -31,7 +31,7 @@ import { cn } from "@repo/ui/lib/utils";
 import { type JSX, useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import TooltipWrapper from "@repo/ui/components/tooltip-wrapper";
+import { TooltipWrapper } from "@repo/ui/components/tooltip-wrapper";
 import { useShallow } from "zustand/react/shallow";
 import { getErrorMessage } from "@/lib/get-error-message";
 import {

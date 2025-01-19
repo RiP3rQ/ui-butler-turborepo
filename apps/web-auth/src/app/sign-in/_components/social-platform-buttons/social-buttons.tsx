@@ -1,5 +1,6 @@
-import SocialPlatformButton from "@/app/sign-in/_components/social-platform-buttons/social-platform-button";
+import { type JSX } from "react";
 import { GithubIcon, GlobeIcon } from "lucide-react";
+import SocialPlatformButton from "@/app/sign-in/_components/social-platform-buttons/social-platform-button";
 
 const getSocialAuthUrl = (provider: "google" | "github"): string => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -18,7 +19,9 @@ interface SocialLoginButtonsProps {
   isDisabled: boolean;
 }
 
-export function SocialLoginButtons({ isDisabled }: SocialLoginButtonsProps) {
+export function SocialLoginButtons({
+  isDisabled,
+}: SocialLoginButtonsProps): JSX.Element {
   const handleSocialLogin = (provider: "google" | "github") => () => {
     window.location.href = getSocialAuthUrl(provider);
   };

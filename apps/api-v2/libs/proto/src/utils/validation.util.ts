@@ -1,4 +1,4 @@
-import { validate, ValidationError } from "class-validator";
+import { validate, type ValidationError } from "class-validator";
 import { plainToClass } from "class-transformer";
 import { RpcException } from "@nestjs/microservices";
 import { status } from "@grpc/grpc-js";

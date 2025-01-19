@@ -5,7 +5,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "lint": "eslint . --max-warnings 0"
+    "type-check": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0 --fix"
   },
   "exports": {
     ".": {

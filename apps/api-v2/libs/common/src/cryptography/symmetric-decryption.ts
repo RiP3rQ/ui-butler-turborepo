@@ -1,8 +1,8 @@
-import crypto from "crypto";
+import crypto from "node:crypto";
 import { ALG } from "./algorythm";
 // openssl rand -hex 32      <-- Generate 32-byte hex key for .env ENCRYPTION_KEY secret key
 
-export const symmetricDecrypt = (encrypted: string) => {
+export const symmetricDecrypt = (encrypted: string): string => {
   // Get encryption key from environment variables
   const key = process.env.ENCRYPTION_KEY;
   if (!key) {
@@ -12,7 +12,7 @@ export const symmetricDecrypt = (encrypted: string) => {
   // Split IV and encrypted data from input string
   const parts = encrypted.split(":");
   // shift() removes the first element from an array and returns it
-  const iv = Buffer.from(parts.shift() as string, "hex");
+  const iv = Buffer.from(parts.shift() ?? "", "hex");
   const data = Buffer.from(parts.join(":"), "hex");
 
   // Create decipher instance with key and IV

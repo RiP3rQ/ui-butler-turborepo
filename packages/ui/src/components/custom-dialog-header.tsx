@@ -1,9 +1,9 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
+import { type JSX } from "react";
 import { DialogHeader, DialogTitle } from "@repo/ui/components/ui/dialog";
 import { Separator } from "@repo/ui/components/ui/separator";
-import { JSX } from "react";
 
 interface CustomDialogHeaderProps {
   icon?: LucideIcon;
@@ -14,7 +14,7 @@ interface CustomDialogHeaderProps {
   titleClassName?: string;
   subTitleClassName?: string;
 }
-function CustomDialogHeader({
+export function CustomDialogHeader({
   icon: Icon,
   title,
   subTitle,
@@ -27,14 +27,19 @@ function CustomDialogHeader({
       <DialogTitle asChild>
         <div className="flex flex-col items-center gap-2 mb-2">
           {Icon ? (
-            <Icon className={`stroke-primary ${iconClassName}`} size={30} />
+            <Icon
+              className={`stroke-primary ${iconClassName ?? ""}`}
+              size={30}
+            />
           ) : null}
           {title ? (
-            <p className={`text-xl text-primary ${titleClassName}`}>{title}</p>
+            <p className={`text-xl text-primary ${titleClassName ?? ""}`}>
+              {title}
+            </p>
           ) : null}
           {subTitle ? (
             <p
-              className={`text-muted-foreground text-sm text-center ${subTitleClassName}`}
+              className={`text-muted-foreground text-sm text-center ${subTitleClassName ?? ""}`}
             >
               {subTitle}
             </p>
@@ -45,4 +50,3 @@ function CustomDialogHeader({
     </DialogHeader>
   );
 }
-export default CustomDialogHeader;

@@ -3,7 +3,30 @@ import { jwtDecode } from "jwt-decode";
 export const AUTH_COOKIE = "Authentication";
 export const REFRESH_COOKIE = "Refresh";
 
-export const getAuthCookie = (response: Response) => {
+export const getAuthCookie = (
+  response: Response,
+):
+  | {
+      accessToken?:
+        | string
+        | {
+            name: string;
+            value: string;
+            secure: boolean;
+            httpOnly: boolean;
+            expires: Date;
+          };
+      refreshToken?:
+        | string
+        | {
+            name: string;
+            value: string;
+            secure: boolean;
+            httpOnly: boolean;
+            expires: Date;
+          };
+    }
+  | undefined => {
   const setCookieHeader = response.headers.get("Set-Cookie");
   if (!setCookieHeader) {
     return;
@@ -24,14 +47,14 @@ export const getAuthCookie = (response: Response) => {
       value: accessToken,
       secure: true,
       httpOnly: true,
-      expires: decodeToken(accessToken),
+      expires: decodeToken(accessToken) ?? new Date(),
     },
     refreshToken: refreshToken && {
       name: REFRESH_COOKIE,
       value: refreshToken,
       secure: true,
       httpOnly: true,
-      expires: decodeToken(refreshToken),
+      expires: decodeToken(refreshToken) ?? new Date(),
     },
   };
 };

@@ -1,8 +1,8 @@
 import { Controller, Get, Header, Logger, Res } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { MetricsService } from './metrics.service';
 import { SkipThrottle } from '@nestjs/throttler';
 import { type Response } from 'express';
+import { MetricsService } from './metrics.service';
 
 @ApiTags('Metrics')
 @Controller('metrics')
@@ -15,7 +15,7 @@ export class MetricsController {
   @Get()
   @Header('Content-Type', 'text/plain; version=0.0.4; charset=utf-8')
   @ApiOperation({ summary: 'Get Prometheus metrics' })
-  async getMetrics(@Res() response: Response) {
+  public async getMetrics(@Res() response: Response) {
     try {
       const metrics = await this.metricsService.getMetrics();
       return response

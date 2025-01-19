@@ -28,5 +28,17 @@ const customJestConfig: Config = {
   rootDir: ".",
 };
 
-// createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
-export default createJestConfig(customJestConfig);
+// Fix the typing of the default export
+const config = createJestConfig(customJestConfig);
+
+// Explicitly type the default export to resolve the private name error
+export default async (): Promise<Config> => {
+  const asyncConfig = await config();
+  return {
+    ...asyncConfig,
+    transformIgnorePatterns: [
+      "/node_modules/(?!@shotstack/sdk/.*)",
+      "^.+\\.module\\.(css|sass|scss)$",
+    ],
+  };
+};

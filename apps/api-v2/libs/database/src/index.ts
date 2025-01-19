@@ -4,9 +4,6 @@ export * from "./config/database.config";
 // constants
 export * from "./constants/connection-name";
 
-// connections
-export * from "./connections/database.factory";
-
 // schemas
 export * from "./schemas/components";
 export * from "./schemas/credentials";
