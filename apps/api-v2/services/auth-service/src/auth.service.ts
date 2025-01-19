@@ -54,7 +54,7 @@ export class AuthService {
     await firstValueFrom(this.usersService.updateUser(updateRequest));
   }
 
-  private async generateTokens(payload: AuthProto.TokenPayload) {
+  private generateTokens(payload: AuthProto.TokenPayload) {
     const accessTokenExpiration = parseInt(
       this.configService.getOrThrow('JWT_ACCESS_TOKEN_EXPIRATION_MS'),
     );
@@ -113,7 +113,7 @@ export class AuthService {
     };
   }
 
-  async register(
+  public async register(
     userData: AuthProto.CreateUserDto,
   ): Promise<AuthProto.AuthResponse> {
     try {
@@ -126,8 +126,11 @@ export class AuthService {
         this.usersService.createUser(createUserRequest),
       );
 
-      if (!newUser) {
-        throw new Error('User creation failed');
+      if (typeof newUser === 'undefined') {
+        throw new RpcException({
+          code: status.INTERNAL,
+          message: 'User creation failed',
+        });
       }
 
       const tokenPayload = this.createTokenPayload({
@@ -135,8 +138,7 @@ export class AuthService {
         $type: 'api.auth.User',
       });
 
-      const { accessToken, refreshToken } =
-        await this.generateTokens(tokenPayload);
+      const { accessToken, refreshToken } = this.generateTokens(tokenPayload);
       const { expiresAccessToken, expiresRefreshToken } =
         this.getTokenExpirations();
 
@@ -161,12 +163,12 @@ export class AuthService {
     }
   }
 
-  async login(
+  public async login(
     user: AuthProto.User,
     redirect = false,
   ): Promise<AuthProto.AuthResponse> {
     try {
-      if (!user || !user.id || !user.email) {
+      if (typeof user === 'undefined') {
         throw new RpcException({
           code: status.INVALID_ARGUMENT,
           message: 'Invalid user data provided',
@@ -179,8 +181,7 @@ export class AuthService {
         email: user.email,
       };
 
-      const { accessToken, refreshToken } =
-        await this.generateTokens(tokenPayload);
+      const { accessToken, refreshToken } = this.generateTokens(tokenPayload);
       const { expiresAccessToken, expiresRefreshToken } =
         this.getTokenExpirations();
 
@@ -218,7 +219,9 @@ export class AuthService {
     }
   }
 
-  async refreshToken(user: AuthProto.User): Promise<AuthProto.AuthResponse> {
+  public async refreshToken(
+    user: AuthProto.User,
+  ): Promise<AuthProto.AuthResponse> {
     try {
       console.log('Refreshing tokens for user:', { email: user.email });
 
@@ -228,8 +231,7 @@ export class AuthService {
         email: user.email,
       };
 
-      const { accessToken, refreshToken } =
-        await this.generateTokens(tokenPayload);
+      const { accessToken, refreshToken } = this.generateTokens(tokenPayload);
       const { expiresAccessToken, expiresRefreshToken } =
         this.getTokenExpirations();
 
@@ -268,7 +270,10 @@ export class AuthService {
     }
   }
 
-  async verifyUser(email: string, password: string): Promise<AuthProto.User> {
+  public async verifyUser(
+    email: string,
+    password: string,
+  ): Promise<AuthProto.User> {
     try {
       console.log('Verifying user:', { email });
 
@@ -282,7 +287,7 @@ export class AuthService {
         this.usersService.getUserByEmail(getUserRequest),
       );
 
-      if (!user) {
+      if (typeof user === 'undefined') {
         console.log('User not found:', { email });
         throw new RpcException({
           code: status.NOT_FOUND,
@@ -290,7 +295,7 @@ export class AuthService {
         });
       }
 
-      const authenticated = await compare(password, user?.password ?? '');
+      const authenticated = await compare(password, user.password ?? '');
 
       if (!authenticated) {
         console.log('Invalid password for user:', { email });
@@ -327,7 +332,7 @@ export class AuthService {
     }
   }
 
-  async verifyUserRefreshToken(
+  public async verifyUserRefreshToken(
     refreshToken: string,
     email: string,
   ): Promise<AuthProto.User> {
@@ -343,7 +348,7 @@ export class AuthService {
         this.usersService.getUserByEmail(request),
       );
 
-      if (!user?.refreshToken || !refreshToken) {
+      if (!user.refreshToken) {
         console.log('No refresh token found for user:', { email });
         throw new RpcException({
           code: status.UNAUTHENTICATED,

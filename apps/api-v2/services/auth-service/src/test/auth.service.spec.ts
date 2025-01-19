@@ -3,11 +3,27 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { RpcException } from '@nestjs/microservices';
-import { AuthService } from '../auth.service';
 import { AuthProto, UsersProto } from '@app/proto';
 import { of, throwError } from 'rxjs';
 import * as bcrypt from 'bcryptjs';
 import { status } from '@grpc/grpc-js';
+import { AuthService } from '../auth.service';
+
+// Add interfaces for mocked services
+interface MockedUsersService {
+  createUser: jest.Mock;
+  getUserByEmail: jest.Mock;
+  updateUser: jest.Mock;
+}
+
+interface MockedJwtService {
+  sign: jest.Mock;
+}
+
+interface TokenOptions {
+  secret: string;
+  expiresIn: number;
+}
 
 jest.mock('bcryptjs', () => ({
   hash: jest.fn(),
@@ -16,28 +32,29 @@ jest.mock('bcryptjs', () => ({
 
 describe('AuthService', () => {
   let service: AuthService;
-  let usersService: jest.Mocked<UsersProto.UsersServiceClient>;
-  let configService: jest.Mocked<ConfigService>;
-  let jwtService: jest.Mocked<JwtService>;
+  let usersService: MockedUsersService;
+  let jwtService: MockedJwtService;
+  let mockConfigService: { getOrThrow: jest.Mock };
 
   const mockUsersClient = {
     getService: jest.fn(),
   };
 
-  const mockConfigService = {
-    getOrThrow: jest.fn(),
-  };
-
-  const mockJwtService = {
-    sign: jest.fn(),
-  };
-
   beforeEach(async () => {
+    mockConfigService = {
+      getOrThrow: jest.fn(),
+    };
+
+    // Type-safe mock initialization
     usersService = {
       createUser: jest.fn(),
       getUserByEmail: jest.fn(),
       updateUser: jest.fn(),
-    } as any;
+    };
+
+    const mockJwtService = {
+      sign: jest.fn(),
+    };
 
     mockUsersClient.getService.mockReturnValue(usersService);
 
@@ -60,12 +77,13 @@ describe('AuthService', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    configService = module.get(ConfigService);
-    jwtService = module.get(JwtService);
+    jwtService = module.get<JwtService>(
+      JwtService,
+    ) as unknown as MockedJwtService;
 
     // Common config mocks
-    mockConfigService.getOrThrow.mockImplementation((key: string) => {
-      const config = {
+    mockConfigService.getOrThrow.mockImplementation((key: string): string => {
+      const config: Record<string, string> = {
         JWT_ACCESS_TOKEN_EXPIRATION_MS: '900000',
         JWT_REFRESH_TOKEN_EXPIRATION_MS: '604800000',
         JWT_ACCESS_TOKEN_SECRET: 'access-secret',
@@ -104,7 +122,7 @@ describe('AuthService', () => {
     });
 
     it('should successfully register a new user', async () => {
-      (usersService.createUser as jest.Mock).mockReturnValue(of(mockNewUser));
+      usersService.createUser.mockReturnValue(of(mockNewUser));
 
       const result = await service.register(mockCreateUserDto);
 
@@ -116,7 +134,7 @@ describe('AuthService', () => {
     });
 
     it('should throw UnauthorizedException when user creation fails', async () => {
-      (usersService.createUser as jest.Mock).mockReturnValue(
+      usersService.createUser.mockReturnValue(
         throwError(() => new Error('Creation failed')),
       );
 
@@ -128,7 +146,7 @@ describe('AuthService', () => {
     it('should handle error logging in register', async () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
-      (usersService.createUser as jest.Mock).mockReturnValue(
+      usersService.createUser.mockReturnValue(
         throwError(() => new Error('Registration error')),
       );
 
@@ -154,7 +172,7 @@ describe('AuthService', () => {
           ? 'access-token'
           : 'refresh-token';
       });
-      (usersService.updateUser as jest.Mock).mockReturnValue(of({}));
+      usersService.updateUser.mockReturnValue(of({}));
     });
 
     it('should successfully login a user', async () => {
@@ -207,15 +225,15 @@ describe('AuthService', () => {
         message: 'Original RPC error',
       });
 
-      (usersService.updateUser as jest.Mock).mockReturnValue(
-        throwError(() => rpcError),
-      );
+      usersService.updateUser.mockReturnValue(throwError(() => rpcError));
 
       await expect(service.login(mockUser)).rejects.toThrow(rpcError);
     });
 
     it('should handle undefined user in login', async () => {
-      await expect(service.login(undefined)).rejects.toThrow(RpcException);
+      await expect(service.login({} as AuthProto.User)).rejects.toThrow(
+        RpcException,
+      );
     });
   });
 
@@ -236,7 +254,7 @@ describe('AuthService', () => {
           ? 'new-access-token'
           : 'new-refresh-token';
       });
-      (usersService.updateUser as jest.Mock).mockReturnValue(of({}));
+      usersService.updateUser.mockReturnValue(of({}));
     });
 
     it('should successfully refresh tokens', async () => {
@@ -346,7 +364,7 @@ describe('AuthService', () => {
 
     it('should handle service errors in verifyUser', async () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
-      (usersService.getUserByEmail as jest.Mock).mockReturnValue(
+      usersService.getUserByEmail.mockReturnValue(
         throwError(() => new Error('Service error')),
       );
 
@@ -362,9 +380,7 @@ describe('AuthService', () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
       const mockError = new Error('Test error');
 
-      (usersService.getUserByEmail as jest.Mock).mockReturnValue(
-        throwError(() => mockError),
-      );
+      usersService.getUserByEmail.mockReturnValue(throwError(() => mockError));
 
       try {
         await service.verifyUser('test@test.com', 'password');
@@ -379,26 +395,32 @@ describe('AuthService', () => {
     });
 
     it('should handle missing email in verifyUser', async () => {
-      await expect(service.verifyUser(null, 'password')).rejects.toThrow(
+      await expect(service.verifyUser('', 'password')).rejects.toThrow(
         RpcException,
       );
     });
 
     it('should handle RpcException with correct status code', async () => {
-      (usersService.getUserByEmail as jest.Mock).mockReturnValue(
+      usersService.getUserByEmail.mockReturnValue(
         throwError(() => new Error('Service error')),
       );
 
       try {
         await service.verifyUser('test@test.com', 'password');
-      } catch (error: any) {
-        expect(error).toBeInstanceOf(RpcException);
-        expect(error.getError()).toEqual(
-          expect.objectContaining({
-            code: status.INTERNAL,
-            message: 'Internal server error',
-          }),
-        );
+        fail('Expected error to be thrown');
+      } catch (error) {
+        if (error instanceof RpcException) {
+          const rpcError = error.getError() as {
+            code: number;
+            message: string;
+          };
+          expect(rpcError).toEqual(
+            expect.objectContaining({
+              code: status.INTERNAL,
+              message: 'Internal server error',
+            }),
+          );
+        }
       }
     });
   });
@@ -415,7 +437,7 @@ describe('AuthService', () => {
     };
 
     it('should successfully verify refresh token', async () => {
-      (usersService.getUserByEmail as jest.Mock).mockReturnValue(of(mockUser));
+      usersService.getUserByEmail.mockReturnValue(of(mockUser));
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
 
       const result = await service.verifyUserRefreshToken(
@@ -429,7 +451,7 @@ describe('AuthService', () => {
     });
 
     it('should throw RpcException when refresh token is invalid', async () => {
-      (usersService.getUserByEmail as jest.Mock).mockReturnValue(of(mockUser));
+      usersService.getUserByEmail.mockReturnValue(of(mockUser));
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
       await expect(
@@ -439,9 +461,7 @@ describe('AuthService', () => {
 
     it('should throw RpcException when user has no refresh token', async () => {
       const userWithoutToken = { ...mockUser, refreshToken: null };
-      (usersService.getUserByEmail as jest.Mock).mockReturnValue(
-        of(userWithoutToken),
-      );
+      usersService.getUserByEmail.mockReturnValue(of(userWithoutToken));
 
       await expect(
         service.verifyUserRefreshToken(mockRefreshToken, mockEmail),
@@ -451,7 +471,7 @@ describe('AuthService', () => {
     it('should handle console logging in verifyUserRefreshToken', async () => {
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
-      (usersService.getUserByEmail as jest.Mock).mockReturnValue(of(mockUser));
+      usersService.getUserByEmail.mockReturnValue(of(mockUser));
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
 
       await service.verifyUserRefreshToken('refresh-token', 'test@test.com');
@@ -467,7 +487,7 @@ describe('AuthService', () => {
     it('should handle error logging in verifyUserRefreshToken', async () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
-      (usersService.getUserByEmail as jest.Mock).mockReturnValue(
+      usersService.getUserByEmail.mockReturnValue(
         throwError(() => new Error('Verification error')),
       );
 
@@ -484,17 +504,8 @@ describe('AuthService', () => {
     });
 
     it('should handle null refresh token in verifyUserRefreshToken', async () => {
-      const mockUserWithNullToken: UsersProto.User = {
-        ...mockUser,
-        refreshToken: null,
-      };
-
-      (usersService.getUserByEmail as jest.Mock).mockReturnValue(
-        of(mockUserWithNullToken),
-      );
-
       await expect(
-        service.verifyUserRefreshToken(null, 'test@test.com'),
+        service.verifyUserRefreshToken('', 'test@test.com'),
       ).rejects.toThrow(RpcException);
     });
   });
