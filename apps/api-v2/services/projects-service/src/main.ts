@@ -1,7 +1,7 @@
+import { join } from 'node:path';
 import { NestFactory } from '@nestjs/core';
 import { Transport } from '@nestjs/microservices';
 import { ProjectsModule } from './projects.module';
-import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice(ProjectsModule, {
@@ -12,7 +12,7 @@ async function bootstrap() {
         __dirname,
         '../../../libs/proto/src/proto/projects.proto',
       ),
-      url: `${process.env.PROJECTS_SERVICE_HOST || 'localhost'}:${process.env.PROJECTS_SERVICE_PORT || '3346'}`,
+      url: `${process.env.PROJECTS_SERVICE_HOST ?? 'localhost'}:${process.env.PROJECTS_SERVICE_PORT ?? '3346'}`,
     },
   });
 
@@ -20,4 +20,8 @@ async function bootstrap() {
   console.log('Projects Microservice is listening on gRPC');
 }
 
-bootstrap();
+bootstrap().catch((error: unknown) => {
+  console.error(
+    `[ERROR] Error starting projects service: ${JSON.stringify(error)}`,
+  );
+});

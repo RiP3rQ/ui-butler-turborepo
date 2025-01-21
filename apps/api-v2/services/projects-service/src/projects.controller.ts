@@ -12,29 +12,20 @@ export class ProjectsController {
   public async getProjectsByUserId(
     request: ProjectsProto.GetProjectsRequest,
   ): Promise<ProjectsProto.GetProjectsResponse> {
-    const projects = await this.projectsService.getProjectsByUserId(
-      request.user,
-    );
-    return {
-      $type: 'api.projects.GetProjectsResponse',
-      projects,
-    };
+    return await this.projectsService.getProjectsByUserId(request);
   }
 
   @GrpcMethod('ProjectsService', 'GetProjectDetails')
   public async getProjectDetails(
     request: ProjectsProto.GetProjectDetailsRequest,
   ): Promise<ProjectsProto.ProjectDetails> {
-    return this.projectsService.getProjectDetails(
-      request.user,
-      request.projectId,
-    );
+    return await this.projectsService.getProjectDetails(request);
   }
 
   @GrpcMethod('ProjectsService', 'CreateProject')
   public async createProject(
     request: ProjectsProto.CreateProjectRequest,
   ): Promise<ProjectsProto.Project> {
-    return this.projectsService.createProject(request.user, request.project);
+    return await this.projectsService.createProject(request);
   }
 }
