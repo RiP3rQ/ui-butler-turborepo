@@ -1,3 +1,4 @@
+// General types
 export * from "./analytics";
 export * from "./app-node";
 export * from "./billing";
@@ -16,3 +17,14 @@ export * from "./project";
 export * from "./components";
 export * from "./credits";
 export * from "./proto";
+
+// API client types
+export * from "./api-client/analytics-endpoints";
+export * from "./api-client/auth-endpoints";
+export * from "./api-client/billing-endpoints";
+export * from "./api-client/components-endpoints";
+export * from "./api-client/credentials-endpoints";
+export * from "./api-client/executions-endpoints";
+export * from "./api-client/projects-endpoints";
+export * from "./api-client/users-endpoints";
+export * from "./api-client/workflows-endpoints";
