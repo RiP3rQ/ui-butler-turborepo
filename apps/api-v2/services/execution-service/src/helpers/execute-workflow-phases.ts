@@ -1,13 +1,13 @@
 import {
-  Environment,
-  ExecutionPhase,
-  ServerSaveEdge,
-  WorkflowExecution,
+  type Environment,
+  type ExecutionPhase,
+  type ServerSaveEdge,
+  type WorkflowExecution,
   WorkflowExecutionStatus,
 } from '@repo/types';
+import { type DrizzleDatabase, eq, workflowExecutions } from '@app/database';
 import { executeWorkflowPhase } from './execute-workflow-phase';
 import { initializeFinalizeExecution } from './initialize-finalize-execution';
-import { DrizzleDatabase, eq, workflowExecutions } from '@app/database';
 
 export async function executeWorkflowPhases(
   database: DrizzleDatabase,
@@ -34,11 +34,13 @@ export async function executeWorkflowPhases(
       phaseExecution.success === WorkflowExecutionStatus.WAITING_FOR_APPROVAL
     ) {
       // Check if execution is waiting for approval
-      const execution = await database.query.workflowExecutions.findFirst({
+      const executionData = await database.query.workflowExecutions.findFirst({
         where: eq(workflowExecutions.id, executionId),
       });
 
-      if (execution?.status === WorkflowExecutionStatus.WAITING_FOR_APPROVAL) {
+      if (
+        executionData?.status === WorkflowExecutionStatus.WAITING_FOR_APPROVAL
+      ) {
         // Stop execution here and wait for user approval
         return;
       }

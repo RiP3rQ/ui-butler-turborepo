@@ -1,5 +1,5 @@
-import { ExecutionEnvironment } from '@repo/types';
-import { ServerOptimizeCodeTaskType } from '@repo/tasks-registry';
+import { type ExecutionEnvironment } from '@repo/types';
+import { type ServerOptimizeCodeTaskType } from '@repo/tasks-registry';
 import { generateObject } from 'ai';
 import { z } from 'zod';
 import { OptimizePerformancePrompt } from '@repo/prompts';
@@ -40,6 +40,7 @@ export async function optimizeCodeExecutor(
       ],
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- LLM can return empty object
     if (!object.optimizedCode) {
       environment.log.ERROR('Optimized code is empty');
       throw new Error('Failed to optimize code');

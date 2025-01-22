@@ -1,5 +1,5 @@
-import { ExecutionEnvironment } from '@repo/types';
-import { ServerImproveStylesTaskType } from '@repo/tasks-registry';
+import { type ExecutionEnvironment } from '@repo/types';
+import { type ServerImproveStylesTaskType } from '@repo/tasks-registry';
 import { generateObject } from 'ai';
 import { z } from 'zod';
 import { ImproveCssPrompt } from '@repo/prompts';
@@ -40,6 +40,7 @@ export async function improveStylesExecutor(
       ],
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- LLM can return empty object
     if (!object.improvedCode) {
       environment.log.ERROR('Improved code styles is empty');
       throw new Error('Failed to improve code styles');

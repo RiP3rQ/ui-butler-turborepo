@@ -1,7 +1,7 @@
+import { join } from 'node:path';
 import { NestFactory } from '@nestjs/core';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { type MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { ExecutionsModule } from './execution.module';
-import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
@@ -14,7 +14,7 @@ async function bootstrap() {
           __dirname,
           '../../../libs/proto/src/proto/execution.proto',
         ),
-        url: `${process.env.EXECUTION_SERVICE_HOST || 'localhost'}:${process.env.EXECUTION_SERVICE_PORT || '3343'}`,
+        url: `${process.env.EXECUTION_SERVICE_HOST ?? 'localhost'}:${process.env.EXECUTION_SERVICE_PORT ?? '3343'}`,
       },
     },
   );
@@ -22,4 +22,9 @@ async function bootstrap() {
   console.log('Execution Microservice is listening');
 }
 
-bootstrap();
+bootstrap().catch((error: unknown) => {
+  console.error(
+    `Execution Microservice failed to start: ${JSON.stringify(error)}`,
+  );
+  process.exit(1);
+});

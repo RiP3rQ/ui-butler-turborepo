@@ -1,25 +1,24 @@
 import { WorkflowExecutionStatus } from '@repo/types';
-
 import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import {
   and,
-  DrizzleDatabase,
+  type DrizzleDatabase,
   eq,
   ne,
   workflowExecutions,
   workflows,
-  WorkflowUpdate,
+  type WorkflowUpdate,
 } from '@app/database';
 
 export async function initializeFinalizeExecution(
   database: DrizzleDatabase,
   executionId: number,
   workflowId: number,
-  executionFailed: boolean = false,
-  creditsConsumed: number = 0,
+  executionFailed: boolean,
+  creditsConsumed: number,
 ) {
   if (!executionId || !workflowId) {
     throw new Error('Execution ID and Workflow ID are required');
@@ -52,7 +51,7 @@ export async function initializeFinalizeExecution(
   };
 
   // Update the execution status of the workflow
-  return await database.transaction(async (tx) => {
+  await database.transaction(async (tx) => {
     try {
       const [updatedExecution, updatedWorkflow] = await Promise.all([
         // Update workflow execution
@@ -83,12 +82,14 @@ export async function initializeFinalizeExecution(
           .returning(),
       ]);
 
-      if (!updatedExecution) {
-        throw new NotFoundException(`Execution ${executionId} not found`);
+      if (!updatedExecution.length) {
+        throw new NotFoundException(
+          `Execution ${String(executionId)} not found`,
+        );
       }
 
-      if (!updatedWorkflow) {
-        throw new NotFoundException(`Workflow ${workflowId} not found`);
+      if (!updatedWorkflow.length) {
+        throw new NotFoundException(`Workflow ${String(workflowId)} not found`);
       }
     } catch (error) {
       if (error instanceof NotFoundException) {

@@ -1,21 +1,21 @@
 import {
-  AppNode,
-  Environment,
-  ExecutionPhase,
-  ServerSaveEdge,
+  type AppNode,
+  type Environment,
+  type ExecutionPhase,
+  type ServerSaveEdge,
   WorkflowExecutionStatus,
 } from '@repo/types';
+import { type DrizzleDatabase, eq, executionPhase } from '@app/database';
 import { ServerTaskRegister } from '@repo/tasks-registry';
 import { createLogCollector } from './create-workflow-log-collector';
 import { decrementUserCredits } from './decrement-user-credits';
 import { setupPhaseEnvironment } from './setup-phase-environment';
 import { executePhase } from './execute-phase';
 import { finalizeExecutionPhase } from './finalize-execution-phase';
-import { DrizzleDatabase, eq, executionPhase } from '@app/database';
 
 export async function executeWorkflowPhase(
   database: DrizzleDatabase,
-  phase: ExecutionPhase,
+  phase: ExecutionPhase | undefined,
   environment: Environment,
   edges: ServerSaveEdge[],
   userId: number,
@@ -34,8 +34,8 @@ export async function executeWorkflowPhase(
   const updatedPhaseData = {
     status: WorkflowExecutionStatus.RUNNING,
     startedAt,
-    inputs: JSON.stringify(environment.phases[node.id].inputs),
-    outputs: JSON.stringify(environment.phases[node.id].outputs),
+    inputs: JSON.stringify(environment.phases[node.id]?.inputs),
+    outputs: JSON.stringify(environment.phases[node.id]?.outputs),
   };
 
   const [updatedPhase] = await database
@@ -68,8 +68,8 @@ export async function executeWorkflowPhase(
   console.log('Phase executed', success);
 
   // Finalize phase-executors
-  const outputs = environment.phases[node.id].outputs;
-  const tempValues = environment.phases[node.id].temp;
+  const outputs = environment.phases[node.id]?.outputs;
+  const tempValues = environment.phases[node.id]?.temp;
   await finalizeExecutionPhase(
     database,
     phase.id,

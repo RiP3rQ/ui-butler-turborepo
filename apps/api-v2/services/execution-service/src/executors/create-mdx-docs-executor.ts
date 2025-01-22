@@ -1,5 +1,5 @@
-import { ExecutionEnvironment } from '@repo/types';
-import { ServerCreateMDXDocsTaskType } from '@repo/tasks-registry';
+import { type ExecutionEnvironment } from '@repo/types';
+import { type ServerCreateMDXDocsTaskType } from '@repo/tasks-registry';
 import { generateObject } from 'ai';
 import { z } from 'zod';
 import { CreateMdxDocsPrompt } from '@repo/prompts';

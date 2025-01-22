@@ -1,11 +1,11 @@
-import { ExecutionPhase, ExecutionPhaseStatus } from '@repo/types';
-import { DrizzleDatabase, executionPhase, inArray } from '@app/database';
+import { type ExecutionPhase, ExecutionPhaseStatus } from '@repo/types';
+import { type DrizzleDatabase, executionPhase, inArray } from '@app/database';
 
 export async function initializeWorkflowPhasesStatuses(
   database: DrizzleDatabase,
   phases: ExecutionPhase[],
 ) {
-  if (!phases || phases.length === 0) {
+  if (phases.length === 0) {
     return;
   }
 

@@ -5,12 +5,12 @@ export interface WorkflowExecution {
   userId: number;
   definition: string;
   status: string;
-  createdAt: Date;
+  createdAt: Date | null;
   workflowId: number;
   trigger: string;
-  creditsConsumed: number;
-  startedAt: Date;
-  completedAt: Date;
+  creditsConsumed: number | null;
+  startedAt: Date | null;
+  completedAt: Date | null;
 }
 
 export interface WorkflowExecutionWithPhases {
@@ -18,11 +18,11 @@ export interface WorkflowExecutionWithPhases {
   userId: number;
   definition: string;
   status: string;
-  createdAt: Date;
+  createdAt: Date | null;
   workflowId: number;
   trigger: string;
-  creditsConsumed: number;
-  startedAt: string;
-  completedAt: string;
+  creditsConsumed: number | null;
+  startedAt: Date | null;
+  completedAt: Date | null;
   phases: ExecutionPhase[];
 }

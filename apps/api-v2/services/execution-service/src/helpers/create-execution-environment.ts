@@ -1,8 +1,8 @@
 import {
-  AppNode,
-  Environment,
-  ExecutionEnvironment,
-  LogCollector,
+  type AppNode,
+  type Environment,
+  type ExecutionEnvironment,
+  type LogCollector,
 } from '@repo/types';
 
 export function createExecutionEnvironment(
@@ -12,11 +12,11 @@ export function createExecutionEnvironment(
 ): ExecutionEnvironment<any> {
   return {
     getComponentId(): number {
-      return environment.componentId;
+      return environment.componentId ?? 0;
     },
 
     getStartingCode(): string {
-      return environment.startingCode;
+      return environment.startingCode ?? '';
     },
     setStartingCode(code: string): void {
       environment.startingCode = code;
@@ -27,39 +27,43 @@ export function createExecutionEnvironment(
       environment.code = code;
     },
 
-    getInput: (name: string) => environment.phases[node.id]?.inputs[name] || '',
+    getInput: (name: string) => environment.phases[node.id]?.inputs[name] ?? '',
     setOutput: (name: string, value: string) => {
-      environment.phases[node.id].outputs[name] = value;
+      if (environment.phases[node.id]) {
+        environment.phases[node.id]!.outputs[name] = value;
+      }
     },
 
     getTemp(name: string): string {
-      return environment.phases[node.id]?.temp[name] || '';
+      return environment.phases[node.id]?.temp[name] ?? '';
     },
     setTemp(name: string, value: string): void {
-      environment.phases[node.id].temp[name] = value;
+      if (environment.phases[node.id]) {
+        environment.phases[node.id]!.temp[name] = value;
+      }
     },
 
     // Generated codes
     getTsDocs(): string {
-      return environment.tsDocs;
+      return environment.tsDocs ?? '';
     },
     setTsDocs(tsDocs: string): void {
       environment.tsDocs = tsDocs;
     },
     getMdxDocs(): string {
-      return environment.mdxDocs;
+      return environment.mdxDocs ?? '';
     },
     setMdxDocs(mdxDocs: string): void {
       environment.mdxDocs = mdxDocs;
     },
     getUnitTests(): string {
-      return environment.unitTests;
+      return environment.unitTests ?? '';
     },
     setUnitTests(unitTests: string): void {
       environment.unitTests = unitTests;
     },
     getE2ETests(): string {
-      return environment.e2eTests;
+      return environment.e2eTests ?? '';
     },
     setE2ETests(e2eTests: string): void {
       environment.e2eTests = e2eTests;

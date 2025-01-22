@@ -1,5 +1,5 @@
 import { WorkflowExecutionStatus } from '@repo/types';
-import { DrizzleDatabase, eq, workflowExecutions } from '@app/database';
+import { type DrizzleDatabase, eq, workflowExecutions } from '@app/database';
 
 export async function pauseWorkflowExecution(
   executionId: number,

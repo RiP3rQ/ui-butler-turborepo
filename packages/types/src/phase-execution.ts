@@ -7,12 +7,12 @@ export interface ExecutionPhase {
   userId: number;
   creditsCost: number | null;
   status: string;
-  startedAt: Date;
-  completedAt: Date;
+  startedAt: Date | null;
+  completedAt: Date | null;
   workflowExecutionId: number;
-  node: string;
-  inputs: string;
-  outputs: string;
+  node: string | null;
+  inputs: string | null;
+  outputs: string | null;
   logs?: ExecutionLog[];
 }
 

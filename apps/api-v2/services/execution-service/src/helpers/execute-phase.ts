@@ -1,19 +1,19 @@
 import {
-  AppNode,
-  Environment,
-  ExecutionEnvironment,
-  ExecutionPhase,
-  LogCollector,
-  WorkflowExecutionStatus,
+  type AppNode,
+  type Environment,
+  type ExecutionEnvironment,
+  type ExecutionPhase,
+  type LogCollector,
+  type WorkflowExecutionStatus,
 } from '@repo/types';
-import { createExecutionEnvironment } from './create-execution-environment';
+import { type DrizzleDatabase } from '@app/database';
 import { ExecutorRegistry } from '../executors/executor';
-import { DrizzleDatabase } from '@app/database';
+import { createExecutionEnvironment } from './create-execution-environment';
 
 export async function executePhase(
   database: DrizzleDatabase,
-  phase: ExecutionPhase,
-  node: AppNode,
+  phase: ExecutionPhase | undefined,
+  node: AppNode | undefined,
   environment: Environment,
   logCollector: LogCollector,
 ): Promise<boolean | typeof WorkflowExecutionStatus.WAITING_FOR_APPROVAL> {

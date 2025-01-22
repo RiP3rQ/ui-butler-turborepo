@@ -8,6 +8,7 @@ module.exports = {
   rules: {
     'no-console': 'off',
     '@typescript-eslint/no-extraneous-class': 'off',
+    '@typescript-eslint/no-unnecessary-condition': 'off',
   },
   ignorePatterns: ['dist/**/*', 'node_modules/**/*'],
 };

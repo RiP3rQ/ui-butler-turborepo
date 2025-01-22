@@ -1,8 +1,8 @@
 import { Controller, Logger } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
-import { ApproveChangesDto } from '@app/common';
-import { ExecutionsService } from './execution.service';
+import { User } from '@app/common';
 import { ExecutionProto } from '@app/proto';
+import { ExecutionsService } from './execution.service';
 
 @Controller()
 export class ExecutionsController {
@@ -10,7 +10,7 @@ export class ExecutionsController {
 
   constructor(private readonly executionsService: ExecutionsService) {}
 
-  private protoUserToUser(protoUser: ExecutionProto.User) {
+  private protoUserToUser(protoUser: ExecutionProto.User): User {
     return {
       id: Number(protoUser.id),
       email: protoUser.email,
@@ -18,47 +18,35 @@ export class ExecutionsController {
   }
 
   @GrpcMethod('ExecutionsService', 'GetPendingChanges')
-  async getPendingChanges(request: ExecutionProto.GetPendingChangesRequest) {
+  public async getPendingChanges(
+    request: ExecutionProto.GetPendingChangesRequest,
+  ): Promise<ExecutionProto.PendingChangesResponse> {
     this.logger.debug('Getting pending changes', request.executionId);
-    const result = await this.executionsService.getPendingChanges(
-      this.protoUserToUser(request.user),
-      request.executionId,
-    );
-    return {
-      $type: 'api.executions.PendingChangesResponse',
-      pendingApproval: result.pendingApproval,
-      status: result.status,
-    };
+    return await this.executionsService.getPendingChanges(request);
   }
 
   @GrpcMethod('ExecutionsService', 'ApproveChanges')
-  async approveChanges(request: ExecutionProto.ApproveChangesRequest) {
+  public async approveChanges(
+    request: ExecutionProto.ApproveChangesRequest,
+  ): Promise<ExecutionProto.ApproveChangesResponse> {
     this.logger.debug('Approving changes', JSON.stringify(request));
-    const approveChangesDto: ApproveChangesDto = {
-      decision: request.body.decision,
-    };
-    const result = await this.executionsService.approveChanges(
-      this.protoUserToUser(request.user),
-      request.executionId,
-      approveChangesDto,
-    );
-    return {
-      $type: 'api.executions.ApproveChangesResponse',
-      message: result.message,
-      status: result.status,
-    };
+    return await this.executionsService.approveChanges(request);
   }
 
   @GrpcMethod('ExecutionsService', 'Execute')
-  async executeWorkflow(request: ExecutionProto.ExecuteWorkflowRequest) {
+  public async executeWorkflow(
+    request: ExecutionProto.ExecuteWorkflowRequest,
+  ): Promise<ExecutionProto.Empty> {
     this.logger.debug(
-      `Executing workflow ${request.workflowExecutionId} with component ${request.componentId}`,
+      `Executing workflow ${String(request.workflowExecutionId)} with component ${String(request.componentId)}`,
     );
     await this.executionsService.executeWorkflow(
       request.workflowExecutionId,
       request.componentId,
       request.nextRunAt ? new Date(request.nextRunAt) : undefined,
     );
-    return {};
+    return {
+      $type: 'api.execution.Empty',
+    };
   }
 }
