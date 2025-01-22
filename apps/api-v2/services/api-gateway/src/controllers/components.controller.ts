@@ -91,8 +91,8 @@ export class ComponentsController implements OnModuleInit {
           id: user.id,
           email: user.email,
         },
-        projectId,
-        componentId,
+        projectId: Number(projectId),
+        componentId: Number(componentId),
       };
 
       return await this.grpcClient.call(
@@ -125,6 +125,8 @@ export class ComponentsController implements OnModuleInit {
         code: saveComponentDto.code,
         projectId: Number(saveComponentDto.projectId),
       };
+
+      console.log('request', request);
 
       return await this.grpcClient.call(
         this.componentsService.saveComponent(request),

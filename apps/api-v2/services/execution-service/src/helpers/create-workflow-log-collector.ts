@@ -1,10 +1,10 @@
 import {
   consoleMap,
-  Log,
-  LogCollector,
-  LogFunction,
-  LogLevel,
-  LogLevels,
+  type Log,
+  type LogCollector,
+  type LogFunction,
+  type LogLevel,
+  LOG_LEVELS,
 } from '@repo/types';
 
 export function createLogCollector(): LogCollector {
@@ -14,7 +14,7 @@ export function createLogCollector(): LogCollector {
 
   // Dynamic creation of log functions
   const logFunctions = {} as Record<LogLevel, LogFunction>;
-  LogLevels.forEach((level) => {
+  Object.entries(LOG_LEVELS).forEach(([_, level]) => {
     logFunctions[level] = (message: string) => {
       logs.push({ level, message, timestamp: new Date() });
       consoleMap[level](message);

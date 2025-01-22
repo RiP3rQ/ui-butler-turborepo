@@ -1,7 +1,7 @@
+import { join } from 'node:path';
 import { NestFactory } from '@nestjs/core';
 import { Transport } from '@nestjs/microservices';
 import { WorkflowsModule } from './workflows.module';
-import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice(WorkflowsModule, {
@@ -12,7 +12,7 @@ async function bootstrap() {
         __dirname,
         '../../../libs/proto/src/proto/workflows.proto',
       ),
-      url: `${process.env.WORKFLOWS_SERVICE_HOST || 'localhost'}:${process.env.WORKFLOWS_SERVICE_PORT || '3342'}`,
+      url: `${process.env.WORKFLOWS_SERVICE_HOST ?? 'localhost'}:${process.env.WORKFLOWS_SERVICE_PORT ?? '3342'}`,
     },
   });
 
@@ -20,4 +20,9 @@ async function bootstrap() {
   console.log('Workflows Microservice is listening');
 }
 
-bootstrap();
+bootstrap().catch((error: unknown) => {
+  console.error(
+    `Workflows Microservice failed to start: ${JSON.stringify(error)}`,
+  );
+  process.exit(1);
+});

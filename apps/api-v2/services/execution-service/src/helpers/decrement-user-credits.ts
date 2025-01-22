@@ -1,5 +1,12 @@
-import { LogCollector } from '@repo/types';
-import { and, DrizzleDatabase, eq, gte, sql, userBalance } from '@app/database';
+import { type LogCollector } from '@repo/types';
+import {
+  and,
+  type DrizzleDatabase,
+  eq,
+  gte,
+  sql,
+  userBalance,
+} from '@app/database';
 
 export async function decrementUserCredits(
   database: DrizzleDatabase,
@@ -28,7 +35,7 @@ export async function decrementUserCredits(
       throw new Error('Failed to update user balance');
     }
 
-    logCollector.INFO(`This phase consumed ${credits} credits`);
+    logCollector.INFO(`This phase consumed ${String(credits)} credits`);
     return true;
   } catch (e) {
     console.error('Error while decrementing user credits', e);

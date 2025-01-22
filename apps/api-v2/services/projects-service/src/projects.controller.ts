@@ -1,40 +1,31 @@
 // projects.controller.ts
 import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
-import { ProjectsService } from './projects.service';
 import { ProjectsProto } from '@app/proto';
+import { ProjectsService } from './projects.service';
 
 @Controller()
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
   @GrpcMethod('ProjectsService', 'GetProjectsByUserId')
-  async getProjectsByUserId(
+  public async getProjectsByUserId(
     request: ProjectsProto.GetProjectsRequest,
   ): Promise<ProjectsProto.GetProjectsResponse> {
-    const projects = await this.projectsService.getProjectsByUserId(
-      request.user,
-    );
-    return {
-      $type: 'api.projects.GetProjectsResponse',
-      projects,
-    };
+    return await this.projectsService.getProjectsByUserId(request);
   }
 
   @GrpcMethod('ProjectsService', 'GetProjectDetails')
-  async getProjectDetails(
+  public async getProjectDetails(
     request: ProjectsProto.GetProjectDetailsRequest,
   ): Promise<ProjectsProto.ProjectDetails> {
-    return this.projectsService.getProjectDetails(
-      request.user,
-      request.projectId,
-    );
+    return await this.projectsService.getProjectDetails(request);
   }
 
   @GrpcMethod('ProjectsService', 'CreateProject')
-  async createProject(
+  public async createProject(
     request: ProjectsProto.CreateProjectRequest,
   ): Promise<ProjectsProto.Project> {
-    return this.projectsService.createProject(request.user, request.project);
+    return await this.projectsService.createProject(request);
   }
 }

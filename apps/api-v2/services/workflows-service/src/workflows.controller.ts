@@ -1,6 +1,5 @@
 import { Controller, Logger } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
-import { WorkflowsService } from './workflows.service';
 import {
   CreateWorkflowDto,
   DuplicateWorkflowDto,
@@ -10,6 +9,7 @@ import {
   type User,
 } from '@app/common';
 import { WorkflowsProto } from '@app/proto';
+import { WorkflowsService } from './workflows.service';
 
 @Controller()
 export class WorkflowsController {
@@ -17,7 +17,10 @@ export class WorkflowsController {
 
   constructor(private readonly workflowsService: WorkflowsService) {}
 
-  private protoUserToUser(protoUser: WorkflowsProto.User): User {
+  private protoUserToUser(protoUser: WorkflowsProto.User | undefined): User {
+    if (!protoUser) {
+      throw new Error('User is required');
+    }
     return {
       id: Number(protoUser.id),
       email: protoUser.email,
@@ -25,91 +28,102 @@ export class WorkflowsController {
   }
 
   @GrpcMethod('WorkflowsService', 'GetAllUserWorkflows')
-  async getAllUserWorkflows(
+  public async getAllUserWorkflows(
     request: WorkflowsProto.GetAllUserWorkflowsRequest,
-  ) {
+  ): Promise<WorkflowsProto.WorkflowsResponse> {
+    if (!request.user) {
+      throw new Error('User is required');
+    }
+
     this.logger.debug('Getting all user workflows');
-    const workflows = await this.workflowsService.getAllUserWorkflows(
+    return await this.workflowsService.getAllUserWorkflows(
       this.protoUserToUser(request.user),
     );
-    return { workflows };
   }
 
   @GrpcMethod('WorkflowsService', 'GetWorkflowById')
-  async getWorkflowById(request: WorkflowsProto.GetWorkflowByIdRequest) {
-    this.logger.debug(`Getting workflow by ID: ${request.workflowId}`);
-    const workflow = await this.workflowsService.getWorkflowById(
+  public async getWorkflowById(
+    request: WorkflowsProto.GetWorkflowByIdRequest,
+  ): Promise<WorkflowsProto.WorkflowResponse> {
+    this.logger.debug(`Getting workflow by ID: ${String(request.workflowId)}`);
+    return await this.workflowsService.getWorkflowById(
       this.protoUserToUser(request.user),
       request.workflowId,
     );
-    return { workflow };
   }
 
   @GrpcMethod('WorkflowsService', 'CreateWorkflow')
-  async createWorkflow(request: WorkflowsProto.CreateWorkflowRequest) {
+  public async createWorkflow(
+    request: WorkflowsProto.CreateWorkflowRequest,
+  ): Promise<WorkflowsProto.WorkflowResponse> {
     this.logger.debug('Creating workflow');
     const createWorkflowDto: CreateWorkflowDto = {
       name: request.name,
       description: request.description,
     };
-    const workflow = await this.workflowsService.createWorkflow(
+    return await this.workflowsService.createWorkflow(
       this.protoUserToUser(request.user),
       createWorkflowDto,
     );
-    return { workflow };
   }
 
   @GrpcMethod('WorkflowsService', 'DeleteWorkflow')
-  async deleteWorkflow(request: WorkflowsProto.DeleteWorkflowRequest) {
-    this.logger.debug(`Deleting workflow: ${request.workflowId}`);
-    const workflow = await this.workflowsService.deleteWorkflow(
+  public async deleteWorkflow(
+    request: WorkflowsProto.DeleteWorkflowRequest,
+  ): Promise<WorkflowsProto.WorkflowResponse> {
+    this.logger.debug(`Deleting workflow: ${String(request.workflowId)}`);
+    return await this.workflowsService.deleteWorkflow(
       this.protoUserToUser(request.user),
       request.workflowId,
     );
-    return { workflow };
   }
 
   @GrpcMethod('WorkflowsService', 'DuplicateWorkflow')
-  async duplicateWorkflow(request: WorkflowsProto.DuplicateWorkflowRequest) {
+  public async duplicateWorkflow(
+    request: WorkflowsProto.DuplicateWorkflowRequest,
+  ): Promise<WorkflowsProto.WorkflowResponse> {
     this.logger.debug('Duplicating workflow');
     const duplicateWorkflowDto: DuplicateWorkflowDto = {
       workflowId: request.workflowId,
       name: request.name,
       description: request.description,
     };
-    const workflow = await this.workflowsService.duplicateWorkflow(
+    return await this.workflowsService.duplicateWorkflow(
       this.protoUserToUser(request.user),
       duplicateWorkflowDto,
     );
-    return { workflow };
   }
 
   @GrpcMethod('WorkflowsService', 'PublishWorkflow')
-  async publishWorkflow(request: WorkflowsProto.PublishWorkflowRequest) {
+  public async publishWorkflow(
+    request: WorkflowsProto.PublishWorkflowRequest,
+  ): Promise<WorkflowsProto.WorkflowResponse> {
     this.logger.debug('Publishing workflow');
     const publishWorkflowDto: PublishWorkflowDto = {
       workflowId: request.workflowId,
       flowDefinition: request.flowDefinition,
     };
-    const workflow = await this.workflowsService.publishWorkflow(
+    return await this.workflowsService.publishWorkflow(
       this.protoUserToUser(request.user),
       publishWorkflowDto,
     );
-    return { workflow };
   }
 
   @GrpcMethod('WorkflowsService', 'UnpublishWorkflow')
-  async unpublishWorkflow(request: WorkflowsProto.UnpublishWorkflowRequest) {
-    this.logger.debug(`Unpublishing workflow: ${request.workflowId}`);
-    const workflow = await this.workflowsService.unpublishWorkflow(
+  public async unpublishWorkflow(
+    request: WorkflowsProto.UnpublishWorkflowRequest,
+  ): Promise<WorkflowsProto.WorkflowResponse> {
+    this.logger.debug(`Unpublishing workflow: ${String(request.workflowId)}`);
+    return await this.workflowsService.unpublishWorkflow(
       this.protoUserToUser(request.user),
       request.workflowId,
     );
-    return { workflow };
   }
 
   @GrpcMethod('WorkflowsService', 'RunWorkflow')
-  async runWorkflow(request: WorkflowsProto.RunWorkflowRequest) {
+  public async runWorkflow(
+    request: WorkflowsProto.RunWorkflowRequest,
+  ): Promise<WorkflowsProto.RunWorkflowResponse> {
     this.logger.debug('Running workflow');
     const runWorkflowDto: RunWorkflowDto = {
       workflowId: request.workflowId,
@@ -120,59 +134,64 @@ export class WorkflowsController {
       this.protoUserToUser(request.user),
       runWorkflowDto,
     );
-    return { url: result.url };
+    return {
+      $type: 'api.workflows.RunWorkflowResponse',
+      url: result.url,
+    };
   }
 
   @GrpcMethod('WorkflowsService', 'UpdateWorkflow')
-  async updateWorkflow(request: WorkflowsProto.UpdateWorkflowRequest) {
+  public async updateWorkflow(
+    request: WorkflowsProto.UpdateWorkflowRequest,
+  ): Promise<WorkflowsProto.WorkflowResponse> {
     this.logger.debug('Updating workflow');
     const updateWorkflowDto: UpdateWorkflowDto = {
       workflowId: request.workflowId,
       definition: request.definition,
     };
-    const workflow = await this.workflowsService.updateWorkflow(
+    return await this.workflowsService.updateWorkflow(
       this.protoUserToUser(request.user),
       updateWorkflowDto,
     );
-    return { workflow };
   }
 
   @GrpcMethod('WorkflowsService', 'GetHistoricWorkflowExecutions')
-  async getHistoricWorkflowExecutions(
+  public async getHistoricWorkflowExecutions(
     request: WorkflowsProto.GetHistoricRequest,
-  ) {
+  ): Promise<WorkflowsProto.WorkflowExecutionsResponse> {
     this.logger.debug('Getting historic workflow executions');
     const executions =
       await this.workflowsService.getHistoricWorkflowExecutions(
         this.protoUserToUser(request.user),
         request.workflowId,
       );
-    return { executions };
+    return {
+      $type: 'api.workflows.WorkflowExecutionsResponse',
+      executions: executions.executions.map((execution) => ({
+        ...execution,
+      })),
+    };
   }
 
   @GrpcMethod('WorkflowsService', 'GetWorkflowExecutions')
-  async getWorkflowExecutions(request: WorkflowsProto.GetExecutionsRequest) {
+  public async getWorkflowExecutions(
+    request: WorkflowsProto.GetExecutionsRequest,
+  ): Promise<WorkflowsProto.WorkflowExecutionsResponse> {
     this.logger.debug('Getting workflow executions');
-    const result = await this.workflowsService.getWorkflowExecutions(
+    return await this.workflowsService.getWorkflowExecutions(
       this.protoUserToUser(request.user),
       request.executionId,
     );
-    return {
-      execution: result,
-      phases: result.phases,
-    };
   }
 
   @GrpcMethod('WorkflowsService', 'GetWorkflowPhase')
-  async getWorkflowPhase(request: WorkflowsProto.GetPhaseRequest) {
+  public async getWorkflowPhase(
+    request: WorkflowsProto.GetPhaseRequest,
+  ): Promise<WorkflowsProto.PhaseResponse> {
     this.logger.debug('Getting workflow phase');
-    const result = await this.workflowsService.getWorkflowPhase(
+    return await this.workflowsService.getWorkflowPhase(
       this.protoUserToUser(request.user),
       request.phaseId,
     );
-    return {
-      phase: result,
-      logs: result.logs,
-    };
   }
 }

@@ -4,7 +4,9 @@ import { firstValueFrom } from 'rxjs';
 import {
   AppNode,
   ExecutionPhaseStatus,
+  IExecutionPhaseStatus,
   TaskType,
+  WorkflowExecutionPlan,
   WorkflowExecutionStatus,
   WorkflowExecutionTrigger,
   WorkflowStatus,
@@ -39,7 +41,7 @@ import {
   parseFlowToExecutionPlan,
   ServerTaskRegister,
 } from '@repo/tasks-registry';
-import { ExecutionProto } from '@app/proto';
+import { type ExecutionProto, type WorkflowsProto } from '@app/proto';
 
 @Injectable()
 export class WorkflowsService implements OnModuleInit {
@@ -53,14 +55,16 @@ export class WorkflowsService implements OnModuleInit {
     private readonly database: DrizzleDatabase,
   ) {}
 
-  onModuleInit() {
+  public onModuleInit(): void {
     this.executionsService =
       this.executionsClient.getService<ExecutionProto.ExecutionsServiceClient>(
         'ExecutionsService',
       );
   }
 
-  async getAllUserWorkflows(user: User) {
+  public async getAllUserWorkflows(
+    user: User,
+  ): Promise<WorkflowsProto.WorkflowsResponse> {
     try {
       const workflowsData = await this.database
         .select()
@@ -68,11 +72,24 @@ export class WorkflowsService implements OnModuleInit {
         .orderBy(desc(workflows.updatedAt))
         .where(eq(workflows.userId, user.id));
 
-      if (!workflowsData) {
+      if (workflowsData.length === 0) {
         throw new RpcException('No workflows data found');
       }
 
-      return workflowsData;
+      return {
+        $type: 'api.workflows.WorkflowsResponse',
+        workflows: workflowsData.map((workflow) => ({
+          $type: 'api.workflows.Workflow',
+          ...workflow,
+          description: workflow.description ?? '',
+          userId: workflow.userId.toString(),
+          status: workflow.status ?? WorkflowStatus.DRAFT,
+          executionPlan: workflow.executionPlan ?? '',
+          creditsCost: workflow.creditsCost ?? 0,
+          createdAt: workflow.createdAt.toISOString(),
+          updatedAt: workflow.updatedAt.toISOString(),
+        })),
+      };
     } catch (error) {
       throw new RpcException(
         error instanceof Error ? error.message : JSON.stringify(error),
@@ -80,7 +97,10 @@ export class WorkflowsService implements OnModuleInit {
     }
   }
 
-  async getWorkflowById(user: User, workflowId: number) {
+  public async getWorkflowById(
+    user: User,
+    workflowId: number,
+  ): Promise<WorkflowsProto.WorkflowResponse> {
     try {
       const [workflowData] = await this.database
         .select()
@@ -93,7 +113,10 @@ export class WorkflowsService implements OnModuleInit {
         throw new RpcException('Workflow not found');
       }
 
-      return workflowData;
+      return {
+        $type: 'api.workflows.WorkflowResponse',
+        ...workflowData,
+      };
     } catch (error) {
       throw new RpcException(
         error instanceof Error ? error.message : JSON.stringify(error),
@@ -101,7 +124,10 @@ export class WorkflowsService implements OnModuleInit {
     }
   }
 
-  async createWorkflow(user: User, createWorkflowDto: CreateWorkflowDto) {
+  public async createWorkflow(
+    user: User,
+    createWorkflowDto: CreateWorkflowDto,
+  ): Promise<WorkflowsProto.WorkflowResponse> {
     try {
       const initialFlow = {
         nodes: [createFlowNodeFunction(TaskType.SET_CODE_CONTEXT)],
@@ -127,7 +153,10 @@ export class WorkflowsService implements OnModuleInit {
         throw new RpcException('Workflow not created');
       }
 
-      return newWorkflow;
+      return {
+        $type: 'api.workflows.WorkflowResponse',
+        ...newWorkflow,
+      };
     } catch (error) {
       throw new RpcException(
         error instanceof Error ? error.message : JSON.stringify(error),
@@ -135,7 +164,10 @@ export class WorkflowsService implements OnModuleInit {
     }
   }
 
-  async deleteWorkflow(user: User, workflowId: number) {
+  public async deleteWorkflow(
+    user: User,
+    workflowId: number,
+  ): Promise<WorkflowsProto.WorkflowResponse> {
     try {
       const [deletedWorkflow] = await this.database
         .delete(workflows)
@@ -146,7 +178,10 @@ export class WorkflowsService implements OnModuleInit {
         throw new RpcException('Workflow not found');
       }
 
-      return deletedWorkflow;
+      return {
+        $type: 'api.workflows.WorkflowResponse',
+        ...deletedWorkflow,
+      };
     } catch (error) {
       throw new RpcException(
         error instanceof Error ? error.message : JSON.stringify(error),
@@ -154,10 +189,10 @@ export class WorkflowsService implements OnModuleInit {
     }
   }
 
-  async duplicateWorkflow(
+  public async duplicateWorkflow(
     user: User,
     duplicateWorkflowDto: DuplicateWorkflowDto,
-  ) {
+  ): Promise<WorkflowsProto.WorkflowResponse> {
     try {
       const [sourceWorkflow] = await this.database
         .select()
@@ -192,7 +227,10 @@ export class WorkflowsService implements OnModuleInit {
         throw new RpcException('Workflow not duplicated');
       }
 
-      return duplicatedWorkflow;
+      return {
+        $type: 'api.workflows.WorkflowResponse',
+        ...duplicatedWorkflow,
+      };
     } catch (error) {
       throw new RpcException(
         error instanceof Error ? error.message : JSON.stringify(error),
@@ -200,7 +238,10 @@ export class WorkflowsService implements OnModuleInit {
     }
   }
 
-  async publishWorkflow(user: User, publishWorkflowDto: PublishWorkflowDto) {
+  public async publishWorkflow(
+    user: User,
+    publishWorkflowDto: PublishWorkflowDto,
+  ): Promise<WorkflowsProto.WorkflowResponse> {
     try {
       const [workflowData] = await this.database
         .select()
@@ -220,17 +261,17 @@ export class WorkflowsService implements OnModuleInit {
         throw new RpcException('Workflow is not in draft state');
       }
 
-      const flow = JSON.parse(publishWorkflowDto.flowDefinition);
-      const result = parseFlowToExecutionPlan(
-        flow.nodes as AppNode[],
-        flow.edges as Edge[],
-      );
+      const flow = JSON.parse(publishWorkflowDto.flowDefinition) as {
+        nodes: AppNode[];
+        edges: Edge[];
+      };
+      const result = parseFlowToExecutionPlan(flow.nodes, flow.edges);
 
-      if (result.error || !result.executionPlan) {
+      if (result.error ?? !result.executionPlan) {
         throw new RpcException('Error parsing flow to execution plan');
       }
 
-      const creditsCost = calculateWorkflowCost(flow.nodes as AppNode[]);
+      const creditsCost = calculateWorkflowCost(flow.nodes);
 
       const publishedWorkflowData: Partial<Workflow> = {
         status: WorkflowStatus.PUBLISHED,
@@ -255,7 +296,10 @@ export class WorkflowsService implements OnModuleInit {
         throw new RpcException('Error publishing workflow');
       }
 
-      return publishedWorkflow;
+      return {
+        $type: 'api.workflows.WorkflowResponse',
+        ...publishedWorkflow,
+      };
     } catch (error) {
       throw new RpcException(
         error instanceof Error ? error.message : JSON.stringify(error),
@@ -263,7 +307,10 @@ export class WorkflowsService implements OnModuleInit {
     }
   }
 
-  async unpublishWorkflow(user: User, workflowId: number) {
+  public async unpublishWorkflow(
+    user: User,
+    workflowId: number,
+  ): Promise<WorkflowsProto.WorkflowResponse> {
     try {
       const [workflowData] = await this.database
         .select()
@@ -295,7 +342,10 @@ export class WorkflowsService implements OnModuleInit {
         throw new RpcException('Error unpublishing workflow');
       }
 
-      return unpublishedWorkflow;
+      return {
+        $type: 'api.workflows.WorkflowResponse',
+        ...unpublishedWorkflow,
+      };
     } catch (error) {
       throw new RpcException(
         error instanceof Error ? error.message : JSON.stringify(error),
@@ -303,7 +353,10 @@ export class WorkflowsService implements OnModuleInit {
     }
   }
 
-  async runWorkflow(user: User, runWorkflowDto: RunWorkflowDto) {
+  public async runWorkflow(
+    user: User,
+    runWorkflowDto: RunWorkflowDto,
+  ): Promise<WorkflowsProto.RunWorkflowResponse> {
     try {
       const [workflowData] = await this.database
         .select()
@@ -319,7 +372,7 @@ export class WorkflowsService implements OnModuleInit {
         throw new RpcException('Workflow not found');
       }
 
-      let executionPlan;
+      let executionPlan: WorkflowExecutionPlan | null = null;
       let workflowDefinition = runWorkflowDto.flowDefinition;
 
       if (workflowData.status === WorkflowStatus.PUBLISHED) {
@@ -328,15 +381,20 @@ export class WorkflowsService implements OnModuleInit {
             'Execution plan is not defined in the published workflow',
           );
         }
-        executionPlan = JSON.parse(workflowData.executionPlan);
+        executionPlan = JSON.parse(
+          workflowData.executionPlan,
+        ) as WorkflowExecutionPlan;
         workflowDefinition = workflowData.definition;
       } else {
         if (!runWorkflowDto.flowDefinition) {
           throw new RpcException('Flow definition is not defined');
         }
-        const flow = JSON.parse(runWorkflowDto.flowDefinition);
+        const flow = JSON.parse(runWorkflowDto.flowDefinition) as {
+          nodes: AppNode[];
+          edges: Edge[];
+        };
         const result = parseFlowToExecutionPlan(flow.nodes, flow.edges);
-        if (result.error || !result.executionPlan) {
+        if (result.error ?? !result.executionPlan) {
           throw new RpcException('Error parsing flow to execution plan');
         }
         executionPlan = result.executionPlan;
@@ -370,7 +428,14 @@ export class WorkflowsService implements OnModuleInit {
             node: JSON.stringify(node),
             name: ServerTaskRegister[node.data.type].label,
           })),
-        );
+        ) as {
+          workflowExecutionId: number;
+          userId: number;
+          status: IExecutionPhaseStatus;
+          number: number;
+          node: string;
+          name: string;
+        }[];
 
         if (phasesData.length > 0) {
           const phases = await tx
@@ -378,7 +443,7 @@ export class WorkflowsService implements OnModuleInit {
             .values(phasesData)
             .returning();
 
-          if (!phases) {
+          if (phases.length === 0) {
             throw new RpcException('Error creating phases');
           }
         }
@@ -388,12 +453,13 @@ export class WorkflowsService implements OnModuleInit {
           this.executionsService.execute({
             $type: 'api.execution.ExecuteWorkflowRequest',
             workflowExecutionId: execution.id,
-            componentId: runWorkflowDto.componentId,
+            componentId: runWorkflowDto.componentId ?? 0,
           }),
         );
 
         return {
-          url: `/workflow/runs/${runWorkflowDto.workflowId}/${execution.id}`,
+          $type: 'api.workflows.RunWorkflowResponse',
+          url: `/workflow/runs/${String(runWorkflowDto.workflowId)}/${String(execution.id)}`,
         };
       });
     } catch (error) {
@@ -403,7 +469,10 @@ export class WorkflowsService implements OnModuleInit {
     }
   }
 
-  async updateWorkflow(user: User, updateWorkflowDto: UpdateWorkflowDto) {
+  public async updateWorkflow(
+    user: User,
+    updateWorkflowDto: UpdateWorkflowDto,
+  ): Promise<WorkflowsProto.WorkflowResponse> {
     try {
       const [workflowData] = await this.database
         .select()
@@ -438,7 +507,10 @@ export class WorkflowsService implements OnModuleInit {
         throw new RpcException('Error updating workflow');
       }
 
-      return updatedWorkflow;
+      return {
+        $type: 'api.workflows.WorkflowResponse',
+        ...updatedWorkflow,
+      };
     } catch (error) {
       throw new RpcException(
         error instanceof Error ? error.message : JSON.stringify(error),
@@ -446,7 +518,10 @@ export class WorkflowsService implements OnModuleInit {
     }
   }
 
-  async getHistoricWorkflowExecutions(user: User, workflowId: number) {
+  public async getHistoricWorkflowExecutions(
+    user: User,
+    workflowId: number,
+  ): Promise<WorkflowsProto.WorkflowExecutionsResponse> {
     try {
       const workflowExecutionsData = await this.database
         .select()
@@ -459,11 +534,21 @@ export class WorkflowsService implements OnModuleInit {
         )
         .orderBy(desc(workflowExecutions.createdAt));
 
-      if (!workflowExecutionsData) {
+      if (workflowExecutionsData.length === 0) {
         throw new RpcException('Workflow executions not found');
       }
 
-      return workflowExecutionsData;
+      return {
+        $type: 'api.workflows.WorkflowExecutionsResponse',
+        executions: workflowExecutionsData.map((execution) => ({
+          $type: 'api.workflows.WorkflowExecution',
+          ...execution,
+          userId: execution.userId.toString(),
+          createdAt: execution.createdAt.toISOString(),
+          startedAt: execution.startedAt?.toISOString() ?? '',
+          endedAt: execution.completedAt?.toISOString() ?? '',
+        })),
+      };
     } catch (error) {
       throw new RpcException(
         error instanceof Error ? error.message : JSON.stringify(error),
@@ -471,7 +556,10 @@ export class WorkflowsService implements OnModuleInit {
     }
   }
 
-  async getWorkflowExecutions(user: User, executionId: number) {
+  public async getWorkflowExecutions(
+    user: User,
+    executionId: number,
+  ): Promise<WorkflowsProto.WorkflowExecutionsResponse> {
     try {
       const workflowExecutionsWithPhases = await this.database
         .select({
@@ -491,16 +579,21 @@ export class WorkflowsService implements OnModuleInit {
         )
         .orderBy(asc(executionPhase.number));
 
-      if (
-        !workflowExecutionsWithPhases ||
-        workflowExecutionsWithPhases.length === 0
-      ) {
+      if (workflowExecutionsWithPhases.length === 0) {
         throw new RpcException('Workflow executions not found');
       }
 
       return {
-        ...workflowExecutionsWithPhases[0].workflowExecution,
-        phases: workflowExecutionsWithPhases.map((row) => row.phases),
+        $type: 'api.workflows.WorkflowExecutionsResponse',
+        executions: workflowExecutionsWithPhases.map((row) => ({
+          $type: 'api.workflows.WorkflowExecution',
+          ...row.workflowExecution,
+          userId: row.workflowExecution.userId.toString(),
+          createdAt: row.workflowExecution.createdAt.toISOString(),
+          startedAt: row.workflowExecution.startedAt?.toISOString() ?? '',
+          endedAt: row.workflowExecution.completedAt?.toISOString() ?? '',
+          phases: row.phases,
+        })),
       };
     } catch (error) {
       throw new RpcException(
@@ -509,7 +602,10 @@ export class WorkflowsService implements OnModuleInit {
     }
   }
 
-  async getWorkflowPhase(user: User, phaseId: number) {
+  public async getWorkflowPhase(
+    user: User,
+    phaseId: number,
+  ): Promise<WorkflowsProto.PhaseResponse> {
     try {
       const phaseWithLogs = await this.database
         .select({
@@ -533,15 +629,30 @@ export class WorkflowsService implements OnModuleInit {
         )
         .orderBy(asc(executionLog.timestamp));
 
-      if (phaseWithLogs.length === 0) {
+      if (phaseWithLogs.length === 0 || !phaseWithLogs[0]) {
         throw new RpcException('Workflow phase not found');
       }
 
       return {
-        ...phaseWithLogs[0].phase,
+        $type: 'api.workflows.PhaseResponse',
+        phase: {
+          $type: 'api.workflows.ExecutionPhase',
+          ...phaseWithLogs[0].phase,
+          endedAt: phaseWithLogs[0].phase.completedAt?.toISOString() ?? '',
+          userId: phaseWithLogs[0].phase.userId.toString(),
+          startedAt: phaseWithLogs[0].phase.startedAt?.toISOString() ?? '',
+        },
         logs: phaseWithLogs
           .filter((row) => row.logs !== null)
-          .map((row) => row.logs),
+          .map((row) => ({
+            $type: 'api.workflows.ExecutionLog',
+            ...row.logs,
+            id: row.logs?.id ?? 0,
+            executionPhaseId: row.logs?.executionPhaseId ?? 0,
+            message: row.logs?.message ?? '',
+            level: row.logs?.logLevel ?? '',
+            timestamp: new Date(row.logs?.timestamp ?? '').toISOString(),
+          })),
       };
     } catch (error) {
       throw new RpcException(

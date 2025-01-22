@@ -1,9 +1,10 @@
 import {
-  BaseWorkflowTask,
-  ExecutionEnvironment,
+  type BaseWorkflowTask,
+  type ExecutionEnvironment,
   TaskType,
-  WorkflowExecutionStatus,
+  type WorkflowExecutionStatus,
 } from '@repo/types';
+import { type DrizzleDatabase } from '@app/database';
 import { setCodeContextExecutor } from './set-code-context-executor';
 import { optimizeCodeExecutor } from './optimize-code-executor';
 import { improveStylesExecutor } from './improve-styles-executor';
@@ -13,7 +14,6 @@ import { createTsDocsExecutor } from './create-ts-docs-executor';
 import { createMdxDocsExecutor } from './create-mdx-docs-executor';
 import { saveGeneratedCodesExecutor } from './save-generated-codes-executor';
 import { approveChangesExecutor } from './approve-changes-executor';
-import { DrizzleDatabase } from '@app/database';
 
 type ExecutorFunctionType<T extends BaseWorkflowTask> = (
   environment: ExecutionEnvironment<T>,

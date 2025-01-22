@@ -1,11 +1,11 @@
 import { WorkflowExecutionStatus } from '@repo/types';
 import { NotFoundException } from '@nestjs/common';
 import {
-  DrizzleDatabase,
+  type DrizzleDatabase,
   eq,
+  type WorkflowUpdate,
   workflowExecutions,
   workflows,
-  WorkflowUpdate,
 } from '@app/database';
 
 export async function initializeWorkflowExecution(
@@ -42,7 +42,7 @@ export async function initializeWorkflowExecution(
       .returning(),
   ]);
 
-  if (!updatedExecution || !updatedWorkflow) {
+  if (!updatedExecution.length || !updatedWorkflow.length) {
     throw new NotFoundException('Workflow or execution not found');
   }
 }

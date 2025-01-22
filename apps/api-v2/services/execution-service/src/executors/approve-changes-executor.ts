@@ -1,7 +1,10 @@
-import { ExecutionEnvironment, WorkflowExecutionStatus } from '@repo/types';
-import { ServerApproveChangesTaskType } from '@repo/tasks-registry';
+import {
+  type ExecutionEnvironment,
+  WorkflowExecutionStatus,
+} from '@repo/types';
+import { type ServerApproveChangesTaskType } from '@repo/tasks-registry';
+import { type DrizzleDatabase } from '@app/database';
 import { pauseWorkflowExecution } from '../helpers/pause-workflow-execution';
-import { DrizzleDatabase } from '@app/database';
 
 export async function approveChangesExecutor(
   environment: ExecutionEnvironment<ServerApproveChangesTaskType>,

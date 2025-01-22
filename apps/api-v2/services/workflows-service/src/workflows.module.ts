@@ -1,9 +1,9 @@
+import { join } from 'node:path';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { Module } from '@nestjs/common';
 import { DatabaseModule } from '@app/database';
 import { WorkflowsController } from './workflows.controller';
 import { WorkflowsService } from './workflows.service';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import { join } from 'path';
 
 @Module({
   imports: [
@@ -19,7 +19,7 @@ import { join } from 'path';
             __dirname,
             '../../../libs/proto/src/proto/execution.proto',
           ),
-          url: `${process.env.EXECUTION_SERVICE_HOST || 'localhost'}:${process.env.EXECUTION_SERVICES_PORT || '3343'}`,
+          url: `${process.env.EXECUTION_SERVICE_HOST ?? 'localhost'}:${process.env.EXECUTION_SERVICES_PORT ?? '3343'}`,
         },
       },
     ]),

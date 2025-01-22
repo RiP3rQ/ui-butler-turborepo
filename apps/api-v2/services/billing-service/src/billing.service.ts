@@ -4,7 +4,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { User } from '@app/common';
 import {
   DATABASE_CONNECTION,
   eq,
@@ -12,11 +11,10 @@ import {
   sql,
   userBalance,
 } from '@app/database';
-import {
-  BalancePackId,
-  getCreditPackById,
-  UserBasicCredits,
-} from '@repo/types';
+import { BalancePackId, getCreditPackById } from '@repo/types';
+import { RpcException } from '@nestjs/microservices';
+import { status } from '@grpc/grpc-js';
+import { BillingProto } from '@app/proto';
 
 @Injectable()
 export class BillingService {
@@ -25,62 +23,118 @@ export class BillingService {
     private readonly database: NeonDatabaseType,
   ) {}
 
-  async setupUser(user: User): Promise<void> {
-    const [balance] = await this.database
-      .insert(userBalance)
-      .values({
-        userId: user.id,
-        balance: 0,
-      })
-      .returning();
+  public async setupUser(
+    request: BillingProto.SetupUserRequest,
+  ): Promise<void> {
+    try {
+      if (!request.user) {
+        throw new RpcException({
+          code: status.INTERNAL,
+          message: 'User is required',
+        });
+      }
 
-    if (!balance) {
-      throw new NotFoundException('Failed to create user balance');
+      const [balance] = await this.database
+        .insert(userBalance)
+        .values({
+          id: Number(request.user.id),
+          balance: 0,
+        })
+        .returning();
+
+      if (!balance) {
+        throw new RpcException({
+          code: status.INTERNAL,
+          message: 'Failed to create user balance',
+        });
+      }
+    } catch (error: unknown) {
+      console.error(`[ERROR] Error setting up user: ${JSON.stringify(error)}`);
+      if (error instanceof RpcException) throw error;
+      throw new RpcException({
+        code: status.INTERNAL,
+        message: error instanceof Error ? error.message : 'Internal error',
+      });
     }
   }
 
-  async purchasePack(
-    user: User,
-    packId: BalancePackId,
-  ): Promise<UserBasicCredits> {
-    const selectedPack = getCreditPackById(packId);
-    if (!selectedPack) {
-      throw new BadRequestException('Invalid pack ID');
+  public async purchasePack(
+    request: BillingProto.PurchasePackRequest,
+  ): Promise<BillingProto.UserCreditsResponse> {
+    try {
+      if (!request.user || !request.packId) {
+        throw new RpcException({
+          code: status.INTERNAL,
+          message: 'Invalid request',
+        });
+      }
+
+      const selectedPack = getCreditPackById(request.packId as BalancePackId);
+      if (!selectedPack) {
+        throw new BadRequestException('Invalid pack ID');
+      }
+
+      const [updated] = await this.database
+        .update(userBalance)
+        .set({
+          balance: sql`${userBalance.balance} + ${selectedPack.credits}`,
+        })
+        .where(eq(userBalance.id, Number(request.user.id)))
+        .returning();
+
+      if (!updated) {
+        throw new NotFoundException('User balance not found');
+      }
+
+      return {
+        $type: 'api.billing.UserCreditsResponse',
+        credits: updated.balance ?? 0,
+        userId: request.user.id,
+      };
+    } catch (error: unknown) {
+      console.error(`[ERROR] Error purchasing pack: ${JSON.stringify(error)}`);
+      if (error instanceof RpcException) throw error;
+      throw new RpcException({
+        code: status.INTERNAL,
+        message: error instanceof Error ? error.message : 'Internal error',
+      });
     }
-
-    const [updated] = await this.database
-      .update(userBalance)
-      .set({
-        balance: sql`${userBalance.balance}
-        +
-        ${selectedPack.credits}`,
-      })
-      .where(eq(userBalance.id, user.id))
-      .returning();
-
-    if (!updated) {
-      throw new NotFoundException('User balance not found');
-    }
-
-    return {
-      credits: updated.balance,
-      userId: user.id,
-    };
   }
 
-  async getUserCredits(user: User): Promise<UserBasicCredits> {
-    const [credits] = await this.database
-      .select()
-      .from(userBalance)
-      .where(eq(userBalance.id, user.id));
+  public async getUserCredits(
+    request: BillingProto.GetUserCreditsRequest,
+  ): Promise<BillingProto.UserCreditsResponse> {
+    try {
+      if (!request.user) {
+        throw new RpcException({
+          code: status.INTERNAL,
+          message: 'Invalid request',
+        });
+      }
 
-    if (!credits) {
-      throw new NotFoundException('User balance not found');
+      const [credits] = await this.database
+        .select()
+        .from(userBalance)
+        .where(eq(userBalance.id, Number(request.user.id)));
+
+      if (!credits) {
+        throw new NotFoundException('User balance not found');
+      }
+
+      return {
+        $type: 'api.billing.UserCreditsResponse',
+        credits: credits.balance ?? 0,
+        userId: request.user.id,
+      };
+    } catch (error: unknown) {
+      console.error(
+        `[ERROR] Error getting user credits: ${JSON.stringify(error)}`,
+      );
+      if (error instanceof RpcException) throw error;
+      throw new RpcException({
+        code: status.INTERNAL,
+        message: error instanceof Error ? error.message : 'Internal error',
+      });
     }
-
-    return {
-      credits: credits.balance,
-      userId: user.id,
-    };
   }
 }

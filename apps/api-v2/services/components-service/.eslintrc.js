@@ -5,5 +5,12 @@ module.exports = {
     tsconfigRootDir: __dirname,
     project: ['./tsconfig.json'],
   },
-  ignorePatterns: ['.eslintrc.js', 'dist', 'node_modules'],
+  rules: {
+    camelcase: 'off',
+    'no-console': 'off',
+    '@typescript-eslint/no-extraneous-class': 'off',
+    '@typescript-eslint/no-empty-function': 'off',
+    '@typescript-eslint/require-await': 'off',
+  },
+  ignorePatterns: ['dist/**/*', 'node_modules/**/*'],
 };

@@ -23,8 +23,17 @@ export class CredentialsService {
   /**
    * Fetches the credentials of a user
    */
-  async getUserCredentials(user: UsersProto.User) {
+  public async getUserCredentials(
+    request: UsersProto.GetCredentialsRequest,
+  ): Promise<UsersProto.GetCredentialsResponse> {
     try {
+      if (!request.user) {
+        throw new RpcException({
+          code: status.NOT_FOUND,
+          message: 'User not found',
+        });
+      }
+
       const userCredentialsData = await this.database
         .select({
           id: userCredentials.id,
@@ -34,18 +43,40 @@ export class CredentialsService {
           updatedAt: userCredentials.updatedAt,
         })
         .from(userCredentials)
-        .where(eq(userCredentials.userId, user.id))
+        .where(eq(userCredentials.userId, request.user.id))
         .orderBy(desc(userCredentials.name));
 
-      if (!userCredentialsData) {
+      if (userCredentialsData.length === 0) {
         throw new RpcException({
           code: status.NOT_FOUND,
           message: 'Credentials not found',
         });
       }
 
-      return userCredentialsData;
-    } catch (error) {
+      const credentials = userCredentialsData.map((credential) => ({
+        ...credential,
+        $type: 'api.users.Credential',
+        userId: credential.userId ?? 0,
+        createdAt: {
+          $type: 'google.protobuf.Timestamp',
+          seconds: Math.floor(credential.createdAt.getTime() / 1000),
+          nanos: (credential.createdAt.getTime() % 1000) * 1000000,
+        },
+        updatedAt: {
+          $type: 'google.protobuf.Timestamp',
+          seconds: Math.floor(credential.updatedAt.getTime() / 1000),
+          nanos: (credential.updatedAt.getTime() % 1000) * 1000000,
+        },
+      })) satisfies UsersProto.Credential[];
+
+      return {
+        $type: 'api.users.GetCredentialsResponse',
+        credentials,
+      };
+    } catch (error: unknown) {
+      console.error(
+        `[ERROR] Error getting user credentials: ${JSON.stringify(error)}`,
+      );
       if (error instanceof RpcException) {
         throw error;
       }
@@ -56,19 +87,35 @@ export class CredentialsService {
     }
   }
 
-  async createCredential(
-    user: UsersProto.User,
-    createCredentialDto: UsersProto.CreateCredentialDto,
-  ) {
+  /**
+   * Creates a credential
+   */
+  public async createCredential(
+    request: UsersProto.CreateCredentialRequest,
+  ): Promise<UsersProto.Credential> {
     try {
+      if (!request.credential) {
+        throw new RpcException({
+          code: status.NOT_FOUND,
+          message: 'Credential not found',
+        });
+      }
+
+      if (!request.user) {
+        throw new RpcException({
+          code: status.NOT_FOUND,
+          message: 'User not found',
+        });
+      }
+
       const encryptedCredentialValue = symmetricEncrypt(
-        createCredentialDto.value,
+        request.credential.value,
       );
 
       const newCredentialData: Omit<NewUserCredential, 'id'> = {
-        name: createCredentialDto.name,
+        name: request.credential.name,
         value: encryptedCredentialValue,
-        userId: user.id,
+        userId: request.user.id,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -85,9 +132,29 @@ export class CredentialsService {
         });
       }
 
-      delete newCredential.value;
-      return newCredential;
-    } catch (error) {
+      // delete the value from the credential
+      const finalCredential = {
+        $type: 'api.users.Credential',
+        id: newCredential.id,
+        name: newCredential.name,
+        userId: newCredential.userId ?? 0,
+        createdAt: {
+          $type: 'google.protobuf.Timestamp',
+          seconds: Math.floor(newCredential.createdAt.getTime() / 1000),
+          nanos: (newCredential.createdAt.getTime() % 1000) * 1000000,
+        },
+        updatedAt: {
+          $type: 'google.protobuf.Timestamp',
+          seconds: Math.floor(newCredential.updatedAt.getTime() / 1000),
+          nanos: (newCredential.updatedAt.getTime() % 1000) * 1000000,
+        },
+      } satisfies UsersProto.Credential;
+
+      return finalCredential;
+    } catch (error: unknown) {
+      console.error(
+        `[ERROR] Error creating credential: ${JSON.stringify(error)}`,
+      );
       if (error instanceof RpcException) {
         throw error;
       }
@@ -101,12 +168,24 @@ export class CredentialsService {
   /**
    * Deletes a credential
    */
-  async deleteCredential(user: UsersProto.User, id: number) {
+  public async deleteCredential(
+    request: UsersProto.DeleteCredentialRequest,
+  ): Promise<UsersProto.Credential> {
     try {
+      if (!request.user) {
+        throw new RpcException({
+          code: status.NOT_FOUND,
+          message: 'User not found',
+        });
+      }
+
       const [deletedCredential] = await this.database
         .delete(userCredentials)
         .where(
-          and(eq(userCredentials.userId, user.id), eq(userCredentials.id, id)),
+          and(
+            eq(userCredentials.userId, request.user.id),
+            eq(userCredentials.id, request.id),
+          ),
         )
         .returning();
 
@@ -117,9 +196,28 @@ export class CredentialsService {
         });
       }
 
-      delete deletedCredential.value;
-      return deletedCredential;
-    } catch (error) {
+      const finalCredential = {
+        $type: 'api.users.Credential',
+        id: deletedCredential.id,
+        name: deletedCredential.name,
+        userId: deletedCredential.userId ?? 0,
+        createdAt: {
+          $type: 'google.protobuf.Timestamp',
+          seconds: Math.floor(deletedCredential.createdAt.getTime() / 1000),
+          nanos: (deletedCredential.createdAt.getTime() % 1000) * 1000000,
+        },
+        updatedAt: {
+          $type: 'google.protobuf.Timestamp',
+          seconds: Math.floor(deletedCredential.updatedAt.getTime() / 1000),
+          nanos: (deletedCredential.updatedAt.getTime() % 1000) * 1000000,
+        },
+      } satisfies UsersProto.Credential;
+
+      return finalCredential;
+    } catch (error: unknown) {
+      console.error(
+        `[ERROR] Error deleting credential: ${JSON.stringify(error)}`,
+      );
       if (error instanceof RpcException) {
         throw error;
       }
@@ -133,13 +231,25 @@ export class CredentialsService {
   /**
    * Reveals the value of a credential
    */
-  async revealCredential(user: UsersProto.User, id: number) {
+  public async revealCredential(
+    request: UsersProto.RevealCredentialRequest,
+  ): Promise<UsersProto.RevealedCredential> {
     try {
+      if (!request.user) {
+        throw new RpcException({
+          code: status.NOT_FOUND,
+          message: 'User not found',
+        });
+      }
+
       const [credential] = await this.database
         .select()
         .from(userCredentials)
         .where(
-          and(eq(userCredentials.userId, user.id), eq(userCredentials.id, id)),
+          and(
+            eq(userCredentials.userId, request.user.id),
+            eq(userCredentials.id, request.id),
+          ),
         );
 
       if (!credential) {
@@ -152,12 +262,18 @@ export class CredentialsService {
       const decryptedCredentialValue = symmetricDecrypt(credential.value);
 
       const finalCredential = {
-        ...credential,
+        $type: 'api.users.RevealedCredential',
+        id: credential.id,
+        name: credential.name,
+        userId: credential.userId ?? 0,
         value: decryptedCredentialValue,
-      };
+      } satisfies UsersProto.RevealedCredential;
 
       return finalCredential;
-    } catch (error) {
+    } catch (error: unknown) {
+      console.error(
+        `[ERROR] Error revealing credential: ${JSON.stringify(error)}`,
+      );
       if (error instanceof RpcException) {
         throw error;
       }

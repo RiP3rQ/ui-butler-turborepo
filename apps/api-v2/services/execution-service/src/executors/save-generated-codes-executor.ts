@@ -1,6 +1,6 @@
-import { ExecutionEnvironment } from '@repo/types';
-import { ServerSaveGeneratedCodesTaskType } from '@repo/tasks-registry';
-import { components, DrizzleDatabase, eq } from '@app/database';
+import { type ExecutionEnvironment } from '@repo/types';
+import { type ServerSaveGeneratedCodesTaskType } from '@repo/tasks-registry';
+import { components, type DrizzleDatabase, eq } from '@app/database';
 
 export async function saveGeneratedCodesExecutor(
   environment: ExecutionEnvironment<ServerSaveGeneratedCodesTaskType>,
@@ -54,7 +54,7 @@ export async function saveGeneratedCodesExecutor(
     const [component] = await database
       .update(components)
       .set(updatedComponents)
-      .where(eq(components.id, componentId))
+      .where(eq(components.id, Number(componentId)))
       .returning();
 
     if (!component) {

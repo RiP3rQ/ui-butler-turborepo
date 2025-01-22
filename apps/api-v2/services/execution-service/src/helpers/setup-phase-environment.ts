@@ -1,8 +1,8 @@
 import { ServerTaskRegister } from '@repo/tasks-registry';
 import {
-  AppNode,
-  Environment,
-  ServerSaveEdge,
+  type AppNode,
+  type Environment,
+  type ServerSaveEdge,
   TaskParamType,
 } from '@repo/types';
 
@@ -11,10 +11,7 @@ export function setupPhaseEnvironment(
   environment: Environment,
   edges: ServerSaveEdge[],
 ) {
-  if (!node || !environment || !edges) {
-    throw new Error('Node, environment or edges not found');
-  }
-
+  // Initialize phase environment
   environment.phases[node.id] = {
     temp: {},
     inputs: {},
@@ -27,10 +24,19 @@ export function setupPhaseEnvironment(
     if (input.type === TaskParamType.CODE_INSTANCE) {
       continue;
     }
+
+    // Ensure phase exists
+    if (!environment.phases[node.id]) {
+      environment.phases[node.id] = {
+        temp: {},
+        inputs: {},
+        outputs: {},
+      };
+    }
+
     const inputValue = node.data.inputs[input.name];
     if (inputValue) {
-      // Assign input value to the environment
-      environment.phases[node.id].inputs[input.name] = inputValue;
+      environment.phases[node.id]!.inputs[input.name] = inputValue;
       continue;
     }
 
@@ -38,11 +44,8 @@ export function setupPhaseEnvironment(
     const connectedEdge = edges.find(
       (edge) => edge.target === node.id && edge.targetHandle === input.name,
     );
-    if (
-      !connectedEdge ||
-      !connectedEdge.sourceHandle || //Maybe this shouldn't be checked
-      !connectedEdge.source //Maybe this shouldn't be checked
-    ) {
+
+    if (!connectedEdge?.source || !connectedEdge.sourceHandle) {
       console.error('MISSING EDGE FOR INPUT', input.name);
       continue;
     }
@@ -57,6 +60,6 @@ export function setupPhaseEnvironment(
     }
 
     // Assign output value to the environment
-    environment.phases[node.id].inputs[input.name] = outputValue;
+    environment.phases[node.id]!.inputs[input.name] = outputValue;
   }
 }

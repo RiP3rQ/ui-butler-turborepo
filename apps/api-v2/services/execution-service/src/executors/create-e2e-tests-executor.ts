@@ -1,5 +1,5 @@
-import { ExecutionEnvironment } from '@repo/types';
-import { ServerCreateE2ETestsTaskType } from '@repo/tasks-registry';
+import { type ExecutionEnvironment } from '@repo/types';
+import { type ServerCreateE2ETestsTaskType } from '@repo/tasks-registry';
 import { generateObject } from 'ai';
 import { z } from 'zod';
 import { CreateE2eTestsPrompt } from '@repo/prompts';

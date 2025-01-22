@@ -2,7 +2,6 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { Edge } from '@nestjs/core/inspector/interfaces/edge.interface';
 import {
-  ApproveChangesRequest,
   Environment,
   ExecutionPhaseStatus,
   IWorkflowExecutionStatus,
@@ -16,7 +15,9 @@ import {
   executionPhase,
   workflowExecutions,
 } from '@app/database';
-import { ApproveChangesDto, User } from '@app/common';
+import { ApproveChangesDto } from '@app/common';
+import { ExecutionProto } from '@app/proto';
+import { status } from '@grpc/grpc-js';
 import { executeWorkflowPhases } from './helpers/execute-workflow-phases';
 import { initializeWorkflowExecution } from './helpers/initialize-workflow-execution';
 import { initializeWorkflowPhasesStatuses } from './helpers/initialize-workflow-phases-statuses';
@@ -29,12 +30,18 @@ export class ExecutionsService {
     private readonly database: DrizzleDatabase,
   ) {}
 
-  async getPendingChanges(user: User, executionId: number) {
+  public async getPendingChanges(
+    request: ExecutionProto.GetPendingChangesRequest,
+  ): Promise<ExecutionProto.PendingChangesResponse> {
     try {
+      if (!request.executionId || !request.user) {
+        throw new RpcException('Execution id and user are required');
+      }
+
       const execution = await this.database.query.workflowExecutions.findFirst({
         where: and(
-          eq(workflowExecutions.id, executionId),
-          eq(workflowExecutions.userId, user.id),
+          eq(workflowExecutions.id, Number(request.executionId)),
+          eq(workflowExecutions.userId, Number(request.user.id)),
         ),
         with: {
           executionPhases: true,
@@ -51,27 +58,50 @@ export class ExecutionsService {
 
       this.logger.debug('Pending phase', pendingPhase);
 
-      const parsedTemp = JSON.parse(pendingPhase?.temp || '{}');
+      const parsedTemp = JSON.parse(pendingPhase?.temp ?? '{}') as Record<
+        string,
+        string
+      >;
 
       return {
+        $type: 'api.execution.PendingChangesResponse',
         pendingApproval: parsedTemp,
         status: execution.status as IWorkflowExecutionStatus,
-      } satisfies ApproveChangesRequest;
-    } catch (error) {
-      throw new RpcException(
-        error instanceof Error ? error.message : JSON.stringify(error),
+      } satisfies ExecutionProto.PendingChangesResponse;
+    } catch (error: unknown) {
+      console.error(
+        `[ERROR] Error getting pending changes: ${JSON.stringify(error)}`,
       );
+      if (error instanceof RpcException) throw error;
+      throw new RpcException({
+        code: status.INTERNAL,
+        message: error instanceof Error ? error.message : 'Internal error',
+      });
     }
   }
 
-  async approveChanges(
-    user: User,
-    executionId: number,
-    body: ApproveChangesDto,
-  ) {
+  public async approveChanges(
+    request: ExecutionProto.ApproveChangesRequest,
+  ): Promise<ExecutionProto.ApproveChangesResponse> {
     try {
+      if (!request.executionId) {
+        throw new RpcException('Execution id is required');
+      }
+
+      if (!request.user) {
+        throw new RpcException('User is required');
+      }
+
+      if (!request.body) {
+        throw new RpcException('Body is required');
+      }
+
+      const approveChangesDto: ApproveChangesDto = {
+        decision: request.body.decision,
+      };
+
       const execution = await this.database.query.workflowExecutions.findFirst({
-        where: eq(workflowExecutions.id, executionId),
+        where: eq(workflowExecutions.id, Number(request.executionId)),
         with: {
           workflow: true,
           executionPhases: true,
@@ -94,9 +124,13 @@ export class ExecutionsService {
         (phase) => phase.status === ExecutionPhaseStatus.PENDING,
       );
 
-      const edges = (JSON.parse(execution.definition)?.edges ?? []) as Edge[];
+      const definition = JSON.parse(execution.definition) as { edges?: Edge[] };
+      const edges = definition?.edges ?? [];
 
-      const temp = JSON.parse(currentPhase.temp || '{}');
+      const temp = JSON.parse(currentPhase.temp ?? '{}') as Record<
+        string,
+        string
+      >;
       const originalCode = temp?.['Original code'] ?? '';
       const pendingCode = temp?.['Pending code'] ?? '';
       const componentId = Number(temp?.['Component ID'] ?? '');
@@ -108,12 +142,12 @@ export class ExecutionsService {
       const environment: Environment = {
         phases: {},
         code:
-          body.decision === 'approve'
+          approveChangesDto.decision === 'approve'
             ? (pendingCode ?? originalCode)
             : originalCode,
         startingCode: originalCode,
-        workflowExecutionId: executionId,
-        componentId,
+        workflowExecutionId: Number(request.executionId),
+        componentId: Number(componentId),
       };
 
       this.logger.debug('Environment', environment);
@@ -125,7 +159,7 @@ export class ExecutionsService {
         .set({
           status: WorkflowExecutionStatus.RUNNING,
         })
-        .where(eq(workflowExecutions.id, executionId));
+        .where(eq(workflowExecutions.id, Number(request.executionId)));
 
       await this.database
         .update(executionPhase)
@@ -134,39 +168,51 @@ export class ExecutionsService {
         })
         .where(eq(executionPhase.id, currentPhase.id));
 
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises --- we don't need to await this
       executeWorkflowPhases(
         this.database,
         environment,
-        executionId,
+        Number(request.executionId),
         remainingPhases,
         edges,
         execution,
       );
 
       return {
+        $type: 'api.execution.ApproveChangesResponse',
         message:
-          body.decision === 'approve'
+          approveChangesDto.decision === 'approve'
             ? 'Changes approved, workflow execution resumed'
             : 'Changes rejected, continuing with original code',
         status: WorkflowExecutionStatus.RUNNING,
-      };
-    } catch (error) {
-      throw new RpcException(
-        error instanceof Error ? error.message : JSON.stringify(error),
+      } satisfies ExecutionProto.ApproveChangesResponse;
+    } catch (error: unknown) {
+      console.error(
+        `[ERROR] Error approving changes: ${JSON.stringify(error)}`,
       );
+      if (error instanceof RpcException) throw error;
+      throw new RpcException({
+        code: status.INTERNAL,
+        message: error instanceof Error ? error.message : 'Internal error',
+      });
     }
   }
 
-  async executeWorkflow(
-    workflowExecutionId: number,
-    componentId: number,
-    nextRunAt?: Date,
-  ) {
+  public async executeWorkflow(
+    request: ExecutionProto.ExecuteWorkflowRequest,
+  ): Promise<ExecutionProto.Empty> {
     try {
-      this.logger.debug('executing workflow', workflowExecutionId);
+      if (!request.workflowExecutionId) {
+        throw new RpcException({
+          code: status.INTERNAL,
+          message: 'Workflow execution id is required',
+        });
+      }
+
+      this.logger.debug('executing workflow', request.workflowExecutionId);
 
       const execution = await this.database.query.workflowExecutions.findFirst({
-        where: eq(workflowExecutions.id, workflowExecutionId),
+        where: eq(workflowExecutions.id, Number(request.workflowExecutionId)),
         with: {
           workflow: true,
           executionPhases: true,
@@ -179,20 +225,21 @@ export class ExecutionsService {
         throw new RpcException('Execution not found');
       }
 
-      const edges = (JSON.parse(execution.definition)?.edges ?? []) as Edge[];
+      const definition = JSON.parse(execution.definition) as { edges?: Edge[] };
+      const edges = definition?.edges ?? [];
       const environment: Environment = {
         phases: {},
         code: '',
         startingCode: '',
-        workflowExecutionId: workflowExecutionId,
-        componentId: componentId,
+        workflowExecutionId: Number(request.workflowExecutionId),
+        componentId: Number(request.componentId),
       };
 
       await initializeWorkflowExecution(
         this.database,
-        workflowExecutionId,
+        Number(request.workflowExecutionId),
         execution.workflowId,
-        nextRunAt,
+        request.nextRunAt ? new Date(request.nextRunAt) : undefined,
       );
 
       await initializeWorkflowPhasesStatuses(
@@ -203,7 +250,7 @@ export class ExecutionsService {
       await executeWorkflowPhases(
         this.database,
         environment,
-        workflowExecutionId,
+        Number(request.workflowExecutionId),
         execution.executionPhases,
         edges,
         execution,
@@ -214,14 +261,19 @@ export class ExecutionsService {
           execution?.status === WorkflowExecutionStatus.WAITING_FOR_APPROVAL
             ? 'paused'
             : 'completed'
-        } for workflowId: ${execution.workflowId}`,
+        } for workflowId: ${String(execution.workflowId)}`,
       );
 
-      return {};
+      return {
+        $type: 'api.execution.Empty',
+      };
     } catch (error) {
-      throw new RpcException(
-        error instanceof Error ? error.message : JSON.stringify(error),
-      );
+      console.error('Error in executeWorkflow:', error);
+      if (error instanceof RpcException) throw error;
+      throw new RpcException({
+        code: status.INTERNAL,
+        message: error instanceof Error ? error.message : 'Internal error',
+      });
     }
   }
 }

@@ -246,7 +246,7 @@ export default function GenerateComponentPage(): JSX.Element {
                     onClick={handleOpenSaveComponentModal}
                     variant="default"
                     size="sm"
-                    className="gap-2"
+                    className="gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={!latestAssistantMessage.content || isLoading}
                   >
                     <SaveIcon className="h-4 w-4" />

@@ -1,11 +1,11 @@
 import {
   ExecutionPhaseStatus,
-  LogCollector,
+  type LogCollector,
   WorkflowExecutionStatus,
 } from '@repo/types';
 import { NotFoundException } from '@nestjs/common';
 import {
-  DrizzleDatabase,
+  type DrizzleDatabase,
   eq,
   executionLog,
   executionPhase,
@@ -14,9 +14,12 @@ import {
 export async function finalizeExecutionPhase(
   database: DrizzleDatabase,
   phaseId: number,
-  success: boolean | typeof WorkflowExecutionStatus.WAITING_FOR_APPROVAL,
-  outputs: Record<string, string>,
-  tempValues: Record<string, string>,
+  success:
+    | boolean
+    | typeof WorkflowExecutionStatus.WAITING_FOR_APPROVAL
+    | undefined,
+  outputs: Record<string, string> | undefined,
+  tempValues: Record<string, string> | undefined,
   logCollector: LogCollector,
   creditsConsumed: number,
 ) {
@@ -27,6 +30,7 @@ export async function finalizeExecutionPhase(
   console.log('Finalizing phase', phaseId, success);
 
   const finalStatus =
+    // eslint-disable-next-line no-nested-ternary --- Thats fine chill eslint
     success === WorkflowExecutionStatus.WAITING_FOR_APPROVAL
       ? ExecutionPhaseStatus.WAITING_FOR_APPROVAL
       : success
@@ -52,7 +56,9 @@ export async function finalizeExecutionPhase(
         .returning();
 
       if (!updatedPhase) {
-        throw new NotFoundException(`Phase with ID ${phaseId} not found`);
+        throw new NotFoundException(
+          `Phase with ID ${String(phaseId)} not found`,
+        );
       }
 
       // Create logs

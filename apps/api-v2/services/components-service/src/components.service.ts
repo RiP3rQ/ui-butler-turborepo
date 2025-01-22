@@ -1,12 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
-import {
-  CodeType,
-  ComponentType,
-  SingleComponentApiResponseType,
-} from '@repo/types';
+import { CodeType } from '@repo/types';
 import { generateText, pipeDataStreamToResponse, streamText } from 'ai';
-import { Response } from 'express';
+import { type Response } from 'express';
 import { singleGeneratedPrompts } from '@repo/prompts';
 import {
   and,
@@ -19,13 +15,13 @@ import {
   projects,
 } from '@app/database';
 import {
-  FavoriteComponentDto,
   GET_GEMINI_MODEL,
   GenerateCodeDto,
   SaveComponentDto,
   UpdateComponentCodeDto,
   User,
 } from '@app/common';
+import { ComponentsProto } from '@app/proto';
 
 @Injectable()
 export class ComponentsService {
@@ -34,12 +30,16 @@ export class ComponentsService {
     private readonly database: DrizzleDatabase,
   ) {}
 
-  async getSingleComponent(
+  public async getSingleComponent(
     user: User,
     projectId: number,
     componentId: number,
-  ): Promise<SingleComponentApiResponseType> {
+  ): Promise<ComponentsProto.Component> {
     try {
+      console.log('user', user);
+      console.log('projectId', projectId);
+      console.log('componentId', componentId);
+
       const [component] = await this.database
         .select({
           id: components.id,
@@ -70,24 +70,43 @@ export class ComponentsService {
       }
 
       return {
-        ...component,
-        wasE2ETested: !!component.e2eTests,
-        wasUnitTested: !!component.unitTests,
-        hasMdxDocs: !!component.mdxDocs,
-        hasTypescriptDocs: !!component.tsDocs,
+        $type: 'api.components.Component',
+        id: component.id,
+        title: component.title,
+        code: component.code,
+        e2eTests: component.e2eTests ?? '',
+        unitTests: component.unitTests ?? '',
+        mdxDocs: component.mdxDocs ?? '',
+        tsDocs: component.tsDocs ?? '',
+        projectId: component.projectId,
+        createdAt: {
+          $type: 'google.protobuf.Timestamp',
+          seconds: component.createdAt.getTime(),
+          nanos: component.createdAt.getMilliseconds(),
+        },
+        updatedAt: {
+          $type: 'google.protobuf.Timestamp',
+          seconds: component.updatedAt.getTime(),
+          nanos: component.updatedAt.getMilliseconds(),
+        },
+        projectName: component.projectName,
+        userId: component.userId,
+        wasE2eTested: Boolean(component.e2eTests),
+        wasUnitTested: Boolean(component.unitTests),
+        hasMdxDocs: Boolean(component.mdxDocs),
+        hasTypescriptDocs: Boolean(component.tsDocs),
       };
     } catch (error) {
-      console.error(error);
       throw new RpcException(
         error instanceof Error ? error.message : JSON.stringify(error),
       );
     }
   }
 
-  async saveComponent(
+  public async saveComponent(
     user: User,
     saveComponentDto: SaveComponentDto,
-  ): Promise<ComponentType> {
+  ): Promise<ComponentsProto.Component> {
     try {
       const newComponentData = {
         title: saveComponentDto.title,
@@ -107,7 +126,33 @@ export class ComponentsService {
         throw new RpcException('Failed to create component');
       }
 
-      return newComponent;
+      return {
+        $type: 'api.components.Component',
+        id: newComponent.id,
+        title: newComponent.title,
+        code: newComponent.code,
+        e2eTests: '',
+        unitTests: '',
+        mdxDocs: '',
+        tsDocs: '',
+        projectId: newComponent.projectId,
+        createdAt: {
+          $type: 'google.protobuf.Timestamp',
+          seconds: newComponent.createdAt.getTime(),
+          nanos: newComponent.createdAt.getMilliseconds(),
+        },
+        updatedAt: {
+          $type: 'google.protobuf.Timestamp',
+          seconds: newComponent.updatedAt.getTime(),
+          nanos: newComponent.updatedAt.getMilliseconds(),
+        },
+        projectName: '',
+        userId: newComponent.userId,
+        wasE2eTested: false,
+        wasUnitTested: false,
+        hasMdxDocs: false,
+        hasTypescriptDocs: false,
+      };
     } catch (error) {
       throw new RpcException(
         error instanceof Error ? error.message : JSON.stringify(error),
@@ -115,15 +160,15 @@ export class ComponentsService {
     }
   }
 
-  async favoriteComponent(
+  public async favoriteComponent(
     user: User,
-    favoriteComponentDto: FavoriteComponentDto,
-  ): Promise<ComponentType> {
+    favoriteComponentDto: { componentId: number; isFavorite: boolean },
+  ): Promise<ComponentsProto.Component> {
     try {
-      const { projectId, componentId, favoriteValue } = favoriteComponentDto;
+      const { componentId, isFavorite } = favoriteComponentDto;
 
       const componentData = {
-        isFavorite: favoriteValue,
+        isFavorite,
         updatedAt: new Date(),
       } as Partial<Component>;
 
@@ -131,11 +176,7 @@ export class ComponentsService {
         .update(components)
         .set(componentData)
         .where(
-          and(
-            eq(components.projectId, projectId),
-            eq(components.id, componentId),
-            eq(components.userId, user.id),
-          ),
+          and(eq(components.id, componentId), eq(components.userId, user.id)),
         )
         .returning();
 
@@ -143,7 +184,33 @@ export class ComponentsService {
         throw new RpcException('Component not found');
       }
 
-      return component;
+      return {
+        $type: 'api.components.Component',
+        id: component.id,
+        title: component.title,
+        code: component.code,
+        e2eTests: component.e2eTests ?? '',
+        unitTests: component.unitTests ?? '',
+        mdxDocs: component.mdxDocs ?? '',
+        tsDocs: component.tsDocs ?? '',
+        projectId: component.projectId,
+        createdAt: {
+          $type: 'google.protobuf.Timestamp',
+          seconds: component.createdAt.getTime(),
+          nanos: component.createdAt.getMilliseconds(),
+        },
+        updatedAt: {
+          $type: 'google.protobuf.Timestamp',
+          seconds: component.updatedAt.getTime(),
+          nanos: component.updatedAt.getMilliseconds(),
+        },
+        projectName: '',
+        userId: component.userId,
+        wasE2eTested: Boolean(component.e2eTests),
+        wasUnitTested: Boolean(component.unitTests),
+        hasMdxDocs: Boolean(component.mdxDocs),
+        hasTypescriptDocs: Boolean(component.tsDocs),
+      };
     } catch (error) {
       throw new RpcException(
         error instanceof Error ? error.message : JSON.stringify(error),
@@ -152,10 +219,13 @@ export class ComponentsService {
   }
 
   private enhancePrompt(prompt: string): string {
-    return singleGeneratedPrompts['generateComponent'](prompt).trim();
+    return singleGeneratedPrompts.generateComponent(prompt).trim();
   }
 
-  async generateComponentStream(prompt: string, res: Response): Promise<void> {
+  public async generateComponentStream(
+    prompt: string,
+    res: Response,
+  ): Promise<void> {
     const enhancedPrompt = this.enhancePrompt(prompt);
     pipeDataStreamToResponse(res, {
       execute: async (dataStreamWriter) => {
@@ -176,12 +246,12 @@ export class ComponentsService {
     });
   }
 
-  async updateComponentCode(
+  public async updateComponentCode(
     user: User,
     componentId: number,
     codeType: CodeType,
     updateComponentCodeDto: UpdateComponentCodeDto,
-  ): Promise<ComponentType> {
+  ): Promise<ComponentsProto.Component> {
     try {
       const updateData = this.createUpdateObject(
         codeType,
@@ -197,10 +267,38 @@ export class ComponentsService {
         .returning();
 
       if (!updatedComponent) {
-        throw new RpcException(`Component with ID ${componentId} not found`);
+        throw new RpcException(
+          `Component with ID ${String(componentId)} not found`,
+        );
       }
 
-      return updatedComponent;
+      return {
+        $type: 'api.components.Component',
+        id: updatedComponent.id,
+        title: updatedComponent.title,
+        code: updatedComponent.code,
+        e2eTests: updatedComponent.e2eTests ?? '',
+        unitTests: updatedComponent.unitTests ?? '',
+        mdxDocs: updatedComponent.mdxDocs ?? '',
+        tsDocs: updatedComponent.tsDocs ?? '',
+        projectId: updatedComponent.projectId,
+        createdAt: {
+          $type: 'google.protobuf.Timestamp',
+          seconds: updatedComponent.createdAt.getTime(),
+          nanos: updatedComponent.createdAt.getMilliseconds(),
+        },
+        updatedAt: {
+          $type: 'google.protobuf.Timestamp',
+          seconds: updatedComponent.updatedAt.getTime(),
+          nanos: updatedComponent.updatedAt.getMilliseconds(),
+        },
+        projectName: '',
+        userId: updatedComponent.userId,
+        wasE2eTested: Boolean(updatedComponent.e2eTests),
+        wasUnitTested: Boolean(updatedComponent.unitTests),
+        hasMdxDocs: Boolean(updatedComponent.mdxDocs),
+        hasTypescriptDocs: Boolean(updatedComponent.tsDocs),
+      };
     } catch (error) {
       throw new RpcException(
         error instanceof Error ? error.message : JSON.stringify(error),
@@ -226,26 +324,19 @@ export class ComponentsService {
       case 'mdxDocs':
         return { ...baseUpdate, mdxDocs: content };
       default:
-        throw new RpcException(`Invalid code type: ${codeType}`);
+        throw new RpcException(`Invalid code type: ${String(codeType)}`);
     }
   }
 
-  async generateCodeFunction(
+  public async generateCodeFunction(
     user: User,
     body: GenerateCodeDto,
-  ): Promise<ComponentType> {
+  ): Promise<ComponentsProto.Component> {
     try {
       const { componentId, codeType } = body;
 
       const [component] = await this.database
-        .select({
-          id: components.id,
-          code: components.code,
-          tsDocs: components.tsDocs,
-          unitTests: components.unitTests,
-          e2eTests: components.e2eTests,
-          mdxDocs: components.mdxDocs,
-        })
+        .select()
         .from(components)
         .where(
           and(eq(components.id, componentId), eq(components.userId, user.id)),
@@ -259,24 +350,34 @@ export class ComponentsService {
         codeType as unknown as CodeType,
         component.code,
       );
-      const updateData = this.createUpdateObject(
-        codeType as unknown as CodeType,
-        generatedCode,
-      );
 
-      const [updatedComponent] = await this.database
-        .update(components)
-        .set(updateData)
-        .where(
-          and(eq(components.id, componentId), eq(components.userId, user.id)),
-        )
-        .returning();
-
-      if (!updatedComponent) {
-        throw new RpcException('Failed to update component');
-      }
-
-      return updatedComponent;
+      return {
+        $type: 'api.components.Component',
+        id: component.id,
+        title: component.title,
+        code: generatedCode,
+        e2eTests: component.e2eTests ?? '',
+        unitTests: component.unitTests ?? '',
+        mdxDocs: component.mdxDocs ?? '',
+        tsDocs: component.tsDocs ?? '',
+        projectId: component.projectId,
+        createdAt: {
+          $type: 'google.protobuf.Timestamp',
+          seconds: component.createdAt.getTime(),
+          nanos: component.createdAt.getMilliseconds(),
+        },
+        updatedAt: {
+          $type: 'google.protobuf.Timestamp',
+          seconds: component.updatedAt.getTime(),
+          nanos: component.updatedAt.getMilliseconds(),
+        },
+        projectName: '',
+        userId: component.userId,
+        wasE2eTested: Boolean(component.e2eTests),
+        wasUnitTested: Boolean(component.unitTests),
+        hasMdxDocs: Boolean(component.mdxDocs),
+        hasTypescriptDocs: Boolean(component.tsDocs),
+      };
     } catch (error) {
       throw new RpcException(
         error instanceof Error ? error.message : JSON.stringify(error),
@@ -292,7 +393,7 @@ export class ComponentsService {
       return sourceCode;
     }
 
-    const prompt = singleGeneratedPrompts[codeType]?.(sourceCode);
+    const prompt = singleGeneratedPrompts[codeType](sourceCode);
     if (!prompt) {
       throw new RpcException(`No prompt defined for code type: ${codeType}`);
     }

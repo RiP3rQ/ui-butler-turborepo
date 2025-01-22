@@ -1,6 +1,6 @@
-import { ExecutionEnvironment } from '@repo/types';
-import { ServerSetCodeContextTaskType } from '@repo/tasks-registry';
-import { components, DrizzleDatabase, eq } from '@app/database';
+import { type ExecutionEnvironment } from '@repo/types';
+import { type ServerSetCodeContextTaskType } from '@repo/tasks-registry';
+import { components, type DrizzleDatabase, eq } from '@app/database';
 
 export async function setCodeContextExecutor(
   environment: ExecutionEnvironment<ServerSetCodeContextTaskType>,
@@ -41,7 +41,7 @@ export async function setCodeContextExecutor(
       throw new Error('Component not found');
     }
 
-    const codeContext = component?.code || environment.getInput('Code');
+    const codeContext = component.code || environment.getInput('Code');
 
     if (!codeContext) {
       environment.log.ERROR('Code context is empty');

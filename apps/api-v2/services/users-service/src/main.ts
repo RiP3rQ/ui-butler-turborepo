@@ -1,6 +1,6 @@
+import { join } from 'node:path';
 import { NestFactory } from '@nestjs/core';
 import { Transport } from '@nestjs/microservices';
-import { join } from 'path';
 import { UsersModule } from './users/users.module';
 
 async function bootstrap() {
@@ -9,7 +9,7 @@ async function bootstrap() {
     options: {
       package: 'api.users',
       protoPath: join(__dirname, '../../../libs/proto/src/proto/users.proto'),
-      url: `${process.env.USERS_SERVICE_HOST || 'localhost'}:${process.env.USERS_SERVICE_PORT || '3341'}`,
+      url: `${process.env.USERS_SERVICE_HOST ?? 'localhost'}:${process.env.USERS_SERVICE_PORT ?? '3341'}`,
     },
   });
 
@@ -17,4 +17,9 @@ async function bootstrap() {
   console.log('Users Microservice is listening on gRPC');
 }
 
-bootstrap();
+bootstrap().catch((error: unknown) => {
+  console.error(
+    `Error starting Users + Credentials Microservice: ${JSON.stringify(error)}`,
+  );
+  process.exit(1);
+});
