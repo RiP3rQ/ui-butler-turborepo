@@ -20,7 +20,7 @@ export async function executeWorkflowPhase(
   edges: ServerSaveEdge[],
   userId: number,
 ) {
-  if (!phase) {
+  if (!phase?.node) {
     throw new Error('Execution phase-executors not found');
   }
 

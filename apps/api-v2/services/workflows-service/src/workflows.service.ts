@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { type ClientGrpc, RpcException } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import {
@@ -45,7 +45,6 @@ import { type ExecutionProto, type WorkflowsProto } from '@app/proto';
 
 @Injectable()
 export class WorkflowsService implements OnModuleInit {
-  private readonly logger = new Logger(WorkflowsService.name);
   private executionsService: ExecutionProto.ExecutionsServiceClient;
 
   constructor(

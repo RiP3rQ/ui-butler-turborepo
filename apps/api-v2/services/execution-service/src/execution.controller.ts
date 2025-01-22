@@ -40,11 +40,7 @@ export class ExecutionsController {
     this.logger.debug(
       `Executing workflow ${String(request.workflowExecutionId)} with component ${String(request.componentId)}`,
     );
-    await this.executionsService.executeWorkflow(
-      request.workflowExecutionId,
-      request.componentId,
-      request.nextRunAt ? new Date(request.nextRunAt) : undefined,
-    );
+    await this.executionsService.executeWorkflow(request);
     return {
       $type: 'api.execution.Empty',
     };
