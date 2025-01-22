@@ -1,4 +1,4 @@
-import { BalancePackId } from "../index";
+import { BalancePackId } from "../billing";
 
 export interface UserCredits {
   balance: number;

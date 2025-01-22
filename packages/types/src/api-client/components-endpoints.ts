@@ -1,4 +1,4 @@
-import { CodeType } from "../index";
+import { CodeType } from "../components";
 
 export interface Component {
   id: number;
