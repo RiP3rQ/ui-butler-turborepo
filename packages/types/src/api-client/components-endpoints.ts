@@ -5,6 +5,7 @@ export interface Component {
   id: number;
   title: string;
   code: string;
+  isFavorite: boolean;
   // Project
   projectId: number;
   projectName: string;

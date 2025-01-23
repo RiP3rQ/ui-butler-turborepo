@@ -1,10 +1,10 @@
+import { ApiClient } from "@/lib/api-client";
+import { getErrorMessage } from "@/lib/get-error-message";
 import {
   type AnalyticsEndpoints,
   type DashboardStats,
   type FavoritedComponent,
 } from "@shared/types";
-import { ApiClient } from "@/lib/api-client";
-import { getErrorMessage } from "@/lib/get-error-message";
 
 /**
  * Service class for dashboard-related API calls

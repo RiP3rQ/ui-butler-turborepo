@@ -15,10 +15,7 @@ import LogsViewer from "@/components/execution-viewer/logs-viewer";
 import ParameterViewer from "@/components/execution-viewer/parameter-viewer";
 import { dateToDurationString, protoTimestampToDate } from "@/lib/dates";
 import { getPhasesTotalCost } from "@/lib/get-phases-total-cost";
-import type {
-  IExecutionPhaseStatus,
-  WorkflowExecutionWithPhases,
-} from "@shared/types";
+import type { IExecutionPhaseStatus, WorkflowsEndpoints } from "@shared/types";
 import { WorkflowExecutionStatus } from "@shared/types";
 import { Badge } from "@shared/ui/components/ui/badge";
 import { Separator } from "@shared/ui/components/ui/separator";
@@ -39,7 +36,7 @@ export type ExecutionData = Awaited<
 
 interface ExecutionViewerProps {
   executionId: number;
-  initialData: WorkflowExecutionWithPhases;
+  initialData: WorkflowsEndpoints["getWorkflowExecutions"]["response"];
 }
 
 export function ExecutionViewer({
@@ -52,22 +49,24 @@ export function ExecutionViewer({
     queryKey: ["execution", executionId],
     queryFn: () =>
       getWorkflowExecutionWithPhasesDetailsFunction({
-        executionId: String(initialData.id),
+        executionId: String(initialData.execution.id),
       }),
     initialData,
     refetchInterval: (q) =>
-      q.state.data?.status === WorkflowExecutionStatus.FAILED ||
-      q.state.data?.status === WorkflowExecutionStatus.COMPLETED
+      q.state.data?.execution.status === WorkflowExecutionStatus.FAILED ||
+      q.state.data?.execution.status === WorkflowExecutionStatus.COMPLETED
         ? false
         : 1000,
   });
 
   const pendingChangesQuery = useQuery({
-    queryKey: ["pendingChanges", query.data.id],
-    enabled: query.data.status === WorkflowExecutionStatus.WAITING_FOR_APPROVAL,
+    queryKey: ["pendingChanges", query.data.execution.id],
+    queryFn: () => getPendingChanges({ executionId: query.data.execution.id }),
+    enabled:
+      query.data.execution.status ===
+      WorkflowExecutionStatus.WAITING_FOR_APPROVAL,
     refetchInterval: (q) =>
       q.state.data?.status === WorkflowExecutionStatus.RUNNING ? 1000 : false,
-    queryFn: () => getPendingChanges({ executionId: query.data.id }),
   });
 
   console.log("pendingChangesQuery", pendingChangesQuery);

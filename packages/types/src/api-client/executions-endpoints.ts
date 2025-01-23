@@ -1,6 +1,9 @@
 export type ApprovalDecision = "approve" | "reject";
 
-export type PendingChange = Record<string, string>;
+export interface PendingChange {
+  "Original code": string;
+  "Pending code": string;
+}
 
 export interface ExecutionsEndpoints {
   /** GET /executions/:executionId/pending-changes */
@@ -9,7 +12,7 @@ export interface ExecutionsEndpoints {
       executionId: number;
     };
     response: {
-      pendingApproval: PendingChange[];
+      pendingApproval: PendingChange;
       status: string;
     };
     request: {

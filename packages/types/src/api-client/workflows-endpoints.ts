@@ -79,20 +79,6 @@ export interface WorkflowExecutionWithDatesInsteadOfProtoTimestamp
   completedAt: Date | null;
 }
 
-export interface WorkflowExecutionWithPhases {
-  id: number;
-  userId: number;
-  definition: string;
-  status: string;
-  createdAt: ProtoTimestamp | null;
-  workflowId: number;
-  trigger: string;
-  creditsConsumed: number | null;
-  startedAt: ProtoTimestamp | null;
-  completedAt: ProtoTimestamp | null;
-  phases: ExecutionPhase[];
-}
-
 export interface WorkflowsEndpoints {
   /** GET /workflows */
   getAllUserWorkflows: {

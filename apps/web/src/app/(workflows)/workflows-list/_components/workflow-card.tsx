@@ -1,18 +1,17 @@
 "use client";
 
-import type { WorkflowType } from "@shared/types";
-import { WorkflowStatus } from "@shared/types";
+import { DuplicateWorkflowDialog } from "@/app/(workflows)/workflows-list/_components/duplicate-workflow-dialog";
+import { EditWorkflowButton } from "@/app/(workflows)/workflows-list/_components/edit-workflow-button";
+import { LastRunDetails } from "@/app/(workflows)/workflows-list/_components/last-run-details";
+import { RunWorkflowButton } from "@/app/(workflows)/workflows-list/_components/run-workflow-button";
+import { WorkflowActionButtons } from "@/app/(workflows)/workflows-list/_components/workflow-action-buttons";
+import { type Workflow, WorkflowStatus } from "@shared/types";
+import { TooltipWrapper } from "@shared/ui/components/tooltip-wrapper";
 import { Card, CardContent } from "@shared/ui/components/ui/card";
 import { cn } from "@shared/ui/lib/utils";
 import { FileIcon, PlayIcon } from "lucide-react";
 import Link from "next/link";
-import { TooltipWrapper } from "@shared/ui/components/tooltip-wrapper";
 import { type JSX } from "react";
-import { DuplicateWorkflowDialog } from "@/app/(workflows)/workflows-list/_components/duplicate-workflow-dialog";
-import { RunWorkflowButton } from "@/app/(workflows)/workflows-list/_components/run-workflow-button";
-import { EditWorkflowButton } from "@/app/(workflows)/workflows-list/_components/edit-workflow-button";
-import { LastRunDetails } from "@/app/(workflows)/workflows-list/_components/last-run-details";
-import { WorkflowActionButtons } from "@/app/(workflows)/workflows-list/_components/workflow-action-buttons";
 
 const STATUS_COLORS = {
   [WorkflowStatus.DRAFT]: "bg-yellow-400 text-yellow-600",
@@ -20,7 +19,7 @@ const STATUS_COLORS = {
 };
 
 interface WorkflowCardProps {
-  workflow: WorkflowType;
+  workflow: Workflow;
 }
 export function WorkflowCard({
   workflow,

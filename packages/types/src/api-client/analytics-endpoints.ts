@@ -25,10 +25,9 @@ export interface CreditStats {
 }
 
 export interface DashboardStats {
-  totalWorkflows: number;
-  activeWorkflows: number;
-  totalExecutions: number;
-  successRate: number;
+  currentActiveProjects: number;
+  numberOfCreatedComponents: number;
+  favoritesComponents: number;
 }
 
 export interface FavoritedComponent {

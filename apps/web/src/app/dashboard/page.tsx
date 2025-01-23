@@ -1,12 +1,12 @@
-import { type JSX } from "react";
-import DashboardStatCards from "@/components/dasboard/stat-cards/dashboard-stat-cards";
-import { DashboardGrid } from "@/components/dasboard/grid/dashboard-grid";
-import { DashboardFavoritedTable } from "@/components/dasboard/table/dashboard-favorited-table";
-import { getUserProjects } from "@/actions/projects/server-actions";
 import {
   getDashboardStatCardsValues,
   getDashboardTableFavoritedContent,
 } from "@/actions/dashboard/server-actions";
+import { getUserProjects } from "@/actions/projects/server-actions";
+import { DashboardGrid } from "@/components/dashboard/grid/dashboard-grid";
+import DashboardStatCards from "@/components/dashboard/stat-cards/dashboard-stat-cards";
+import { DashboardFavoritedTable } from "@/components/dashboard/table/dashboard-favorited-table";
+import { type JSX } from "react";
 
 export default async function DashboardPage(): Promise<JSX.Element> {
   const [

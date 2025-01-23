@@ -13,10 +13,12 @@ export default async function WorkflowRunPage({
 }>): Promise<JSX.Element> {
   try {
     const { workflowId, runId } = await params;
+
     const workflowExecution =
       await getWorkflowExecutionWithPhasesDetailsFunction({
         executionId: Number(runId),
       });
+
     return (
       <div className="flex flex-col h-screen w-full overflow-hidden">
         <Topbar

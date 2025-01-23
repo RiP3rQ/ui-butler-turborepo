@@ -1,7 +1,7 @@
 "use client";
 
 import { getDashboardTableFavoritedContent } from "@/actions/dashboard/server-actions";
-import { columns } from "@/components/dasboard/table/columns";
+import { columns } from "@/components/dashboard/table/columns";
 import { type FavoritedComponent } from "@shared/types";
 import { DataTable } from "@shared/ui/components/table/data-table";
 import { Button } from "@shared/ui/components/ui/button";

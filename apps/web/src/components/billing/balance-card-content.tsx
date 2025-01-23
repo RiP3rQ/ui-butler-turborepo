@@ -1,13 +1,13 @@
 "use client";
-import { CoinsIcon } from "lucide-react";
-import { type UserBasicCredits } from "@shared/types";
-import { useQuery } from "@tanstack/react-query";
-import { type JSX } from "react";
-import CountUpWrapper from "@/components/credits/count-up-wrapper";
 import { getAvailableCredits } from "@/actions/billing/server-actions";
+import CountUpWrapper from "@/components/credits/count-up-wrapper";
+import { type UserCredits } from "@shared/types";
+import { useQuery } from "@tanstack/react-query";
+import { CoinsIcon } from "lucide-react";
+import { type JSX } from "react";
 
 interface BalanceCardContentProps {
-  initialData: UserBasicCredits;
+  initialData: UserCredits;
 }
 
 export function BalanceCardContent({

@@ -46,6 +46,7 @@ message Component {
     bool was_unit_tested = 14;
     bool has_mdx_docs = 15;
     bool has_typescript_docs = 16;
+    bool is_favorite = 17;
 }
 
 message GetComponentRequest {

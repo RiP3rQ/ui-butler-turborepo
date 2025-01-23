@@ -1,8 +1,11 @@
 "use client";
 
+import { runWorkflow } from "@/actions/executions/server-actions";
+import { getUserWorkflows } from "@/actions/workflows/server-actions";
+import { getErrorMessage } from "@/lib/get-error-message";
+import { useConfirmationModalStore } from "@/store/confirmation-modal-store";
+import { type Workflow } from "@shared/types";
 import { Button } from "@shared/ui/components/ui/button";
-import { type WorkflowType } from "@shared/types";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,15 +13,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@shared/ui/components/ui/dropdown-menu";
-import { ChevronDownIcon } from "lucide-react";
 import { Skeleton } from "@shared/ui/components/ui/skeleton";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { ChevronDownIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { type JSX } from "react";
-import { useConfirmationModalStore } from "@/store/confirmation-modal-store";
-import { getErrorMessage } from "@/lib/get-error-message";
-import { runWorkflow } from "@/actions/executions/server-actions";
-import { getUserWorkflows } from "@/actions/workflows/server-actions";
+import { toast } from "sonner";
 
 interface RunWorkflowButtonProps {
   componentId: string;
@@ -53,7 +53,7 @@ export function RunWorkflowButton({
     },
   });
 
-  const handleClick = (workflow: WorkflowType): void => {
+  const handleClick = (workflow: Workflow): void => {
     setConfirmationModalBasicState({
       isModalOpen: true,
       modalTitle: `Confirm workflow run`,

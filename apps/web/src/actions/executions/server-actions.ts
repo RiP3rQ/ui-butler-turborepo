@@ -2,7 +2,6 @@
 
 import {
   type ExecutionsEndpoints,
-  type PendingChange,
   type WorkflowsEndpoints,
 } from "@shared/types";
 
@@ -22,10 +21,7 @@ export async function approvePendingChanges(
  */
 export async function getPendingChanges(
   request: Readonly<ExecutionsEndpoints["getPendingChanges"]["request"]>,
-): Promise<{
-  pendingApproval: PendingChange[];
-  status: string;
-}> {
+): Promise<ExecutionsEndpoints["getPendingChanges"]["response"]> {
   return ExecutionsService.getPendingChanges(request);
 }
 

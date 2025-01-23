@@ -54,6 +54,7 @@ export class ComponentsService {
           updatedAt: components.updatedAt,
           projectName: projects.title,
           userId: components.userId,
+          isFavorite: components.isFavorite,
         })
         .from(components)
         .innerJoin(projects, eq(components.projectId, projects.id))
@@ -79,6 +80,7 @@ export class ComponentsService {
         mdxDocs: component.mdxDocs ?? '',
         tsDocs: component.tsDocs ?? '',
         projectId: component.projectId,
+        isFavorite: component.isFavorite ?? false,
         createdAt: {
           $type: 'google.protobuf.Timestamp',
           seconds: component.createdAt.getTime(),
@@ -136,6 +138,7 @@ export class ComponentsService {
         mdxDocs: '',
         tsDocs: '',
         projectId: newComponent.projectId,
+        isFavorite: newComponent.isFavorite ?? false,
         createdAt: {
           $type: 'google.protobuf.Timestamp',
           seconds: newComponent.createdAt.getTime(),
@@ -194,6 +197,7 @@ export class ComponentsService {
         mdxDocs: component.mdxDocs ?? '',
         tsDocs: component.tsDocs ?? '',
         projectId: component.projectId,
+        isFavorite: component.isFavorite ?? false,
         createdAt: {
           $type: 'google.protobuf.Timestamp',
           seconds: component.createdAt.getTime(),
@@ -282,6 +286,7 @@ export class ComponentsService {
         mdxDocs: updatedComponent.mdxDocs ?? '',
         tsDocs: updatedComponent.tsDocs ?? '',
         projectId: updatedComponent.projectId,
+        isFavorite: updatedComponent.isFavorite ?? false,
         createdAt: {
           $type: 'google.protobuf.Timestamp',
           seconds: updatedComponent.createdAt.getTime(),
@@ -361,6 +366,7 @@ export class ComponentsService {
         mdxDocs: component.mdxDocs ?? '',
         tsDocs: component.tsDocs ?? '',
         projectId: component.projectId,
+        isFavorite: component.isFavorite ?? false,
         createdAt: {
           $type: 'google.protobuf.Timestamp',
           seconds: component.createdAt.getTime(),

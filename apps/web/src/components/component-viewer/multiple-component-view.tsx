@@ -1,25 +1,25 @@
 "use client";
+import { favoriteComponentFunction } from "@/actions/components/server-actions";
+import CodeEditor from "@/components/code-editor/editor";
+import { FavoriteButton } from "@/components/components/favorite-button";
+import { type Component, type ProjectDetails } from "@shared/types";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@shared/ui/components/ui/accordion";
-import { type ComponentType, type ProjectDetailsType } from "@shared/types";
-import moment from "moment";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { Button } from "@shared/ui/components/ui/button";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { NavigationIcon } from "lucide-react";
+import moment from "moment";
 import { useRouter } from "next/navigation";
 import { type JSX, useState } from "react";
-import CodeEditor from "@/components/code-editor/editor";
-import { FavoriteButton } from "@/components/components/favorite-button";
-import { favoriteComponentFunction } from "@/actions/components/server-actions";
+import { toast } from "sonner";
 
 interface MultipleComponentsViewProps {
   queryKey: string;
-  components: ComponentType[];
+  components: Component[];
 }
 
 export function MultipleComponentsView({
@@ -38,7 +38,7 @@ export function MultipleComponentsView({
       setMutatingComponentId(newFavoritedComponent.componentId);
       await queryClient.cancelQueries({ queryKey: [queryKey] });
       const previousProjectDetails = queryClient.getQueryData([queryKey]);
-      queryClient.setQueryData([queryKey], (old: ProjectDetailsType) => ({
+      queryClient.setQueryData([queryKey], (old: ProjectDetails) => ({
         ...old,
         components: old.components.map((component) =>
           component.id === newFavoritedComponent.componentId

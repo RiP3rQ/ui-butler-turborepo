@@ -2,7 +2,6 @@ import { ApiClient } from "@/lib/api-client";
 import { getErrorMessage } from "@/lib/get-error-message";
 import {
   type ExecutionsEndpoints,
-  type PendingChange,
   type WorkflowsEndpoints,
 } from "@shared/types";
 
@@ -43,10 +42,7 @@ export class ExecutionsService {
    */
   static async getPendingChanges(
     request: Readonly<ExecutionsEndpoints["getPendingChanges"]["request"]>,
-  ): Promise<{
-    pendingApproval: PendingChange[];
-    status: string;
-  }> {
+  ): Promise<ExecutionsEndpoints["getPendingChanges"]["response"]> {
     try {
       const response = await ApiClient.get<
         ExecutionsEndpoints["getPendingChanges"]["response"]
