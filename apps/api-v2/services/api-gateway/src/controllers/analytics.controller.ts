@@ -16,21 +16,25 @@ import {
 import { type ClientGrpc } from '@nestjs/microservices';
 import {
   ApiBearerAuth,
+  ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOperation,
   ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { firstValueFrom } from 'rxjs';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
 
+/**
+ * Controller handling analytics-related operations through gRPC communication
+ * with the Analytics microservice.
+ * @class AnalyticsController
+ */
 @ApiTags('Analytics')
 @ApiBearerAuth()
 @Controller('analytics')
 @UseInterceptors(CacheInterceptor)
-@CacheTTL(60000) // 1 minutes cache for all routes in this controller
 @UseGuards(JwtAuthGuard)
 export class AnalyticsController implements OnModuleInit {
   private analyticsService: AnalyticsProto.AnalyticsServiceClient;
@@ -47,7 +51,13 @@ export class AnalyticsController implements OnModuleInit {
       );
   }
 
+  /**
+   * Retrieves available analytics periods for the current user
+   * @param user - Current authenticated user
+   * @returns Promise<AnalyticsProto.Period[]> Array of available periods
+   */
   @Get('periods')
+  @CacheTTL(300000) // 5 minutes cache
   @ApiOperation({
     summary: 'Get analytics periods',
     description: 'Retrieves available analytics periods for the current user',
@@ -55,13 +65,29 @@ export class AnalyticsController implements OnModuleInit {
   @ApiResponse({
     status: 200,
     description: 'List of available analytics periods',
-    type: Array,
+    type: 'object',
+    schema: {
+      properties: {
+        periods: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              year: { type: 'number' },
+              month: { type: 'number' },
+            },
+          },
+        },
+      },
+    },
   })
+  @ApiNotFoundResponse({ description: 'User not found or unauthorized' })
+  @ApiInternalServerErrorResponse({ description: 'gRPC service error' })
   public async getPeriods(
     @CurrentUser() user: AnalyticsProto.User,
-  ): Promise<AnalyticsProto.Period[]> {
-    if (typeof user === 'undefined') {
-      throw new NotFoundException('Unauthorized');
+  ): Promise<readonly AnalyticsProto.Period[]> {
+    if (!user?.id) {
+      throw new NotFoundException('User not found or unauthorized');
     }
 
     try {
@@ -74,16 +100,25 @@ export class AnalyticsController implements OnModuleInit {
         },
       };
 
-      const response = await firstValueFrom(
+      const response = await this.grpcClient.call(
         this.analyticsService.getPeriods(request),
+        'Analytics.getPeriods',
       );
-      return response.periods;
+      return Object.freeze(response.periods);
     } catch (error) {
       handleGrpcError(error);
     }
   }
 
+  /**
+   * Retrieves statistical values for dashboard cards for a specific period
+   * @param month - Month number (1-12)
+   * @param year - Year (YYYY)
+   * @param user - Current authenticated user
+   * @returns Promise<AnalyticsProto.StatCardsResponse>
+   */
   @Get('stat-cards-values')
+  @CacheTTL(60000) // 1 minute cache
   @ApiOperation({
     summary: 'Get statistics card values',
     description:
@@ -94,31 +129,37 @@ export class AnalyticsController implements OnModuleInit {
     type: Number,
     required: true,
     description: 'Month number (1-12)',
+    minimum: 1,
+    maximum: 12,
   })
   @ApiQuery({
     name: 'year',
     type: Number,
     required: true,
     description: 'Year (YYYY)',
+    minimum: 2000,
   })
   @ApiResponse({
     status: 200,
     description: 'Statistical card values',
+    type: 'object',
+    schema: {
+      properties: {
+        workflowExecutions: { type: 'number' },
+        creditsConsumed: { type: 'number' },
+        phasesExecuted: { type: 'number' },
+      },
+    },
   })
-  @ApiNotFoundResponse({
-    description: 'Invalid query parameters or unauthorized',
-  })
+  @ApiNotFoundResponse({ description: 'Invalid parameters or unauthorized' })
+  @ApiInternalServerErrorResponse({ description: 'gRPC service error' })
   public async getStatCardsValues(
     @Query('month', new ParseIntPipe()) month: number,
     @Query('year', new ParseIntPipe()) year: number,
     @CurrentUser() user: AnalyticsProto.User,
-  ): Promise<AnalyticsProto.StatCardsResponse> {
-    if (typeof user === 'undefined') {
-      throw new NotFoundException('Unauthorized');
-    }
-
-    if (!month || !year) {
-      throw new NotFoundException('Invalid query parameters provided');
+  ): Promise<Readonly<AnalyticsProto.StatCardsResponse>> {
+    if (!user?.id || month < 1 || month > 12 || year < 2000) {
+      throw new NotFoundException('Invalid parameters or unauthorized');
     }
 
     try {
@@ -133,9 +174,11 @@ export class AnalyticsController implements OnModuleInit {
         year,
       };
 
-      return await firstValueFrom(
+      const response = await this.grpcClient.call(
         this.analyticsService.getStatCardsValues(request),
+        'Analytics.getStatCardsValues',
       );
+      return Object.freeze(response);
     } catch (error) {
       handleGrpcError(error);
     }
@@ -188,8 +231,9 @@ export class AnalyticsController implements OnModuleInit {
         year,
       };
 
-      const response = await firstValueFrom(
+      const response = await this.grpcClient.call(
         this.analyticsService.getWorkflowExecutionStats(request),
+        'Analytics.getWorkflowExecutionStats',
       );
 
       return response.stats;
@@ -244,8 +288,9 @@ export class AnalyticsController implements OnModuleInit {
         year,
       };
 
-      const response = await firstValueFrom(
+      const response = await this.grpcClient.call(
         this.analyticsService.getUsedCreditsInPeriod(request),
+        'Analytics.getUsedCreditsInPeriod',
       );
 
       return response.stats;
@@ -254,7 +299,13 @@ export class AnalyticsController implements OnModuleInit {
     }
   }
 
+  /**
+   * Retrieves dashboard statistics for the current user
+   * @param user - Current authenticated user
+   * @returns Promise<AnalyticsProto.DashboardStatsResponse>
+   */
   @Get('dashboard-stat-cards-values')
+  @CacheTTL(30000) // 30 seconds cache
   @ApiOperation({
     summary: 'Get dashboard statistics',
     description: 'Retrieves statistical values for the main dashboard',
@@ -262,12 +313,22 @@ export class AnalyticsController implements OnModuleInit {
   @ApiResponse({
     status: 200,
     description: 'Dashboard statistics',
+    type: 'object',
+    schema: {
+      properties: {
+        currentActiveProjects: { type: 'number' },
+        numberOfCreatedComponents: { type: 'number' },
+        favoritesComponents: { type: 'number' },
+      },
+    },
   })
+  @ApiNotFoundResponse({ description: 'User not found or unauthorized' })
+  @ApiInternalServerErrorResponse({ description: 'gRPC service error' })
   public async getDashboardStatCardsValues(
     @CurrentUser() user: AnalyticsProto.User,
-  ): Promise<AnalyticsProto.DashboardStatsResponse> {
-    if (typeof user === 'undefined') {
-      throw new NotFoundException('Unauthorized');
+  ): Promise<Readonly<AnalyticsProto.DashboardStatsResponse>> {
+    if (!user?.id) {
+      throw new NotFoundException('User not found or unauthorized');
     }
 
     try {
@@ -280,10 +341,11 @@ export class AnalyticsController implements OnModuleInit {
         },
       };
 
-      return await this.grpcClient.call(
+      const response = await this.grpcClient.call(
         this.analyticsService.getDashboardStatCardsValues(request),
         'Analytics.getDashboardStatCardsValues',
       );
+      return Object.freeze(response);
     } catch (error) {
       handleGrpcError(error);
     }
@@ -316,8 +378,9 @@ export class AnalyticsController implements OnModuleInit {
         },
       };
 
-      const response = await firstValueFrom(
+      const response = await this.grpcClient.call(
         this.analyticsService.getFavoritedTableContent(request),
+        'Analytics.getFavoritedTableContent',
       );
 
       return response.components;
