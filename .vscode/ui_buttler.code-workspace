@@ -1,0 +1,104 @@
+{
+  "folders": [
+    // PACKAGES
+    {
+      "name": "prompts",
+      "path": "../packages/prompts",
+    },
+    {
+      "name": "ui",
+      "path": "../packages/ui",
+    },
+    {
+      "name": "types",
+      "path": "../packages/types",
+    },
+    {
+      "name": "tasks-registry",
+      "path": "../packages/tasks-registry",
+    },
+    // APPS
+    {
+      "name": "web",
+      "path": "../apps/web",
+    },
+    {
+      "name": "landing-page",
+      "path": "../apps/web-landing-page",
+    },
+    {
+      "name": "auth-pages",
+      "path": "../apps/web-auth",
+    },
+    {
+      "name": "standard-api-v1",
+      "path": "../apps/api",
+    },
+    {
+      "name": "microservices-api-v2",
+      "path": "../apps/api-v2",
+    },
+    {
+      "name": "ROOT",
+      "path": "../",
+    },
+  ],
+  "settings": {
+    "files.exclude": {
+      // EXCLUDE ANNOYING FOLDERS FROM ROOT
+      ".idea": true,
+      ".turbo": true,
+      "dist": true,
+      // EXCLUDE ANNOYING FOLDERS IN CHILD FOLDERS
+      "**/.turbo": true,
+      "**/dist": true,
+      "**/node_modules": true,
+      // OTHERS
+      "**/.git": true,
+      "**/.svn": true,
+      "**/.hg": true,
+      "**/CVS": true,
+      "**/.DS_Store": true,
+      "**/Thumbs.db": true,
+      "node_modules/": true,
+      "apps/": false,
+      "services/": false,
+      "pnpm-lock.yaml": true,
+      "**/.retool_types/**": true,
+      "**/*tsconfig.json": true,
+      ".cache": true,
+      "retool.config.json": true,
+    },
+    "files.autoSave": "afterDelay",
+    "editor.tabSize": 2,
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "always",
+      "source.addMissingImports": "always",
+      "source.fixAll.sortJSON": "always",
+      "source.organizeImports": "always",
+      "source.removeUnused": "always",
+      "source.sortImports": "always",
+      "source.removeUnusedImports": "always",
+    },
+    "eslint.run": "onSave",
+    "eslint.format.enable": true,
+    "eslint.ignoreUntitled": true,
+    "eslint.useFlatConfig": true,
+    "[sql]": {
+      "editor.defaultFormatter": "mtxr.sqltools",
+    },
+    "[jsonc]": {
+      "editor.defaultFormatter": "vscode.json-language-features",
+    },
+    "[json]": {
+      "editor.defaultFormatter": "vscode.json-language-features",
+    },
+    "typescript.preferences.preferTypeOnlyAutoImports": true,
+    "[typescript]": {
+      "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    },
+  },
+}
