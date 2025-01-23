@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack -p 3001",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint --fix",
+    "lint": "next lint --max-warnings 0 --fix",
     "type-check": "tsc --noEmit",
     "typecheck": "tsc --noEmit"
   },

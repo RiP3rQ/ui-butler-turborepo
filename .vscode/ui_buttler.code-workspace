@@ -63,7 +63,7 @@
       "services/": false,
       "pnpm-lock.yaml": true,
       "**/.retool_types/**": true,
-      "**/*tsconfig.json": true,
+      // "**/*tsconfig.json": true,
       ".cache": true,
       "retool.config.json": true,
     },
@@ -83,8 +83,6 @@
     },
     "eslint.run": "onSave",
     "eslint.format.enable": true,
-    "eslint.ignoreUntitled": true,
-    "eslint.useFlatConfig": true,
     "jest.enable": false,
     "[sql]": {
       "editor.defaultFormatter": "mtxr.sqltools",
@@ -99,5 +97,6 @@
     "[typescript]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode",
     },
+    "typescript.tsdk": "ROOT\\node_modules\\typescript\\lib",
   },
 }

@@ -1,9 +1,9 @@
+import registerUser from "@/actions/register-user";
+import { useRegisterForm } from "@/hooks/use-register-form";
+import { getErrorMessage } from "@/lib/get-error-message";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook } from "@testing-library/react";
 import { toast } from "sonner";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useRegisterForm } from "@/hooks/use-register-form";
-import registerUser from "@/actions/register-user";
-import { getErrorMessage } from "@/lib/get-error-message";
 
 // Mock modules
 jest.mock("sonner", () => ({
@@ -21,7 +21,11 @@ jest.mock("@/lib/get-error-message", () => ({
 
 const queryClient = new QueryClient();
 
-const wrapper = ({ children }: { children: React.ReactNode }) => (
+const wrapper = ({
+  children,
+}: {
+  children: React.ReactNode;
+}): React.ReactNode => (
   <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 );
 
@@ -56,7 +60,7 @@ describe("useRegisterForm", () => {
     };
 
     await act(async () => {
-      await result.current.onSubmit(values);
+      result.current.onSubmit(values);
     });
 
     expect(toast.loading).toHaveBeenCalledWith("Registering...", {
@@ -76,7 +80,7 @@ describe("useRegisterForm", () => {
     };
 
     await act(async () => {
-      await result.current.onSubmit(values);
+      result.current.onSubmit(values);
     });
 
     expect(toast.success).toHaveBeenCalledWith("Registration successful!", {
@@ -103,7 +107,7 @@ describe("useRegisterForm", () => {
     };
 
     await act(async () => {
-      await result.current.onSubmit(values);
+      result.current.onSubmit(values);
     });
 
     expect(console.error).toHaveBeenCalledWith(new Error(errorMessage));
@@ -157,7 +161,7 @@ describe("useRegisterForm", () => {
     };
 
     await act(async () => {
-      await result.current.onSubmit(values);
+      result.current.onSubmit(values);
     });
 
     expect(getErrorMessage).toHaveBeenCalledWith(errorObject);

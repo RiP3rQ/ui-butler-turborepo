@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { Transport } from '@nestjs/microservices';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
+import { type Express, type Router } from 'express';
 import helmet from 'helmet';
 import { join } from 'node:path';
 import { ComponentsModule } from './components.module';
@@ -45,25 +46,27 @@ async function bootstrap() {
   });
 
   // Get and display routes
-  const server = app.getHttpServer();
+  const server = app.getHttpServer() as Express;
   await app.init(); // Initialize the application to get the router
-  const router = server._events.request._router;
+  // @ts-expect-error This works but is not typed
+  const router = server._events.request._router as Router;
   console.log('\nRegistered Routes:');
   router.stack
-    .filter((layer: any) => layer.route)
-    .forEach((layer: any) => {
-      const path = layer.route?.path;
-      const methods = Object.keys(layer.route.methods).map((m) =>
+    .filter((layer) => layer.route)
+    .forEach((layer) => {
+      const path = layer.route?.path ?? '';
+      // @ts-expect-error This works but is not typed
+      const methods = Object.keys(layer.route?.methods ?? {}).map((m) =>
         m.toUpperCase(),
       );
-      console.log(`${methods.join(', ')} ${path}`);
+      console.log(`${methods.join(', ')} ${String(path)}`);
     });
 
   // Start both HTTP and Microservice
   await app.startAllMicroservices();
-  console.log(`Microservice is listening on port ${GRPC_PORT}`);
+  console.log(`Microservice is listening on port ${String(GRPC_PORT)}`);
   await app.listen(HTTP_PORT);
-  console.log(`Components Service is running on port ${HTTP_PORT}`);
+  console.log(`Components Service is running on port ${String(HTTP_PORT)}`);
 }
 
 bootstrap().catch((error: unknown) => {

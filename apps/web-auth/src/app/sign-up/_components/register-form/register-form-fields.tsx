@@ -1,8 +1,7 @@
-import { type JSX } from "react";
-import { type Control } from "react-hook-form";
-import { type z } from "zod";
+import { type registerFormSchema } from "@/schemas/register-schema";
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -10,8 +9,9 @@ import {
 } from "@shared/ui/components/ui/form";
 import { Input } from "@shared/ui/components/ui/input";
 import { Separator } from "@shared/ui/components/ui/separator";
-import { FormDescription } from "@/components/ui/form";
-import { type registerFormSchema } from "@/schemas/register-schema";
+import { type JSX } from "react";
+import { type Control } from "react-hook-form";
+import { type z } from "zod";
 
 interface RegisterFormFieldsProps {
   control: Control<z.infer<typeof registerFormSchema>>;
