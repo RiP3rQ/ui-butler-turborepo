@@ -76,7 +76,7 @@ export class WorkflowsController implements OnModuleInit {
    * @throws {NotFoundException} When user is not found
    */
   private userToProtoUser(user: User): WorkflowsProto.User {
-    if (!user?.id) {
+    if (!user.id) {
       throw new NotFoundException('Unauthorized: User not found');
     }
 
@@ -109,7 +109,7 @@ export class WorkflowsController implements OnModuleInit {
     @CurrentUser() user: User,
   ): Promise<WorkflowsProto.WorkflowsResponse> {
     try {
-      if (!user?.id) {
+      if (!user.id) {
         throw new NotFoundException('Unauthorized: User not found');
       }
 
@@ -150,7 +150,7 @@ export class WorkflowsController implements OnModuleInit {
     @Param('workflowId', ParseIntPipe) workflowId: number,
   ): Promise<WorkflowsProto.WorkflowResponse> {
     try {
-      if (!user?.id) {
+      if (!user.id) {
         throw new NotFoundException('Unauthorized: User not found');
       }
 
@@ -189,7 +189,7 @@ export class WorkflowsController implements OnModuleInit {
     @Body() createWorkflowDto: CreateWorkflowDto,
   ): Promise<WorkflowsProto.WorkflowResponse> {
     try {
-      if (!user?.id) {
+      if (!user.id) {
         throw new NotFoundException('Unauthorized: User not found');
       }
 
@@ -215,7 +215,7 @@ export class WorkflowsController implements OnModuleInit {
     @Param('id', ParseIntPipe) workflowId: number,
   ): Promise<WorkflowsProto.WorkflowResponse> {
     try {
-      if (!user?.id) {
+      if (!user.id) {
         throw new NotFoundException('Unauthorized: User not found');
       }
 
@@ -240,7 +240,7 @@ export class WorkflowsController implements OnModuleInit {
     @Body() duplicateWorkflowDto: DuplicateWorkflowDto,
   ): Promise<WorkflowsProto.WorkflowResponse> {
     try {
-      if (!user?.id) {
+      if (!user.id) {
         throw new NotFoundException('Unauthorized: User not found');
       }
 
@@ -267,7 +267,7 @@ export class WorkflowsController implements OnModuleInit {
     @Body() publishWorkflowDto: PublishWorkflowDto,
   ): Promise<WorkflowsProto.WorkflowResponse> {
     try {
-      if (!user?.id) {
+      if (!user.id) {
         throw new NotFoundException('Unauthorized: User not found');
       }
 
@@ -293,7 +293,7 @@ export class WorkflowsController implements OnModuleInit {
     @Param('id', ParseIntPipe) workflowId: number,
   ): Promise<WorkflowsProto.WorkflowResponse> {
     try {
-      if (!user?.id) {
+      if (!user.id) {
         throw new NotFoundException('Unauthorized: User not found');
       }
 
@@ -332,7 +332,7 @@ export class WorkflowsController implements OnModuleInit {
     @Body() runWorkflowDto: RunWorkflowDto,
   ): Promise<WorkflowsProto.RunWorkflowResponse> {
     try {
-      if (!user?.id) {
+      if (!user.id) {
         throw new NotFoundException('Unauthorized: User not found');
       }
 
@@ -359,7 +359,7 @@ export class WorkflowsController implements OnModuleInit {
     @Body() updateWorkflowDto: UpdateWorkflowDto,
   ): Promise<WorkflowsProto.WorkflowResponse> {
     try {
-      if (!user?.id) {
+      if (!user.id) {
         throw new NotFoundException('Unauthorized: User not found');
       }
 
@@ -385,7 +385,7 @@ export class WorkflowsController implements OnModuleInit {
     @Query('workflowId', ParseIntPipe) workflowId: number,
   ): Promise<WorkflowsProto.WorkflowExecutionsResponse> {
     try {
-      if (!user?.id) {
+      if (!user.id) {
         throw new NotFoundException('Unauthorized: User not found');
       }
 
@@ -410,7 +410,7 @@ export class WorkflowsController implements OnModuleInit {
     @Query('executionId') executionId: string | number,
   ): Promise<WorkflowsProto.WorkflowExecutionDetailResponse> {
     try {
-      if (!user?.id) {
+      if (!user.id) {
         throw new NotFoundException('Unauthorized: User not found');
       }
 
@@ -435,7 +435,7 @@ export class WorkflowsController implements OnModuleInit {
     @Param('id', ParseIntPipe) phaseId: number,
   ): Promise<WorkflowsProto.PhaseResponse> {
     try {
-      if (!user?.id) {
+      if (!user.id) {
         throw new NotFoundException('Unauthorized: User not found');
       }
 

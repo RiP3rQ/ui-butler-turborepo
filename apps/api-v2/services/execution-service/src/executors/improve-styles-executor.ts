@@ -40,7 +40,6 @@ export async function improveStylesExecutor(
       ],
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- LLM can return empty object
     if (!object.improvedCode) {
       environment.log.ERROR('Improved code styles is empty');
       throw new Error('Failed to improve code styles');

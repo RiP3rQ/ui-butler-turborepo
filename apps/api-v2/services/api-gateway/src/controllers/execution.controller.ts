@@ -66,7 +66,7 @@ export class ExecutionsController implements OnModuleInit {
    * @returns {ExecutionProto.User} Converted user for proto messages
    */
   private userToProtoUser(user: User): ExecutionProto.User {
-    if (!user?.id) {
+    if (!user.id) {
       throw new NotFoundException('Unauthorized: User not found');
     }
 

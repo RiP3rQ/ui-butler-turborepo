@@ -67,7 +67,7 @@ export class BillingController implements OnModuleInit {
   public async setupUser(
     @CurrentUser() user: BillingProto.User,
   ): Promise<BillingProto.Empty> {
-    if (!user?.id) {
+    if (!user.id) {
       throw new NotFoundException('Unauthorized: User not found');
     }
 
@@ -109,7 +109,7 @@ export class BillingController implements OnModuleInit {
     @Query('packId') packId: BalancePackId,
     @CurrentUser() user: BillingProto.User,
   ): Promise<BillingProto.UserCreditsResponse> {
-    if (!user?.id) {
+    if (!user.id) {
       throw new NotFoundException('Unauthorized: User not found');
     }
 
@@ -158,7 +158,7 @@ export class BillingController implements OnModuleInit {
   public async getUserCredits(
     @CurrentUser() user: BillingProto.User,
   ): Promise<BillingProto.UserCreditsResponse> {
-    if (!user?.id) {
+    if (!user.id) {
       throw new NotFoundException('Unauthorized: User not found');
     }
 

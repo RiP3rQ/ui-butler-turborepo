@@ -11,5 +11,5 @@ module.exports = {
     '@typescript-eslint/no-extraneous-class': 'off',
     '@typescript-eslint/no-empty-function': 'off',
   },
-  ignorePatterns: ['dist/**/*', 'node_modules/**/*'],
+  ignorePatterns: ['dist/**/*', 'node_modules/**/*', 'src/test/**/*'],
 };

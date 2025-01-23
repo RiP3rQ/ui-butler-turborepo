@@ -78,7 +78,7 @@ export class ProjectsController implements OnModuleInit {
   public async getProjectsByUserId(
     @CurrentUser() user: ProjectsProto.User,
   ): Promise<ProjectsProto.Project[]> {
-    if (!user?.id) {
+    if (!user.id) {
       throw new NotFoundException('Unauthorized: User not found');
     }
 
@@ -129,7 +129,7 @@ export class ProjectsController implements OnModuleInit {
     @CurrentUser() user: ProjectsProto.User,
     @Param('projectId', ParseIntPipe) projectId: number,
   ): Promise<ProjectsProto.ProjectDetails> {
-    if (!user?.id) {
+    if (!user.id) {
       throw new NotFoundException('Unauthorized: User not found');
     }
 
@@ -177,7 +177,7 @@ export class ProjectsController implements OnModuleInit {
     @CurrentUser() user: ProjectsProto.User,
     @Body() createProjectDto: ProjectsProto.CreateProjectDto,
   ): Promise<ProjectsProto.Project> {
-    if (!user?.id) {
+    if (!user.id) {
       throw new NotFoundException('Unauthorized: User not found');
     }
 

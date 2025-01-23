@@ -82,7 +82,7 @@ export class AuthController {
     @Body() userData: Readonly<AuthProto.CreateUserDto>,
     @Res({ passthrough: true }) response: Response,
   ): Promise<AuthProto.AuthResponse> {
-    if (!userData?.email || !userData?.password) {
+    if (!userData.email || !userData.password) {
       throw new NotFoundException('Required user data missing in request body');
     }
 
@@ -134,7 +134,7 @@ export class AuthController {
     @CurrentUser() user: Readonly<AuthProto.User>,
     @Res({ passthrough: true }) response: Response,
   ): Promise<AuthProto.AuthResponse> {
-    if (!user?.id || !user?.email) {
+    if (!user.id || !user.email) {
       throw new UnauthorizedException('Invalid user data provided');
     }
 

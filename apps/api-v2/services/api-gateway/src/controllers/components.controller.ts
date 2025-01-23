@@ -1,3 +1,4 @@
+import { ClientRequest, IncomingMessage } from 'node:http';
 import {
   CurrentUser,
   FavoriteComponentDto,
@@ -39,7 +40,6 @@ import { Throttle } from '@nestjs/throttler';
 import { codeTypeValues } from '@shared/types';
 import { type Request, type Response } from 'express';
 import HttpProxy from 'http-proxy';
-import { ClientRequest, IncomingMessage } from 'node:http';
 import { rateLimitConfigs } from '../config/rate-limit.config';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
@@ -120,7 +120,7 @@ export class ComponentsController implements OnModuleInit {
     @Param('projectId', ParseIntPipe) projectId: number,
     @Param('componentId', ParseIntPipe) componentId: number,
   ): Promise<ComponentsProto.Component> {
-    if (!user?.id) {
+    if (!user.id) {
       throw new NotFoundException('Unauthorized: User not found');
     }
 
@@ -163,7 +163,7 @@ export class ComponentsController implements OnModuleInit {
     @CurrentUser() user: ComponentsProto.User,
     @Body() saveComponentDto: SaveComponentDto,
   ): Promise<ComponentsProto.Component> {
-    if (!user?.id) {
+    if (!user.id) {
       throw new NotFoundException('Unauthorized: User not found');
     }
 
@@ -209,7 +209,7 @@ export class ComponentsController implements OnModuleInit {
     @CurrentUser() user: ComponentsProto.User,
     @Body() favoriteComponentDto: FavoriteComponentDto,
   ): Promise<ComponentsProto.Component> {
-    if (!user?.id) {
+    if (!user.id) {
       throw new NotFoundException('Unauthorized: User not found');
     }
 
@@ -317,7 +317,7 @@ export class ComponentsController implements OnModuleInit {
     codeType: ComponentsProto.CodeType,
     @Body() updateComponentCodeDto: UpdateComponentCodeDto,
   ): Promise<ComponentsProto.Component> {
-    if (!user?.id) {
+    if (!user.id) {
       throw new NotFoundException('Unauthorized: User not found');
     }
 
@@ -362,7 +362,7 @@ export class ComponentsController implements OnModuleInit {
     @CurrentUser() user: ComponentsProto.User,
     @Body() generateCodeDto: GenerateCodeDto,
   ): Promise<ComponentsProto.Component> {
-    if (!user?.id) {
+    if (!user.id) {
       throw new NotFoundException('Unauthorized: User not found');
     }
 

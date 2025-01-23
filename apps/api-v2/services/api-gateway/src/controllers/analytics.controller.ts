@@ -86,7 +86,7 @@ export class AnalyticsController implements OnModuleInit {
   public async getPeriods(
     @CurrentUser() user: AnalyticsProto.User,
   ): Promise<readonly AnalyticsProto.Period[]> {
-    if (!user?.id) {
+    if (!user.id) {
       throw new NotFoundException('User not found or unauthorized');
     }
 
@@ -158,7 +158,7 @@ export class AnalyticsController implements OnModuleInit {
     @Query('year', new ParseIntPipe()) year: number,
     @CurrentUser() user: AnalyticsProto.User,
   ): Promise<Readonly<AnalyticsProto.StatCardsResponse>> {
-    if (!user?.id || month < 1 || month > 12 || year < 2000) {
+    if (!user.id || month < 1 || month > 12 || year < 2000) {
       throw new NotFoundException('Invalid parameters or unauthorized');
     }
 
@@ -327,7 +327,7 @@ export class AnalyticsController implements OnModuleInit {
   public async getDashboardStatCardsValues(
     @CurrentUser() user: AnalyticsProto.User,
   ): Promise<Readonly<AnalyticsProto.DashboardStatsResponse>> {
-    if (!user?.id) {
+    if (!user.id) {
       throw new NotFoundException('User not found or unauthorized');
     }
 

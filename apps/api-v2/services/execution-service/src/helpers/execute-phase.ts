@@ -1,6 +1,7 @@
 import { type DrizzleDatabase } from '@microservices/database';
 import {
   type AppNode,
+  type BaseWorkflowTask,
   type Environment,
   type ExecutionEnvironment,
   type ExecutionPhaseWithDatesInsteadOfProtoTimestamp,
@@ -10,7 +11,7 @@ import {
 import { ExecutorRegistry } from '../executors/executor';
 import { createExecutionEnvironment } from './create-execution-environment';
 
-export async function executePhase(
+export async function executePhase<T extends keyof BaseWorkflowTask>(
   database: DrizzleDatabase,
   phase: ExecutionPhaseWithDatesInsteadOfProtoTimestamp | undefined,
   node: AppNode | undefined,
@@ -29,7 +30,7 @@ export async function executePhase(
 
   // Get values ONLY FOR THIS PHASE from the environment
   // TODO: FIX THIS TYPE
-  const executionEnvironment: ExecutionEnvironment<any> =
+  const executionEnvironment: ExecutionEnvironment<T> =
     createExecutionEnvironment(node, environment, logCollector);
 
   return await runFn(

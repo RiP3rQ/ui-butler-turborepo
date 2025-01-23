@@ -4,5 +4,16 @@
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": true
+  },
+  "env": {
+    "jest": true,
+    "node": true
+  },
+  "settings": {
+    "import/resolver": {
+      "typescript": {
+        "project": ["apps/web-auth/tsconfig.json"]
+      }
+    }
   }
 }

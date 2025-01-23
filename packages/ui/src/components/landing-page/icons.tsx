@@ -1,7 +1,7 @@
 import type { LucideProps } from "lucide-react";
 
 export const Icons = {
-  logo: (props: LucideProps) => (
+  Logo: (props: LucideProps) => (
     <svg
       {...props}
       fill="none"
@@ -39,7 +39,7 @@ export const Icons = {
       </defs>
     </svg>
   ),
-  uiButler: (props: LucideProps) => (
+  UiButler: (props: LucideProps) => (
     <svg
       {...props}
       fill="none"
@@ -67,7 +67,7 @@ export const Icons = {
       </defs>
     </svg>
   ),
-  sparkles: (props: LucideProps) => (
+  Sparkles: (props: LucideProps) => (
     <svg
       {...props}
       fill="none"
@@ -84,7 +84,7 @@ export const Icons = {
       />
     </svg>
   ),
-  bolt: (props: LucideProps) => (
+  Bolt: (props: LucideProps) => (
     <svg
       {...props}
       fill="none"
@@ -106,7 +106,7 @@ export const Icons = {
       />
     </svg>
   ),
-  palette: (props: LucideProps) => (
+  Palette: (props: LucideProps) => (
     <svg
       {...props}
       fill="none"
@@ -146,7 +146,7 @@ export const Icons = {
       />
     </svg>
   ),
-  seo: (props: LucideProps) => (
+  Seo: (props: LucideProps) => (
     <svg
       {...props}
       fill="none"
@@ -188,7 +188,7 @@ export const Icons = {
       />
     </svg>
   ),
-  monitor: (props: LucideProps) => (
+  Monitor: (props: LucideProps) => (
     <svg
       {...props}
       fill="none"
@@ -229,7 +229,7 @@ export const Icons = {
       />
     </svg>
   ),
-  shop: (props: LucideProps) => (
+  Shop: (props: LucideProps) => (
     <svg
       {...props}
       fill="none"
@@ -260,7 +260,7 @@ export const Icons = {
       />
     </svg>
   ),
-  server: (props: LucideProps) => (
+  Server: (props: LucideProps) => (
     <svg
       {...props}
       fill="none"
@@ -302,7 +302,7 @@ export const Icons = {
       />
     </svg>
   ),
-  auth: (props: LucideProps) => (
+  Auth: (props: LucideProps) => (
     <svg
       {...props}
       fill="none"
@@ -355,7 +355,7 @@ export const Icons = {
       />
     </svg>
   ),
-  customize: (props: LucideProps) => (
+  Customize: (props: LucideProps) => (
     <svg
       {...props}
       fill="none"
@@ -392,7 +392,7 @@ export const Icons = {
       />
     </svg>
   ),
-  launch: (props: LucideProps) => (
+  Launch: (props: LucideProps) => (
     <svg
       {...props}
       fill="none"
@@ -417,7 +417,7 @@ export const Icons = {
       />
     </svg>
   ),
-  feature: (props: LucideProps) => (
+  Feature: (props: LucideProps) => (
     <svg
       {...props}
       fill="none"

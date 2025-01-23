@@ -2,17 +2,17 @@ import { Icons } from "@shared/ui/components/landing-page/icons";
 
 export const perks = [
   {
-    Icon: Icons.auth,
+    Icon: Icons.Auth,
     title: "Get Started",
     info: "Create your free account to start organizing your UI components with UI-Butler.",
   },
   {
-    Icon: Icons.customize,
+    Icon: Icons.Customize,
     title: "Organize",
     info: "Categorize and manage your components for easy access and reuse.",
   },
   {
-    Icon: Icons.launch,
+    Icon: Icons.Launch,
     title: "Build",
     info: "Leverage your organized components to build projects faster and more efficiently.",
   },
@@ -20,32 +20,32 @@ export const perks = [
 
 export const features = [
   {
-    Icon: Icons.bolt,
+    Icon: Icons.Bolt,
     title: "Quick Setup",
     info: "Set up your component library in minutes with our intuitive interface.",
   },
   {
-    Icon: Icons.palette,
+    Icon: Icons.Palette,
     title: "Component Customization",
     info: "Easily customize components to fit your project's needs.",
   },
   {
-    Icon: Icons.seo,
+    Icon: Icons.Seo,
     title: "Component Documentation",
     info: "Automatically generate documentation for your components.",
   },
   {
-    Icon: Icons.monitor,
+    Icon: Icons.Monitor,
     title: "Responsive Design",
     info: "Ensure your components look great on all devices.",
   },
   {
-    Icon: Icons.shop,
+    Icon: Icons.Shop,
     title: "Component Testing",
     info: "Test your components in various environments directly within UI-Butler.",
   },
   {
-    Icon: Icons.server,
+    Icon: Icons.Server,
     title: "Secure Storage",
     info: "Keep your components safe with secure and reliable cloud storage.",
   },

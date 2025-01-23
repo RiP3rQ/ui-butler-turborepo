@@ -82,7 +82,7 @@ export class CredentialsController implements OnModuleInit {
   public async getUserCredentials(
     @CurrentUser() user: User,
   ): Promise<UsersProto.Credential[]> {
-    if (!user?.id) {
+    if (!user.id) {
       throw new NotFoundException('Unauthorized: User not found');
     }
 
@@ -131,7 +131,7 @@ export class CredentialsController implements OnModuleInit {
     @CurrentUser() user: User,
     @Body() createCredentialDto: CreateCredentialDto,
   ): Promise<UsersProto.Credential> {
-    if (!user?.id) {
+    if (!user.id) {
       throw new NotFoundException('Unauthorized: User not found');
     }
 
@@ -181,7 +181,7 @@ export class CredentialsController implements OnModuleInit {
     @CurrentUser() user: User,
     @Query('id', ParseIntPipe) id: number,
   ): Promise<UsersProto.Credential> {
-    if (!user?.id) {
+    if (!user.id) {
       throw new NotFoundException('Unauthorized: User not found');
     }
 
@@ -229,7 +229,7 @@ export class CredentialsController implements OnModuleInit {
     @CurrentUser() user: User,
     @Param('id', ParseIntPipe) id: number,
   ): Promise<UsersProto.RevealedCredential> {
-    if (!user?.id) {
+    if (!user.id) {
       throw new NotFoundException('Unauthorized: User not found');
     }
 

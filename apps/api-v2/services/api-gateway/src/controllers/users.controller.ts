@@ -103,7 +103,7 @@ export class UsersController implements OnModuleInit {
   public async getCurrentUser(
     @CurrentUser() user: UsersProto.User,
   ): Promise<UsersProto.GetCurrentUserResponse> {
-    if (!user?.id) {
+    if (!user.id) {
       throw new NotFoundException('Unauthorized: User not found');
     }
 
