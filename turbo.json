@@ -15,7 +15,7 @@
       "outputs": []
     },
     "type-check": {
-      "cache": false
+      "cache": true
     },
     "dev": {
       "cache": false,

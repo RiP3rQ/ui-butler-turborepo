@@ -10,7 +10,7 @@ export function CustomSidebarHeader(): JSX.Element {
   return (
     <div className="flex items-center justify-center w-full">
       <Link className="flex items-center gap-2" href="/dashboard">
-        <Icons.logo className="size-8" />
+        <Icons.Logo className="size-8" />
         {open ? <span className="text-lg font-medium">UI-Butler</span> : null}
       </Link>
     </div>

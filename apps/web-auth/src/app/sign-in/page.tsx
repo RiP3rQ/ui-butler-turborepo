@@ -1,8 +1,8 @@
-import Link from "next/link";
-import { type Metadata } from "next";
 import { Icons } from "@shared/ui/components/landing-page/icons";
-import * as React from "react";
 import { Separator } from "@shared/ui/components/ui/separator";
+import { type Metadata } from "next";
+import Link from "next/link";
+import * as React from "react";
 import { LoginForm } from "./_components/login-form/login-form";
 
 export const metadata: Metadata = {
@@ -16,7 +16,7 @@ export default function LoginPage(): React.ReactNode {
       <div className="relative hidden min-h-screen flex-col bg-muted p-10 text-white dark:border-r lg:flex">
         <div className="absolute inset-0 bg-zinc-900" />
         <div className="relative z-20 flex items-center gap-2">
-          <Icons.logo className="size-12" />
+          <Icons.Logo className="size-12" />
           <span className="text-4xl font-bold">UI-Butler</span>
         </div>
         <div className="relative z-20 mt-auto">

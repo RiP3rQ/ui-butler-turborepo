@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { type JSX } from "react";
-import { buttonVariants } from "@shared/ui/components/ui/button";
 import { Container } from "@shared/ui/components/landing-page/container";
 import { Icons } from "@shared/ui/components/landing-page/icons";
+import { buttonVariants } from "@shared/ui/components/ui/button";
 
 interface NavbarProps {
   isUserLoggedIn: boolean;
@@ -15,7 +15,7 @@ export function Navbar({ isUserLoggedIn }: Readonly<NavbarProps>): JSX.Element {
         <div className="flex items-center justify-between h-full mx-auto md:max-w-screen-xl">
           <div className="flex items-start">
             <Link className="flex items-center gap-2" href="/">
-              <Icons.logo className="w-8 h-8" />
+              <Icons.Logo className="w-8 h-8" />
               <span className="text-lg font-medium">UI-Butler</span>
             </Link>
           </div>
@@ -39,7 +39,7 @@ export function Navbar({ isUserLoggedIn }: Readonly<NavbarProps>): JSX.Element {
             {/* CREATE A PROPER USER ICON WITH COMBOBOX OPTIONS */}
             {isUserLoggedIn ? (
               <div className="flex items-center gap-2">
-                {/*<Icons.user className="w-6 h-6" />*/}
+                {/* <Icons.User className="w-6 h-6" /> */}
                 <Link
                   className={buttonVariants({ size: "sm", variant: "ghost" })}
                   href="/analytics-dashboard"

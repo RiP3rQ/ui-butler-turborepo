@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { cn } from "@shared/ui/lib/utils";
 import { Icons } from "@shared/ui/components/landing-page/icons";
+import { cn } from "@shared/ui/lib/utils";
 
 interface LogoProps {
   fontSize?: string;
@@ -19,7 +19,7 @@ export function Logo({
       )}
     >
       <div className="p-2">
-        <Icons.logo size={iconSize} />
+        <Icons.Logo size={iconSize} />
       </div>
       <div>
         <span className="bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">
