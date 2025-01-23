@@ -1,16 +1,6 @@
-import { type components, type projects } from '@app/database';
-import { type ProjectsProto, type Timestamp } from '@microservices/proto';
-
-/**
- * Converts a JavaScript Date to a Google Protobuf Timestamp
- */
-export function dateToTimestamp(date: Date): Timestamp {
-  return {
-    $type: 'google.protobuf.Timestamp',
-    seconds: Number(BigInt(Math.floor(date.getTime() / 1000))),
-    nanos: (date.getTime() % 1000) * 1000000,
-  };
-}
+import { dateToTimestamp } from '@microservices/common';
+import { type components, type projects } from '@microservices/database';
+import { type ProjectsProto } from '@microservices/proto';
 
 type ProjectWithNumberOfComponents = typeof projects.$inferSelect & {
   numberOfComponents: number;
@@ -57,6 +47,7 @@ export function convertToGrpcProjectDetails(
     createdAt: dateToTimestamp(project.createdAt),
     updatedAt: dateToTimestamp(project.updatedAt),
     components: components.map(convertToGrpcComponent),
+    workflows: [],
   };
 }
 

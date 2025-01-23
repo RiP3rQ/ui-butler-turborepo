@@ -4,7 +4,7 @@ import {
   SaveComponentDto,
   UpdateComponentCodeDto,
   User,
-} from '@app/common';
+} from '@microservices/common';
 import {
   and,
   Component,
@@ -14,7 +14,7 @@ import {
   eq,
   NewComponent,
   projects,
-} from '@app/database';
+} from '@microservices/database';
 import { ComponentsProto } from '@microservices/proto';
 import { Inject, Injectable } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';

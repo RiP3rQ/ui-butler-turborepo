@@ -1,4 +1,4 @@
-import { AuthServiceClient, GrpcError } from '@app/common';
+import { AuthServiceClient, GrpcError } from '@microservices/common';
 import { AuthProto } from '@microservices/proto';
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';

@@ -1,5 +1,5 @@
 // controllers/analytics.controller.ts
-import { CurrentUser, JwtAuthGuard } from '@app/common';
+import { CurrentUser, JwtAuthGuard } from '@microservices/common';
 import { AnalyticsProto } from '@microservices/proto';
 import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import {

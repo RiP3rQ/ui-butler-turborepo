@@ -5,7 +5,7 @@ import {
   JwtAuthGuard,
   SaveComponentDto,
   UpdateComponentCodeDto,
-} from '@app/common';
+} from '@microservices/common';
 import { ComponentsProto } from '@microservices/proto';
 import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import {

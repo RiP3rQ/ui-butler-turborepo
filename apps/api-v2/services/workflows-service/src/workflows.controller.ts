@@ -5,7 +5,7 @@ import {
   RunWorkflowDto,
   UpdateWorkflowDto,
   type User,
-} from '@app/common';
+} from '@microservices/common';
 import { WorkflowsProto } from '@microservices/proto';
 import { Controller, Logger } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';

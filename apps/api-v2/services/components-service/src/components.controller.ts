@@ -1,4 +1,4 @@
-import { GenerateComponentRequestDto } from '@app/common';
+import { GenerateComponentRequestDto } from '@microservices/common';
 import { ComponentsProto } from '@microservices/proto';
 import { Body, Controller, Logger, Post, Req, Res } from '@nestjs/common';
 import { GrpcMethod, RpcException } from '@nestjs/microservices';

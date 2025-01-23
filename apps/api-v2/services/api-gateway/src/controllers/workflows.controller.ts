@@ -7,7 +7,7 @@ import {
   RunWorkflowDto,
   UpdateWorkflowDto,
   type User,
-} from '@app/common';
+} from '@microservices/common';
 import { WorkflowsProto } from '@microservices/proto';
 import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 import {

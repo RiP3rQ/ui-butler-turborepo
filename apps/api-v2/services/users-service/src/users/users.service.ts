@@ -1,3 +1,4 @@
+import { status } from '@grpc/grpc-js';
 import {
   and,
   eq,
@@ -5,8 +6,7 @@ import {
   profile,
   User,
   users,
-} from '@app/database';
-import { status } from '@grpc/grpc-js';
+} from '@microservices/database';
 import { UsersProto } from '@microservices/proto';
 import { Inject, Injectable } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';

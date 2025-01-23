@@ -1,7 +1,7 @@
 // auth.service.ts
-import { GrpcError } from '@app/common';
 import { status } from '@grpc/grpc-js';
-import { AuthProto, UsersProto } from '@microservices/proto';
+import { GrpcError } from '@microservices/common';
+import type { AuthProto, UsersProto } from '@microservices/proto';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -136,6 +136,7 @@ export class AuthService {
       const tokenPayload = this.createTokenPayload({
         ...newUser,
         $type: 'api.auth.User',
+        username: newUser.username ?? 'UNKNOWN',
       });
 
       const { accessToken, refreshToken } = this.generateTokens(tokenPayload);
@@ -309,7 +310,7 @@ export class AuthService {
         $type: 'api.auth.User',
         id: user.id,
         email: user.email,
-        username: user.username,
+        username: user.username ?? 'UNKNOWN',
       };
     } catch (error) {
       const grpcError = error as GrpcError;
@@ -369,7 +370,7 @@ export class AuthService {
         $type: 'api.auth.User',
         id: user.id,
         email: user.email,
-        username: user.username,
+        username: user.username ?? 'UNKNOWN',
       };
     } catch (error) {
       console.error('Error verifying refresh token:', error);

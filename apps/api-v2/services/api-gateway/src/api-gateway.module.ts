@@ -4,7 +4,7 @@ import {
   JwtRefreshStrategy,
   JwtStrategy,
   LocalStrategy,
-} from '@app/common';
+} from '@microservices/common';
 import { DatabaseModule } from '@microservices/database';
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';

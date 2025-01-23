@@ -1,11 +1,11 @@
+import { status } from '@grpc/grpc-js';
 import {
   DATABASE_CONNECTION,
   eq,
   type NeonDatabaseType,
   sql,
   userBalance,
-} from '@app/database';
-import { status } from '@grpc/grpc-js';
+} from '@microservices/database';
 import { BillingProto } from '@microservices/proto';
 import {
   BadRequestException,

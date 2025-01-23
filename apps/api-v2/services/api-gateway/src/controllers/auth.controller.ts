@@ -5,7 +5,7 @@ import {
   GoogleAuthGuard,
   JwtRefreshAuthGuard,
   LocalAuthGuard,
-} from '@app/common';
+} from '@microservices/common';
 import { AuthProto } from '@microservices/proto';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import {

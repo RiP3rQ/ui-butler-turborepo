@@ -5,7 +5,7 @@ import {
   RunWorkflowDto,
   UpdateWorkflowDto,
   User,
-} from '@app/common';
+} from '@microservices/common';
 import {
   and,
   asc,
@@ -20,7 +20,7 @@ import {
   WorkflowExecution,
   workflowExecutions,
   workflows,
-} from '@app/database';
+} from '@microservices/database';
 import { type ExecutionProto, type WorkflowsProto } from '@microservices/proto';
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { Edge } from '@nestjs/core/inspector/interfaces/edge.interface';

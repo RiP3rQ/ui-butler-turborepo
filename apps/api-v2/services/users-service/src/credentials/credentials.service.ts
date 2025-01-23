@@ -1,4 +1,5 @@
-import { symmetricDecrypt, symmetricEncrypt } from '@app/common';
+import { status } from '@grpc/grpc-js';
+import { symmetricDecrypt, symmetricEncrypt } from '@microservices/common';
 import {
   and,
   DATABASE_CONNECTION,
@@ -7,8 +8,7 @@ import {
   eq,
   NewUserCredential,
   userCredentials,
-} from '@app/database';
-import { status } from '@grpc/grpc-js';
+} from '@microservices/database';
 import { UsersProto } from '@microservices/proto';
 import { Inject, Injectable } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';

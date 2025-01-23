@@ -1,4 +1,5 @@
-import { ApproveChangesDto } from '@app/common';
+import { status } from '@grpc/grpc-js';
+import type { ApproveChangesDto } from '@microservices/common';
 import {
   and,
   DATABASE_CONNECTION,
@@ -6,8 +7,7 @@ import {
   eq,
   executionPhase,
   workflowExecutions,
-} from '@app/database';
-import { status } from '@grpc/grpc-js';
+} from '@microservices/database';
 import { ExecutionProto } from '@microservices/proto';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Edge } from '@nestjs/core/inspector/interfaces/edge.interface';
@@ -239,7 +239,7 @@ export class ExecutionsService {
         this.database,
         Number(request.workflowExecutionId),
         execution.workflowId,
-        request.nextRunAt ? new Date(request.nextRunAt) : undefined,
+        request.nextRunAt,
       );
 
       await initializeWorkflowPhasesStatuses(

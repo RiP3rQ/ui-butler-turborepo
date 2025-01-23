@@ -1,4 +1,4 @@
-import { User } from '@app/common';
+import { User } from '@microservices/common';
 import { ExecutionProto } from '@microservices/proto';
 import { Controller, Logger } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';

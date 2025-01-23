@@ -3,7 +3,7 @@ import {
   CurrentUser,
   JwtAuthGuard,
   type User,
-} from '@app/common';
+} from '@microservices/common';
 import { ExecutionProto } from '@microservices/proto';
 import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 import {

@@ -1,4 +1,4 @@
-import { CurrentUser, JwtAuthGuard } from '@app/common';
+import { CurrentUser, JwtAuthGuard } from '@microservices/common';
 import { UsersProto } from '@microservices/proto';
 import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 import {
