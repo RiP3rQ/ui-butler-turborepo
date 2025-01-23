@@ -1,11 +1,6 @@
 "use server";
 
-import {
-  type Workflow,
-  type WorkflowPhase,
-  type WorkflowsEndpoints,
-} from "@shared/types/src/api-client/workflows-endpoints";
-import { type WorkflowExecution } from "@shared/types/src/workflow-execution";
+import { WorkflowService } from "@/actions/workflows/workflows-service";
 import {
   type CreateWorkflowSchemaType,
   type DuplicateWorkflowSchemaType,
@@ -14,7 +9,10 @@ import {
   updateWorkflowSchema,
   validateWorkflowInput,
 } from "@/schemas/workflow";
-import { WorkflowService } from "@/actions/workflows/workflows-service";
+import {
+  type Workflow,
+  type WorkflowsEndpoints,
+} from "@shared/types/src/api-client/workflows-endpoints";
 
 /**
  * Creates a new workflow
@@ -49,7 +47,7 @@ export async function getHistoricWorkflowExecutions(
   request: Readonly<
     WorkflowsEndpoints["getHistoricWorkflowExecutions"]["request"]
   >,
-): Promise<WorkflowExecution[]> {
+): Promise<WorkflowsEndpoints["getHistoricWorkflowExecutions"]["response"]> {
   return WorkflowService.getHistoricExecutions(request);
 }
 
@@ -76,10 +74,7 @@ export async function getWorkflowExecutionWithPhasesDetailsFunction(
  */
 export async function getWorkflowPhaseDetailsFunction(
   request: Readonly<WorkflowsEndpoints["getWorkflowPhase"]["request"]>,
-): Promise<{
-  phase: WorkflowPhase;
-  logs: string[];
-}> {
+): Promise<WorkflowsEndpoints["getWorkflowPhase"]["response"]> {
   return WorkflowService.getPhaseDetails(request);
 }
 

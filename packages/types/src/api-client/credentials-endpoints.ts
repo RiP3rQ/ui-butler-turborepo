@@ -5,8 +5,8 @@ export interface Credential {
   name: string;
   type: string;
   value: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: ProtoTimestamp;
+  updatedAt: ProtoTimestamp;
 }
 
 export interface RevealedCredential {

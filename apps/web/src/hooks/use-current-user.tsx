@@ -1,11 +1,11 @@
 "use client";
 
-import { type BasicUser } from "@shared/types";
+import { getCurrentUser } from "@/actions/user/server-actions";
+import { type User } from "@shared/types";
 import { useQuery } from "@tanstack/react-query";
-import getCurrentUser from "@/actions/user/server-actions";
 
 export function useCurrentUser(): {
-  user: BasicUser | undefined;
+  user: User | undefined;
   isLoading: boolean;
 } {
   const { data, isLoading } = useQuery({

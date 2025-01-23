@@ -1,7 +1,16 @@
 "use client";
 
-import { type JSX } from "react";
-import { useMemo } from "react";
+import { SidebarFooterContent } from "@/components/sidebar/sidebar-footer-content";
+import { CustomSidebarHeader } from "@/components/sidebar/sidebar-header";
+import { SidebarMainContent } from "@/components/sidebar/sidebar-main-content";
+import { type Project } from "@shared/types";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarRail,
+} from "@shared/ui/components/ui/sidebar";
 import {
   AirplayIcon,
   Bot,
@@ -11,17 +20,7 @@ import {
   SquareTerminal,
   VariableIcon,
 } from "lucide-react";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarRail,
-} from "@shared/ui/components/ui/sidebar";
-import type { ProjectType } from "@shared/types";
-import { SidebarMainContent } from "@/components/sidebar/sidebar-main-content";
-import { SidebarFooterContent } from "@/components/sidebar/sidebar-footer-content";
-import { CustomSidebarHeader } from "@/components/sidebar/sidebar-header";
+import { useMemo, type JSX } from "react";
 
 // This is sample data.
 const data = {
@@ -70,7 +69,7 @@ const data = {
 };
 
 interface AdditionalAppSidebarProps {
-  userProjects: ProjectType[];
+  userProjects: Project[];
 }
 
 export function AppSidebar({

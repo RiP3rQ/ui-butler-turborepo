@@ -1,9 +1,10 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { CoinsIcon } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { useRouter } from "next/navigation";
+import { getHistoricWorkflowExecutions } from "@/actions/workflows/server-actions";
+import { ExecutionStatusIndicator } from "@/components/execution-viewer/execution-status-indicator";
+import { dateToDurationString, protoTimestampToDate } from "@/lib/dates";
+import type { IWorkflowExecutionStatus } from "@shared/types";
+import { Badge } from "@shared/ui/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -12,12 +13,11 @@ import {
   TableHeader,
   TableRow,
 } from "@shared/ui/components/ui/table";
-import { Badge } from "@shared/ui/components/ui/badge";
-import type { IWorkflowExecutionStatus } from "@shared/types";
+import { useQuery } from "@tanstack/react-query";
+import { formatDistanceToNow } from "date-fns";
+import { CoinsIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { type JSX } from "react";
-import { dateToDurationString } from "@/lib/dates";
-import { ExecutionStatusIndicator } from "@/components/execution-viewer/execution-status-indicator";
-import { getHistoricWorkflowExecutions } from "@/actions/workflows/server-actions";
 
 type InitialDataType = Awaited<
   ReturnType<typeof getHistoricWorkflowExecutions>
@@ -57,12 +57,14 @@ function ExecutionsTable({
         <TableBody className="gap-2 h-full overflow-auto">
           {query.data.map((execution) => {
             const duration = dateToDurationString(
-              new Date(execution.startedAt).toISOString(),
-              new Date(execution.completedAt).toISOString(),
+              protoTimestampToDate(execution.startedAt).toISOString(),
+              protoTimestampToDate(execution.completedAt).toISOString(),
             );
             const formatedStartedAt =
-              new Date(execution.startedAt).toISOString() &&
-              formatDistanceToNow(execution.startedAt, { addSuffix: true });
+              protoTimestampToDate(execution.startedAt) &&
+              formatDistanceToNow(protoTimestampToDate(execution.startedAt), {
+                addSuffix: true,
+              });
 
             return (
               <TableRow

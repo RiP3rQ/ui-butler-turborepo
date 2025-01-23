@@ -1,6 +1,7 @@
+import type { ProtoTimestamp } from "../others/proto-timestamp";
 import {
-  type IWorkflowStatus,
   type IWorkflowExecutionStatus,
+  type IWorkflowStatus,
 } from "../others/workflow";
 
 export interface ApproveChangesRequest {
@@ -21,12 +22,12 @@ export interface Workflow {
   creditsCost: number | null;
   isPublished: boolean;
   status: IWorkflowStatus;
-  lastRunAt?: Date;
+  lastRunAt?: ProtoTimestamp;
   lastRunId?: string;
   lastRunStatus?: string;
-  nextRunAt?: Date | null;
-  createdAt: Date;
-  updatedAt: Date;
+  nextRunAt?: ProtoTimestamp | null;
+  createdAt: ProtoTimestamp;
+  updatedAt: ProtoTimestamp;
 }
 
 export interface ExecutionLog {
@@ -34,7 +35,7 @@ export interface ExecutionLog {
   executionPhaseId: number;
   logLevel: string;
   message: string;
-  timestamp: Date;
+  timestamp: ProtoTimestamp;
 }
 
 export interface ExecutionPhase {
@@ -44,8 +45,8 @@ export interface ExecutionPhase {
   userId: number;
   creditsCost: number | null;
   status: string;
-  startedAt: Date | null;
-  completedAt: Date | null;
+  startedAt: ProtoTimestamp | null;
+  completedAt: ProtoTimestamp | null;
   workflowExecutionId: number;
   node: string | null;
   inputs: string | null;
@@ -58,12 +59,12 @@ export interface WorkflowExecution {
   userId: number;
   definition: string;
   status: string;
-  createdAt: Date | null;
+  createdAt: ProtoTimestamp | null;
   workflowId: number;
   trigger: string;
   creditsConsumed: number | null;
-  startedAt: Date | null;
-  completedAt: Date | null;
+  startedAt: ProtoTimestamp | null;
+  completedAt: ProtoTimestamp | null;
 }
 
 export interface WorkflowExecutionWithPhases {
@@ -71,12 +72,12 @@ export interface WorkflowExecutionWithPhases {
   userId: number;
   definition: string;
   status: string;
-  createdAt: Date | null;
+  createdAt: ProtoTimestamp | null;
   workflowId: number;
   trigger: string;
   creditsConsumed: number | null;
-  startedAt: Date | null;
-  completedAt: Date | null;
+  startedAt: ProtoTimestamp | null;
+  completedAt: ProtoTimestamp | null;
   phases: ExecutionPhase[];
 }
 
@@ -170,7 +171,7 @@ export interface WorkflowsEndpoints {
     body: {
       workflowId: number;
       flowDefinition?: string;
-      componentId: number;
+      componentId?: number;
     };
     response: {
       url: string;
@@ -179,7 +180,7 @@ export interface WorkflowsEndpoints {
     request: {
       workflowId: number;
       flowDefinition?: string;
-      componentId: number;
+      componentId?: number;
     };
   };
 

@@ -18,7 +18,7 @@ import {
   type AppNode,
   type FlowType,
   TaskType,
-  type WorkflowType,
+  type Workflow,
 } from "@shared/types";
 import { type JSX, useCallback, useEffect } from "react";
 import {
@@ -30,7 +30,7 @@ import NodeComponent from "@/components/react-flow/nodes/node-component";
 import DeletableEdge from "@/components/react-flow/edges/deletable-edge";
 
 interface FlowEditorProps {
-  workflow: WorkflowType;
+  workflow: Workflow;
 }
 
 const nodeTypes = {

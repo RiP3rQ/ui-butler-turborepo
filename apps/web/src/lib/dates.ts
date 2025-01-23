@@ -1,5 +1,5 @@
-import { endOfMonth, intervalToDuration, startOfMonth } from "date-fns";
 import type { Period, ProtoTimestamp } from "@shared/types";
+import { endOfMonth, intervalToDuration, startOfMonth } from "date-fns";
 
 export function dateToDurationString(
   start?: string | null,
@@ -38,6 +38,10 @@ export function periodToDateRange(period: Period): {
   return { startDate, endDate };
 }
 
-export function protoTimestampToDate(timestamp: ProtoTimestamp): Date {
+export function protoTimestampToDate(timestamp?: ProtoTimestamp | null): Date {
+  if (!timestamp) {
+    return new Date();
+  }
+
   return new Date(timestamp.seconds * 1000 + timestamp.nanos / 1000000);
 }

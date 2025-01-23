@@ -7,7 +7,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useCallback, useTransition } from "react";
 import { useShallow } from "zustand/react/shallow";
-import { type ComponentType, type ProjectType } from "@shared/types";
+import { type Component, type Project } from "@shared/types";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useModalsStateStore } from "@/store/modals-store";
 import { getUserProjects } from "@/actions/projects/server-actions";
@@ -21,7 +21,7 @@ export function useSaveComponentForm(): {
   form: ReturnType<typeof useForm<SaveComponentSchemaType>>;
   handleSubmit: (values: SaveComponentSchemaType) => void;
   isPending: boolean;
-  projects: ProjectType[] | undefined;
+  projects: Project[] | undefined;
   isLoadingProjects: boolean;
   closeButtonOnClickHandler: () => void;
 } {
@@ -48,15 +48,13 @@ export function useSaveComponentForm(): {
     createNewComponentModal.setIsOpen(false);
   }, [createNewComponentModal, form]);
 
-  const { data: projects, isLoading: isLoadingProjects } = useQuery<
-    ProjectType[]
-  >({
+  const { data: projects, isLoading: isLoadingProjects } = useQuery<Project[]>({
     queryKey: ["projects"],
     queryFn: getUserProjects,
   });
 
   const { mutate: saveComponent, isPending } = useMutation<
-    ComponentType,
+    Component,
     Error,
     SaveComponentSchemaType
   >({

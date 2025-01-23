@@ -1,3 +1,5 @@
+import { protoTimestampToDate } from "@/lib/dates";
+import type { ExecutionLog, LogLevel } from "@shared/types";
 import {
   Card,
   CardContent,
@@ -13,9 +15,8 @@ import {
   TableHeader,
   TableRow,
 } from "@shared/ui/components/ui/table";
-import { format } from "date-fns";
 import { cn } from "@shared/ui/lib/utils";
-import type { ExecutionLog, LogLevel } from "@shared/types";
+import { format } from "date-fns";
 import { type JSX } from "react";
 
 interface LogsViewerProps {
@@ -50,9 +51,9 @@ function LogsViewer({
             {logs?.map((log) => (
               <TableRow key={log.id}>
                 <TableCell className="w-48 text-xs text-muted-foreground p-[2px] pl-4 text-center tracking-wide">
-                  {format(new Date(log.timestamp), "PP")}
+                  {format(protoTimestampToDate(log.timestamp), "PP")}
                   {" - "}
-                  {format(new Date(log.timestamp), "HH:mm:ss:SSS")}
+                  {format(protoTimestampToDate(log.timestamp), "HH:mm:ss:SSS")}
                 </TableCell>
                 <TableCell
                   className={cn(

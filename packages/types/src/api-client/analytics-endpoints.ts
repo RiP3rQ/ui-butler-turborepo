@@ -2,6 +2,8 @@
  * Analytics API response types
  */
 
+import type { ProtoTimestamp } from "../others/proto-timestamp";
+
 export interface StatCard {
   title: string;
   value: number;
@@ -30,11 +32,14 @@ export interface DashboardStats {
 }
 
 export interface FavoritedComponent {
+  usageCount: number; // TODO: Remove this field
+  lastUsed: string; // TODO: Remove this field
   id: number;
   name: string;
-  type: string;
-  usageCount: number;
-  lastUsed: string;
+  projectName: string;
+  createdAt: ProtoTimestamp;
+  updatedAt: ProtoTimestamp;
+  // TODO: DISPLAY CHECKMARKS FOR THE WORKFLOW TYPES THAT ARE DONE TO THE COMPONENT (e.g. "Tests", "TestsE2E", "Ts docs")
 }
 
 export interface Period {
@@ -51,7 +56,7 @@ export interface StatCardsValuesResponse {
 export interface UsedCreditsInPeriodResponse {
   successful: number;
   failed: number;
-  date: string;
+  date: ProtoTimestamp;
 }
 
 export interface DashboardStatCardsValuesResponse {
@@ -65,15 +70,6 @@ export interface DashboardGridValuesResponse {
   name: string;
   color: string;
   numberOfComponents: number;
-}
-
-export interface DashboardTableFavoritedContentResponse {
-  id: number;
-  name: string;
-  projectName: string;
-  createdAt: string;
-  updatedAt: string;
-  // TODO: DISPLAY CHECKMARKS FOR THE WORKFLOW TYPES THAT ARE DONE TO THE COMPONENT (e.g. "Tests", "TestsE2E", "Ts docs")
 }
 
 /**

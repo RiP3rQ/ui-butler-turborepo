@@ -1,15 +1,14 @@
-import {
-  type Workflow,
-  type WorkflowPhase,
-  type WorkflowsEndpoints,
-} from "@shared/types/src/api-client/workflows-endpoints";
-import { type WorkflowExecution } from "@shared/types/src/workflow-execution";
 import { ApiClient } from "@/lib/api-client";
 import { getErrorMessage } from "@/lib/get-error-message";
 import {
   type CreateWorkflowSchemaType,
   type DuplicateWorkflowSchemaType,
 } from "@/schemas/workflow";
+import {
+  type Workflow,
+  type WorkflowExecution,
+  type WorkflowsEndpoints,
+} from "@shared/types/src/api-client/workflows-endpoints";
 
 /**
  * Service class for workflow-related API calls
@@ -166,10 +165,7 @@ export class WorkflowService {
    */
   static async getPhaseDetails(
     request: Readonly<WorkflowsEndpoints["getWorkflowPhase"]["request"]>,
-  ): Promise<{
-    phase: WorkflowPhase;
-    logs: string[];
-  }> {
+  ): Promise<WorkflowsEndpoints["getWorkflowPhase"]["response"]> {
     try {
       const response = await ApiClient.get<
         WorkflowsEndpoints["getWorkflowPhase"]["response"]

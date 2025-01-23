@@ -1,11 +1,29 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { getPendingChanges } from "@/actions/executions/server-actions";
+import {
+  getWorkflowExecutionWithPhasesDetailsFunction,
+  getWorkflowPhaseDetailsFunction,
+} from "@/actions/workflows/server-actions";
+import CountUpWrapper from "@/components/credits/count-up-wrapper";
+import { ApproveChangesDialog } from "@/components/dialogs/approve-changes-dialog";
+import ExecutionLabel from "@/components/execution-viewer/execution-label";
+import ExecutionPhaseStatusBadge from "@/components/execution-viewer/execution-phase-status-badge";
+import ExecutionRunPhasesHeader from "@/components/execution-viewer/execution-run-phases-header";
+import ExecutionRunPhasesRenderer from "@/components/execution-viewer/execution-run-phases-renderer";
+import LogsViewer from "@/components/execution-viewer/logs-viewer";
+import ParameterViewer from "@/components/execution-viewer/parameter-viewer";
+import { dateToDurationString, protoTimestampToDate } from "@/lib/dates";
+import { getPhasesTotalCost } from "@/lib/get-phases-total-cost";
 import type {
   IExecutionPhaseStatus,
   WorkflowExecutionWithPhases,
 } from "@shared/types";
 import { WorkflowExecutionStatus } from "@shared/types";
+import { Badge } from "@shared/ui/components/ui/badge";
+import { Separator } from "@shared/ui/components/ui/separator";
+import { useQuery } from "@tanstack/react-query";
+import { formatDistanceToNow } from "date-fns";
 import {
   CalendarIcon,
   CircleDashedIcon,
@@ -13,25 +31,7 @@ import {
   CoinsIcon,
   Loader2Icon,
 } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { Separator } from "@shared/ui/components/ui/separator";
 import { type JSX, useEffect, useMemo, useState } from "react";
-import { Badge } from "@shared/ui/components/ui/badge";
-import ExecutionRunPhasesRenderer from "@/components/execution-viewer/execution-run-phases-renderer";
-import ExecutionRunPhasesHeader from "@/components/execution-viewer/execution-run-phases-header";
-import ExecutionLabel from "@/components/execution-viewer/execution-label";
-import ParameterViewer from "@/components/execution-viewer/parameter-viewer";
-import LogsViewer from "@/components/execution-viewer/logs-viewer";
-import ExecutionPhaseStatusBadge from "@/components/execution-viewer/execution-phase-status-badge";
-import CountUpWrapper from "@/components/credits/count-up-wrapper";
-import { dateToDurationString } from "@/lib/dates";
-import { getPhasesTotalCost } from "@/lib/get-phases-total-cost";
-import { ApproveChangesDialog } from "@/components/dialogs/approve-changes-dialog";
-import { getPendingChanges } from "@/actions/executions/server-actions";
-import {
-  getWorkflowExecutionWithPhasesDetailsFunction,
-  getWorkflowPhaseDetailsFunction,
-} from "@/actions/workflows/server-actions";
 
 export type ExecutionData = Awaited<
   ReturnType<typeof getWorkflowExecutionWithPhasesDetailsFunction>
@@ -74,14 +74,16 @@ export function ExecutionViewer({
 
   const shouldOpenApproveChangesModal = useMemo(() => {
     return Boolean(
-      query.data.status === WorkflowExecutionStatus.WAITING_FOR_APPROVAL &&
+      query.data.execution.status ===
+        WorkflowExecutionStatus.WAITING_FOR_APPROVAL &&
         pendingChangesQuery.data?.pendingApproval,
     );
-  }, [query.data.status, pendingChangesQuery.data?.pendingApproval]);
+  }, [query.data.execution.status, pendingChangesQuery.data?.pendingApproval]);
 
   console.log("shouldOpenApproveChangesModal", shouldOpenApproveChangesModal);
 
-  const isRunning = query.data.status === WorkflowExecutionStatus.RUNNING;
+  const isRunning =
+    query.data.execution.status === WorkflowExecutionStatus.RUNNING;
 
   // currently running phase-executors
   useEffect(() => {
@@ -90,28 +92,32 @@ export function ExecutionViewer({
     if (isRunning) {
       // Select the last executed phase-executors
       const phaseToSelect = [...allPhases].sort((a, b) =>
-        a.startedAt > b.startedAt ? -1 : 1,
+        protoTimestampToDate(a.startedAt) > protoTimestampToDate(b.startedAt)
+          ? -1
+          : 1,
       )[0];
 
       setSelectedPhase(phaseToSelect?.id ?? null);
       return;
     }
     const phaseToSelect = [...allPhases].sort((a, b) =>
-      a.completedAt > b.completedAt ? -1 : 1,
+      protoTimestampToDate(a.completedAt) > protoTimestampToDate(b.completedAt)
+        ? -1
+        : 1,
     )[0];
     setSelectedPhase(phaseToSelect?.id ?? null);
   }, [query.data.phases, isRunning, setSelectedPhase]);
 
   const phaseDetails = useQuery({
-    queryKey: ["phaseDetails", selectedPhase, query.data.status],
+    queryKey: ["phaseDetails", selectedPhase, query.data.execution.status],
     enabled: selectedPhase !== null,
     queryFn: () =>
       getWorkflowPhaseDetailsFunction({ phaseId: selectedPhase ?? 1 }),
   });
 
   const duration = dateToDurationString(
-    query.data.startedAt,
-    query.data.completedAt,
+    protoTimestampToDate(query.data.execution.startedAt).toISOString(),
+    protoTimestampToDate(query.data.execution.completedAt).toISOString(),
   );
 
   const creditsConsumed = getPhasesTotalCost(query.data.phases);
@@ -119,7 +125,7 @@ export function ExecutionViewer({
   return (
     <div className="flex w-full h-full">
       <ApproveChangesDialog
-        executionId={query.data.id}
+        executionId={query.data.execution.id}
         open={shouldOpenApproveChangesModal}
         data={pendingChangesQuery.data?.pendingApproval}
       />
@@ -131,9 +137,9 @@ export function ExecutionViewer({
             value={
               <div className="font-semibold capitalize flex gap-2 items-center">
                 <ExecutionPhaseStatusBadge
-                  status={query.data.status as IExecutionPhaseStatus} // SHOULD be casted as WorkflowExecutionStatus
+                  status={query.data.execution.status as IExecutionPhaseStatus} // SHOULD be casted as WorkflowExecutionStatus
                 />
-                <span>{query.data.status}</span>
+                <span>{query.data.execution.status}</span>
               </div>
             }
           />
@@ -142,10 +148,13 @@ export function ExecutionViewer({
             label="Started at"
             value={
               <span className="lowercase">
-                {query.data.startedAt
-                  ? formatDistanceToNow(new Date(query.data.startedAt), {
-                      addSuffix: true,
-                    })
+                {query.data.execution.startedAt
+                  ? formatDistanceToNow(
+                      protoTimestampToDate(query.data.execution.startedAt),
+                      {
+                        addSuffix: true,
+                      },
+                    )
                   : "-"}
               </span>
             }
@@ -212,8 +221,12 @@ export function ExecutionViewer({
                 </div>
                 <span>
                   {dateToDurationString(
-                    new Date(phaseDetails.data.startedAt).toISOString(),
-                    new Date(phaseDetails.data.completedAt).toISOString(),
+                    protoTimestampToDate(
+                      phaseDetails.data.phase.startedAt,
+                    ).toISOString(),
+                    protoTimestampToDate(
+                      phaseDetails.data.phase.completedAt,
+                    ).toISOString(),
                   ) ?? "-"}
                 </span>
               </Badge>
@@ -223,24 +236,24 @@ export function ExecutionViewer({
                   <CoinsIcon className="stroke-muted-foreground" size={18} />
                   <span>Credits</span>
                 </div>
-                <span>{phaseDetails.data.creditsCost}</span>
+                <span>{phaseDetails.data.phase.creditsCost}</span>
               </Badge>
             </div>
 
             <ParameterViewer
-              paramsJSON={phaseDetails.data.inputs}
+              paramsJSON={phaseDetails.data.phase.inputs}
               subTitle="Inputs used for this phase-executors"
               title="Inputs"
             />
 
             <ParameterViewer
-              paramsJSON={phaseDetails.data.outputs}
+              paramsJSON={phaseDetails.data.phase.outputs}
               subTitle="Outputs generated by this phase-executors"
               title="Outputs"
             />
 
             <LogsViewer
-              logs={phaseDetails.data.logs}
+              logs={phaseDetails.data.phase.logs}
               subTitle="Logs generated by this phase-executors"
               title="Logs"
             />
