@@ -85,6 +85,7 @@
     "eslint.format.enable": true,
     "eslint.ignoreUntitled": true,
     "eslint.useFlatConfig": true,
+    "jest.enable": false,
     "[sql]": {
       "editor.defaultFormatter": "mtxr.sqltools",
     },

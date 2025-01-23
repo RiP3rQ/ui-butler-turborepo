@@ -54,6 +54,12 @@ export interface ExecutionPhase {
   logs?: ExecutionLog[];
 }
 
+export interface ExecutionPhaseWithDatesInsteadOfProtoTimestamp
+  extends Omit<ExecutionPhase, "startedAt" | "completedAt"> {
+  startedAt: Date | null;
+  completedAt: Date | null;
+}
+
 export interface WorkflowExecution {
   id: number;
   userId: number;
@@ -65,6 +71,13 @@ export interface WorkflowExecution {
   creditsConsumed: number | null;
   startedAt: ProtoTimestamp | null;
   completedAt: ProtoTimestamp | null;
+}
+
+export interface WorkflowExecutionWithDatesInsteadOfProtoTimestamp
+  extends Omit<WorkflowExecution, "createdAt" | "startedAt" | "completedAt"> {
+  createdAt: Date | null;
+  startedAt: Date | null;
+  completedAt: Date | null;
 }
 
 export interface WorkflowExecutionWithPhases {

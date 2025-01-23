@@ -7,7 +7,7 @@ import { ServerTaskRegister } from '@shared/tasks-registry';
 import {
   type AppNode,
   type Environment,
-  type ExecutionPhase,
+  type ExecutionPhaseWithDatesInsteadOfProtoTimestamp,
   type ServerSaveEdge,
   WorkflowExecutionStatus,
 } from '@shared/types';
@@ -19,7 +19,7 @@ import { setupPhaseEnvironment } from './setup-phase-environment';
 
 export async function executeWorkflowPhase(
   database: DrizzleDatabase,
-  phase: ExecutionPhase | undefined,
+  phase: ExecutionPhaseWithDatesInsteadOfProtoTimestamp | undefined,
   environment: Environment,
   edges: ServerSaveEdge[],
   userId: number,

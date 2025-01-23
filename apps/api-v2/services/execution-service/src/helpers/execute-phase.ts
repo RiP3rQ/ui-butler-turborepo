@@ -3,7 +3,7 @@ import {
   type AppNode,
   type Environment,
   type ExecutionEnvironment,
-  type ExecutionPhase,
+  type ExecutionPhaseWithDatesInsteadOfProtoTimestamp,
   type LogCollector,
   type WorkflowExecutionStatus,
 } from '@shared/types';
@@ -12,7 +12,7 @@ import { createExecutionEnvironment } from './create-execution-environment';
 
 export async function executePhase(
   database: DrizzleDatabase,
-  phase: ExecutionPhase | undefined,
+  phase: ExecutionPhaseWithDatesInsteadOfProtoTimestamp | undefined,
   node: AppNode | undefined,
   environment: Environment,
   logCollector: LogCollector,

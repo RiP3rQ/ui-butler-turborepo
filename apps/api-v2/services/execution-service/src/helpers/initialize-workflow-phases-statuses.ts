@@ -3,11 +3,14 @@ import {
   executionPhase,
   inArray,
 } from '@microservices/database';
-import { type ExecutionPhase, ExecutionPhaseStatus } from '@shared/types';
+import {
+  ExecutionPhaseStatus,
+  type ExecutionPhaseWithDatesInsteadOfProtoTimestamp,
+} from '@shared/types';
 
 export async function initializeWorkflowPhasesStatuses(
   database: DrizzleDatabase,
-  phases: ExecutionPhase[],
+  phases: ExecutionPhaseWithDatesInsteadOfProtoTimestamp[],
 ) {
   if (phases.length === 0) {
     return;

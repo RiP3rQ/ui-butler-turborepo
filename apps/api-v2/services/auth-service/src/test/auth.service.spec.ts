@@ -20,11 +20,6 @@ interface MockedJwtService {
   sign: jest.Mock;
 }
 
-interface TokenOptions {
-  secret: string;
-  expiresIn: number;
-}
-
 jest.mock('bcryptjs', () => ({
   hash: jest.fn(),
   compare: jest.fn(),
@@ -40,6 +35,10 @@ describe('AuthService', () => {
     getService: jest.fn(),
   };
 
+  const mockJwtService = {
+    sign: jest.fn(),
+  };
+
   beforeEach(async () => {
     mockConfigService = {
       getOrThrow: jest.fn(),
@@ -50,10 +49,6 @@ describe('AuthService', () => {
       createUser: jest.fn(),
       getUserByEmail: jest.fn(),
       updateUser: jest.fn(),
-    };
-
-    const mockJwtService = {
-      sign: jest.fn(),
     };
 
     mockUsersClient.getService.mockReturnValue(usersService);
@@ -90,7 +85,7 @@ describe('AuthService', () => {
         JWT_REFRESH_TOKEN_SECRET: 'refresh-secret',
         AUTH_UI_REDIRECT: 'http://localhost:3000',
       };
-      return config[key];
+      return config[key]!;
     });
   });
 
