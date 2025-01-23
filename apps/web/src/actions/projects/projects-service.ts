@@ -2,7 +2,7 @@ import {
   type Project,
   type ProjectDetails,
   type ProjectsEndpoints,
-} from "@shared/types/src/api-client/projects-endpoints";
+} from "@shared/types";
 import { ApiClient } from "@/lib/api-client";
 import { type CreateNewProjectSchemaType } from "@/schemas/project";
 import { getErrorMessage } from "@/lib/get-error-message";

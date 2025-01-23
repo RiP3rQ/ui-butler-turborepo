@@ -4,7 +4,7 @@ import {
   type Credential,
   type CredentialsEndpoints,
   type RevealedCredential,
-} from "@shared/types/src/api-client/credentials-endpoints";
+} from "@shared/types";
 import {
   type CreateCredentialSchemaType,
   validateCredentialInput,

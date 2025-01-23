@@ -1,10 +1,10 @@
+import { ApiClient } from "@/lib/api-client";
+import { getErrorMessage } from "@/lib/get-error-message";
 import {
   type ExecutionsEndpoints,
   type PendingChange,
-} from "@shared/types/src/api-client/executions-endpoints";
-import { type WorkflowsEndpoints } from "@shared/types/src/api-client/workflows-endpoints";
-import { ApiClient } from "@/lib/api-client";
-import { getErrorMessage } from "@/lib/get-error-message";
+  type WorkflowsEndpoints,
+} from "@shared/types";
 
 /**
  * Service class for execution-related API calls
@@ -24,7 +24,9 @@ export class ExecutionsService {
         ExecutionsEndpoints["approveChanges"]["body"],
         ExecutionsEndpoints["approveChanges"]["response"]
       >(`${this.EXECUTIONS_PATH}/${String(request.executionId)}/approve`, {
-        body: { decision: request.decision === "approve" },
+        body: {
+          decision: request.decision === "approve" ? "approve" : "reject",
+        },
       });
 
       if (!response.success) {

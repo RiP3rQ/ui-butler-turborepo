@@ -50,10 +50,6 @@ export interface ComponentsEndpoints {
   /** POST /components */
   saveComponent: {
     body: {
-      user: {
-        id: number;
-        email: string;
-      };
       title: string;
       code: string;
       projectId: number;
@@ -99,10 +95,6 @@ export interface ComponentsEndpoints {
     };
     body: {
       content: string;
-      user: {
-        id: number;
-        email: string;
-      };
     };
     response: Component;
   };

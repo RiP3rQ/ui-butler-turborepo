@@ -3,7 +3,7 @@
 import type {
   Period,
   StatCardsValuesResponse,
-  UsedCreditsInPeriodResponse,
+  UsedCreditsInPeriod,
 } from "@shared/types";
 import { AnalyticsService } from "./analytics-service";
 
@@ -19,12 +19,12 @@ export async function getStatCardsValues(
 
 export async function getUsedCreditsInPeriod(
   selectedPeriod: Period,
-): Promise<UsedCreditsInPeriodResponse[]> {
+): Promise<UsedCreditsInPeriod[]> {
   return AnalyticsService.getUsedCreditsInPeriod(selectedPeriod);
 }
 
 export async function getWorkflowExecutionStats(
   selectedPeriod: Period,
-): Promise<UsedCreditsInPeriodResponse[]> {
+): Promise<UsedCreditsInPeriod[]> {
   return AnalyticsService.getWorkflowExecutionStats(selectedPeriod);
 }

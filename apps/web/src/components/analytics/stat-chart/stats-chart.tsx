@@ -1,6 +1,5 @@
 "use client";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
-import type { UsedCreditsInPeriodResponse } from "@shared/types";
+import type { UsedCreditsInPeriod } from "@shared/types";
 import {
   ChartContainer,
   ChartLegend,
@@ -9,6 +8,7 @@ import {
   ChartTooltipContent,
 } from "@shared/ui/components/ui/chart";
 import { type JSX } from "react";
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 
 const chartConfig = {
   successful: {
@@ -22,7 +22,7 @@ const chartConfig = {
 };
 
 interface StatsChartProps {
-  data: UsedCreditsInPeriodResponse[];
+  data: UsedCreditsInPeriod[];
 }
 function StatsChart({ data }: Readonly<StatsChartProps>): JSX.Element {
   return (

@@ -1,10 +1,7 @@
 "use server";
 
-import {
-  type User,
-  type UsersEndpoints,
-} from "@shared/types/src/api-client/users-endpoints";
 import { UserService } from "@/actions/user/user-service";
+import { type User, type UsersEndpoints } from "@shared/types";
 
 /**
  * Fetches current user information

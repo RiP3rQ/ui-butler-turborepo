@@ -1,9 +1,6 @@
 "use server";
 
-import {
-  type DashboardStats,
-  type FavoritedComponent,
-} from "@shared/types/src/api-client/analytics-endpoints";
+import { type DashboardStats, type FavoritedComponent } from "@shared/types";
 import { DashboardService } from "@/actions/dashboard/dashboard-service";
 
 /**

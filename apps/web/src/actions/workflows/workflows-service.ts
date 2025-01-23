@@ -8,7 +8,7 @@ import {
   type Workflow,
   type WorkflowExecution,
   type WorkflowsEndpoints,
-} from "@shared/types/src/api-client/workflows-endpoints";
+} from "@shared/types";
 
 /**
  * Service class for workflow-related API calls

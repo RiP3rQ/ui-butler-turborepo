@@ -4,7 +4,7 @@ import {
   type Project,
   type ProjectDetails,
   type ProjectsEndpoints,
-} from "@shared/types/src/api-client/projects-endpoints";
+} from "@shared/types";
 import {
   type CreateNewProjectSchemaType,
   validateProjectInput,

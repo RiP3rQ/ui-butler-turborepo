@@ -1,26 +1,26 @@
 "use client";
 
 import {
-  type Period,
-  type StatCardsValuesResponse,
-  type UsedCreditsInPeriodResponse,
-} from "@shared/types";
-import { useQuery } from "@tanstack/react-query";
-import { type JSX } from "react";
-import { StatCards } from "@/components/analytics/stat-cards/stat-cards";
-import { StatsChartWrapper } from "@/components/analytics/stat-chart/stats-chart-wrapper";
-import { CreditsUserChartWrapper } from "@/components/analytics/stat-chart/credits-user-chart-wrapper";
-import {
   getStatCardsValues,
   getUsedCreditsInPeriod,
   getWorkflowExecutionStats,
 } from "@/actions/analytics/server-actions";
+import { StatCards } from "@/components/analytics/stat-cards/stat-cards";
+import { CreditsUserChartWrapper } from "@/components/analytics/stat-chart/credits-user-chart-wrapper";
+import { StatsChartWrapper } from "@/components/analytics/stat-chart/stats-chart-wrapper";
+import {
+  type Period,
+  type StatCardsValuesResponse,
+  type UsedCreditsInPeriod,
+} from "@shared/types";
+import { useQuery } from "@tanstack/react-query";
+import { type JSX } from "react";
 
 interface AnalyticsPageContentProps {
   period: Period;
   statCardsValues: StatCardsValuesResponse;
-  workflowExecutionStatsAction: UsedCreditsInPeriodResponse[];
-  usedCreditsInPeriodAction: UsedCreditsInPeriodResponse[];
+  workflowExecutionStatsAction: UsedCreditsInPeriod[];
+  usedCreditsInPeriodAction: UsedCreditsInPeriod[];
 }
 
 export function AnalyticsPageContent({

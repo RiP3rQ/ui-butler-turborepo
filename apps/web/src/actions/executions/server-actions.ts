@@ -3,8 +3,9 @@
 import {
   type ExecutionsEndpoints,
   type PendingChange,
-} from "@shared/types/src/api-client/executions-endpoints";
-import { type WorkflowsEndpoints } from "@shared/types/src/api-client/workflows-endpoints";
+  type WorkflowsEndpoints,
+} from "@shared/types";
+
 import { ExecutionsService } from "@/actions/executions/executions-service";
 
 /**

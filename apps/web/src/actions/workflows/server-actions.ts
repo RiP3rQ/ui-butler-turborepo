@@ -9,10 +9,7 @@ import {
   updateWorkflowSchema,
   validateWorkflowInput,
 } from "@/schemas/workflow";
-import {
-  type Workflow,
-  type WorkflowsEndpoints,
-} from "@shared/types/src/api-client/workflows-endpoints";
+import { type Workflow, type WorkflowsEndpoints } from "@shared/types";
 
 /**
  * Creates a new workflow

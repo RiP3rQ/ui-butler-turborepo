@@ -1,11 +1,11 @@
+import { ApiClient } from "@/lib/api-client";
+import { getErrorMessage } from "@/lib/get-error-message";
 import {
   type AnalyticsEndpoints,
   type Period,
   type StatCardsValuesResponse,
-  type UsedCreditsInPeriodResponse,
+  type UsedCreditsInPeriod,
 } from "@shared/types";
-import { ApiClient } from "@/lib/api-client";
-import { getErrorMessage } from "@/lib/get-error-message";
 
 /**
  * Service class for analytics-related API calls
@@ -66,9 +66,9 @@ export class AnalyticsService {
    */
   static async getUsedCreditsInPeriod(
     period: Period,
-  ): Promise<UsedCreditsInPeriodResponse[]> {
+  ): Promise<UsedCreditsInPeriod[]> {
     try {
-      const response = await ApiClient.get<UsedCreditsInPeriodResponse[]>(
+      const response = await ApiClient.get<UsedCreditsInPeriod[]>(
         `${this.BASE_PATH}/used-credits-in-period`,
         {
           params: {
@@ -94,9 +94,9 @@ export class AnalyticsService {
    */
   static async getWorkflowExecutionStats(
     period: Period,
-  ): Promise<UsedCreditsInPeriodResponse[]> {
+  ): Promise<UsedCreditsInPeriod[]> {
     try {
-      const response = await ApiClient.get<UsedCreditsInPeriodResponse[]>(
+      const response = await ApiClient.get<UsedCreditsInPeriod[]>(
         `${this.BASE_PATH}/workflow-execution-stats`,
         {
           params: {
@@ -140,11 +140,9 @@ export class AnalyticsService {
   /**
    * Fetches favorited components
    */
-  static async getFavoritedTableContent(): Promise<
-    UsedCreditsInPeriodResponse[]
-  > {
+  static async getFavoritedTableContent(): Promise<UsedCreditsInPeriod[]> {
     try {
-      const response = await ApiClient.get<UsedCreditsInPeriodResponse[]>(
+      const response = await ApiClient.get<UsedCreditsInPeriod[]>(
         `${this.BASE_PATH}/favorited-table-content`,
       );
 
