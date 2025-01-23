@@ -69,8 +69,9 @@ export interface ProjectDetails {
   createdAt?: Timestamp | undefined;
   updatedAt?: Timestamp | undefined;
   userId: number;
-  numberOfComponents: number;
+  numberOfComponents?: number | undefined;
   components: Component[];
+  workflows: Workflow[];
 }
 
 export interface CreateProjectRequest {
@@ -84,6 +85,15 @@ export interface CreateProjectDto {
   title: string;
   description: string;
   color: string;
+}
+
+export interface Workflow {
+  $type: "api.projects.Workflow";
+  id: number;
+  name: string;
+  projectId: number;
+  createdAt?: Timestamp | undefined;
+  updatedAt?: Timestamp | undefined;
 }
 
 export const API_PROJECTS_PACKAGE_NAME = "api.projects";
@@ -589,8 +599,8 @@ function createBaseProjectDetails(): ProjectDetails {
     description: "",
     color: "",
     userId: 0,
-    numberOfComponents: 0,
     components: [],
+    workflows: [],
   };
 }
 
@@ -625,11 +635,14 @@ export const ProjectDetails: MessageFns<
     if (message.userId !== 0) {
       writer.uint32(56).int32(message.userId);
     }
-    if (message.numberOfComponents !== 0) {
+    if (message.numberOfComponents !== undefined) {
       writer.uint32(64).int32(message.numberOfComponents);
     }
     for (const v of message.components) {
       Component.encode(v!, writer.uint32(74).fork()).join();
+    }
+    for (const v of message.workflows) {
+      Workflow.encode(v!, writer.uint32(82).fork()).join();
     }
     return writer;
   },
@@ -712,6 +725,14 @@ export const ProjectDetails: MessageFns<
           }
 
           message.components.push(Component.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 10: {
+          if (tag !== 82) {
+            break;
+          }
+
+          message.workflows.push(Workflow.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -862,6 +883,95 @@ export const CreateProjectDto: MessageFns<
 };
 
 messageTypeRegistry.set(CreateProjectDto.$type, CreateProjectDto);
+
+function createBaseWorkflow(): Workflow {
+  return { $type: "api.projects.Workflow", id: 0, name: "", projectId: 0 };
+}
+
+export const Workflow: MessageFns<Workflow, "api.projects.Workflow"> = {
+  $type: "api.projects.Workflow" as const,
+
+  encode(
+    message: Workflow,
+    writer: BinaryWriter = new BinaryWriter(),
+  ): BinaryWriter {
+    if (message.id !== 0) {
+      writer.uint32(8).int32(message.id);
+    }
+    if (message.name !== "") {
+      writer.uint32(18).string(message.name);
+    }
+    if (message.projectId !== 0) {
+      writer.uint32(24).int32(message.projectId);
+    }
+    if (message.createdAt !== undefined) {
+      Timestamp.encode(message.createdAt, writer.uint32(34).fork()).join();
+    }
+    if (message.updatedAt !== undefined) {
+      Timestamp.encode(message.updatedAt, writer.uint32(42).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): Workflow {
+    const reader =
+      input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseWorkflow();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.id = reader.int32();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.name = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.projectId = reader.int32();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.createdAt = Timestamp.decode(reader, reader.uint32());
+          continue;
+        }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
+          message.updatedAt = Timestamp.decode(reader, reader.uint32());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+};
+
+messageTypeRegistry.set(Workflow.$type, Workflow);
 
 export interface ProjectsServiceClient {
   getProjectsByUserId(

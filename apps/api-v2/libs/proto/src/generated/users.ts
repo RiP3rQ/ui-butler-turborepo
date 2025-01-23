@@ -18,7 +18,7 @@ export interface User {
   $type: "api.users.User";
   id: number;
   email: string;
-  username: string;
+  username?: string | undefined;
   password?: string | undefined;
   refreshToken?: string | undefined;
   createdAt?: Timestamp | undefined;
@@ -151,7 +151,7 @@ export interface RevealCredentialRequest {
 export const API_USERS_PACKAGE_NAME = "api.users";
 
 function createBaseUser(): User {
-  return { $type: "api.users.User", id: 0, email: "", username: "" };
+  return { $type: "api.users.User", id: 0, email: "" };
 }
 
 export const User: MessageFns<User, "api.users.User"> = {
@@ -167,7 +167,7 @@ export const User: MessageFns<User, "api.users.User"> = {
     if (message.email !== "") {
       writer.uint32(18).string(message.email);
     }
-    if (message.username !== "") {
+    if (message.username !== undefined) {
       writer.uint32(26).string(message.username);
     }
     if (message.password !== undefined) {

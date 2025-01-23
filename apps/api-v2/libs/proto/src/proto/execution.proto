@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package api.execution;
 
+import "google/protobuf/timestamp.proto";
+
 service ExecutionsService {
     rpc GetPendingChanges (GetPendingChangesRequest) returns (PendingChangesResponse) {}
     rpc ApproveChanges (ApproveChangesRequest) returns (ApproveChangesResponse) {}

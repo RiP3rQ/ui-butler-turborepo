@@ -8,6 +8,7 @@
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
+import { Timestamp } from "./google/protobuf/timestamp";
 import { messageTypeRegistry } from "./typeRegistry";
 
 export const protobufPackage = "api.workflows";
@@ -23,39 +24,48 @@ export interface Workflow {
   id: number;
   name: string;
   description: string;
-  userId: string;
+  userId: number;
   definition: string;
   status: string;
   executionPlan: string;
   creditsCost: number;
-  createdAt: string;
-  updatedAt: string;
+  isPublished: boolean;
+  createdAt?: Timestamp | undefined;
+  updatedAt?: Timestamp | undefined;
+  lastRunAt?: Timestamp | undefined;
+  lastRunId?: string | undefined;
+  lastRunStatus?: string | undefined;
+  nextRunAt?: Timestamp | undefined;
 }
 
 export interface WorkflowExecution {
   $type: "api.workflows.WorkflowExecution";
   id: number;
   workflowId: number;
-  userId: string;
+  userId: number;
   status: string;
-  startedAt: string;
-  endedAt: string;
-  trigger: string;
+  startedAt?: Timestamp | undefined;
+  completedAt?: Timestamp | undefined;
+  trigger?: string | undefined;
   definition: string;
-  createdAt: string;
+  createdAt?: Timestamp | undefined;
+  creditsConsumed?: number | undefined;
 }
 
 export interface ExecutionPhase {
   $type: "api.workflows.ExecutionPhase";
   id: number;
   workflowExecutionId: number;
-  userId: string;
+  userId: number;
   status: string;
   number: number;
-  node: string;
+  node?: string | undefined;
   name: string;
-  startedAt: string;
-  endedAt: string;
+  creditsCost?: number | undefined;
+  inputs?: string | undefined;
+  outputs?: string | undefined;
+  startedAt?: Timestamp | undefined;
+  completedAt?: Timestamp | undefined;
 }
 
 export interface ExecutionLog {
@@ -63,8 +73,8 @@ export interface ExecutionLog {
   id: number;
   executionPhaseId: number;
   message: string;
-  level: string;
-  timestamp: string;
+  logLevel: string;
+  timestamp?: Timestamp | undefined;
 }
 
 /** Request messages */
@@ -243,13 +253,12 @@ function createBaseWorkflow(): Workflow {
     id: 0,
     name: "",
     description: "",
-    userId: "",
+    userId: 0,
     definition: "",
     status: "",
     executionPlan: "",
     creditsCost: 0,
-    createdAt: "",
-    updatedAt: "",
+    isPublished: false,
   };
 }
 
@@ -269,8 +278,8 @@ export const Workflow: MessageFns<Workflow, "api.workflows.Workflow"> = {
     if (message.description !== "") {
       writer.uint32(26).string(message.description);
     }
-    if (message.userId !== "") {
-      writer.uint32(34).string(message.userId);
+    if (message.userId !== 0) {
+      writer.uint32(32).int32(message.userId);
     }
     if (message.definition !== "") {
       writer.uint32(42).string(message.definition);
@@ -284,11 +293,26 @@ export const Workflow: MessageFns<Workflow, "api.workflows.Workflow"> = {
     if (message.creditsCost !== 0) {
       writer.uint32(64).int32(message.creditsCost);
     }
-    if (message.createdAt !== "") {
-      writer.uint32(74).string(message.createdAt);
+    if (message.isPublished !== false) {
+      writer.uint32(72).bool(message.isPublished);
     }
-    if (message.updatedAt !== "") {
-      writer.uint32(82).string(message.updatedAt);
+    if (message.createdAt !== undefined) {
+      Timestamp.encode(message.createdAt, writer.uint32(82).fork()).join();
+    }
+    if (message.updatedAt !== undefined) {
+      Timestamp.encode(message.updatedAt, writer.uint32(90).fork()).join();
+    }
+    if (message.lastRunAt !== undefined) {
+      Timestamp.encode(message.lastRunAt, writer.uint32(98).fork()).join();
+    }
+    if (message.lastRunId !== undefined) {
+      writer.uint32(106).string(message.lastRunId);
+    }
+    if (message.lastRunStatus !== undefined) {
+      writer.uint32(114).string(message.lastRunStatus);
+    }
+    if (message.nextRunAt !== undefined) {
+      Timestamp.encode(message.nextRunAt, writer.uint32(122).fork()).join();
     }
     return writer;
   },
@@ -326,11 +350,11 @@ export const Workflow: MessageFns<Workflow, "api.workflows.Workflow"> = {
           continue;
         }
         case 4: {
-          if (tag !== 34) {
+          if (tag !== 32) {
             break;
           }
 
-          message.userId = reader.string();
+          message.userId = reader.int32();
           continue;
         }
         case 5: {
@@ -366,11 +390,11 @@ export const Workflow: MessageFns<Workflow, "api.workflows.Workflow"> = {
           continue;
         }
         case 9: {
-          if (tag !== 74) {
+          if (tag !== 72) {
             break;
           }
 
-          message.createdAt = reader.string();
+          message.isPublished = reader.bool();
           continue;
         }
         case 10: {
@@ -378,7 +402,47 @@ export const Workflow: MessageFns<Workflow, "api.workflows.Workflow"> = {
             break;
           }
 
-          message.updatedAt = reader.string();
+          message.createdAt = Timestamp.decode(reader, reader.uint32());
+          continue;
+        }
+        case 11: {
+          if (tag !== 90) {
+            break;
+          }
+
+          message.updatedAt = Timestamp.decode(reader, reader.uint32());
+          continue;
+        }
+        case 12: {
+          if (tag !== 98) {
+            break;
+          }
+
+          message.lastRunAt = Timestamp.decode(reader, reader.uint32());
+          continue;
+        }
+        case 13: {
+          if (tag !== 106) {
+            break;
+          }
+
+          message.lastRunId = reader.string();
+          continue;
+        }
+        case 14: {
+          if (tag !== 114) {
+            break;
+          }
+
+          message.lastRunStatus = reader.string();
+          continue;
+        }
+        case 15: {
+          if (tag !== 122) {
+            break;
+          }
+
+          message.nextRunAt = Timestamp.decode(reader, reader.uint32());
           continue;
         }
       }
@@ -398,13 +462,9 @@ function createBaseWorkflowExecution(): WorkflowExecution {
     $type: "api.workflows.WorkflowExecution",
     id: 0,
     workflowId: 0,
-    userId: "",
+    userId: 0,
     status: "",
-    startedAt: "",
-    endedAt: "",
-    trigger: "",
     definition: "",
-    createdAt: "",
   };
 }
 
@@ -424,26 +484,29 @@ export const WorkflowExecution: MessageFns<
     if (message.workflowId !== 0) {
       writer.uint32(16).int32(message.workflowId);
     }
-    if (message.userId !== "") {
-      writer.uint32(26).string(message.userId);
+    if (message.userId !== 0) {
+      writer.uint32(24).int32(message.userId);
     }
     if (message.status !== "") {
       writer.uint32(34).string(message.status);
     }
-    if (message.startedAt !== "") {
-      writer.uint32(42).string(message.startedAt);
+    if (message.startedAt !== undefined) {
+      Timestamp.encode(message.startedAt, writer.uint32(42).fork()).join();
     }
-    if (message.endedAt !== "") {
-      writer.uint32(50).string(message.endedAt);
+    if (message.completedAt !== undefined) {
+      Timestamp.encode(message.completedAt, writer.uint32(50).fork()).join();
     }
-    if (message.trigger !== "") {
+    if (message.trigger !== undefined) {
       writer.uint32(58).string(message.trigger);
     }
     if (message.definition !== "") {
       writer.uint32(66).string(message.definition);
     }
-    if (message.createdAt !== "") {
-      writer.uint32(74).string(message.createdAt);
+    if (message.createdAt !== undefined) {
+      Timestamp.encode(message.createdAt, writer.uint32(74).fork()).join();
+    }
+    if (message.creditsConsumed !== undefined) {
+      writer.uint32(80).int32(message.creditsConsumed);
     }
     return writer;
   },
@@ -473,11 +536,11 @@ export const WorkflowExecution: MessageFns<
           continue;
         }
         case 3: {
-          if (tag !== 26) {
+          if (tag !== 24) {
             break;
           }
 
-          message.userId = reader.string();
+          message.userId = reader.int32();
           continue;
         }
         case 4: {
@@ -493,7 +556,7 @@ export const WorkflowExecution: MessageFns<
             break;
           }
 
-          message.startedAt = reader.string();
+          message.startedAt = Timestamp.decode(reader, reader.uint32());
           continue;
         }
         case 6: {
@@ -501,7 +564,7 @@ export const WorkflowExecution: MessageFns<
             break;
           }
 
-          message.endedAt = reader.string();
+          message.completedAt = Timestamp.decode(reader, reader.uint32());
           continue;
         }
         case 7: {
@@ -525,7 +588,15 @@ export const WorkflowExecution: MessageFns<
             break;
           }
 
-          message.createdAt = reader.string();
+          message.createdAt = Timestamp.decode(reader, reader.uint32());
+          continue;
+        }
+        case 10: {
+          if (tag !== 80) {
+            break;
+          }
+
+          message.creditsConsumed = reader.int32();
           continue;
         }
       }
@@ -545,13 +616,10 @@ function createBaseExecutionPhase(): ExecutionPhase {
     $type: "api.workflows.ExecutionPhase",
     id: 0,
     workflowExecutionId: 0,
-    userId: "",
+    userId: 0,
     status: "",
     number: 0,
-    node: "",
     name: "",
-    startedAt: "",
-    endedAt: "",
   };
 }
 
@@ -571,8 +639,8 @@ export const ExecutionPhase: MessageFns<
     if (message.workflowExecutionId !== 0) {
       writer.uint32(16).int32(message.workflowExecutionId);
     }
-    if (message.userId !== "") {
-      writer.uint32(26).string(message.userId);
+    if (message.userId !== 0) {
+      writer.uint32(24).int32(message.userId);
     }
     if (message.status !== "") {
       writer.uint32(34).string(message.status);
@@ -580,17 +648,26 @@ export const ExecutionPhase: MessageFns<
     if (message.number !== 0) {
       writer.uint32(40).int32(message.number);
     }
-    if (message.node !== "") {
+    if (message.node !== undefined) {
       writer.uint32(50).string(message.node);
     }
     if (message.name !== "") {
       writer.uint32(58).string(message.name);
     }
-    if (message.startedAt !== "") {
-      writer.uint32(66).string(message.startedAt);
+    if (message.creditsCost !== undefined) {
+      writer.uint32(64).int32(message.creditsCost);
     }
-    if (message.endedAt !== "") {
-      writer.uint32(74).string(message.endedAt);
+    if (message.inputs !== undefined) {
+      writer.uint32(74).string(message.inputs);
+    }
+    if (message.outputs !== undefined) {
+      writer.uint32(82).string(message.outputs);
+    }
+    if (message.startedAt !== undefined) {
+      Timestamp.encode(message.startedAt, writer.uint32(90).fork()).join();
+    }
+    if (message.completedAt !== undefined) {
+      Timestamp.encode(message.completedAt, writer.uint32(98).fork()).join();
     }
     return writer;
   },
@@ -620,11 +697,11 @@ export const ExecutionPhase: MessageFns<
           continue;
         }
         case 3: {
-          if (tag !== 26) {
+          if (tag !== 24) {
             break;
           }
 
-          message.userId = reader.string();
+          message.userId = reader.int32();
           continue;
         }
         case 4: {
@@ -660,11 +737,11 @@ export const ExecutionPhase: MessageFns<
           continue;
         }
         case 8: {
-          if (tag !== 66) {
+          if (tag !== 64) {
             break;
           }
 
-          message.startedAt = reader.string();
+          message.creditsCost = reader.int32();
           continue;
         }
         case 9: {
@@ -672,7 +749,31 @@ export const ExecutionPhase: MessageFns<
             break;
           }
 
-          message.endedAt = reader.string();
+          message.inputs = reader.string();
+          continue;
+        }
+        case 10: {
+          if (tag !== 82) {
+            break;
+          }
+
+          message.outputs = reader.string();
+          continue;
+        }
+        case 11: {
+          if (tag !== 90) {
+            break;
+          }
+
+          message.startedAt = Timestamp.decode(reader, reader.uint32());
+          continue;
+        }
+        case 12: {
+          if (tag !== 98) {
+            break;
+          }
+
+          message.completedAt = Timestamp.decode(reader, reader.uint32());
           continue;
         }
       }
@@ -693,8 +794,7 @@ function createBaseExecutionLog(): ExecutionLog {
     id: 0,
     executionPhaseId: 0,
     message: "",
-    level: "",
-    timestamp: "",
+    logLevel: "",
   };
 }
 
@@ -717,11 +817,11 @@ export const ExecutionLog: MessageFns<
     if (message.message !== "") {
       writer.uint32(26).string(message.message);
     }
-    if (message.level !== "") {
-      writer.uint32(34).string(message.level);
+    if (message.logLevel !== "") {
+      writer.uint32(34).string(message.logLevel);
     }
-    if (message.timestamp !== "") {
-      writer.uint32(42).string(message.timestamp);
+    if (message.timestamp !== undefined) {
+      Timestamp.encode(message.timestamp, writer.uint32(42).fork()).join();
     }
     return writer;
   },
@@ -763,7 +863,7 @@ export const ExecutionLog: MessageFns<
             break;
           }
 
-          message.level = reader.string();
+          message.logLevel = reader.string();
           continue;
         }
         case 5: {
@@ -771,7 +871,7 @@ export const ExecutionLog: MessageFns<
             break;
           }
 
-          message.timestamp = reader.string();
+          message.timestamp = Timestamp.decode(reader, reader.uint32());
           continue;
         }
       }
