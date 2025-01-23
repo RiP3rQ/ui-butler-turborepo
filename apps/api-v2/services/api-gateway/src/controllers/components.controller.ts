@@ -7,6 +7,7 @@ import {
   UpdateComponentCodeDto,
 } from '@app/common';
 import { ComponentsProto } from '@microservices/proto';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import {
   All,
   Body,
@@ -23,8 +24,17 @@ import {
   Req,
   Res,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { codeTypeValues } from '@shared/types';
 import { type Request, type Response } from 'express';
@@ -34,11 +44,18 @@ import { rateLimitConfigs } from '../config/rate-limit.config';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
 
+/**
+ * Controller handling component-related operations through gRPC communication
+ * with the components microservice.
+ * @class ComponentsController
+ */
+@ApiTags('Components')
+@ApiBearerAuth()
 @Controller('components')
 @UseGuards(JwtAuthGuard)
 export class ComponentsController implements OnModuleInit {
   private componentsService: ComponentsProto.ComponentsServiceClient;
-  private proxy: HttpProxy;
+  private readonly proxy: HttpProxy;
 
   constructor(
     @Inject('COMPONENTS_SERVICE')
@@ -46,14 +63,19 @@ export class ComponentsController implements OnModuleInit {
     private readonly grpcClient: GrpcClientProxy,
   ) {
     this.proxy = HttpProxy.createProxyServer();
+    this.setupProxyEventHandlers();
+  }
 
+  private setupProxyEventHandlers(): void {
     this.proxy.on(
       'proxyReq',
       (proxyReq: ClientRequest, req: IncomingMessage) => {
         const originalReq = req as Request;
-        const authHeader = originalReq.headers.authorization;
-        if (authHeader) {
-          proxyReq.setHeader('Authorization', authHeader);
+        if (originalReq.headers.authorization) {
+          proxyReq.setHeader(
+            'Authorization',
+            originalReq.headers.authorization,
+          );
         }
 
         if (originalReq.body) {
@@ -73,14 +95,33 @@ export class ComponentsController implements OnModuleInit {
       );
   }
 
+  /**
+   * Retrieves a specific component by ID
+   * @param {ComponentsProto.User} user - The authenticated user
+   * @param {number} projectId - Project identifier
+   * @param {number} componentId - Component identifier
+   * @returns {Promise<ComponentsProto.Component>} The requested component
+   * @throws {NotFoundException} When user or component is not found
+   */
+  @ApiOperation({ summary: 'Get component by ID' })
+  @ApiParam({ name: 'projectId', type: Number })
+  @ApiParam({ name: 'componentId', type: Number })
+  @ApiResponse({
+    status: 200,
+    description: 'Component retrieved successfully',
+    type: 'ComponentsProto.Component',
+  })
+  @ApiResponse({ status: 404, description: 'Component not found' })
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(300000) // 5 minutes cache
   @Get('/:projectId/:componentId')
   public async getComponent(
     @CurrentUser() user: ComponentsProto.User,
     @Param('projectId', ParseIntPipe) projectId: number,
     @Param('componentId', ParseIntPipe) componentId: number,
   ): Promise<ComponentsProto.Component> {
-    if (typeof user === 'undefined') {
-      throw new NotFoundException('Unauthorized');
+    if (!user?.id) {
+      throw new NotFoundException('Unauthorized: User not found');
     }
 
     try {
@@ -91,8 +132,8 @@ export class ComponentsController implements OnModuleInit {
           id: user.id,
           email: user.email,
         },
-        projectId: Number(projectId),
-        componentId: Number(componentId),
+        projectId,
+        componentId,
       };
 
       return await this.grpcClient.call(
@@ -104,13 +145,26 @@ export class ComponentsController implements OnModuleInit {
     }
   }
 
+  /**
+   * Saves a new component
+   * @param {ComponentsProto.User} user - The authenticated user
+   * @param {SaveComponentDto} saveComponentDto - Component data to save
+   * @returns {Promise<ComponentsProto.Component>} The saved component
+   */
+  @ApiOperation({ summary: 'Save new component' })
+  @ApiBody({ type: SaveComponentDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Component saved successfully',
+    type: 'ComponentsProto.Component',
+  })
   @Post()
   public async saveComponent(
     @CurrentUser() user: ComponentsProto.User,
     @Body() saveComponentDto: SaveComponentDto,
   ): Promise<ComponentsProto.Component> {
-    if (typeof user === 'undefined') {
-      throw new NotFoundException('Unauthorized');
+    if (!user?.id) {
+      throw new NotFoundException('Unauthorized: User not found');
     }
 
     try {
@@ -137,13 +191,26 @@ export class ComponentsController implements OnModuleInit {
     }
   }
 
+  /**
+   * Toggles favorite status for a component
+   * @param {ComponentsProto.User} user - The authenticated user
+   * @param {FavoriteComponentDto} favoriteComponentDto - Favorite toggle data
+   * @returns {Promise<ComponentsProto.Component>} Updated component
+   */
+  @ApiOperation({ summary: 'Toggle component favorite status' })
+  @ApiBody({ type: FavoriteComponentDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Component favorite status updated',
+    type: 'ComponentsProto.Component',
+  })
   @Post('/favorite')
   public async favoriteComponent(
     @CurrentUser() user: ComponentsProto.User,
     @Body() favoriteComponentDto: FavoriteComponentDto,
   ): Promise<ComponentsProto.Component> {
-    if (typeof user === 'undefined') {
-      throw new NotFoundException('Unauthorized');
+    if (!user?.id) {
+      throw new NotFoundException('Unauthorized: User not found');
     }
 
     try {
@@ -168,16 +235,32 @@ export class ComponentsController implements OnModuleInit {
     }
   }
 
+  /**
+   * Proxies generate request to components service
+   * @param {Request} req - Express request object
+   * @param {Response} res - Express response object
+   * @returns {Promise<void>}
+   */
+  @ApiOperation({ summary: 'Generate component code' })
+  @ApiResponse({
+    status: 200,
+    description: 'Code generated successfully',
+  })
   @All('generate')
-  public async proxyRequest(@Req() req: Request, @Res() res: Response) {
+  public async proxyRequest(
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<void> {
     return new Promise((resolve, reject) => {
+      const target = `http://${process.env.COMPONENTS_SERVICE_HOST ?? 'localhost'}:${
+        process.env.COMPONENTS_SERVICE_HTTP_PORT ?? '3348'
+      }`;
+
       this.proxy.web(
         req,
         res,
         {
-          target: `http://${process.env.COMPONENTS_SERVICE_HOST ?? 'localhost'}:${
-            process.env.COMPONENTS_SERVICE_HTTP_PORT ?? '3348'
-          }`,
+          target,
           changeOrigin: true,
           secure: false,
           ws: true,
@@ -203,12 +286,29 @@ export class ComponentsController implements OnModuleInit {
         console.log('Received response from Components Service');
         console.log('Status:', proxyRes.statusCode);
         if (proxyRes.statusCode === 200) {
-          resolve(true);
+          resolve();
         }
       });
     });
   }
 
+  /**
+   * Updates component code of specified type
+   * @param {ComponentsProto.User} user - The authenticated user
+   * @param {number} componentId - Component identifier
+   * @param {ComponentsProto.CodeType} codeType - Type of code to update
+   * @param {UpdateComponentCodeDto} updateComponentCodeDto - New code content
+   * @returns {Promise<ComponentsProto.Component>} Updated component
+   */
+  @ApiOperation({ summary: 'Update component code' })
+  @ApiParam({ name: 'componentId', type: Number })
+  @ApiParam({ name: 'codeType', enum: codeTypeValues })
+  @ApiBody({ type: UpdateComponentCodeDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Component code updated successfully',
+    type: 'ComponentsProto.Component',
+  })
   @Patch('/:componentId/:codeType')
   public async updateComponentCode(
     @CurrentUser() user: ComponentsProto.User,
@@ -217,8 +317,8 @@ export class ComponentsController implements OnModuleInit {
     codeType: ComponentsProto.CodeType,
     @Body() updateComponentCodeDto: UpdateComponentCodeDto,
   ): Promise<ComponentsProto.Component> {
-    if (typeof user === 'undefined') {
-      throw new NotFoundException('Unauthorized');
+    if (!user?.id) {
+      throw new NotFoundException('Unauthorized: User not found');
     }
 
     try {
@@ -243,14 +343,27 @@ export class ComponentsController implements OnModuleInit {
     }
   }
 
+  /**
+   * Generates code based on component type
+   * @param {ComponentsProto.User} user - The authenticated user
+   * @param {GenerateCodeDto} generateCodeDto - Code generation parameters
+   * @returns {Promise<ComponentsProto.Component>} Component with generated code
+   */
+  @ApiOperation({ summary: 'Generate code for component' })
+  @ApiBody({ type: GenerateCodeDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Code generated successfully',
+    type: 'ComponentsProto.Component',
+  })
   @Throttle({ ai: rateLimitConfigs.ai })
   @Post('/generate-code')
   public async generateCodeBasedOnType(
     @CurrentUser() user: ComponentsProto.User,
     @Body() generateCodeDto: GenerateCodeDto,
   ): Promise<ComponentsProto.Component> {
-    if (typeof user === 'undefined') {
-      throw new NotFoundException('Unauthorized');
+    if (!user?.id) {
+      throw new NotFoundException('Unauthorized: User not found');
     }
 
     try {

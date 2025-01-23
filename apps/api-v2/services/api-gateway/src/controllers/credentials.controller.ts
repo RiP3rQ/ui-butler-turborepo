@@ -5,21 +5,46 @@ import {
   type User,
 } from '@app/common';
 import { UsersProto } from '@microservices/proto';
+import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 import {
   Body,
   Controller,
   Delete,
   Get,
   Inject,
+  NotFoundException,
   OnModuleInit,
   Param,
+  ParseIntPipe,
   Post,
   Query,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
+import { handleGrpcError } from '../utils/grpc-error.util';
 
+const CACHE_TTL_15_MINUTES = 900000;
+const CACHE_KEY_CREDENTIALS = 'user-credentials';
+
+/**
+ * Controller handling user credentials operations through gRPC communication
+ * with the users microservice.
+ * @class CredentialsController
+ */
+@ApiTags('Credentials')
+@ApiBearerAuth()
 @Controller('credentials')
 @UseGuards(JwtAuthGuard)
 export class CredentialsController implements OnModuleInit {
@@ -35,94 +60,197 @@ export class CredentialsController implements OnModuleInit {
       this.client.getService<UsersProto.UsersServiceClient>('UsersService');
   }
 
+  /**
+   * Retrieves all credentials for the authenticated user
+   * @param {User} user - The authenticated user
+   * @returns {Promise<UsersProto.Credential[]>} List of user credentials
+   * @throws {NotFoundException} When user is not found
+   * @throws {GrpcException} When gRPC service fails
+   */
+  @ApiOperation({ summary: 'Get all user credentials' })
+  @ApiResponse({
+    status: 200,
+    description: 'Credentials retrieved successfully',
+    type: JSON.stringify(UsersProto.Credential),
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiResponse({ status: 500, description: 'gRPC service error' })
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey(CACHE_KEY_CREDENTIALS)
+  @CacheTTL(CACHE_TTL_15_MINUTES)
   @Get()
-  public async getUserCredentials(@CurrentUser() user: User) {
-    const request: UsersProto.GetCredentialsRequest = {
-      $type: 'api.users.GetCredentialsRequest',
-      user: {
-        $type: 'api.users.User',
-        id: user.id,
-        email: user.email,
-        username: user.username ?? '',
-      },
-    };
+  public async getUserCredentials(
+    @CurrentUser() user: User,
+  ): Promise<UsersProto.Credential[]> {
+    if (!user?.id) {
+      throw new NotFoundException('Unauthorized: User not found');
+    }
 
-    const response = await this.grpcClient.call(
-      this.usersService.getUserCredentials(request),
-      'Credentials.getUserCredentials',
-    );
+    try {
+      const request: UsersProto.GetCredentialsRequest = {
+        $type: 'api.users.GetCredentialsRequest',
+        user: {
+          $type: 'api.users.User',
+          id: user.id,
+          email: user.email,
+          username: user.username ?? '',
+        },
+      };
 
-    return response.credentials;
+      const response = await this.grpcClient.call(
+        this.usersService.getUserCredentials(request),
+        'Credentials.getUserCredentials',
+      );
+
+      return response.credentials;
+    } catch (error) {
+      handleGrpcError(error);
+    }
   }
 
+  /**
+   * Creates a new credential for the user
+   * @param {User} user - The authenticated user
+   * @param {CreateCredentialDto} createCredentialDto - Credential creation data
+   * @returns {Promise<UsersProto.Credential>} The created credential
+   * @throws {NotFoundException} When user is not found
+   * @throws {GrpcException} When gRPC service fails
+   */
+  @ApiOperation({ summary: 'Create new credential' })
+  @ApiBody({ type: CreateCredentialDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Credential created successfully',
+    type: JSON.stringify(UsersProto.Credential),
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiResponse({ status: 500, description: 'gRPC service error' })
+  @Throttle({ default: { ttl: 60000, limit: 5 } }) // 5 requests per minute
   @Post()
   public async createCredential(
     @CurrentUser() user: User,
     @Body() createCredentialDto: CreateCredentialDto,
   ): Promise<UsersProto.Credential> {
-    const request: UsersProto.CreateCredentialRequest = {
-      $type: 'api.users.CreateCredentialRequest',
-      user: {
-        $type: 'api.users.User',
-        id: user.id,
-        email: user.email,
-        username: user.username ?? '',
-      },
-      credential: {
-        $type: 'api.users.CreateCredentialDto',
-        ...createCredentialDto,
-      },
-    };
+    if (!user?.id) {
+      throw new NotFoundException('Unauthorized: User not found');
+    }
 
-    return await this.grpcClient.call(
-      this.usersService.createCredential(request),
-      'Credentials.createCredential',
-    );
+    try {
+      const request: UsersProto.CreateCredentialRequest = {
+        $type: 'api.users.CreateCredentialRequest',
+        user: {
+          $type: 'api.users.User',
+          id: user.id,
+          email: user.email,
+          username: user.username ?? '',
+        },
+        credential: {
+          $type: 'api.users.CreateCredentialDto',
+          ...createCredentialDto,
+        },
+      };
+
+      return await this.grpcClient.call(
+        this.usersService.createCredential(request),
+        'Credentials.createCredential',
+      );
+    } catch (error) {
+      handleGrpcError(error);
+    }
   }
 
+  /**
+   * Deletes a user credential by ID
+   * @param {User} user - The authenticated user
+   * @param {string} id - Credential identifier
+   * @returns {Promise<UsersProto.Credential>} The deleted credential
+   * @throws {NotFoundException} When user or credential is not found
+   * @throws {GrpcException} When gRPC service fails
+   */
+  @ApiOperation({ summary: 'Delete credential' })
+  @ApiQuery({ name: 'id', type: String, description: 'Credential ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Credential deleted successfully',
+    type: JSON.stringify(UsersProto.Credential),
+  })
+  @ApiResponse({ status: 404, description: 'User or credential not found' })
+  @ApiResponse({ status: 500, description: 'gRPC service error' })
   @Delete()
   public async deleteCredential(
     @CurrentUser() user: User,
-    @Query('id') id: string,
+    @Query('id', ParseIntPipe) id: number,
   ): Promise<UsersProto.Credential> {
-    const request: UsersProto.DeleteCredentialRequest = {
-      $type: 'api.users.DeleteCredentialRequest',
-      user: {
-        $type: 'api.users.User',
-        id: user.id,
-        email: user.email,
-        username: user.username ?? '',
-      },
-      id: Number(id),
-    };
+    if (!user?.id) {
+      throw new NotFoundException('Unauthorized: User not found');
+    }
 
-    return await this.grpcClient.call(
-      this.usersService.deleteCredential(request),
-      'Credentials.deleteCredential',
-    );
+    try {
+      const request: UsersProto.DeleteCredentialRequest = {
+        $type: 'api.users.DeleteCredentialRequest',
+        user: {
+          $type: 'api.users.User',
+          id: user.id,
+          email: user.email,
+          username: user.username ?? '',
+        },
+        id,
+      };
+
+      return await this.grpcClient.call(
+        this.usersService.deleteCredential(request),
+        'Credentials.deleteCredential',
+      );
+    } catch (error) {
+      handleGrpcError(error);
+    }
   }
 
+  /**
+   * Reveals the value of a credential
+   * @param {User} user - The authenticated user
+   * @param {string} id - Credential identifier
+   * @returns {Promise<UsersProto.RevealedCredential>} The revealed credential
+   * @throws {NotFoundException} When user or credential is not found
+   * @throws {GrpcException} When gRPC service fails
+   */
+  @ApiOperation({ summary: 'Reveal credential value' })
+  @ApiParam({ name: 'id', type: String, description: 'Credential ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Credential value revealed successfully',
+    type: JSON.stringify(UsersProto.RevealedCredential),
+  })
+  @ApiResponse({ status: 404, description: 'User or credential not found' })
+  @ApiResponse({ status: 500, description: 'gRPC service error' })
+  @Throttle({ default: { ttl: 60000, limit: 10 } }) // 10 requests per minute
   @Get(':id/reveal')
   public async getRevealedCredentialValue(
     @CurrentUser() user: User,
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
   ): Promise<UsersProto.RevealedCredential> {
-    const request: UsersProto.RevealCredentialRequest = {
-      $type: 'api.users.RevealCredentialRequest',
-      user: {
-        $type: 'api.users.User',
-        id: user.id,
-        email: user.email,
-        username: user.username ?? '',
-      },
-      id: Number(id),
-    };
+    if (!user?.id) {
+      throw new NotFoundException('Unauthorized: User not found');
+    }
 
-    const response = await this.grpcClient.call(
-      this.usersService.revealCredential(request),
-      'Credentials.RevealCredential',
-    );
+    try {
+      const request: UsersProto.RevealCredentialRequest = {
+        $type: 'api.users.RevealCredentialRequest',
+        user: {
+          $type: 'api.users.User',
+          id: user.id,
+          email: user.email,
+          username: user.username ?? '',
+        },
+        id,
+      };
 
-    return response;
+      return await this.grpcClient.call(
+        this.usersService.revealCredential(request),
+        'Credentials.RevealCredential',
+      );
+    } catch (error) {
+      handleGrpcError(error);
+    }
   }
 }
