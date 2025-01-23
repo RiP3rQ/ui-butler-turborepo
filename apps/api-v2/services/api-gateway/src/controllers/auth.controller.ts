@@ -95,7 +95,7 @@ export class AuthController {
     };
 
     const result = await this.authProxyService.register(registerRequest);
-    await this.setCookies(response, result);
+    this.setCookies(response, result);
     return result;
   }
 
@@ -150,9 +150,7 @@ export class AuthController {
 
     try {
       const result = await this.authProxyService.login(loginRequest);
-      if (result) {
-        await this.setCookies(response, result);
-      }
+      this.setCookies(response, result);
       return result;
     } catch (error) {
       console.error('Login error:', error);
@@ -200,11 +198,7 @@ export class AuthController {
 
       const result = await this.authProxyService.refreshToken(refreshRequest);
 
-      if (!result) {
-        throw new UnauthorizedException('Token refresh failed');
-      }
-
-      await this.setCookies(response, result);
+      this.setCookies(response, result);
       return result;
     } catch (error) {
       console.error('Refresh token error:', error);
@@ -303,10 +297,10 @@ export class AuthController {
    * @param response - Express response object
    * @param authData - Authentication response data
    */
-  private async setCookies(
+  private setCookies(
     response: Response,
     authData: Readonly<AuthProto.AuthResponse>,
-  ): Promise<void> {
+  ): void {
     if (!authData.expiresAccessToken || !authData.expiresRefreshToken) {
       console.error('Invalid auth data received:', authData);
       return;

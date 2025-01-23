@@ -1,15 +1,15 @@
-import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import compression from 'compression';
 import { ConfigService } from '@nestjs/config';
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import compression, { filter } from 'compression';
 import cookieParser from 'cookie-parser';
 import { Logger } from 'nestjs-pino';
 import { ApiGatewayModule } from './api-gateway.module';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
 import { EnhancedResponseInterceptor } from './interceptors/enhanced-response.interceptor';
-import { MetricsService } from './metrics/metrics.service';
 import { MetricsInterceptor } from './metrics/metrics.interceptor';
+import { MetricsService } from './metrics/metrics.service';
 import { PerformanceMetrics } from './metrics/performance.metrics';
 
 async function bootstrap() {
@@ -30,7 +30,7 @@ async function bootstrap() {
         if (req.headers['x-no-compression']) {
           return false;
         }
-        return compression.filter(req, res);
+        return filter(req, res);
       },
       level: 6, // compression level (0-9)
       threshold: 100 * 1024, // only compress responses bigger than 100kb
@@ -117,6 +117,6 @@ async function bootstrap() {
 }
 
 bootstrap().catch((error: unknown) => {
-  console.error('Error starting api-gateway:', error);
+  console.error('Error starting api-gateway:', JSON.stringify(error));
   process.exit(1);
 });

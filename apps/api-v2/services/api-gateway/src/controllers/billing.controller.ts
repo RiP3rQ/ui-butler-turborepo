@@ -106,7 +106,7 @@ export class BillingController implements OnModuleInit {
   @ApiResponse({ status: 500, description: 'gRPC service error' })
   @Get('purchase')
   public async purchasePack(
-    @Query('packId') packId: BalancePackId,
+    @Query('packId') packId: BalancePackId | undefined,
     @CurrentUser() user: BillingProto.User,
   ): Promise<BillingProto.UserCreditsResponse> {
     if (!user.id) {
