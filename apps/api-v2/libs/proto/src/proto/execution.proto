@@ -52,8 +52,8 @@ message WorkflowExecution {
     int32 workflowId = 2;
     string userId = 3;
     string status = 4;
-    string startedAt = 5;
-    string endedAt = 6;
+    google.protobuf.Timestamp startedAt = 5;
+    google.protobuf.Timestamp endedAt = 6;
     string trigger = 7;
     string definition = 8;
     Workflow workflow = 9;
@@ -79,8 +79,8 @@ message ExecutionPhase {
     int32 number = 5;
     string node = 6;
     string name = 7;
-    string startedAt = 8;
-    string endedAt = 9;
+    google.protobuf.Timestamp startedAt = 8;
+    google.protobuf.Timestamp endedAt = 9;
     string temp = 10;
 }
 
