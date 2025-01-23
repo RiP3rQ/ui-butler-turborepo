@@ -1,3 +1,5 @@
+export type ApprovalDecision = "approve" | "reject";
+
 export interface PendingChange {
   id: number;
   type: string;
@@ -15,6 +17,9 @@ export interface ExecutionsEndpoints {
       pendingApproval: PendingChange[];
       status: string;
     };
+    request: {
+      executionId: number;
+    };
   };
 
   /** POST /executions/:executionId/approve */
@@ -28,6 +33,10 @@ export interface ExecutionsEndpoints {
     response: {
       message: string;
       status: string;
+    };
+    request: {
+      executionId: number;
+      decision: ApprovalDecision;
     };
   };
 }

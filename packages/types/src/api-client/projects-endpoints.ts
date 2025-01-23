@@ -31,13 +31,17 @@ export interface ProjectsEndpoints {
       projectId: number;
     };
     response: ProjectDetails;
+    request: {
+      projectId: number;
+    };
   };
 
   /** POST /projects */
   createProject: {
     body: {
-      name: string;
-      description: string;
+      title: string;
+      color: string;
+      description?: string;
     };
     response: Project;
   };

@@ -31,15 +31,23 @@ export interface WorkflowsEndpoints {
       workflowId: number;
     };
     response: Workflow;
+    request: {
+      workflowId: number;
+    };
   };
 
   /** POST /workflows */
   createWorkflow: {
     body: {
       name: string;
-      description: string;
+      description?: string | undefined;
+      definition?: string | undefined;
     };
     response: Workflow;
+    request: {
+      name: string;
+      description: string;
+    };
   };
 
   /** DELETE /workflows/:id */
@@ -48,16 +56,25 @@ export interface WorkflowsEndpoints {
       id: number;
     };
     response: Workflow;
+    request: {
+      id: number;
+    };
   };
 
   /** POST /workflows/duplicate */
   duplicateWorkflow: {
     body: {
+      name: string;
+      workflowId: number;
+      description?: string | undefined;
+      definition?: string | undefined;
+    };
+    response: Workflow;
+    request: {
       workflowId: number;
       name: string;
       description: string;
     };
-    response: Workflow;
   };
 
   /** POST /workflows/:id/publish */
@@ -70,6 +87,10 @@ export interface WorkflowsEndpoints {
       flowDefinition: string;
     };
     response: Workflow;
+    request: {
+      workflowId: number;
+      flowDefinition: string;
+    };
   };
 
   /** POST /workflows/:id/unpublish */
@@ -78,6 +99,9 @@ export interface WorkflowsEndpoints {
       id: number;
     };
     response: Workflow;
+    request: {
+      id: number;
+    };
   };
 
   /** POST /workflows/run-workflow */
@@ -91,6 +115,11 @@ export interface WorkflowsEndpoints {
       url: string;
       executionId: number;
     };
+    request: {
+      workflowId: number;
+      flowDefinition?: string;
+      componentId: number;
+    };
   };
 
   /** PATCH /workflows */
@@ -100,6 +129,10 @@ export interface WorkflowsEndpoints {
       definition: string;
     };
     response: Workflow;
+    request: {
+      workflowId: number;
+      definition: string;
+    };
   };
 
   /** GET /workflows/historic */
@@ -108,6 +141,9 @@ export interface WorkflowsEndpoints {
       workflowId: number;
     };
     response: WorkflowExecution[];
+    request: {
+      workflowId: number;
+    };
   };
 
   /** GET /workflows/executions */
@@ -119,6 +155,9 @@ export interface WorkflowsEndpoints {
       execution: WorkflowExecution;
       phases: WorkflowPhase[];
     };
+    request: {
+      executionId: string | number;
+    };
   };
 
   /** GET /workflows/phases/:id */
@@ -129,6 +168,9 @@ export interface WorkflowsEndpoints {
     response: {
       phase: WorkflowPhase;
       logs: string[];
+    };
+    request: {
+      phaseId: number;
     };
   };
 }
