@@ -5,17 +5,17 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@repo/ui/components/ui/card";
-import { Label } from "@repo/ui/components/ui/label";
+} from "@shared/ui/components/ui/card";
+import { Label } from "@shared/ui/components/ui/label";
 import moment from "moment";
-import { type ProjectDetailsType } from "@repo/types";
+import { type ProjectDetails } from "@shared/types";
 import { useQuery } from "@tanstack/react-query";
 import { type JSX, useMemo } from "react";
 import { MultipleComponentsView } from "@/components/component-viewer/multiple-component-view";
 import { getProjectsDetailsFunction } from "@/actions/projects/server-actions";
 
 interface ProjectCardProps {
-  projectData: ProjectDetailsType;
+  projectData: ProjectDetails;
   projectId: string;
 }
 
@@ -30,7 +30,7 @@ export function ProjectCard({
     queryKey: [queryKey],
     queryFn: async () =>
       await getProjectsDetailsFunction({
-        projectId,
+        projectId: Number(projectId),
       }),
     initialData: projectData,
   });

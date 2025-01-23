@@ -1,87 +1,36 @@
-import type {
-  ComponentType,
-  SingleComponentApiResponseType,
-} from "@repo/types";
+import {
+  type Component,
+  type ComponentsEndpoints,
+} from "@shared/types/src/api-client/components-endpoints";
+import { type CodeType } from "@shared/types/src/components";
 import { ApiClient } from "@/lib/api-client";
 import { getErrorMessage } from "@/lib/get-error-message";
-import type { SaveComponentSchemaType } from "@/schemas/component";
-import {
-  type FavoriteComponentRequest,
-  type GenerateCodeRequest,
-  type GetSingleComponentRequest,
-  type UpdateComponentCodeRequest,
-} from "@/actions/components/types";
 
 /**
- * Service class for component-related API calls
+ * Service for handling component-related operations
  */
-export class ComponentService {
+export class ComponentsService {
   private static readonly BASE_PATH = "/components";
 
   /**
-   * Toggles favorite status for a component
+   * Fetches a specific component by ID
    */
-  static async favoriteComponent({
-    projectId,
-    componentId,
-    favoriteValue,
-  }: Readonly<FavoriteComponentRequest>): Promise<ComponentType> {
+  static async getComponent(
+    projectId: number,
+    componentId: number,
+  ): Promise<Component> {
     try {
-      const { data } = await ApiClient.post<
-        FavoriteComponentRequest,
-        ComponentType
-      >(`${this.BASE_PATH}/favorite`, {
-        body: {
-          projectId,
-          componentId,
-          favoriteValue,
-        },
-      });
-      return data;
-    } catch (error) {
-      console.error("Failed to favorite component:", error);
-      throw new Error(getErrorMessage(error));
-    }
-  }
+      const response = await ApiClient.get<
+        ComponentsEndpoints["getComponent"]["response"]
+      >(`${this.BASE_PATH}/${String(projectId)}/${String(componentId)}`);
 
-  /**
-   * Generates code for a component
-   */
-  static async generateCode({
-    componentId,
-    codeType,
-  }: Readonly<GenerateCodeRequest>): Promise<ComponentType> {
-    try {
-      const { data } = await ApiClient.post<GenerateCodeRequest, ComponentType>(
-        `${this.BASE_PATH}/generate-code`,
-        {
-          body: {
-            componentId,
-            codeType,
-          },
-        },
-      );
-      return data;
-    } catch (error) {
-      console.error(`Failed to generate ${codeType}:`, error);
-      throw new Error(getErrorMessage(error));
-    }
-  }
+      if (!response.success) {
+        throw new Error("Failed to fetch component");
+      }
 
-  /**
-   * Fetches single component data
-   */
-  static async getSingleComponent({
-    projectId,
-    componentId,
-  }: Readonly<GetSingleComponentRequest>): Promise<SingleComponentApiResponseType> {
-    try {
-      const { data } = await ApiClient.get<SingleComponentApiResponseType>(
-        `${this.BASE_PATH}/${projectId}/${componentId}`,
-      );
-      return data;
+      return response.data;
     } catch (error) {
-      console.error("Failed to fetch component data:", error);
+      console.error("Failed to fetch component:", error);
       throw new Error(getErrorMessage(error));
     }
   }
@@ -90,16 +39,27 @@ export class ComponentService {
    * Saves a new component
    */
   static async saveComponent(
-    form: Readonly<SaveComponentSchemaType>,
-  ): Promise<ComponentType> {
+    title: string,
+    code: string,
+    projectId: number,
+  ): Promise<Component> {
     try {
-      const { data } = await ApiClient.post<
-        SaveComponentSchemaType,
-        ComponentType
+      const response = await ApiClient.post<
+        ComponentsEndpoints["saveComponent"]["body"],
+        ComponentsEndpoints["saveComponent"]["response"]
       >(this.BASE_PATH, {
-        body: form,
+        body: {
+          title,
+          code,
+          projectId,
+        },
       });
-      return data;
+
+      if (!response.success) {
+        throw new Error("Failed to save component");
+      }
+
+      return response.data;
     } catch (error) {
       console.error("Failed to save component:", error);
       throw new Error(getErrorMessage(error));
@@ -107,23 +67,90 @@ export class ComponentService {
   }
 
   /**
+   * Updates the favorite status of a component
+   */
+  static async toggleFavorite(
+    projectId: number,
+    componentId: number,
+    favoriteValue: boolean,
+  ): Promise<Component> {
+    try {
+      const response = await ApiClient.post<
+        ComponentsEndpoints["favoriteComponent"]["body"],
+        ComponentsEndpoints["favoriteComponent"]["response"]
+      >(`${this.BASE_PATH}/favorite`, {
+        body: {
+          projectId,
+          componentId,
+          favoriteValue,
+        },
+      });
+
+      if (!response.success) {
+        throw new Error("Failed to update favorite status");
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error("Failed to toggle favorite:", error);
+      throw new Error(getErrorMessage(error));
+    }
+  }
+
+  /**
    * Updates component code
    */
-  static async updateCode({
-    componentId,
-    codeType,
-    content,
-  }: Readonly<UpdateComponentCodeRequest>): Promise<ComponentType> {
+  static async updateComponentCode(
+    componentId: number,
+    codeType: CodeType,
+    content: string,
+  ): Promise<Component> {
     try {
-      const { data } = await ApiClient.patch<
-        { content: string },
-        ComponentType
+      const response = await ApiClient.patch<
+        ComponentsEndpoints["updateComponentCode"]["body"],
+        ComponentsEndpoints["updateComponentCode"]["response"]
       >(`${this.BASE_PATH}/${String(componentId)}/${codeType}`, {
-        body: { content },
+        body: {
+          content,
+        },
       });
-      return data;
+
+      if (!response.success) {
+        throw new Error("Failed to update component code");
+      }
+
+      return response.data;
     } catch (error) {
-      console.error(`Failed to update ${codeType}:`, error);
+      console.error("Failed to update component code:", error);
+      throw new Error(getErrorMessage(error));
+    }
+  }
+
+  /**
+   * Generates code for a component
+   */
+  static async generateCode(
+    componentId: number,
+    codeType: CodeType,
+  ): Promise<Component> {
+    try {
+      const response = await ApiClient.post<
+        ComponentsEndpoints["generateCode"]["body"],
+        ComponentsEndpoints["generateCode"]["response"]
+      >(`${this.BASE_PATH}/generate-code`, {
+        body: {
+          componentId,
+          codeType,
+        },
+      });
+
+      if (!response.success) {
+        throw new Error("Failed to generate code");
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error("Failed to generate code:", error);
       throw new Error(getErrorMessage(error));
     }
   }

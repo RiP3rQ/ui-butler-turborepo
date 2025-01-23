@@ -1,9 +1,9 @@
+import { GenerateComponentRequestDto } from '@microservices/common';
+import { ComponentsProto } from '@microservices/proto';
 import { Body, Controller, Logger, Post, Req, Res } from '@nestjs/common';
-import { GenerateComponentRequestDto } from '@app/common';
-import { ComponentsProto } from '@app/proto';
-import { CodeType } from '@repo/types';
-import { type Response } from 'express';
 import { GrpcMethod, RpcException } from '@nestjs/microservices';
+import { CodeType } from '@shared/types';
+import { type Response } from 'express';
 import { ComponentsService } from './components.service';
 // import { Observable } from 'rxjs';
 // import { Metadata, ServerDuplexStream } from '@grpc/grpc-js';

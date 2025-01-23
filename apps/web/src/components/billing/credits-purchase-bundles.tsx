@@ -7,15 +7,18 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@repo/ui/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@repo/ui/components/ui/radio-group";
-import { Label } from "@repo/ui/components/ui/label";
-import { Button } from "@repo/ui/components/ui/button";
+} from "@shared/ui/components/ui/card";
+import {
+  RadioGroup,
+  RadioGroupItem,
+} from "@shared/ui/components/ui/radio-group";
+import { Label } from "@shared/ui/components/ui/label";
+import { Button } from "@shared/ui/components/ui/button";
 import { CreditCardIcon } from "lucide-react";
 import { type JSX, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { type BalancePackId, CreditPacks } from "@repo/types";
+import { type BalancePackId, CreditPacks } from "@shared/types";
 import { purchaseCredits } from "@/actions/billing/server-actions";
 
 export function CreditsPurchaseBundles(): JSX.Element {

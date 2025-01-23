@@ -1,4 +1,4 @@
-import type { Period } from "@repo/types";
+import type { Period } from "@shared/types";
 import { type JSX } from "react";
 import { PeriodSelector } from "@/components/analytics/period-selector";
 import { AnalyticsPageContent } from "@/components/analytics/analytics-page-content";

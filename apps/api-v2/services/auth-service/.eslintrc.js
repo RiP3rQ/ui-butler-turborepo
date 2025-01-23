@@ -1,6 +1,6 @@
 module.exports = {
   root: true,
-  extends: ['@repo/eslint-config/nest.js'],
+  extends: ['@shared/eslint-config/nest.js'],
   parserOptions: {
     tsconfigRootDir: __dirname,
     project: ['./tsconfig.json'],
@@ -11,5 +11,5 @@ module.exports = {
     '@typescript-eslint/no-extraneous-class': 'off',
     '@typescript-eslint/no-empty-function': 'off',
   },
-  ignorePatterns: ['dist/**/*', 'node_modules/**/*'],
+  ignorePatterns: ['dist/**/*', 'node_modules/**/*', 'src/test/**/*'],
 };

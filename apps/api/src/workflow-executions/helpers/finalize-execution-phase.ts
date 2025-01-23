@@ -2,7 +2,7 @@ import {
   ExecutionPhaseStatus,
   LogCollector,
   WorkflowExecutionStatus,
-} from '@repo/types';
+} from '@shared/types';
 import { DrizzleDatabase } from '../../database/merged-schemas';
 import {
   executionLog,

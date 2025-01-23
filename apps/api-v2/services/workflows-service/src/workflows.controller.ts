@@ -1,5 +1,3 @@
-import { Controller, Logger } from '@nestjs/common';
-import { GrpcMethod } from '@nestjs/microservices';
 import {
   CreateWorkflowDto,
   DuplicateWorkflowDto,
@@ -7,8 +5,10 @@ import {
   RunWorkflowDto,
   UpdateWorkflowDto,
   type User,
-} from '@app/common';
-import { WorkflowsProto } from '@app/proto';
+} from '@microservices/common';
+import { WorkflowsProto } from '@microservices/proto';
+import { Controller, Logger } from '@nestjs/common';
+import { GrpcMethod } from '@nestjs/microservices';
 import { WorkflowsService } from './workflows.service';
 
 @Controller()

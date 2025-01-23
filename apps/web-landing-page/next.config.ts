@@ -4,7 +4,7 @@ const { NEXT_PUBLIC_MAIN_APP_URL, NEXT_PUBLIC_MAIN_AUTH_APP_URL } = process.env;
 
 const nextConfig: NextConfig = {
   /* config options here */
-  transpilePackages: ["@repo/ui"],
+  transpilePackages: ["@shared/ui"],
   redirects: async () => {
     return [
       {

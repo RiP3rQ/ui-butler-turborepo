@@ -7,15 +7,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@repo/ui/components/ui/dialog";
-import { Button } from "@repo/ui/components/ui/button";
+} from "@shared/ui/components/ui/dialog";
+import { Button } from "@shared/ui/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { Copy, Eye, EyeOff, Loader2 } from "lucide-react";
 import {
   type UserCredentials,
   type UserDecryptedCredentials,
-} from "@repo/types";
-import { cn } from "@repo/ui/lib/utils";
+} from "@shared/types";
+import { cn } from "@shared/ui/lib/utils";
 import { toast } from "sonner";
 import { getRevealedCredentialValue } from "@/actions/credentials/server-actions";
 

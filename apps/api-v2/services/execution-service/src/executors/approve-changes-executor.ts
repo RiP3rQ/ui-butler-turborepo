@@ -1,9 +1,9 @@
+import { type DrizzleDatabase } from '@microservices/database';
+import { type ServerApproveChangesTaskType } from '@shared/tasks-registry';
 import {
   type ExecutionEnvironment,
   WorkflowExecutionStatus,
-} from '@repo/types';
-import { type ServerApproveChangesTaskType } from '@repo/tasks-registry';
-import { type DrizzleDatabase } from '@app/database';
+} from '@shared/types';
 import { pauseWorkflowExecution } from '../helpers/pause-workflow-execution';
 
 export async function approveChangesExecutor(

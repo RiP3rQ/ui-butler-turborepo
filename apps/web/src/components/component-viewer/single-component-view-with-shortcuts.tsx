@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { type SingleComponentViewProps } from "@repo/types";
+import { type SingleComponentViewProps } from "@shared/types";
 import { type JSX } from "react";
 import { CodeEditorKeyboardShortcuts } from "@/components/code-editor/code-editor-keyboard-shortcuts";
 import { SingleComponentView } from "@/components/component-viewer/single-component-view";
@@ -14,8 +14,8 @@ export default function SingleComponentViewWithShortcuts(
     queryKey: ["single-component", props.projectId, props.componentId],
     queryFn: () =>
       getSingleComponentsDataFunction({
-        projectId: props.projectId,
-        componentId: props.componentId,
+        projectId: Number(props.projectId),
+        componentId: Number(props.componentId),
       }),
     initialData: props.componentsData,
   });

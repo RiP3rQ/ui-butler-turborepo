@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@shared/ui/components/ui/button";
 import { DownloadCloudIcon } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";

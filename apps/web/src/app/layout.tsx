@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import "@repo/ui/globals.css";
-import { SidebarProvider } from "@repo/ui/components/ui/sidebar";
+import "@shared/ui/globals.css";
+import { SidebarProvider } from "@shared/ui/components/ui/sidebar";
 import { cookies } from "next/headers";
-import { ToastProvider } from "@repo/ui/providers/toast-provider";
+import { ToastProvider } from "@shared/ui/providers/toast-provider";
 import { type JSX } from "react";
 import { QueryProvider } from "@/providers/query-provider";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";

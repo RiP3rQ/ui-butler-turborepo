@@ -1,23 +1,25 @@
 // auth.controller.ts
 import {
-  Body,
-  Controller,
-  Get,
-  NotFoundException,
-  Post,
-  Res,
-  UnauthorizedException,
-  UseGuards,
-} from '@nestjs/common';
-import { type Response } from 'express';
-import {
   CurrentUser,
   GithubAuthGuard,
   GoogleAuthGuard,
   JwtRefreshAuthGuard,
   LocalAuthGuard,
-} from '@app/common';
-import { AuthProto } from '@app/proto';
+} from '@microservices/common';
+import { AuthProto } from '@microservices/proto';
+import { CacheInterceptor } from '@nestjs/cache-manager';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  NotFoundException,
+  Post,
+  Res,
+  UnauthorizedException,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import {
   ApiBody,
   ApiCookieAuth,
@@ -28,13 +30,26 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { type Response } from 'express';
 import { AuthProxyService } from '../proxies/auth.proxy.service';
 
+/**
+ * Authentication controller handling user registration, login, and OAuth flows
+ * @remarks Uses gRPC for communication with auth microservice
+ */
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authProxyService: AuthProxyService) {}
 
+  /**
+   * Register a new user
+   * @param userData - User registration data
+   * @param response - Express response object for setting cookies
+   * @returns AuthResponse with tokens and expiration times
+   * @throws {NotFoundException} When user data is missing
+   * @throws {RpcException} When gRPC auth service fails
+   */
   @Post('register')
   @ApiOperation({
     summary: 'Register new user',
@@ -52,18 +67,23 @@ export class AuthController {
     },
   })
   @ApiResponse({
-    status: 201,
+    status: HttpStatus.CREATED,
     description: 'User successfully registered',
+    type: JSON.stringify(AuthProto.AuthResponse),
   })
   @ApiNotFoundResponse({
     description: 'User data not found in request body',
   })
+  @ApiResponse({
+    status: HttpStatus.CONFLICT,
+    description: 'Email already exists',
+  })
   public async register(
-    @Body() userData: AuthProto.CreateUserDto,
+    @Body() userData: Readonly<AuthProto.CreateUserDto>,
     @Res({ passthrough: true }) response: Response,
   ): Promise<AuthProto.AuthResponse> {
-    if (typeof userData === 'undefined') {
-      throw new NotFoundException('User not found in request body');
+    if (!userData.email || !userData.password) {
+      throw new NotFoundException('Required user data missing in request body');
     }
 
     const registerRequest: AuthProto.RegisterRequest = {
@@ -79,6 +99,13 @@ export class AuthController {
     return result;
   }
 
+  /**
+   * Authenticate user login
+   * @param user - User data from LocalAuthGuard
+   * @param response - Express response object
+   * @returns AuthResponse with tokens
+   * @throws {UnauthorizedException} When credentials are invalid
+   */
   @Post('login')
   @UseGuards(LocalAuthGuard)
   @ApiOperation({
@@ -96,18 +123,19 @@ export class AuthController {
     },
   })
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
     description: 'User successfully logged in',
+    type: JSON.stringify(AuthProto.AuthResponse),
   })
   @ApiUnauthorizedResponse({
     description: 'Invalid credentials',
   })
   public async login(
-    @CurrentUser() user: AuthProto.User,
+    @CurrentUser() user: Readonly<AuthProto.User>,
     @Res({ passthrough: true }) response: Response,
   ): Promise<AuthProto.AuthResponse> {
-    if (typeof user === 'undefined') {
-      throw new UnauthorizedException('No user data provided');
+    if (!user.id || !user.email) {
+      throw new UnauthorizedException('Invalid user data provided');
     }
 
     const loginRequest: AuthProto.LoginRequest = {
@@ -122,37 +150,42 @@ export class AuthController {
 
     try {
       const result = await this.authProxyService.login(loginRequest);
-      if (typeof result !== 'undefined') {
-        this.setCookies(response, result);
-      }
+      this.setCookies(response, result);
       return result;
     } catch (error) {
       console.error('Login error:', error);
-      throw new UnauthorizedException('Login failed');
+      throw new UnauthorizedException('Authentication failed');
     }
   }
 
+  /**
+   * Refresh access token using refresh token
+   * @param user - User data from JwtRefreshAuthGuard
+   * @param response - Express response object
+   * @returns AuthResponse with new tokens
+   * @throws {UnauthorizedException} When refresh token is invalid
+   */
   @Post('refresh')
   @UseGuards(JwtRefreshAuthGuard)
+  @UseInterceptors(CacheInterceptor)
   @ApiOperation({
     summary: 'Refresh access token',
     description: 'Get new access token using refresh token',
   })
   @ApiCookieAuth('Refresh')
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
     description: 'New access token generated',
+    type: JSON.stringify(AuthProto.AuthResponse),
   })
   @ApiUnauthorizedResponse({
     description: 'Invalid or expired refresh token',
   })
   public async refreshToken(
-    @CurrentUser() user: AuthProto.User,
+    @CurrentUser() user: Readonly<AuthProto.User>,
     @Res({ passthrough: true }) response: Response,
   ): Promise<AuthProto.AuthResponse> {
     try {
-      console.log('Refresh token request for user:', { email: user.email });
-
       const refreshRequest: AuthProto.RefreshTokenRequest = {
         $type: 'api.auth.RefreshTokenRequest',
         user: {
@@ -164,10 +197,6 @@ export class AuthController {
       };
 
       const result = await this.authProxyService.refreshToken(refreshRequest);
-
-      if (typeof result === 'undefined') {
-        throw new UnauthorizedException('Token refresh failed');
-      }
 
       this.setCookies(response, result);
       return result;
@@ -263,11 +292,16 @@ export class AuthController {
     return result;
   }
 
-  private setCookies(response: Response, authData: AuthProto.AuthResponse) {
-    if (
-      typeof authData.expiresAccessToken === 'undefined' ||
-      typeof authData.expiresRefreshToken === 'undefined'
-    ) {
+  /**
+   * Set authentication cookies in response
+   * @param response - Express response object
+   * @param authData - Authentication response data
+   */
+  private setCookies(
+    response: Response,
+    authData: Readonly<AuthProto.AuthResponse>,
+  ): void {
+    if (!authData.expiresAccessToken || !authData.expiresRefreshToken) {
       console.error('Invalid auth data received:', authData);
       return;
     }
@@ -275,6 +309,7 @@ export class AuthController {
     const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' as const,
     };
 
     try {
@@ -303,7 +338,7 @@ export class AuthController {
       }
     } catch (error) {
       console.error('Error setting cookies:', error);
-      // You might want to throw an error here or handle it differently
+      throw new UnauthorizedException('Failed to set authentication cookies');
     }
   }
 }

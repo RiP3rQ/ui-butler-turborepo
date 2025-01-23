@@ -1,5 +1,9 @@
+import {
+  DATABASE_CONNECTION,
+  type NeonDatabaseType,
+  sql,
+} from '@microservices/database';
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { DATABASE_CONNECTION, type NeonDatabaseType, sql } from '@app/database';
 import { Gauge, Registry } from 'prom-client';
 
 interface TableRow extends Record<string, unknown> {
@@ -255,9 +259,7 @@ export class DatabaseStatsService {
     );
   }
 
-  private parseMetricValue(
-    value: string | number | null | undefined | unknown,
-  ): number {
+  private parseMetricValue(value: unknown): number {
     if (value === null || value === undefined) return 0;
     const parsed = Number(value);
     return isNaN(parsed) ? 0 : parsed;

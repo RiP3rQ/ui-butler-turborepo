@@ -4,7 +4,7 @@ import {
   FolderGit2Icon,
   MessageCircleHeartIcon,
 } from "lucide-react";
-import type { DashboardStatCardsValuesResponse } from "@repo/types";
+import type { DashboardStatCardsValuesResponse } from "@shared/types";
 import { useQuery } from "@tanstack/react-query";
 import { type JSX } from "react";
 import SingleStatCard from "@/components/analytics/stat-cards/single-stat-card";

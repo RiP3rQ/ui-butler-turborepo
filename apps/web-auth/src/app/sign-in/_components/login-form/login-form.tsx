@@ -1,9 +1,9 @@
 "use client";
 
 import { type JSX } from "react";
-import { Form } from "@repo/ui/components/ui/form";
-import { cn } from "@repo/ui/lib/utils";
-import { Button } from "@repo/ui/components/ui/button";
+import { Form } from "@shared/ui/components/ui/form";
+import { cn } from "@shared/ui/lib/utils";
+import { Button } from "@shared/ui/components/ui/button";
 import { LoginFormFields } from "@/app/sign-in/_components/login-form/login-form-fields";
 import { SocialLoginButtons } from "@/app/sign-in/_components/social-platform-buttons/social-buttons";
 import { useLoginForm } from "@/hooks/use-login-form";

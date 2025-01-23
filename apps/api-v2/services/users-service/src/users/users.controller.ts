@@ -1,7 +1,7 @@
+import { status } from '@grpc/grpc-js';
+import { UsersProto } from '@microservices/proto';
 import { Controller, Logger } from '@nestjs/common';
 import { GrpcMethod, RpcException } from '@nestjs/microservices';
-import { status } from '@grpc/grpc-js';
-import { UsersProto } from '@app/proto';
 import { UsersService } from './users.service';
 
 @Controller()

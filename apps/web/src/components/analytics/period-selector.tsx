@@ -1,14 +1,14 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import type { Period } from "@repo/types";
+import type { Period } from "@shared/types";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@repo/ui/components/ui/select";
+} from "@shared/ui/components/ui/select";
 import { type JSX } from "react";
 
 const MONTHS_NAMES: readonly string[] = [

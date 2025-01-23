@@ -3,7 +3,7 @@ import {
   ExecutionEnvironment,
   TaskType,
   WorkflowExecutionStatus,
-} from '@repo/types';
+} from '@shared/types';
 import { setCodeContextExecutor } from './set-code-context-executor';
 import { optimizeCodeExecutor } from './optimize-code-executor';
 import { improveStylesExecutor } from './improve-styles-executor';

@@ -3,8 +3,8 @@ import type {
   AppNodeMissingInputs,
   WorkflowExecutionPlan,
   WorkflowExecutionPlanError,
-} from "@repo/types";
-import { FlowToExecutionPlanValidationType } from "@repo/types";
+} from "@shared/types";
+import { FlowToExecutionPlanValidationType } from "@shared/types";
 import type { Edge } from "@xyflow/react";
 import { ClientTaskRegister } from "./tasks/register";
 

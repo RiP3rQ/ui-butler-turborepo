@@ -1,6 +1,6 @@
+import { UsersProto } from '@microservices/proto';
 import { Controller, Logger } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
-import { UsersProto } from '@app/proto';
 import { CredentialsService } from './credentials.service';
 
 @Controller()

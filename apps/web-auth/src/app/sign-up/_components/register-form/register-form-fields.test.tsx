@@ -6,7 +6,7 @@ import { type registerFormSchema } from "@/schemas/register-schema";
 import { RegisterFormFields } from "@/app/sign-up/_components/register-form/register-form-fields";
 
 // Mock UI components
-jest.mock("@repo/ui/components/ui/form", () => ({
+jest.mock("@shared/ui/components/ui/form", () => ({
   FormField: ({ render, disabled, name }: any) =>
     render({
       field: {
@@ -27,7 +27,7 @@ jest.mock("@repo/ui/components/ui/form", () => ({
   FormMessage: () => <div data-testid="form-message" />,
 }));
 
-jest.mock("@repo/ui/components/ui/input", () => ({
+jest.mock("@shared/ui/components/ui/input", () => ({
   Input: ({
     type,
     placeholder,
@@ -51,7 +51,7 @@ jest.mock("@repo/ui/components/ui/input", () => ({
   ),
 }));
 
-jest.mock("@repo/ui/components/ui/separator", () => ({
+jest.mock("@shared/ui/components/ui/separator", () => ({
   Separator: () => <hr data-testid="separator" />,
 }));
 

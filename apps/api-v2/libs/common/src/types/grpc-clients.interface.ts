@@ -1,4 +1,4 @@
-import { type AuthProto, type UsersProto } from "@app/proto";
+import { type AuthProto, type UsersProto } from "@microservices/proto";
 import { type Observable } from "rxjs";
 
 export interface AuthServiceClient {

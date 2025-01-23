@@ -1,5 +1,5 @@
-import type { IExecutionPhaseStatus } from "@repo/types";
-import { ExecutionPhaseStatus } from "@repo/types";
+import type { IExecutionPhaseStatus } from "@shared/types";
+import { ExecutionPhaseStatus } from "@shared/types";
 import {
   CircleCheckIcon,
   CircleDashedIcon,

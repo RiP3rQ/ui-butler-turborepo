@@ -1,6 +1,6 @@
+import { BillingProto } from '@microservices/proto';
 import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
-import { BillingProto } from '@app/proto';
 import { BillingService } from './billing.service';
 
 @Controller()

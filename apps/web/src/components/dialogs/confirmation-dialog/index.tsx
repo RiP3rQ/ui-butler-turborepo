@@ -1,6 +1,6 @@
 import { type JSX } from "react";
 import { Loader2 } from "lucide-react";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@shared/ui/components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -9,7 +9,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@repo/ui/components/ui/dialog";
+} from "@shared/ui/components/ui/dialog";
 import { useConfirmationModalStore } from "@/store/confirmation-modal-store";
 
 export function ConfirmationModal(): JSX.Element {

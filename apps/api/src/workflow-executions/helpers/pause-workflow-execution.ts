@@ -1,6 +1,6 @@
 import { DrizzleDatabase } from '../../database/merged-schemas';
 import { workflowExecutions } from '../../database/schemas/workflow-executions';
-import { WorkflowExecutionStatus } from '@repo/types';
+import { WorkflowExecutionStatus } from '@shared/types';
 import { eq } from 'drizzle-orm';
 
 export async function pauseWorkflowExecution(

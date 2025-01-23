@@ -1,12 +1,12 @@
 "use client";
 
-import { type ProjectType } from "@repo/types";
+import { type ProjectType } from "@shared/types";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@repo/ui/components/ui/avatar";
-import { Button } from "@repo/ui/components/ui/button";
+} from "@shared/ui/components/ui/avatar";
+import { Button } from "@shared/ui/components/ui/button";
 import { useShallow } from "zustand/react/shallow";
 import { useQuery } from "@tanstack/react-query";
 import { type JSX } from "react";

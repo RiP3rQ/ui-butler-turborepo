@@ -1,12 +1,13 @@
-import Image from "next/image";
-import { ArrowRight, ChevronRight, UserIcon, Zap } from "lucide-react";
-import { Wrapper } from "@repo/ui/components/landing-page/wrapper";
-import { Container } from "@repo/ui/components/landing-page/container";
-import Link from "next/link";
-import { Button } from "@repo/ui/components/ui/button";
-import { BorderBeam } from "@repo/ui/components/landing-page/custom-ui/border-beam";
-import { SectionBadge } from "@repo/ui/components/landing-page/custom-ui/section-badge";
-import { cn } from "@repo/ui/lib/utils";
+import { Container } from "@shared/ui/components/landing-page/container";
+import { BorderBeam } from "@shared/ui/components/landing-page/custom-ui/border-beam";
+import { LampContainer } from "@shared/ui/components/landing-page/custom-ui/lamp";
+import { Marquee } from "@shared/ui/components/landing-page/custom-ui/marquee";
+import { SectionBadge } from "@shared/ui/components/landing-page/custom-ui/section-badge";
+import { Footer } from "@shared/ui/components/landing-page/footer";
+import { Icons } from "@shared/ui/components/landing-page/icons";
+import { Navbar } from "@shared/ui/components/landing-page/navbar";
+import { Wrapper } from "@shared/ui/components/landing-page/wrapper";
+import { Button } from "@shared/ui/components/ui/button";
 import {
   Card,
   CardContent,
@@ -14,18 +15,17 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@repo/ui/components/ui/card";
-import { Marquee } from "@repo/ui/components/landing-page/custom-ui/marquee";
-import { LampContainer } from "@repo/ui/components/landing-page/custom-ui/lamp";
-import { Footer } from "@repo/ui/components/landing-page/footer";
-import { Input } from "@repo/ui/components/ui/input";
-import { Icons } from "@repo/ui/components/landing-page/icons";
-import { Navbar } from "@repo/ui/components/landing-page/navbar";
+} from "@shared/ui/components/ui/card";
+import { Input } from "@shared/ui/components/ui/input";
+import { cn } from "@shared/ui/lib/utils";
+import { ArrowRight, ChevronRight, UserIcon, Zap } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import { features, perks, pricingCards, reviews } from "../constants";
 import { isUserLoggerIn } from "../helpers/logged-in-user";
 import {
-  type Perk,
   type Feature,
+  type Perk,
   type PricingCard,
   type Review,
 } from "../types";
@@ -46,7 +46,10 @@ export default async function Home(): Promise<React.ReactNode> {
 
           <Container>
             <div className="flex flex-col items-center justify-center py-20 h-full">
-              <button className="group relative grid overflow-hidden rounded-full px-4 py-1 shadow-[0_1000px_0_0_hsl(0_0%_20%)_inset] transition-colors duration-200">
+              <button
+                type="button"
+                className="group relative grid overflow-hidden rounded-full px-4 py-1 shadow-[0_1000px_0_0_hsl(0_0%_20%)_inset] transition-colors duration-200"
+              >
                 <span>
                   <span className="spark mask-gradient absolute inset-0 h-[100%] w-[100%] animate-flip overflow-hidden rounded-full [mask:linear-gradient(white,_transparent_50%)] before:absolute before:aspect-square before:w-[200%] before:rotate-[-90deg] before:animate-rotate before:bg-[conic-gradient(from_0deg,transparent_0_340deg,white_360deg)] before:content-[''] before:[inset:0_auto_auto_50%] before:[translate:-50%_-15%]" />
                 </span>
@@ -164,7 +167,7 @@ export default async function Home(): Promise<React.ReactNode> {
           </Container>
           <Container>
             <div className="flex items-center justify-center mx-auto mt-8">
-              <Icons.feature className="w-auto h-80" />
+              <Icons.Feature className="w-auto h-80" />
             </div>
           </Container>
           <Container>

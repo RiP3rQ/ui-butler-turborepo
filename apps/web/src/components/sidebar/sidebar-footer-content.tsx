@@ -12,7 +12,7 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@repo/ui/components/ui/avatar";
+} from "@shared/ui/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,15 +21,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@repo/ui/components/ui/dropdown-menu";
+} from "@shared/ui/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@repo/ui/components/ui/sidebar";
-import { logoutUser } from "@repo/ui/actions/auth/logout-user";
-import { Skeleton } from "@repo/ui/components/ui/skeleton";
+} from "@shared/ui/components/ui/sidebar";
+import { logoutUser } from "@shared/ui/actions/auth/logout-user";
+import { Skeleton } from "@shared/ui/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import { type JSX } from "react";
 import { useCurrentUser } from "@/hooks/use-current-user";

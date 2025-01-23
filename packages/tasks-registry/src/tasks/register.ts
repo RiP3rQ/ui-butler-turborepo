@@ -1,4 +1,4 @@
-import { TaskType, type WorkflowTask } from "@repo/types";
+import { TaskType, type WorkflowTask } from "@shared/types";
 import { SetCodeContextTask } from "./set-code-context";
 import { OptimizeCodeTask } from "./optimize-code";
 import { ImproveStylesTask } from "./improve-styles";

@@ -1,12 +1,12 @@
 // auth.service.spec.ts
-import { Test, TestingModule } from '@nestjs/testing';
+import { status } from '@grpc/grpc-js';
+import { type AuthProto, type UsersProto } from '@microservices/proto';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { RpcException } from '@nestjs/microservices';
-import { AuthProto, UsersProto } from '@app/proto';
-import { of, throwError } from 'rxjs';
+import { Test, type TestingModule } from '@nestjs/testing';
 import * as bcrypt from 'bcryptjs';
-import { status } from '@grpc/grpc-js';
+import { of, throwError } from 'rxjs';
 import { AuthService } from '../auth.service';
 
 // Add interfaces for mocked services
@@ -18,11 +18,6 @@ interface MockedUsersService {
 
 interface MockedJwtService {
   sign: jest.Mock;
-}
-
-interface TokenOptions {
-  secret: string;
-  expiresIn: number;
 }
 
 jest.mock('bcryptjs', () => ({
@@ -40,6 +35,10 @@ describe('AuthService', () => {
     getService: jest.fn(),
   };
 
+  const mockJwtService = {
+    sign: jest.fn(),
+  };
+
   beforeEach(async () => {
     mockConfigService = {
       getOrThrow: jest.fn(),
@@ -50,10 +49,6 @@ describe('AuthService', () => {
       createUser: jest.fn(),
       getUserByEmail: jest.fn(),
       updateUser: jest.fn(),
-    };
-
-    const mockJwtService = {
-      sign: jest.fn(),
     };
 
     mockUsersClient.getService.mockReturnValue(usersService);
@@ -90,7 +85,7 @@ describe('AuthService', () => {
         JWT_REFRESH_TOKEN_SECRET: 'refresh-secret',
         AUTH_UI_REDIRECT: 'http://localhost:3000',
       };
-      return config[key];
+      return config[key]!;
     });
   });
 
@@ -114,7 +109,7 @@ describe('AuthService', () => {
     };
 
     beforeEach(() => {
-      mockJwtService.sign.mockImplementation((payload, options) => {
+      mockJwtService.sign.mockImplementation((_payload, options) => {
         return options.secret === 'access-secret'
           ? 'access-token'
           : 'refresh-token';
@@ -167,7 +162,7 @@ describe('AuthService', () => {
 
     beforeEach(() => {
       (bcrypt.hash as jest.Mock).mockResolvedValue('hashed-refresh-token');
-      mockJwtService.sign.mockImplementation((payload, options) => {
+      mockJwtService.sign.mockImplementation((_payload, options) => {
         return options.secret === 'access-secret'
           ? 'access-token'
           : 'refresh-token';
@@ -249,7 +244,7 @@ describe('AuthService', () => {
       jest.clearAllMocks();
 
       (bcrypt.hash as jest.Mock).mockResolvedValue('new-hashed-refresh-token');
-      mockJwtService.sign.mockImplementation((payload, options) => {
+      mockJwtService.sign.mockImplementation((_payload, options) => {
         return options.secret === 'access-secret'
           ? 'new-access-token'
           : 'new-refresh-token';
@@ -281,7 +276,7 @@ describe('AuthService', () => {
     });
 
     it('should throw RpcException when token refresh fails', async () => {
-      (usersService.updateUser as jest.Mock).mockReturnValue(
+      usersService.updateUser.mockReturnValue(
         throwError(() => new Error('Update failed')),
       );
 
@@ -306,7 +301,7 @@ describe('AuthService', () => {
     it('should handle error logging in refreshToken', async () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
-      (usersService.updateUser as jest.Mock).mockReturnValue(
+      usersService.updateUser.mockReturnValue(
         throwError(() => new Error('Refresh error')),
       );
 
@@ -335,7 +330,7 @@ describe('AuthService', () => {
     };
 
     it('should successfully verify user credentials', async () => {
-      (usersService.getUserByEmail as jest.Mock).mockReturnValue(of(mockUser));
+      usersService.getUserByEmail.mockReturnValue(of(mockUser));
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
 
       const result = await service.verifyUser(mockEmail, mockPassword);
@@ -346,7 +341,7 @@ describe('AuthService', () => {
     });
 
     it('should throw RpcException when user is not found', async () => {
-      (usersService.getUserByEmail as jest.Mock).mockReturnValue(of(null));
+      usersService.getUserByEmail.mockReturnValue(of(null));
 
       await expect(service.verifyUser(mockEmail, mockPassword)).rejects.toThrow(
         RpcException,
@@ -354,7 +349,7 @@ describe('AuthService', () => {
     });
 
     it('should throw RpcException when password is invalid', async () => {
-      (usersService.getUserByEmail as jest.Mock).mockReturnValue(of(mockUser));
+      usersService.getUserByEmail.mockReturnValue(of(mockUser));
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
       await expect(service.verifyUser(mockEmail, mockPassword)).rejects.toThrow(
@@ -566,7 +561,7 @@ describe('AuthService', () => {
       };
       const mockRefreshTokenHash = 'hashed-token';
 
-      (usersService.updateUser as jest.Mock).mockReturnValue(of({}));
+      usersService.updateUser.mockReturnValue(of({}));
 
       await (service as any).updateUserRefreshToken(
         mockTokenPayload,
@@ -595,7 +590,7 @@ describe('AuthService', () => {
       };
       const mockRefreshTokenHash = 'hashed-token';
 
-      (usersService.updateUser as jest.Mock).mockReturnValue(
+      usersService.updateUser.mockReturnValue(
         throwError(() => new Error('Update failed')),
       );
 
@@ -616,7 +611,7 @@ describe('AuthService', () => {
         email: 'test@test.com',
       };
 
-      mockJwtService.sign.mockImplementation((payload, options) => {
+      mockJwtService.sign.mockImplementation((_payload, options) => {
         return options.secret === 'access-secret'
           ? 'access-token'
           : 'refresh-token';

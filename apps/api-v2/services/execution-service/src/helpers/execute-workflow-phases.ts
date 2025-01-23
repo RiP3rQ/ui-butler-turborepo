@@ -1,11 +1,15 @@
 import {
-  type Environment,
-  type ExecutionPhase,
-  type ServerSaveEdge,
-  type WorkflowExecution,
+  eq,
+  workflowExecutions,
+  type DrizzleDatabase,
+} from '@microservices/database';
+import {
   WorkflowExecutionStatus,
-} from '@repo/types';
-import { type DrizzleDatabase, eq, workflowExecutions } from '@app/database';
+  type Environment,
+  type ExecutionPhaseWithDatesInsteadOfProtoTimestamp,
+  type ServerSaveEdge,
+  type WorkflowExecutionWithDatesInsteadOfProtoTimestamp,
+} from '@shared/types';
 import { executeWorkflowPhase } from './execute-workflow-phase';
 import { initializeFinalizeExecution } from './initialize-finalize-execution';
 
@@ -13,9 +17,9 @@ export async function executeWorkflowPhases(
   database: DrizzleDatabase,
   environment: Environment,
   executionId: number,
-  phases: ExecutionPhase[],
+  phases: ExecutionPhaseWithDatesInsteadOfProtoTimestamp[],
   edges: ServerSaveEdge[],
-  execution: WorkflowExecution,
+  execution: WorkflowExecutionWithDatesInsteadOfProtoTimestamp,
 ) {
   let executionFailed = false;
   let creditsConsumed = 0;

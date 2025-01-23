@@ -1,7 +1,7 @@
 // components/CodeSection.tsx
 import { Loader2Icon, SaveIcon, XIcon } from "lucide-react";
-import { Button } from "@repo/ui/components/ui/button";
-import { Card, CardContent } from "@repo/ui/components/ui/card";
+import { Button } from "@shared/ui/components/ui/button";
+import { Card, CardContent } from "@shared/ui/components/ui/card";
 import { type JSX } from "react";
 import CodeEditor from "@/components/code-editor/editor";
 

@@ -1,10 +1,10 @@
 "use client";
 
-import { Label } from "@repo/ui/components/ui/label";
+import { Label } from "@shared/ui/components/ui/label";
 import { type JSX, useEffect, useId, useState } from "react";
-import { Input } from "@repo/ui/components/ui/input";
-import { Textarea } from "@repo/ui/components/ui/textarea";
-import type { ParamProps } from "@repo/types";
+import { Input } from "@shared/ui/components/ui/input";
+import { Textarea } from "@shared/ui/components/ui/textarea";
+import type { ParamProps } from "@shared/types";
 
 function StringParamField({
   param,

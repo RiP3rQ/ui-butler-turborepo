@@ -1,9 +1,9 @@
-import { type ExecutionEnvironment } from '@repo/types';
-import { type ServerOptimizeCodeTaskType } from '@repo/tasks-registry';
+import { GET_GEMINI_MODEL } from '@microservices/common';
+import { OptimizePerformancePrompt } from '@shared/prompts';
+import { type ServerOptimizeCodeTaskType } from '@shared/tasks-registry';
+import { type ExecutionEnvironment } from '@shared/types';
 import { generateObject } from 'ai';
 import { z } from 'zod';
-import { OptimizePerformancePrompt } from '@repo/prompts';
-import { GET_GEMINI_MODEL } from '@app/common';
 
 export async function optimizeCodeExecutor(
   environment: ExecutionEnvironment<ServerOptimizeCodeTaskType>,
@@ -40,7 +40,6 @@ export async function optimizeCodeExecutor(
       ],
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- LLM can return empty object
     if (!object.optimizedCode) {
       environment.log.ERROR('Optimized code is empty');
       throw new Error('Failed to optimize code');

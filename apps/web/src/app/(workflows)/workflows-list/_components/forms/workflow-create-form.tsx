@@ -8,10 +8,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@repo/ui/components/ui/form";
-import { Input } from "@repo/ui/components/ui/input";
-import { Textarea } from "@repo/ui/components/ui/textarea";
-import { Button } from "@repo/ui/components/ui/button";
+} from "@shared/ui/components/ui/form";
+import { Input } from "@shared/ui/components/ui/input";
+import { Textarea } from "@shared/ui/components/ui/textarea";
+import { Button } from "@shared/ui/components/ui/button";
 import { Loader2Icon } from "lucide-react";
 import { type JSX } from "react";
 import type {

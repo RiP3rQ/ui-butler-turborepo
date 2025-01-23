@@ -5,7 +5,7 @@ import type {
   DashboardStatCardsValuesResponse,
   DashboardTableFavoritedContentResponse,
   Period,
-} from '@repo/types';
+} from '@shared/types';
 import { and, eq, gte, lte, min, sql } from 'drizzle-orm';
 import { periodToDateRange } from './lib/period-to-date-range';
 import { inArray } from 'drizzle-orm/sql/expressions/conditions';

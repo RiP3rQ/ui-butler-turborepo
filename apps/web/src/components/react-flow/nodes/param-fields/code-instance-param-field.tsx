@@ -1,6 +1,6 @@
 "use client";
 
-import type { ParamProps } from "@repo/types";
+import type { ParamProps } from "@shared/types";
 import { type JSX } from "react";
 
 function CodeInstanceParamField({ param }: Readonly<ParamProps>): JSX.Element {

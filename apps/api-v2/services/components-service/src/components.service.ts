@@ -1,9 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { RpcException } from '@nestjs/microservices';
-import { CodeType } from '@repo/types';
-import { generateText, pipeDataStreamToResponse, streamText } from 'ai';
-import { type Response } from 'express';
-import { singleGeneratedPrompts } from '@repo/prompts';
+import {
+  GenerateCodeDto,
+  GET_GEMINI_MODEL,
+  SaveComponentDto,
+  UpdateComponentCodeDto,
+  User,
+} from '@microservices/common';
 import {
   and,
   Component,
@@ -13,15 +14,14 @@ import {
   eq,
   NewComponent,
   projects,
-} from '@app/database';
-import {
-  GET_GEMINI_MODEL,
-  GenerateCodeDto,
-  SaveComponentDto,
-  UpdateComponentCodeDto,
-  User,
-} from '@app/common';
-import { ComponentsProto } from '@app/proto';
+} from '@microservices/database';
+import { ComponentsProto } from '@microservices/proto';
+import { Inject, Injectable } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
+import { singleGeneratedPrompts } from '@shared/prompts';
+import { CodeType } from '@shared/types';
+import { generateText, pipeDataStreamToResponse, streamText } from 'ai';
+import { type Response } from 'express';
 
 @Injectable()
 export class ComponentsService {

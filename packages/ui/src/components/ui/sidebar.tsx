@@ -11,19 +11,19 @@ import {
   PanelLeft,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useIsMobile } from "@repo/ui/hooks/use-mobile";
-import { cn } from "@repo/ui/lib/utils";
-import { Button } from "@repo/ui/components/ui/button";
-import { Input } from "@repo/ui/components/ui/input";
-import { Separator } from "@repo/ui/components/ui/separator";
-import { Sheet, SheetContent } from "@repo/ui/components/ui/sheet";
-import { Skeleton } from "@repo/ui/components/ui/skeleton";
+import { useIsMobile } from "@shared/ui/hooks/use-mobile";
+import { cn } from "@shared/ui/lib/utils";
+import { Button } from "@shared/ui/components/ui/button";
+import { Input } from "@shared/ui/components/ui/input";
+import { Separator } from "@shared/ui/components/ui/separator";
+import { Sheet, SheetContent } from "@shared/ui/components/ui/sheet";
+import { Skeleton } from "@shared/ui/components/ui/skeleton";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@repo/ui/components/ui/tooltip";
+} from "@shared/ui/components/ui/tooltip";
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;

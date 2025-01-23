@@ -3,7 +3,7 @@ import {
   ExecutionPhase,
   ServerSaveEdge,
   WorkflowExecutionStatus,
-} from '@repo/types';
+} from '@shared/types';
 import { executeWorkflowPhase } from './execute-workflow-phase';
 import { DrizzleDatabase } from '../../database/merged-schemas';
 import { eq } from 'drizzle-orm';

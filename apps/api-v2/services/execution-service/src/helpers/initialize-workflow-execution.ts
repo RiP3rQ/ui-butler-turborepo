@@ -1,18 +1,20 @@
-import { WorkflowExecutionStatus } from '@repo/types';
-import { NotFoundException } from '@nestjs/common';
+import { timestampToDate } from '@microservices/common';
 import {
   type DrizzleDatabase,
   eq,
-  type WorkflowUpdate,
   workflowExecutions,
   workflows,
-} from '@app/database';
+  type WorkflowUpdate,
+} from '@microservices/database';
+import type { Timestamp } from '@microservices/proto';
+import { NotFoundException } from '@nestjs/common';
+import { WorkflowExecutionStatus } from '@shared/types';
 
 export async function initializeWorkflowExecution(
   database: DrizzleDatabase,
   executionId: number,
   workflowId: number,
-  nextRunAt?: Date,
+  nextRunAt?: Timestamp,
 ) {
   const updatedExecutionData = {
     status: WorkflowExecutionStatus.RUNNING,
@@ -23,7 +25,7 @@ export async function initializeWorkflowExecution(
     lastRunAt: new Date(),
     lastRunStatus: WorkflowExecutionStatus.RUNNING,
     lastRunId: executionId.toString(),
-    ...(nextRunAt && { nextRunAt }),
+    ...(nextRunAt && { nextRunAt: timestampToDate(nextRunAt) }),
   };
 
   const [updatedExecution, updatedWorkflow] = await Promise.all([

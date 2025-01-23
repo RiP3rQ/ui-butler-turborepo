@@ -1,7 +1,11 @@
-import type { ProjectDetailsType, ProjectType } from "@repo/types";
+import {
+  type Project,
+  type ProjectDetails,
+  type ProjectsEndpoints,
+} from "@shared/types/src/api-client/projects-endpoints";
 import { ApiClient } from "@/lib/api-client";
-import type { CreateNewProjectSchemaType } from "@/schemas/project";
-import { type GetProjectDetailsRequest } from "@/actions/projects/types";
+import { type CreateNewProjectSchemaType } from "@/schemas/project";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 /**
  * Service class for project-related API calls
@@ -14,52 +18,69 @@ export class ProjectsService {
    */
   static async createProject(
     form: Readonly<CreateNewProjectSchemaType>,
-  ): Promise<ProjectType> {
+  ): Promise<Project> {
     try {
-      const { data } = await ApiClient.post<
-        CreateNewProjectSchemaType,
-        ProjectType
+      const response = await ApiClient.post<
+        ProjectsEndpoints["createProject"]["body"],
+        ProjectsEndpoints["createProject"]["response"]
       >(this.BASE_PATH, {
         body: form,
       });
-      return data;
+
+      if (!response.success) {
+        throw new Error("Failed to create project");
+      }
+
+      return response.data;
     } catch (error) {
       console.error("Failed to create project:", error);
-      throw new Error("Failed to create project");
+      throw new Error(getErrorMessage(error));
     }
   }
 
   /**
    * Fetches project details by ID
    */
-  static async getProjectDetails({
-    projectId,
-  }: Readonly<GetProjectDetailsRequest>): Promise<ProjectDetailsType> {
+  static async getProjectDetails(
+    request: Readonly<ProjectsEndpoints["getProjectDetails"]["request"]>,
+  ): Promise<ProjectDetails> {
     try {
-      if (!projectId) {
+      if (!request.projectId) {
         throw new Error("Project ID is required");
       }
 
-      const { data } = await ApiClient.get<ProjectDetailsType>(
-        `${this.BASE_PATH}/${encodeURIComponent(projectId)}`,
-      );
-      return data;
+      const response = await ApiClient.get<
+        ProjectsEndpoints["getProjectDetails"]["response"]
+      >(`${this.BASE_PATH}/${String(request.projectId)}`);
+
+      if (!response.success) {
+        throw new Error("Failed to get project details");
+      }
+
+      return response.data;
     } catch (error) {
       console.error("Failed to get project details:", error);
-      throw new Error("Failed to get project details");
+      throw new Error(getErrorMessage(error));
     }
   }
 
   /**
    * Fetches all projects for the current user
    */
-  static async getUserProjects(): Promise<ProjectType[]> {
+  static async getUserProjects(): Promise<Project[]> {
     try {
-      const { data } = await ApiClient.get<ProjectType[]>(this.BASE_PATH);
-      return data;
+      const response = await ApiClient.get<
+        ProjectsEndpoints["getProjects"]["response"]
+      >(this.BASE_PATH);
+
+      if (!response.success) {
+        throw new Error("Failed to get user projects");
+      }
+
+      return response.data;
     } catch (error) {
       console.error("Failed to get user projects:", error);
-      throw new Error("Failed to get user projects");
+      throw new Error(getErrorMessage(error));
     }
   }
 }

@@ -1,9 +1,9 @@
-import { ExecutionEnvironment } from '@repo/types';
-import { ServerCreateTypeScriptDocsTaskType } from '@repo/tasks-registry';
+import { ExecutionEnvironment } from '@shared/types';
+import { ServerCreateTypeScriptDocsTaskType } from '@shared/tasks-registry';
 import { generateObject } from 'ai';
 import { GEMINI_MODEL } from '../../common/openai/ai';
 import { z } from 'zod';
-import { CreateTypescriptDocsPrompt } from '@repo/prompts';
+import { CreateTypescriptDocsPrompt } from '@shared/prompts';
 
 export async function createTsDocsExecutor(
   environment: ExecutionEnvironment<ServerCreateTypeScriptDocsTaskType>,

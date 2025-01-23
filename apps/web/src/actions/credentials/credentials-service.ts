@@ -1,8 +1,11 @@
-import type { UserCredentials, UserDecryptedCredentials } from "@repo/types";
+import {
+  type Credential,
+  type CredentialsEndpoints,
+  type RevealedCredential,
+} from "@shared/types/src/api-client/credentials-endpoints";
 import { ApiClient } from "@/lib/api-client";
 import { getErrorMessage } from "@/lib/get-error-message";
 import type { CreateCredentialSchemaType } from "@/schemas/credential";
-import { type DeleteCredentialRequest } from "@/actions/credentials/types";
 
 /**
  * Service class for credentials-related API calls
@@ -15,15 +18,20 @@ export class CredentialsService {
    */
   static async createCredential(
     form: Readonly<CreateCredentialSchemaType>,
-  ): Promise<UserCredentials> {
+  ): Promise<Credential> {
     try {
-      const { data } = await ApiClient.post<
-        CreateCredentialSchemaType,
-        UserCredentials
+      const response = await ApiClient.post<
+        CredentialsEndpoints["createCredential"]["body"],
+        CredentialsEndpoints["createCredential"]["response"]
       >(this.BASE_PATH, {
         body: form,
       });
-      return data;
+
+      if (!response.success) {
+        throw new Error("Failed to create credential");
+      }
+
+      return response.data;
     } catch (error) {
       console.error("Failed to create credential:", error);
       throw new Error(getErrorMessage(error));
@@ -33,14 +41,21 @@ export class CredentialsService {
   /**
    * Deletes a credential by ID
    */
-  static async deleteCredential({
-    id,
-  }: Readonly<DeleteCredentialRequest>): Promise<UserCredentials> {
+  static async deleteCredential(
+    request: Readonly<CredentialsEndpoints["deleteCredential"]["request"]>,
+  ): Promise<Credential> {
     try {
-      const { data } = await ApiClient.delete<UserCredentials>(this.BASE_PATH, {
-        params: { id: id.toString() },
+      const response = await ApiClient.delete<
+        CredentialsEndpoints["deleteCredential"]["response"]
+      >(this.BASE_PATH, {
+        params: { id: String(request.id) },
       });
-      return data;
+
+      if (!response.success) {
+        throw new Error("Failed to delete credential");
+      }
+
+      return response.data;
     } catch (error) {
       console.error("Failed to delete credential:", error);
       throw new Error(getErrorMessage(error));
@@ -50,10 +65,17 @@ export class CredentialsService {
   /**
    * Fetches all user credentials
    */
-  static async getUserCredentials(): Promise<UserCredentials[]> {
+  static async getUserCredentials(): Promise<Credential[]> {
     try {
-      const { data } = await ApiClient.get<UserCredentials[]>(this.BASE_PATH);
-      return data;
+      const response = await ApiClient.get<
+        CredentialsEndpoints["getUserCredentials"]["response"]
+      >(this.BASE_PATH);
+
+      if (!response.success) {
+        throw new Error("Failed to fetch user credentials");
+      }
+
+      return response.data;
     } catch (error) {
       console.error("Failed to fetch user credentials:", error);
       throw new Error(getErrorMessage(error));
@@ -65,13 +87,17 @@ export class CredentialsService {
    */
   static async getRevealedCredentialValue(
     credentialId: number,
-  ): Promise<UserDecryptedCredentials> {
+  ): Promise<RevealedCredential> {
     try {
-      const { data } = await ApiClient.get<UserDecryptedCredentials>(
-        `${this.BASE_PATH}/${String(credentialId)}/reveal`,
-      );
-      console.log("data", data);
-      return data;
+      const response = await ApiClient.get<
+        CredentialsEndpoints["revealCredential"]["response"]
+      >(`${this.BASE_PATH}/${String(credentialId)}/reveal`);
+
+      if (!response.success) {
+        throw new Error("Failed to fetch revealed credential value");
+      }
+
+      return response.data;
     } catch (error) {
       console.error("Failed to fetch revealed credential value:", error);
       throw new Error(getErrorMessage(error));

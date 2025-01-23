@@ -1,6 +1,6 @@
 "use client";
 import { CirclePlayIcon, CoinsIcon, WaypointsIcon } from "lucide-react";
-import type { StatCardsValuesResponse } from "@repo/types";
+import type { StatCardsValuesResponse } from "@shared/types";
 import { type JSX } from "react";
 import SingleStatCard from "@/components/analytics/stat-cards/single-stat-card";
 

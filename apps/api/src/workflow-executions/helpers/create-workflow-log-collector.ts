@@ -5,7 +5,7 @@ import {
   LogFunction,
   LogLevel,
   LogLevels,
-} from '@repo/types';
+} from '@shared/types';
 
 export function createLogCollector(): LogCollector {
   const logs: Log[] = [];

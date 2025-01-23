@@ -1,4 +1,4 @@
-import type { AppNode } from "@repo/types";
+import type { AppNode } from "@shared/types";
 import { ClientTaskRegister } from "./tasks/register";
 
 export function calculateWorkflowCost(nodes: AppNode[]): number {

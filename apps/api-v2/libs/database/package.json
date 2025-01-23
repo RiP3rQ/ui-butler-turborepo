@@ -1,5 +1,5 @@
 {
-  "name": "@app/database",
+  "name": "@microservices/database",
   "version": "0.0.0",
   "description": "",
   "exports": {
@@ -30,8 +30,8 @@
     "pg": "^8.13.1"
   },
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
+    "@shared/eslint-config": "workspace:*",
+    "@shared/typescript-config": "workspace:*",
     "@types/pg": "^8.11.10",
     "drizzle-kit": "^0.28.1",
     "typescript": "^5.7.3"

@@ -1,9 +1,9 @@
-import { type ExecutionEnvironment } from '@repo/types';
-import { type ServerCreateMDXDocsTaskType } from '@repo/tasks-registry';
+import { GET_GEMINI_MODEL } from '@microservices/common';
+import { CreateMdxDocsPrompt } from '@shared/prompts';
+import { type ServerCreateMDXDocsTaskType } from '@shared/tasks-registry';
+import { type ExecutionEnvironment } from '@shared/types';
 import { generateObject } from 'ai';
 import { z } from 'zod';
-import { CreateMdxDocsPrompt } from '@repo/prompts';
-import { GET_GEMINI_MODEL } from '@app/common';
 
 export async function createMdxDocsExecutor(
   environment: ExecutionEnvironment<ServerCreateMDXDocsTaskType>,

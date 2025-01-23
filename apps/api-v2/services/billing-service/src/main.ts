@@ -1,7 +1,7 @@
+import { join } from 'node:path';
 import { NestFactory } from '@nestjs/core';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { type MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { BillingModule } from './billing.module';
-import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
@@ -14,7 +14,7 @@ async function bootstrap() {
           __dirname,
           '../../../libs/proto/src/proto/billing.proto',
         ),
-        url: `${process.env.BILLING_SERVICE_HOST || 'localhost'}:${process.env.BILLING_SERVICE_PORT || '3344'}`,
+        url: `${process.env.BILLING_SERVICE_HOST ?? 'localhost'}:${process.env.BILLING_SERVICE_PORT ?? '3344'}`,
       },
     },
   );
@@ -22,4 +22,7 @@ async function bootstrap() {
   console.log('Billing Microservice is listening');
 }
 
-bootstrap();
+bootstrap().catch((error: unknown) => {
+  console.error('Error starting Billing Microservice:', JSON.stringify(error));
+  process.exit(1);
+});

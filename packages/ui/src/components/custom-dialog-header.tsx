@@ -2,8 +2,8 @@
 
 import type { LucideIcon } from "lucide-react";
 import { type JSX } from "react";
-import { DialogHeader, DialogTitle } from "@repo/ui/components/ui/dialog";
-import { Separator } from "@repo/ui/components/ui/separator";
+import { DialogHeader, DialogTitle } from "@shared/ui/components/ui/dialog";
+import { Separator } from "@shared/ui/components/ui/separator";
 
 interface CustomDialogHeaderProps {
   icon?: LucideIcon;

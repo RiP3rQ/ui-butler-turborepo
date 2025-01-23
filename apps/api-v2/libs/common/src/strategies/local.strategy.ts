@@ -1,9 +1,9 @@
 // local.strategy.ts
+import { AuthProto } from "@microservices/proto";
 import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
+import { type ClientGrpc } from "@nestjs/microservices";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-local";
-import { type ClientGrpc } from "@nestjs/microservices";
-import { AuthProto } from "@app/proto";
 import { firstValueFrom } from "rxjs";
 import { AuthServiceClient } from "../types/grpc-clients.interface";
 

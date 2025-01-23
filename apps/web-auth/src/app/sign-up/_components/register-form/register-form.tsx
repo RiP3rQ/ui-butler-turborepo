@@ -1,12 +1,12 @@
 "use client";
 
-import { type JSX } from "react";
-import { Button } from "@repo/ui/components/ui/button";
-import { cn } from "@repo/ui/lib/utils";
-import { Form } from "@/components/ui/form";
-import { useRegisterForm } from "@/hooks/use-register-form";
-import { RegisterFormFields } from "@/app/sign-up/_components/register-form/register-form-fields";
 import { SocialLoginButtons } from "@/app/sign-in/_components/social-platform-buttons/social-buttons";
+import { RegisterFormFields } from "@/app/sign-up/_components/register-form/register-form-fields";
+import { useRegisterForm } from "@/hooks/use-register-form";
+import { Button } from "@shared/ui/components/ui/button";
+import { Form } from "@shared/ui/components/ui/form";
+import { cn } from "@shared/ui/lib/utils";
+import { type JSX } from "react";
 
 type UserAuthFormProps = React.HTMLAttributes<HTMLDivElement>;
 

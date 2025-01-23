@@ -1,16 +1,16 @@
 "use client";
 
-import { type DashboardTableFavoritedContentResponse } from "@repo/types";
-import { DataTable } from "@repo/ui/components/table/data-table";
-import { Button } from "@repo/ui/components/ui/button";
-import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
-import { type JSX } from "react";
-import { columns } from "@/components/dasboard/table/columns";
 import { getDashboardTableFavoritedContent } from "@/actions/dashboard/server-actions";
+import { columns } from "@/components/dasboard/table/columns";
+import { type FavoritedComponent } from "@shared/types";
+import { DataTable } from "@shared/ui/components/table/data-table";
+import { Button } from "@shared/ui/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { type JSX } from "react";
 
 interface DashboardFavoritedTableProps {
-  initialData?: DashboardTableFavoritedContentResponse[];
+  initialData?: FavoritedComponent[];
 }
 
 export function DashboardFavoritedTable({

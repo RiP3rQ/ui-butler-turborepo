@@ -1,11 +1,11 @@
 "use client";
-import type { DashboardTableFavoritedContentResponse } from "@repo/types";
+import type { FavoritedComponent } from "@shared/types";
+import { DataTableColumnHeader } from "@shared/ui/components/table/data-table-header";
 import { type ColumnDef } from "@tanstack/react-table";
-import { DataTableColumnHeader } from "@repo/ui/components/table/data-table-header";
 import moment from "moment";
-import { ActionsTableColumns } from "@/components/dasboard/table/table-actions-column";
+import { ActionsTableColumns } from "./table-actions-column";
 
-export const columns: ColumnDef<DashboardTableFavoritedContentResponse>[] = [
+export const columns: ColumnDef<FavoritedComponent>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => (

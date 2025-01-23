@@ -3,7 +3,7 @@ import { UploadIcon } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useReactFlow } from "@xyflow/react";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@shared/ui/components/ui/button";
 import { type JSX } from "react";
 import useWorkflowExecutionPlan from "@/hooks/use-workflow-execution-plan";
 import { publishWorkflowFunction } from "@/actions/workflows/server-actions";

@@ -10,12 +10,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@repo/ui/components/ui/alert-dialog";
-import { Input } from "@repo/ui/components/ui/input";
+} from "@shared/ui/components/ui/alert-dialog";
+import { Input } from "@shared/ui/components/ui/input";
 import { type JSX, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@shared/ui/components/ui/button";
 import { XIcon } from "lucide-react";
 import { deleteCredentialFunction } from "@/actions/credentials/server-actions";
 

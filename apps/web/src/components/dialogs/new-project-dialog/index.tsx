@@ -6,10 +6,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@repo/ui/components/ui/dialog";
-import { Button } from "@repo/ui/components/ui/button";
+} from "@shared/ui/components/ui/dialog";
+import { Button } from "@shared/ui/components/ui/button";
 import { useShallow } from "zustand/react/shallow";
-import { Form } from "@repo/ui/components/ui/form";
+import { Form } from "@shared/ui/components/ui/form";
 import { Loader2Icon } from "lucide-react";
 import { type JSX } from "react";
 import { useModalsStateStore } from "@/store/modals-store";

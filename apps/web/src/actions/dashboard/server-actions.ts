@@ -1,15 +1,15 @@
 "use server";
 
-import type {
-  DashboardStatCardsValuesResponse,
-  DashboardTableFavoritedContentResponse,
-} from "@repo/types";
+import {
+  type DashboardStats,
+  type FavoritedComponent,
+} from "@shared/types/src/api-client/analytics-endpoints";
 import { DashboardService } from "@/actions/dashboard/dashboard-service";
 
 /**
  * Fetches dashboard statistics
  */
-export async function getDashboardStatCardsValues(): Promise<DashboardStatCardsValuesResponse> {
+export async function getDashboardStatCardsValues(): Promise<DashboardStats> {
   return DashboardService.getStatCardsValues();
 }
 
@@ -17,7 +17,7 @@ export async function getDashboardStatCardsValues(): Promise<DashboardStatCardsV
  * Fetches dashboard favorited content
  */
 export async function getDashboardTableFavoritedContent(): Promise<
-  DashboardTableFavoritedContentResponse[]
+  FavoritedComponent[]
 > {
   return DashboardService.getFavoritedContent();
 }

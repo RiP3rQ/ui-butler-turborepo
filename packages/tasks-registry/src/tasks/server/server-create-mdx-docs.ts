@@ -1,4 +1,4 @@
-import { type BaseWorkflowTask, TaskParamType, TaskType } from "@repo/types";
+import { type BaseWorkflowTask, TaskParamType, TaskType } from "@shared/types";
 
 export const ServerCreateMDXDocsTask = {
   type: TaskType.CREATE_MDX_DOCUMENTATION,

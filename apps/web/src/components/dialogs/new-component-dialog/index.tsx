@@ -1,17 +1,17 @@
 "use client";
 
 import { type JSX } from "react";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@shared/ui/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@repo/ui/components/ui/dialog";
-import { Form } from "@repo/ui/components/ui/form";
+} from "@shared/ui/components/ui/dialog";
+import { Form } from "@shared/ui/components/ui/form";
 import { useShallow } from "zustand/react/shallow";
-import { CardContent, CardFooter } from "@repo/ui/components/ui/card";
+import { CardContent, CardFooter } from "@shared/ui/components/ui/card";
 import { Loader2Icon, SaveIcon } from "lucide-react";
 import { useModalsStateStore } from "@/store/modals-store";
 import { useSaveComponentForm } from "@/hooks/use-save-component-form";

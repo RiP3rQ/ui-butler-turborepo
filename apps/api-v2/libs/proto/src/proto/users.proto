@@ -3,12 +3,13 @@ syntax = "proto3";
 package api.users;
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
 // Common messages for Users
 message User {
     int32 id = 1;
     string email = 2;
-    string username = 3;
+    optional string username = 3;
     optional string password = 4;
     optional string refreshToken = 5;
     google.protobuf.Timestamp createdAt = 6;

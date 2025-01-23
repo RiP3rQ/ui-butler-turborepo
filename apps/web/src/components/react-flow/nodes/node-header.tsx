@@ -1,12 +1,12 @@
-import type { AppNode, TaskType } from "@repo/types";
+import type { AppNode, TaskType } from "@shared/types";
 import { CoinsIcon, CopyIcon, GripVerticalIcon, TrashIcon } from "lucide-react";
-import { Button } from "@repo/ui/components/ui/button";
-import { Badge } from "@repo/ui/components/ui/badge";
+import { Button } from "@shared/ui/components/ui/button";
+import { Badge } from "@shared/ui/components/ui/badge";
 import { useReactFlow } from "@xyflow/react";
 import {
   ClientTaskRegister,
   createFlowNodeFunction,
-} from "@repo/tasks-registry";
+} from "@shared/tasks-registry";
 import { type JSX } from "react";
 
 interface NodeHeaderProps {

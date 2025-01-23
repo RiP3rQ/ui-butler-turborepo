@@ -6,7 +6,7 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@repo/ui/components/ui/collapsible";
+} from "@shared/ui/components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -17,10 +17,10 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   useSidebar,
-} from "@repo/ui/components/ui/sidebar";
-import { Separator } from "@repo/ui/components/ui/separator";
-import type { NavMainType } from "@repo/types";
-import { cn } from "@repo/ui/lib/utils";
+} from "@shared/ui/components/ui/sidebar";
+import { Separator } from "@shared/ui/components/ui/separator";
+import type { NavMainType } from "@shared/types";
+import { cn } from "@shared/ui/lib/utils";
 import { type JSX } from "react";
 
 interface NavMainProps {

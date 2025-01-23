@@ -1,27 +1,27 @@
 "use client";
 
-import { type Row } from "@tanstack/react-table";
-import { Button } from "@repo/ui/components/ui/button";
+import { type FavoritedComponent } from "@shared/types";
+import { Button } from "@shared/ui/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@repo/ui/components/ui/dropdown-menu";
+} from "@shared/ui/components/ui/dropdown-menu";
+import { type Row } from "@tanstack/react-table";
 import {
   HeartOffIcon,
   MoreHorizontal,
   SquareArrowUpRightIcon,
 } from "lucide-react";
-import { type DashboardTableFavoritedContentResponse } from "@repo/types";
 import { useRouter } from "next/navigation";
 import { type JSX } from "react";
 
 export function ActionsTableColumns({
   row,
 }: {
-  row: Row<DashboardTableFavoritedContentResponse>;
+  row: Row<FavoritedComponent>;
 }): JSX.Element {
   const router = useRouter();
 

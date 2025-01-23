@@ -1,7 +1,7 @@
 // projects.controller.ts
+import { ProjectsProto } from '@microservices/proto';
 import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
-import { ProjectsProto } from '@app/proto';
 import { ProjectsService } from './projects.service';
 
 @Controller()

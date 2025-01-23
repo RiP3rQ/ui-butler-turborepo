@@ -5,11 +5,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@repo/ui/components/ui/form";
-import { Input } from "@repo/ui/components/ui/input";
-import { Separator } from "@repo/ui/components/ui/separator";
-import { Textarea } from "@repo/ui/components/ui/textarea";
-import { ColorPicker } from "@repo/ui/components/color-picker";
+} from "@shared/ui/components/ui/form";
+import { Input } from "@shared/ui/components/ui/input";
+import { Separator } from "@shared/ui/components/ui/separator";
+import { Textarea } from "@shared/ui/components/ui/textarea";
+import { ColorPicker } from "@shared/ui/components/color-picker";
 import { type JSX } from "react";
 import { type CreateNewProjectSchemaType } from "@/schemas/project";
 

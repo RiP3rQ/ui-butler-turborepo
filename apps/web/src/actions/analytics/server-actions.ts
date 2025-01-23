@@ -4,7 +4,7 @@ import type {
   Period,
   StatCardsValuesResponse,
   UsedCreditsInPeriodResponse,
-} from "@repo/types";
+} from "@shared/types";
 import { AnalyticsService } from "./analytics-service";
 
 export async function getPeriods(): Promise<Period[]> {

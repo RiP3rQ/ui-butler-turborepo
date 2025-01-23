@@ -5,7 +5,7 @@ import {
   getSmoothStepPath,
   useReactFlow,
 } from "@xyflow/react";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@shared/ui/components/ui/button";
 import { XIcon } from "lucide-react";
 import { type JSX } from "react";
 

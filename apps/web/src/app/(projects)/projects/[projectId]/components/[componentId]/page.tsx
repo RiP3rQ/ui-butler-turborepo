@@ -5,9 +5,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@repo/ui/components/ui/card";
+} from "@shared/ui/components/ui/card";
 import moment from "moment";
-import { Label } from "@repo/ui/components/ui/label";
+import { Label } from "@shared/ui/components/ui/label";
 import { type JSX } from "react";
 import SingleComponentViewWithShortcuts from "@/components/component-viewer/single-component-view-with-shortcuts";
 import { RunWorkflowButton } from "@/components/component-viewer/single-component-view/run-workflow-button";
@@ -26,8 +26,8 @@ export default async function SingleComponentPage({
   }
 
   const componentsData = await getSingleComponentsDataFunction({
-    projectId,
-    componentId,
+    projectId: Number(projectId),
+    componentId: Number(componentId),
   });
 
   return (

@@ -7,8 +7,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@repo/ui/components/ui/card";
-import { Button } from "@repo/ui/components/ui/button";
+} from "@shared/ui/components/ui/card";
+import { Button } from "@shared/ui/components/ui/button";
 import {
   Form,
   FormControl,
@@ -17,8 +17,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@repo/ui/components/ui/form";
-import { Textarea } from "@repo/ui/components/ui/textarea";
+} from "@shared/ui/components/ui/form";
+import { Textarea } from "@shared/ui/components/ui/textarea";
 import { useChat } from "ai/react";
 import { toast } from "sonner";
 import {
@@ -27,11 +27,11 @@ import {
   RotateCcwIcon,
   SaveIcon,
 } from "lucide-react";
-import { cn } from "@repo/ui/lib/utils";
+import { cn } from "@shared/ui/lib/utils";
 import { type JSX, useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TooltipWrapper } from "@repo/ui/components/tooltip-wrapper";
+import { TooltipWrapper } from "@shared/ui/components/tooltip-wrapper";
 import { useShallow } from "zustand/react/shallow";
 import { getErrorMessage } from "@/lib/get-error-message";
 import {

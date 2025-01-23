@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package api.execution;
 
+import "google/protobuf/timestamp.proto";
+
 service ExecutionsService {
     rpc GetPendingChanges (GetPendingChangesRequest) returns (PendingChangesResponse) {}
     rpc ApproveChanges (ApproveChangesRequest) returns (ApproveChangesResponse) {}
@@ -41,7 +43,7 @@ message ApproveChangesResponse {
 message ExecuteWorkflowRequest {
     int32 workflowExecutionId = 1;
     int32 componentId = 2;
-    optional string nextRunAt = 3;
+    optional google.protobuf.Timestamp nextRunAt = 3;
 }
 
 message Empty {}
@@ -52,8 +54,8 @@ message WorkflowExecution {
     int32 workflowId = 2;
     string userId = 3;
     string status = 4;
-    string startedAt = 5;
-    string endedAt = 6;
+    google.protobuf.Timestamp startedAt = 5;
+    google.protobuf.Timestamp endedAt = 6;
     string trigger = 7;
     string definition = 8;
     Workflow workflow = 9;
@@ -79,8 +81,8 @@ message ExecutionPhase {
     int32 number = 5;
     string node = 6;
     string name = 7;
-    string startedAt = 8;
-    string endedAt = 9;
+    google.protobuf.Timestamp startedAt = 8;
+    google.protobuf.Timestamp endedAt = 9;
     string temp = 10;
 }
 

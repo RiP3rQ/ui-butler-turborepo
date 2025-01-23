@@ -13,7 +13,7 @@ import {
   ExecutionPhaseStatus,
   IWorkflowExecutionStatus,
   WorkflowExecutionStatus,
-} from '@repo/types';
+} from '@shared/types';
 import { initializeWorkflowExecution } from './helpers/initialize-workflow-execution';
 import { initializeWorkflowPhasesStatuses } from './helpers/initialize-workflow-phases-statuses';
 import { User } from '../database/schemas/users';

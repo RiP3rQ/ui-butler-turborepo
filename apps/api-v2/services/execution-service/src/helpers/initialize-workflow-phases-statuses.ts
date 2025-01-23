@@ -1,9 +1,16 @@
-import { type ExecutionPhase, ExecutionPhaseStatus } from '@repo/types';
-import { type DrizzleDatabase, executionPhase, inArray } from '@app/database';
+import {
+  type DrizzleDatabase,
+  executionPhase,
+  inArray,
+} from '@microservices/database';
+import {
+  ExecutionPhaseStatus,
+  type ExecutionPhaseWithDatesInsteadOfProtoTimestamp,
+} from '@shared/types';
 
 export async function initializeWorkflowPhasesStatuses(
   database: DrizzleDatabase,
-  phases: ExecutionPhase[],
+  phases: ExecutionPhaseWithDatesInsteadOfProtoTimestamp[],
 ) {
   if (phases.length === 0) {
     return;

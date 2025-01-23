@@ -1,7 +1,7 @@
 import type { LucideProps } from "lucide-react";
 import { type Viewport } from "@xyflow/react";
-import type { TaskParam, TaskType } from "./task";
-import type { AppEdge, AppNode, AppNodeMissingInputs } from "./app-node";
+import type { TaskParam, TaskType } from "./tasks";
+import type { AppEdge, AppNode, AppNodeMissingInputs } from "./react-flow";
 
 export const WorkflowStatus = {
   DRAFT: "DRAFT",
@@ -75,26 +75,3 @@ export const WorkflowExecutionTrigger = {
 
 export type IWorkflowExecutionTrigger =
   (typeof WorkflowExecutionTrigger)[keyof typeof WorkflowExecutionTrigger];
-
-export interface WorkflowType {
-  id: number;
-  name: string;
-  userId: number | null;
-  description: string | null;
-  definition: string;
-  executionPlan: string | null;
-  creditsCost: number | null;
-  status: IWorkflowStatus;
-  lastRunAt?: Date;
-  lastRunId?: string;
-  lastRunStatus?: string;
-  nextRunAt?: Date | null;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface FlowType {
-  nodes: AppNode[];
-  edges: AppEdge[];
-  viewport: Viewport;
-}

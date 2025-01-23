@@ -1,11 +1,10 @@
-import type { ApproveChangesRequest } from "@repo/types";
-import { ApiClient } from "@/lib/api-client";
 import {
-  type ApprovePendingChangesRequest,
-  type GetPendingChangesRequest,
-  type RunWorkflowRequest,
-  type WorkflowRunResponse,
-} from "@/actions/executions/types";
+  type ExecutionsEndpoints,
+  type PendingChange,
+} from "@shared/types/src/api-client/executions-endpoints";
+import { type WorkflowsEndpoints } from "@shared/types/src/api-client/workflows-endpoints";
+import { ApiClient } from "@/lib/api-client";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 /**
  * Service class for execution-related API calls
@@ -17,37 +16,50 @@ export class ExecutionsService {
   /**
    * Approves or rejects pending changes
    */
-  static async approvePendingChanges({
-    executionId,
-    decision,
-  }: Readonly<ApprovePendingChangesRequest>): Promise<void> {
+  static async approvePendingChanges(
+    request: Readonly<ExecutionsEndpoints["approveChanges"]["request"]>,
+  ): Promise<void> {
     try {
-      await ApiClient.post<{ decision: string }, unknown>(
-        `${this.EXECUTIONS_PATH}/${executionId.toString()}/approve`,
-        {
-          body: { decision },
-        },
-      );
+      const response = await ApiClient.post<
+        ExecutionsEndpoints["approveChanges"]["body"],
+        ExecutionsEndpoints["approveChanges"]["response"]
+      >(`${this.EXECUTIONS_PATH}/${String(request.executionId)}/approve`, {
+        body: { decision: request.decision === "approve" },
+      });
+
+      if (!response.success) {
+        throw new Error("Failed to approve changes");
+      }
     } catch (error) {
       console.error("Failed to approve changes:", error);
-      throw new Error("Failed to approve changes");
+      throw new Error(getErrorMessage(error));
     }
   }
 
   /**
    * Fetches pending changes for an execution
    */
-  static async getPendingChanges({
-    executionId,
-  }: Readonly<GetPendingChangesRequest>): Promise<ApproveChangesRequest> {
+  static async getPendingChanges(
+    request: Readonly<ExecutionsEndpoints["getPendingChanges"]["request"]>,
+  ): Promise<{
+    pendingApproval: PendingChange[];
+    status: string;
+  }> {
     try {
-      const { data } = await ApiClient.get<ApproveChangesRequest>(
-        `${this.EXECUTIONS_PATH}/${executionId.toString()}/pending-changes`,
+      const response = await ApiClient.get<
+        ExecutionsEndpoints["getPendingChanges"]["response"]
+      >(
+        `${this.EXECUTIONS_PATH}/${String(request.executionId)}/pending-changes`,
       );
-      return data;
+
+      if (!response.success) {
+        throw new Error("Failed to fetch pending changes");
+      }
+
+      return response.data;
     } catch (error) {
       console.error("Failed to fetch pending changes:", error);
-      throw new Error("Failed to fetch pending changes");
+      throw new Error(getErrorMessage(error));
     }
   }
 
@@ -55,19 +67,24 @@ export class ExecutionsService {
    * Runs a workflow
    */
   static async runWorkflow(
-    request: Readonly<RunWorkflowRequest>,
-  ): Promise<WorkflowRunResponse> {
+    request: Readonly<WorkflowsEndpoints["runWorkflow"]["request"]>,
+  ): Promise<WorkflowsEndpoints["runWorkflow"]["response"]> {
     try {
-      const { data } = await ApiClient.post<
-        RunWorkflowRequest,
-        WorkflowRunResponse
+      const response = await ApiClient.post<
+        WorkflowsEndpoints["runWorkflow"]["body"],
+        WorkflowsEndpoints["runWorkflow"]["response"]
       >(`${this.WORKFLOWS_PATH}/run-workflow`, {
         body: request,
       });
-      return data;
+
+      if (!response.success) {
+        throw new Error("Failed to run workflow");
+      }
+
+      return response.data;
     } catch (error) {
       console.error("Failed to run workflow:", error);
-      throw new Error("Failed to run workflow");
+      throw new Error(getErrorMessage(error));
     }
   }
 }

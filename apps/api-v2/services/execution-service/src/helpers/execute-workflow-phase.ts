@@ -1,26 +1,30 @@
 import {
+  type DrizzleDatabase,
+  eq,
+  executionPhase,
+} from '@microservices/database';
+import { ServerTaskRegister } from '@shared/tasks-registry';
+import {
   type AppNode,
   type Environment,
-  type ExecutionPhase,
+  type ExecutionPhaseWithDatesInsteadOfProtoTimestamp,
   type ServerSaveEdge,
   WorkflowExecutionStatus,
-} from '@repo/types';
-import { type DrizzleDatabase, eq, executionPhase } from '@app/database';
-import { ServerTaskRegister } from '@repo/tasks-registry';
+} from '@shared/types';
 import { createLogCollector } from './create-workflow-log-collector';
 import { decrementUserCredits } from './decrement-user-credits';
-import { setupPhaseEnvironment } from './setup-phase-environment';
 import { executePhase } from './execute-phase';
 import { finalizeExecutionPhase } from './finalize-execution-phase';
+import { setupPhaseEnvironment } from './setup-phase-environment';
 
 export async function executeWorkflowPhase(
   database: DrizzleDatabase,
-  phase: ExecutionPhase | undefined,
+  phase: ExecutionPhaseWithDatesInsteadOfProtoTimestamp | undefined,
   environment: Environment,
   edges: ServerSaveEdge[],
   userId: number,
 ) {
-  if (!phase) {
+  if (!phase?.node) {
     throw new Error('Execution phase-executors not found');
   }
 

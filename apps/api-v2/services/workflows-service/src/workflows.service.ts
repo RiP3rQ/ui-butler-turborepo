@@ -1,17 +1,12 @@
-import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { type ClientGrpc, RpcException } from '@nestjs/microservices';
-import { firstValueFrom } from 'rxjs';
 import {
-  AppNode,
-  ExecutionPhaseStatus,
-  IExecutionPhaseStatus,
-  TaskType,
-  WorkflowExecutionPlan,
-  WorkflowExecutionStatus,
-  WorkflowExecutionTrigger,
-  WorkflowStatus,
-} from '@repo/types';
-import { Edge } from '@nestjs/core/inspector/interfaces/edge.interface';
+  CreateWorkflowDto,
+  dateToTimestamp,
+  DuplicateWorkflowDto,
+  PublishWorkflowDto,
+  RunWorkflowDto,
+  UpdateWorkflowDto,
+  User,
+} from '@microservices/common';
 import {
   and,
   asc,
@@ -26,26 +21,31 @@ import {
   WorkflowExecution,
   workflowExecutions,
   workflows,
-} from '@app/database';
-import {
-  CreateWorkflowDto,
-  DuplicateWorkflowDto,
-  PublishWorkflowDto,
-  RunWorkflowDto,
-  UpdateWorkflowDto,
-  User,
-} from '@app/common';
+} from '@microservices/database';
+import { type ExecutionProto, type WorkflowsProto } from '@microservices/proto';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import { Edge } from '@nestjs/core/inspector/interfaces/edge.interface';
+import { type ClientGrpc, RpcException } from '@nestjs/microservices';
 import {
   calculateWorkflowCost,
   createFlowNodeFunction,
   parseFlowToExecutionPlan,
   ServerTaskRegister,
-} from '@repo/tasks-registry';
-import { type ExecutionProto, type WorkflowsProto } from '@app/proto';
+} from '@shared/tasks-registry';
+import {
+  AppNode,
+  ExecutionPhaseStatus,
+  IExecutionPhaseStatus,
+  TaskType,
+  WorkflowExecutionPlan,
+  WorkflowExecutionStatus,
+  WorkflowExecutionTrigger,
+  WorkflowStatus,
+} from '@shared/types';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class WorkflowsService implements OnModuleInit {
-  private readonly logger = new Logger(WorkflowsService.name);
   private executionsService: ExecutionProto.ExecutionsServiceClient;
 
   constructor(
@@ -82,12 +82,22 @@ export class WorkflowsService implements OnModuleInit {
           $type: 'api.workflows.Workflow',
           ...workflow,
           description: workflow.description ?? '',
-          userId: workflow.userId.toString(),
+          userId: Number(workflow.userId),
           status: workflow.status ?? WorkflowStatus.DRAFT,
           executionPlan: workflow.executionPlan ?? '',
           creditsCost: workflow.creditsCost ?? 0,
-          createdAt: workflow.createdAt.toISOString(),
-          updatedAt: workflow.updatedAt.toISOString(),
+          createdAt: dateToTimestamp(workflow.createdAt),
+          updatedAt: dateToTimestamp(workflow.updatedAt),
+          lastRunAt: workflow.lastRunAt
+            ? dateToTimestamp(workflow.lastRunAt)
+            : undefined,
+          lastRunId: workflow.lastRunId ? workflow.lastRunId : undefined,
+          lastRunStatus: workflow.lastRunStatus
+            ? workflow.lastRunStatus
+            : undefined,
+          nextRunAt: workflow.nextRunAt
+            ? dateToTimestamp(workflow.nextRunAt)
+            : undefined,
         })),
       };
     } catch (error) {
@@ -308,7 +318,7 @@ export class WorkflowsService implements OnModuleInit {
   }
 
   public async unpublishWorkflow(
-    user: User,
+    _user: User,
     workflowId: number,
   ): Promise<WorkflowsProto.WorkflowResponse> {
     try {
@@ -543,10 +553,20 @@ export class WorkflowsService implements OnModuleInit {
         executions: workflowExecutionsData.map((execution) => ({
           $type: 'api.workflows.WorkflowExecution',
           ...execution,
-          userId: execution.userId.toString(),
-          createdAt: execution.createdAt.toISOString(),
-          startedAt: execution.startedAt?.toISOString() ?? '',
-          endedAt: execution.completedAt?.toISOString() ?? '',
+          userId: Number(execution.userId),
+          createdAt: dateToTimestamp(execution.createdAt),
+          startedAt: execution.startedAt
+            ? dateToTimestamp(execution.startedAt)
+            : undefined,
+          endedAt: execution.completedAt
+            ? dateToTimestamp(execution.completedAt)
+            : undefined,
+          completedAt: execution.completedAt
+            ? dateToTimestamp(execution.completedAt)
+            : undefined,
+          creditsConsumed: execution.creditsConsumed
+            ? Number(execution.creditsConsumed)
+            : undefined,
         })),
       };
     } catch (error) {
@@ -588,10 +608,20 @@ export class WorkflowsService implements OnModuleInit {
         executions: workflowExecutionsWithPhases.map((row) => ({
           $type: 'api.workflows.WorkflowExecution',
           ...row.workflowExecution,
-          userId: row.workflowExecution.userId.toString(),
-          createdAt: row.workflowExecution.createdAt.toISOString(),
-          startedAt: row.workflowExecution.startedAt?.toISOString() ?? '',
-          endedAt: row.workflowExecution.completedAt?.toISOString() ?? '',
+          userId: Number(row.workflowExecution.userId),
+          createdAt: dateToTimestamp(row.workflowExecution.createdAt),
+          startedAt: row.workflowExecution.startedAt
+            ? dateToTimestamp(row.workflowExecution.startedAt)
+            : undefined,
+          endedAt: row.workflowExecution.completedAt
+            ? dateToTimestamp(row.workflowExecution.completedAt)
+            : undefined,
+          completedAt: row.workflowExecution.completedAt
+            ? dateToTimestamp(row.workflowExecution.completedAt)
+            : undefined,
+          creditsConsumed: row.workflowExecution.creditsConsumed
+            ? Number(row.workflowExecution.creditsConsumed)
+            : undefined,
           phases: row.phases,
         })),
       };
@@ -638,9 +668,22 @@ export class WorkflowsService implements OnModuleInit {
         phase: {
           $type: 'api.workflows.ExecutionPhase',
           ...phaseWithLogs[0].phase,
-          endedAt: phaseWithLogs[0].phase.completedAt?.toISOString() ?? '',
-          userId: phaseWithLogs[0].phase.userId.toString(),
-          startedAt: phaseWithLogs[0].phase.startedAt?.toISOString() ?? '',
+          userId: Number(phaseWithLogs[0].phase.userId),
+          startedAt: phaseWithLogs[0].phase.startedAt
+            ? dateToTimestamp(phaseWithLogs[0].phase.startedAt)
+            : undefined,
+          completedAt: phaseWithLogs[0].phase.completedAt
+            ? dateToTimestamp(phaseWithLogs[0].phase.completedAt)
+            : undefined,
+          creditsCost: phaseWithLogs[0].phase.creditsCost
+            ? Number(phaseWithLogs[0].phase.creditsCost)
+            : undefined,
+          inputs: phaseWithLogs[0].phase.inputs
+            ? JSON.stringify(JSON.parse(phaseWithLogs[0].phase.inputs))
+            : undefined,
+          outputs: phaseWithLogs[0].phase.outputs
+            ? JSON.stringify(JSON.parse(phaseWithLogs[0].phase.outputs))
+            : undefined,
         },
         logs: phaseWithLogs
           .filter((row) => row.logs !== null)
@@ -651,7 +694,8 @@ export class WorkflowsService implements OnModuleInit {
             executionPhaseId: row.logs?.executionPhaseId ?? 0,
             message: row.logs?.message ?? '',
             level: row.logs?.logLevel ?? '',
-            timestamp: new Date(row.logs?.timestamp ?? '').toISOString(),
+            logLevel: row.logs?.logLevel ?? '',
+            timestamp: dateToTimestamp(row.logs?.timestamp ?? ''),
           })),
       };
     } catch (error) {

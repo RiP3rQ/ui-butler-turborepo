@@ -1,8 +1,6 @@
 // analytics.service.ts
-import { Inject, Injectable } from '@nestjs/common';
-import { RpcException } from '@nestjs/microservices';
 import { status } from '@grpc/grpc-js';
-import { eachDayOfInterval, format } from 'date-fns';
+import { dateToTimestamp } from '@microservices/common';
 import {
   and,
   components,
@@ -17,9 +15,11 @@ import {
   projects,
   sql,
   workflowExecutions,
-} from '@app/database';
-import { AnalyticsProto } from '@app/proto';
-import { dateToTimestamp } from './utils/timestamp.util';
+} from '@microservices/database';
+import { AnalyticsProto } from '@microservices/proto';
+import { Inject, Injectable } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
+import { eachDayOfInterval, format } from 'date-fns';
 
 @Injectable()
 export class AnalyticsService {
@@ -170,7 +170,7 @@ export class AnalyticsService {
 
       return Object.entries(statsDates).map(([date, stats]) => ({
         $type: 'api.analytics.DailyStats',
-        date,
+        date: dateToTimestamp(date),
         ...stats,
       }));
     } catch (error) {
@@ -234,7 +234,7 @@ export class AnalyticsService {
 
       return Object.entries(statsDates).map(([date, stats]) => ({
         $type: 'api.analytics.DailyStats',
-        date,
+        date: dateToTimestamp(date),
         ...stats,
       }));
     } catch (error) {

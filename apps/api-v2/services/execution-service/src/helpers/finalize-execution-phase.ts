@@ -1,15 +1,15 @@
 import {
-  ExecutionPhaseStatus,
-  type LogCollector,
-  WorkflowExecutionStatus,
-} from '@repo/types';
-import { NotFoundException } from '@nestjs/common';
-import {
   type DrizzleDatabase,
   eq,
   executionLog,
   executionPhase,
-} from '@app/database';
+} from '@microservices/database';
+import { NotFoundException } from '@nestjs/common';
+import {
+  ExecutionPhaseStatus,
+  type LogCollector,
+  WorkflowExecutionStatus,
+} from '@shared/types';
 
 export async function finalizeExecutionPhase(
   database: DrizzleDatabase,

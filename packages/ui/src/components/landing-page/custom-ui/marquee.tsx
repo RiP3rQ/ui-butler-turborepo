@@ -1,5 +1,5 @@
 import { type JSX } from "react";
-import { cn } from "@repo/ui/lib/utils";
+import { cn } from "@shared/ui/lib/utils";
 
 interface MarqueeProps {
   className?: string;

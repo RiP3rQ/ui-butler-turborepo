@@ -56,6 +56,7 @@ module.exports = {
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/dot-notation": "off",
     "import/no-default-export": "off",
+    "import/order": "off",
   },
   plugins: ["import"],
 };

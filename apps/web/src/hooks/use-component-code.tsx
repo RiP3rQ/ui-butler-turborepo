@@ -1,16 +1,22 @@
 "use client";
 
-import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { type CodeType, type ComponentType } from "@repo/types";
-import { type UseMutationResult } from "@tanstack/react-query";
-import { getErrorMessage } from "@/lib/get-error-message";
 import {
   generateCodeFunction,
   updateComponentCode,
 } from "@/actions/components/server-actions";
-import { type UpdateComponentCodeRequest } from "@/actions/components/types";
+import { getErrorMessage } from "@/lib/get-error-message";
+import {
+  type CodeType,
+  type Component,
+  type ComponentsEndpoints,
+} from "@shared/types";
+import {
+  useMutation,
+  useQueryClient,
+  type UseMutationResult,
+} from "@tanstack/react-query";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export function useComponentCode(
   projectId: string,
@@ -20,12 +26,13 @@ export function useComponentCode(
   setUpdating: (codeType: CodeType | null) => void;
   generatingCodeType: CodeType | null;
   updateMutation: UseMutationResult<
-    ComponentType,
+    Component,
     Error,
-    UpdateComponentCodeRequest
+    ComponentsEndpoints["updateComponentCode"]["params"] &
+      ComponentsEndpoints["updateComponentCode"]["body"]
   >;
   generateMutation: UseMutationResult<
-    ComponentType,
+    Component,
     Error,
     {
       componentId: number;
@@ -39,9 +46,12 @@ export function useComponentCode(
     null,
   );
   const updateMutation = useMutation<
-    ComponentType,
+    Component,
     Error,
-    Readonly<UpdateComponentCodeRequest>
+    Readonly<
+      ComponentsEndpoints["updateComponentCode"]["params"] &
+        ComponentsEndpoints["updateComponentCode"]["body"]
+    >
   >({
     mutationFn: updateComponentCode,
     onSuccess: () => {

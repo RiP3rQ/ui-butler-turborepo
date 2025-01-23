@@ -1,38 +1,38 @@
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { PassportModule } from '@nestjs/passport';
 import {
   GithubStrategy,
   GoogleStrategy,
   JwtRefreshStrategy,
   JwtStrategy,
   LocalStrategy,
-} from '@app/common';
-import Joi from 'joi';
-import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+} from '@microservices/common';
+import { DatabaseModule } from '@microservices/database';
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
-import { TerminusModule } from '@nestjs/terminus';
-import { ScheduleModule } from '@nestjs/schedule';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { ClientsModule } from '@nestjs/microservices';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { DatabaseModule } from '@app/database';
-import { AuthProxyService } from './proxies/auth.proxy.service';
-import { AuthController } from './controllers/auth.controller';
-import { BillingController } from './controllers/billing.controller';
-import { UsersController } from './controllers/users.controller';
-import { ErrorInterceptor } from './interceptors/error.interceptor';
-import { ComponentsController } from './controllers/components.controller';
-import { CredentialsController } from './controllers/credentials.controller';
-import { ProjectsController } from './controllers/projects.controller';
-import { WorkflowsController } from './controllers/workflows.controller';
-import { ExecutionsController } from './controllers/execution.controller';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { ClientsModule } from '@nestjs/microservices';
+import { PassportModule } from '@nestjs/passport';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TerminusModule } from '@nestjs/terminus';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import Joi from 'joi';
+import { createGrpcOptions } from './config/grpc.config';
 import { getRateLimitConfig } from './config/rate-limit.config';
 import { AnalyticsController } from './controllers/analytics.controller';
-import { createGrpcOptions } from './config/grpc.config';
-import { loggerConfig } from './logging/logger.config';
+import { AuthController } from './controllers/auth.controller';
+import { BillingController } from './controllers/billing.controller';
+import { ComponentsController } from './controllers/components.controller';
+import { CredentialsController } from './controllers/credentials.controller';
+import { ExecutionsController } from './controllers/execution.controller';
+import { ProjectsController } from './controllers/projects.controller';
+import { UsersController } from './controllers/users.controller';
+import { WorkflowsController } from './controllers/workflows.controller';
 import { HealthModule } from './health/health.module';
+import { ErrorInterceptor } from './interceptors/error.interceptor';
+import { loggerConfig } from './logging/logger.config';
 import { MetricsModule } from './metrics/metrics.module';
 import { HelmetMiddleware } from './middlewares/helmet.middleware';
+import { AuthProxyService } from './proxies/auth.proxy.service';
 import { GrpcClientProxy } from './proxies/grpc-client.proxy';
 
 @Module({

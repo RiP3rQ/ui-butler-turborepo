@@ -18,7 +18,7 @@ export default async function WorkflowPage({
 
   try {
     const workflow = await getWorkflowByIdFunction({
-      workflowId,
+      workflowId: Number(workflowId),
     });
 
     return <Editor workflow={workflow} workflowId={workflowId} />;

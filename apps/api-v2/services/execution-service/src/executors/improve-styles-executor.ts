@@ -1,9 +1,9 @@
-import { type ExecutionEnvironment } from '@repo/types';
-import { type ServerImproveStylesTaskType } from '@repo/tasks-registry';
+import { GET_GEMINI_MODEL } from '@microservices/common';
+import { ImproveCssPrompt } from '@shared/prompts';
+import { type ServerImproveStylesTaskType } from '@shared/tasks-registry';
+import { type ExecutionEnvironment } from '@shared/types';
 import { generateObject } from 'ai';
 import { z } from 'zod';
-import { ImproveCssPrompt } from '@repo/prompts';
-import { GET_GEMINI_MODEL } from '@app/common';
 
 export async function improveStylesExecutor(
   environment: ExecutionEnvironment<ServerImproveStylesTaskType>,
@@ -40,7 +40,6 @@ export async function improveStylesExecutor(
       ],
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- LLM can return empty object
     if (!object.improvedCode) {
       environment.log.ERROR('Improved code styles is empty');
       throw new Error('Failed to improve code styles');

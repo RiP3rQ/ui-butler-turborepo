@@ -1,18 +1,18 @@
+import { type DrizzleDatabase } from '@microservices/database';
 import {
   type AppNode,
   type Environment,
   type ExecutionEnvironment,
-  type ExecutionPhase,
+  type ExecutionPhaseWithDatesInsteadOfProtoTimestamp,
   type LogCollector,
   type WorkflowExecutionStatus,
-} from '@repo/types';
-import { type DrizzleDatabase } from '@app/database';
+} from '@shared/types';
 import { ExecutorRegistry } from '../executors/executor';
 import { createExecutionEnvironment } from './create-execution-environment';
 
 export async function executePhase(
   database: DrizzleDatabase,
-  phase: ExecutionPhase | undefined,
+  phase: ExecutionPhaseWithDatesInsteadOfProtoTimestamp | undefined,
   node: AppNode | undefined,
   environment: Environment,
   logCollector: LogCollector,
@@ -28,7 +28,7 @@ export async function executePhase(
   }
 
   // Get values ONLY FOR THIS PHASE from the environment
-  // TODO: FIX THIS TYPE
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any --- This type is tweaking, on god
   const executionEnvironment: ExecutionEnvironment<any> =
     createExecutionEnvironment(node, environment, logCollector);
 

@@ -1,5 +1,5 @@
-import { type Edge, type Node } from "@xyflow/react";
-import { type TaskParam, type TaskType } from "./task";
+import { type Edge, type Node, type Viewport } from "@xyflow/react";
+import { type TaskParam, type TaskType } from "./tasks";
 
 export interface AppNodeData {
   type: TaskType;
@@ -36,4 +36,10 @@ export interface ServerSaveEdge {
   target: string;
   sourceHandle?: string;
   targetHandle?: string;
+}
+
+export interface FlowType {
+  nodes: AppNode[];
+  edges: AppEdge[];
+  viewport: Viewport;
 }

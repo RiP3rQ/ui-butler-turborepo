@@ -1,5 +1,5 @@
 import { endOfMonth, startOfMonth } from 'date-fns';
-import type { Period } from '@repo/types';
+import type { Period } from '@shared/types';
 
 export function periodToDateRange(period: Period) {
   const startDate = startOfMonth(new Date(period.year, period.month - 1));

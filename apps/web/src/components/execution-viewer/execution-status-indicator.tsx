@@ -1,8 +1,8 @@
 import {
   type IWorkflowExecutionStatus,
   WorkflowExecutionStatus,
-} from "@repo/types";
-import { cn } from "@repo/ui/lib/utils";
+} from "@shared/types";
+import { cn } from "@shared/ui/lib/utils";
 import { type JSX } from "react";
 
 const indicatorStatusColors = {

@@ -1,6 +1,6 @@
 module.exports = {
   root: true,
-  extends: ["@repo/eslint-config/nest.js"],
+  extends: ["@shared/eslint-config/nest.js"],
   parserOptions: {
     tsconfigRootDir: __dirname,
     project: ["./tsconfig.json"],
@@ -12,5 +12,10 @@ module.exports = {
       },
     },
   },
-  ignorePatterns: [".eslintrc.js", "dist", "node_modules"],
+  ignorePatterns: [
+    ".eslintrc.js",
+    "dist",
+    "node_modules",
+    "src/components/ui/**/*",
+  ],
 };

@@ -8,8 +8,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@repo/ui/components/ui/card";
-import { Button } from "@repo/ui/components/ui/button";
+} from "@shared/ui/components/ui/card";
+import { Button } from "@shared/ui/components/ui/button";
 import {
   Form,
   FormControl,
@@ -18,8 +18,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@repo/ui/components/ui/form";
-import { Input } from "@repo/ui/components/ui/input";
+} from "@shared/ui/components/ui/form";
+import { Input } from "@shared/ui/components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -29,8 +29,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@repo/ui/components/ui/select";
-import { Skeleton } from "@repo/ui/components/ui/skeleton";
+} from "@shared/ui/components/ui/select";
+import { Skeleton } from "@shared/ui/components/ui/skeleton";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { type JSX } from "react";

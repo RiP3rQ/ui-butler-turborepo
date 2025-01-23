@@ -8,6 +8,7 @@
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
+import { Timestamp } from "./google/protobuf/timestamp";
 import { messageTypeRegistry } from "./typeRegistry";
 
 export const protobufPackage = "api.execution";
@@ -58,7 +59,7 @@ export interface ExecuteWorkflowRequest {
   $type: "api.execution.ExecuteWorkflowRequest";
   workflowExecutionId: number;
   componentId: number;
-  nextRunAt?: string | undefined;
+  nextRunAt?: Timestamp | undefined;
 }
 
 export interface Empty {
@@ -72,8 +73,8 @@ export interface WorkflowExecution {
   workflowId: number;
   userId: string;
   status: string;
-  startedAt: string;
-  endedAt: string;
+  startedAt?: Timestamp | undefined;
+  endedAt?: Timestamp | undefined;
   trigger: string;
   definition: string;
   workflow?: Workflow | undefined;
@@ -101,8 +102,8 @@ export interface ExecutionPhase {
   number: number;
   node: string;
   name: string;
-  startedAt: string;
-  endedAt: string;
+  startedAt?: Timestamp | undefined;
+  endedAt?: Timestamp | undefined;
   temp: string;
 }
 
@@ -607,7 +608,7 @@ export const ExecuteWorkflowRequest: MessageFns<
       writer.uint32(16).int32(message.componentId);
     }
     if (message.nextRunAt !== undefined) {
-      writer.uint32(26).string(message.nextRunAt);
+      Timestamp.encode(message.nextRunAt, writer.uint32(26).fork()).join();
     }
     return writer;
   },
@@ -644,7 +645,7 @@ export const ExecuteWorkflowRequest: MessageFns<
             break;
           }
 
-          message.nextRunAt = reader.string();
+          message.nextRunAt = Timestamp.decode(reader, reader.uint32());
           continue;
         }
       }
@@ -697,8 +698,6 @@ function createBaseWorkflowExecution(): WorkflowExecution {
     workflowId: 0,
     userId: "",
     status: "",
-    startedAt: "",
-    endedAt: "",
     trigger: "",
     definition: "",
     executionPhases: [],
@@ -727,11 +726,11 @@ export const WorkflowExecution: MessageFns<
     if (message.status !== "") {
       writer.uint32(34).string(message.status);
     }
-    if (message.startedAt !== "") {
-      writer.uint32(42).string(message.startedAt);
+    if (message.startedAt !== undefined) {
+      Timestamp.encode(message.startedAt, writer.uint32(42).fork()).join();
     }
-    if (message.endedAt !== "") {
-      writer.uint32(50).string(message.endedAt);
+    if (message.endedAt !== undefined) {
+      Timestamp.encode(message.endedAt, writer.uint32(50).fork()).join();
     }
     if (message.trigger !== "") {
       writer.uint32(58).string(message.trigger);
@@ -793,7 +792,7 @@ export const WorkflowExecution: MessageFns<
             break;
           }
 
-          message.startedAt = reader.string();
+          message.startedAt = Timestamp.decode(reader, reader.uint32());
           continue;
         }
         case 6: {
@@ -801,7 +800,7 @@ export const WorkflowExecution: MessageFns<
             break;
           }
 
-          message.endedAt = reader.string();
+          message.endedAt = Timestamp.decode(reader, reader.uint32());
           continue;
         }
         case 7: {
@@ -992,8 +991,6 @@ function createBaseExecutionPhase(): ExecutionPhase {
     number: 0,
     node: "",
     name: "",
-    startedAt: "",
-    endedAt: "",
     temp: "",
   };
 }
@@ -1029,11 +1026,11 @@ export const ExecutionPhase: MessageFns<
     if (message.name !== "") {
       writer.uint32(58).string(message.name);
     }
-    if (message.startedAt !== "") {
-      writer.uint32(66).string(message.startedAt);
+    if (message.startedAt !== undefined) {
+      Timestamp.encode(message.startedAt, writer.uint32(66).fork()).join();
     }
-    if (message.endedAt !== "") {
-      writer.uint32(74).string(message.endedAt);
+    if (message.endedAt !== undefined) {
+      Timestamp.encode(message.endedAt, writer.uint32(74).fork()).join();
     }
     if (message.temp !== "") {
       writer.uint32(82).string(message.temp);
@@ -1110,7 +1107,7 @@ export const ExecutionPhase: MessageFns<
             break;
           }
 
-          message.startedAt = reader.string();
+          message.startedAt = Timestamp.decode(reader, reader.uint32());
           continue;
         }
         case 9: {
@@ -1118,7 +1115,7 @@ export const ExecutionPhase: MessageFns<
             break;
           }
 
-          message.endedAt = reader.string();
+          message.endedAt = Timestamp.decode(reader, reader.uint32());
           continue;
         }
         case 10: {

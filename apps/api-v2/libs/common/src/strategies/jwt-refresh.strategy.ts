@@ -1,11 +1,11 @@
 // libs/common/src/strategies/jwt-refresh.strategy.ts
+import { AuthProto } from "@microservices/proto";
 import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { PassportStrategy } from "@nestjs/passport";
-import { ExtractJwt, Strategy } from "passport-jwt";
-import { Request } from "express";
 import { type ClientGrpc } from "@nestjs/microservices";
-import { AuthProto } from "@app/proto";
+import { PassportStrategy } from "@nestjs/passport";
+import { Request } from "express";
+import { ExtractJwt, Strategy } from "passport-jwt";
 import { firstValueFrom } from "rxjs";
 import { AuthServiceClient } from "../types/grpc-clients.interface";
 

@@ -1,5 +1,5 @@
+import { DatabaseModule } from '@microservices/database';
 import { Module } from '@nestjs/common';
-import { DatabaseModule } from '@app/database';
 import { CredentialsController } from '../credentials/credentials.controller';
 import { CredentialsService } from '../credentials/credentials.service';
 import { UsersController } from './users.controller';

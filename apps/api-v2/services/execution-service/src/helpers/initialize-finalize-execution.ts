@@ -1,8 +1,3 @@
-import { WorkflowExecutionStatus } from '@repo/types';
-import {
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
 import {
   and,
   type DrizzleDatabase,
@@ -11,7 +6,12 @@ import {
   workflowExecutions,
   workflows,
   type WorkflowUpdate,
-} from '@app/database';
+} from '@microservices/database';
+import {
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+import { WorkflowExecutionStatus } from '@shared/types';
 
 export async function initializeFinalizeExecution(
   database: DrizzleDatabase,

@@ -1,19 +1,17 @@
 "use server";
 
-import type { ApproveChangesRequest } from "@repo/types";
 import {
-  type ApprovePendingChangesRequest,
-  type GetPendingChangesRequest,
-  type RunWorkflowRequest,
-  type WorkflowRunResponse,
-} from "@/actions/executions/types";
+  type ExecutionsEndpoints,
+  type PendingChange,
+} from "@shared/types/src/api-client/executions-endpoints";
+import { type WorkflowsEndpoints } from "@shared/types/src/api-client/workflows-endpoints";
 import { ExecutionsService } from "@/actions/executions/executions-service";
 
 /**
  * Approves or rejects pending changes
  */
 export async function approvePendingChanges(
-  request: Readonly<ApprovePendingChangesRequest>,
+  request: Readonly<ExecutionsEndpoints["approveChanges"]["request"]>,
 ): Promise<void> {
   return ExecutionsService.approvePendingChanges(request);
 }
@@ -22,8 +20,11 @@ export async function approvePendingChanges(
  * Fetches pending changes for an execution
  */
 export async function getPendingChanges(
-  request: Readonly<GetPendingChangesRequest>,
-): Promise<ApproveChangesRequest> {
+  request: Readonly<ExecutionsEndpoints["getPendingChanges"]["request"]>,
+): Promise<{
+  pendingApproval: PendingChange[];
+  status: string;
+}> {
   return ExecutionsService.getPendingChanges(request);
 }
 
@@ -31,7 +32,7 @@ export async function getPendingChanges(
  * Runs a workflow
  */
 export async function runWorkflow(
-  request: Readonly<RunWorkflowRequest>,
-): Promise<WorkflowRunResponse> {
+  request: Readonly<WorkflowsEndpoints["runWorkflow"]["request"]>,
+): Promise<WorkflowsEndpoints["runWorkflow"]["response"]> {
   return ExecutionsService.runWorkflow(request);
 }

@@ -1,5 +1,5 @@
-import { ExecutionEnvironment, WorkflowExecutionStatus } from '@repo/types';
-import { ServerApproveChangesTaskType } from '@repo/tasks-registry';
+import { ExecutionEnvironment, WorkflowExecutionStatus } from '@shared/types';
+import { ServerApproveChangesTaskType } from '@shared/tasks-registry';
 import { pauseWorkflowExecution } from '../helpers/pause-workflow-execution';
 import { DrizzleDatabase } from '../../database/merged-schemas';
 

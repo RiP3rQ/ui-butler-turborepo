@@ -5,7 +5,7 @@ import {
   ExecutionPhase,
   LogCollector,
   WorkflowExecutionStatus,
-} from '@repo/types';
+} from '@shared/types';
 import { createExecutionEnvironment } from './create-execution-environment';
 import { ExecutorRegistry } from '../executors/executor';
 import { DrizzleDatabase } from '../../database/merged-schemas';

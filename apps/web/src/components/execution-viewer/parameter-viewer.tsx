@@ -4,8 +4,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@repo/ui/components/ui/card";
-import { Input } from "@repo/ui/components/ui/input";
+} from "@shared/ui/components/ui/card";
+import { Input } from "@shared/ui/components/ui/input";
 import { type JSX } from "react";
 
 interface ParameterViewerProps {

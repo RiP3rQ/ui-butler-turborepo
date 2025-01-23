@@ -1,5 +1,5 @@
 import { type JSX } from "react";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@shared/ui/components/ui/button";
 import { Loader2, type LucideIcon } from "lucide-react";
 
 interface SocialPlatformButtonProps {

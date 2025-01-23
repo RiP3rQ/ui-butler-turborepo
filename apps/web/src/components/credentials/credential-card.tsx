@@ -1,8 +1,8 @@
 import { LockKeyholeIcon, EyeIcon } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import { Card } from "@repo/ui/components/ui/card";
-import { Button } from "@repo/ui/components/ui/button";
-import { type UserCredentials } from "@repo/types";
+import { Card } from "@shared/ui/components/ui/card";
+import { Button } from "@shared/ui/components/ui/button";
+import { type UserCredentials } from "@shared/types";
 import { type JSX } from "react";
 import { protoTimestampToDate } from "@/lib/dates";
 import { DeleteCredentialDialog } from "./delete-credential-dialog";

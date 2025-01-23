@@ -4,8 +4,8 @@ import {
   ExecutionPhase,
   ServerSaveEdge,
   WorkflowExecutionStatus,
-} from '@repo/types';
-import { ServerTaskRegister } from '@repo/tasks-registry';
+} from '@shared/types';
+import { ServerTaskRegister } from '@shared/tasks-registry';
 import { createLogCollector } from './create-workflow-log-collector';
 import { decrementUserCredits } from './decrement-user-credits';
 import { setupPhaseEnvironment } from './setup-phase-environment';

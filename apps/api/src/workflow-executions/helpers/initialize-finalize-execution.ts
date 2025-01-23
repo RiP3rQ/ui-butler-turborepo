@@ -1,4 +1,4 @@
-import { WorkflowExecutionStatus } from '@repo/types';
+import { WorkflowExecutionStatus } from '@shared/types';
 import { DrizzleDatabase } from '../../database/merged-schemas';
 import { workflowExecutions } from '../../database/schemas/workflow-executions';
 import { and, eq, ne } from 'drizzle-orm';

@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactFlowProvider } from "@xyflow/react";
-import { WorkflowStatus, type WorkflowType } from "@repo/types";
+import { WorkflowStatus, type Workflow } from "@shared/types";
 import { useQuery } from "@tanstack/react-query";
 import { type JSX } from "react";
 import Topbar from "@/components/react-flow/topbar/topbar";
@@ -11,14 +11,14 @@ import { FlowValidationContextProvider } from "@/context/flow-validation-context
 import { getWorkflowByIdFunction } from "@/actions/workflows/server-actions";
 
 interface EditorProps {
-  workflow: WorkflowType;
+  workflow: Workflow;
   workflowId: string;
 }
 
 function Editor({ workflow, workflowId }: Readonly<EditorProps>): JSX.Element {
   const { data } = useQuery({
     queryKey: ["workflow", workflowId],
-    queryFn: () => getWorkflowByIdFunction({ workflowId }),
+    queryFn: () => getWorkflowByIdFunction({ workflowId: Number(workflowId) }),
     initialData: workflow,
   });
 

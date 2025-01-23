@@ -1,7 +1,4 @@
 // projects.service.ts
-import { Inject, Injectable } from '@nestjs/common';
-import { RpcException } from '@nestjs/microservices';
-import { status } from '@grpc/grpc-js';
 import {
   and,
   components,
@@ -12,7 +9,10 @@ import {
   projects,
   sql,
 } from '@app/database';
-import { type ProjectsProto } from '@app/proto';
+import { status } from '@grpc/grpc-js';
+import { type ProjectsProto } from '@microservices/proto';
+import { Inject, Injectable } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
 import {
   convertToGrpcProject,
   convertToGrpcProjectDetails,

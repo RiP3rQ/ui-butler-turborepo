@@ -5,7 +5,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@repo/ui/components/ui/tooltip";
+} from "@shared/ui/components/ui/tooltip";
 
 interface TooltipWrapperProps {
   children: React.ReactNode;

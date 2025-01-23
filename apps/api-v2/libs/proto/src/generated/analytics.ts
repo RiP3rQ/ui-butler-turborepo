@@ -58,7 +58,7 @@ export interface WorkflowStatsRequest {
 
 export interface DailyStats {
   $type: "api.analytics.DailyStats";
-  date: string;
+  date?: Timestamp | undefined;
   successful: number;
   failed: number;
 }
@@ -543,12 +543,7 @@ export const WorkflowStatsRequest: MessageFns<
 messageTypeRegistry.set(WorkflowStatsRequest.$type, WorkflowStatsRequest);
 
 function createBaseDailyStats(): DailyStats {
-  return {
-    $type: "api.analytics.DailyStats",
-    date: "",
-    successful: 0,
-    failed: 0,
-  };
+  return { $type: "api.analytics.DailyStats", successful: 0, failed: 0 };
 }
 
 export const DailyStats: MessageFns<DailyStats, "api.analytics.DailyStats"> = {
@@ -558,8 +553,8 @@ export const DailyStats: MessageFns<DailyStats, "api.analytics.DailyStats"> = {
     message: DailyStats,
     writer: BinaryWriter = new BinaryWriter(),
   ): BinaryWriter {
-    if (message.date !== "") {
-      writer.uint32(10).string(message.date);
+    if (message.date !== undefined) {
+      Timestamp.encode(message.date, writer.uint32(10).fork()).join();
     }
     if (message.successful !== 0) {
       writer.uint32(16).int32(message.successful);
@@ -583,7 +578,7 @@ export const DailyStats: MessageFns<DailyStats, "api.analytics.DailyStats"> = {
             break;
           }
 
-          message.date = reader.string();
+          message.date = Timestamp.decode(reader, reader.uint32());
           continue;
         }
         case 2: {

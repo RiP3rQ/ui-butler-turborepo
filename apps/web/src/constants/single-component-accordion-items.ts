@@ -1,10 +1,10 @@
+import { type AccordionItemConfig } from "@shared/types";
 import {
   BookOpenIcon,
   FileCode2Icon,
   TabletSmartphoneIcon,
   TestTubeDiagonalIcon,
 } from "lucide-react";
-import { type AccordionItemConfig } from "@repo/types";
 
 export const ACCORDION_ITEMS: readonly AccordionItemConfig[] = [
   {
@@ -45,7 +45,7 @@ export const ACCORDION_ITEMS: readonly AccordionItemConfig[] = [
     title: "E2E tests",
     codeType: "e2eTests",
     getCode: (data) => data.e2eTests ?? "",
-    checkImplemented: (data) => data.wasE2ETested,
+    checkImplemented: (data) => data.wasE2eTested,
     action: {
       title: "Generate E2E Tests",
       icon: TabletSmartphoneIcon,

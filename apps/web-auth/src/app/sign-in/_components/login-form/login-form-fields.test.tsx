@@ -10,7 +10,7 @@ import { LoginFormFields } from "@/app/sign-in/_components/login-form/login-form
 type LoginFormData = z.infer<typeof loginFormSchema>;
 
 // Mock the UI components
-jest.mock("@repo/ui/components/ui/form", () => ({
+jest.mock("@shared/ui/components/ui/form", () => ({
   FormField: ({ render, name }: any) =>
     render({
       field: {
@@ -39,7 +39,7 @@ jest.mock("@repo/ui/components/ui/form", () => ({
   ),
 }));
 
-jest.mock("@repo/ui/components/ui/input", () => ({
+jest.mock("@shared/ui/components/ui/input", () => ({
   Input: ({ id, type, onChange, value, ...props }: any) => (
     <input
       id={id}
@@ -51,7 +51,7 @@ jest.mock("@repo/ui/components/ui/input", () => ({
   ),
 }));
 
-jest.mock("@repo/ui/components/ui/separator", () => ({
+jest.mock("@shared/ui/components/ui/separator", () => ({
   Separator: () => <hr data-testid="separator" />,
 }));
 

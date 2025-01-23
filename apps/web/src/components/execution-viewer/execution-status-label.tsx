@@ -1,6 +1,6 @@
-import type { IWorkflowExecutionStatus } from "@repo/types";
-import { WorkflowExecutionStatus } from "@repo/types";
-import { cn } from "@repo/ui/lib/utils";
+import type { IWorkflowExecutionStatus } from "@shared/types";
+import { WorkflowExecutionStatus } from "@shared/types";
+import { cn } from "@shared/ui/lib/utils";
 import { type JSX } from "react";
 
 const statusLabelColors: Record<IWorkflowExecutionStatus, string> = {

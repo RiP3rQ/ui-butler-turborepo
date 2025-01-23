@@ -1,4 +1,4 @@
-import { type BaseWorkflowTask, TaskParamType, TaskType } from "@repo/types";
+import { type BaseWorkflowTask, TaskParamType, TaskType } from "@shared/types";
 
 export const ServerCreateUnitTestsTask = {
   type: TaskType.CREATE_UNIT_TESTS,

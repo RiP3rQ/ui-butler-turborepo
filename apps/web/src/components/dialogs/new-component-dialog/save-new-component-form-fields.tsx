@@ -6,24 +6,24 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@repo/ui/components/ui/form";
-import { Input } from "@repo/ui/components/ui/input";
+} from "@shared/ui/components/ui/form";
+import { Input } from "@shared/ui/components/ui/input";
 import { type JSX } from "react";
-import { type ProjectType } from "@repo/types";
-import { Skeleton } from "@repo/ui/components/ui/skeleton";
+import { type Project } from "@shared/types";
+import { Skeleton } from "@shared/ui/components/ui/skeleton";
 import {
   Select,
   SelectItem,
   SelectContent,
   SelectValue,
   SelectTrigger,
-} from "@repo/ui/components/ui/select";
+} from "@shared/ui/components/ui/select";
 import { type SaveComponentSchemaType } from "@/schemas/component";
 
 interface SaveNewComponentFormFieldsProps {
   control: Control<SaveComponentSchemaType>;
   isDisabled: boolean;
-  projects: ProjectType[] | undefined;
+  projects: Project[] | undefined;
   isLoadingProjects: boolean;
 }
 

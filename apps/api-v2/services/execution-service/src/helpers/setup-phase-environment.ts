@@ -1,10 +1,10 @@
-import { ServerTaskRegister } from '@repo/tasks-registry';
+import { ServerTaskRegister } from '@shared/tasks-registry';
 import {
   type AppNode,
   type Environment,
   type ServerSaveEdge,
   TaskParamType,
-} from '@repo/types';
+} from '@shared/types';
 
 export function setupPhaseEnvironment(
   node: AppNode,
@@ -36,6 +36,7 @@ export function setupPhaseEnvironment(
 
     const inputValue = node.data.inputs[input.name];
     if (inputValue) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion --- This type is tweaking, on god
       environment.phases[node.id]!.inputs[input.name] = inputValue;
       continue;
     }
@@ -60,6 +61,7 @@ export function setupPhaseEnvironment(
     }
 
     // Assign output value to the environment
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion --- This type is tweaking, on god
     environment.phases[node.id]!.inputs[input.name] = outputValue;
   }
 }

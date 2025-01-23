@@ -1,6 +1,6 @@
+import { GrpcErrorInterceptor } from '@microservices/common';
+import { DatabaseModule } from '@microservices/database';
 import { Module } from '@nestjs/common';
-import { DatabaseModule } from '@app/database';
-import { GrpcErrorInterceptor } from '@app/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ExecutionsController } from './execution.controller';
 import { ExecutionsService } from './execution.service';

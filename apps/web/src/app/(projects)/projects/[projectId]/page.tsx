@@ -18,7 +18,7 @@ export default async function SingleProjectPage({
 
   try {
     const projectData = await getProjectsDetailsFunction({
-      projectId,
+      projectId: Number(projectId),
     });
 
     return <ProjectCard projectData={projectData} projectId={projectId} />;

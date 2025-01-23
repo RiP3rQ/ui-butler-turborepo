@@ -1,8 +1,8 @@
 "use client";
 
-import type { ParamProps } from "@repo/types";
+import type { ParamProps } from "@shared/types";
 import { type JSX, useId } from "react";
-import { Label } from "@repo/ui/components/ui/label";
+import { Label } from "@shared/ui/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -11,7 +11,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@repo/ui/components/ui/select";
+} from "@shared/ui/components/ui/select";
 
 interface OptionType {
   label: string;
