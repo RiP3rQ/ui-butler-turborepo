@@ -1,10 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { Transport } from '@nestjs/microservices';
-import { ComponentsModule } from './components.module';
-import helmet from 'helmet';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
-import { join } from 'path';
+import helmet from 'helmet';
+import { join } from 'node:path';
+import { ComponentsModule } from './components.module';
 
 async function bootstrap() {
   // Create a hybrid application (HTTP + Microservice)
@@ -26,7 +26,7 @@ async function bootstrap() {
         __dirname,
         '../../../libs/proto/src/proto/components.proto',
       ),
-      url: `${process.env.COMPONENTS_SERVICE_HOST ?? 'localhost'}:${GRPC_PORT}`,
+      url: `${process.env.COMPONENTS_SERVICE_HOST ?? 'localhost'}:${String(GRPC_PORT)}`,
     },
   });
 
@@ -66,7 +66,13 @@ async function bootstrap() {
   console.log(`Components Service is running on port ${HTTP_PORT}`);
 }
 
-bootstrap();
+bootstrap().catch((error: unknown) => {
+  console.error(
+    'Error starting Components Microservice:',
+    JSON.stringify(error),
+  );
+  process.exit(1);
+});
 
 // FOR DEBUGGING PURPOSES -->
 
