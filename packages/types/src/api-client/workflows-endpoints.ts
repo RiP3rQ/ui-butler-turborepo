@@ -1,4 +1,4 @@
-import { WorkflowExecution } from "../workflow-execution";
+import { type WorkflowExecution } from "../workflow-execution";
 
 export interface Workflow {
   id: number;

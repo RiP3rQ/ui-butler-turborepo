@@ -22,7 +22,6 @@ export interface CredentialsEndpoints {
   createCredential: {
     body: {
       name: string;
-      type: string;
       value: string;
     };
     response: Credential;
@@ -34,6 +33,9 @@ export interface CredentialsEndpoints {
       id: string;
     };
     response: Credential;
+    request: {
+      id: number;
+    };
   };
 
   /** GET /credentials/:id/reveal */

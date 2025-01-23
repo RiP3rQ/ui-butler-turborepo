@@ -1,4 +1,4 @@
-import { CodeType } from "../components";
+import { type CodeType } from "../components";
 
 export interface Component {
   id: number;
@@ -18,6 +18,10 @@ export interface ComponentsEndpoints {
       componentId: number;
     };
     response: Component;
+    request: {
+      projectId: number;
+      componentId: number;
+    };
   };
 
   /** POST /components */
@@ -28,6 +32,11 @@ export interface ComponentsEndpoints {
       projectId: number;
     };
     response: Component;
+    request: {
+      title: string;
+      code: string;
+      projectId: number;
+    };
   };
 
   /** POST /components/favorite */
@@ -38,6 +47,11 @@ export interface ComponentsEndpoints {
       favoriteValue: boolean;
     };
     response: Component;
+    request: {
+      projectId: number;
+      componentId: number;
+      favoriteValue: boolean;
+    };
   };
 
   /** ALL /components/generate */
@@ -66,5 +80,9 @@ export interface ComponentsEndpoints {
       codeType: CodeType;
     };
     response: Component;
+    request: {
+      componentId: number;
+      codeType: CodeType;
+    };
   };
 }

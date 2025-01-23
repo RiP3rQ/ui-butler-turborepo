@@ -1,19 +1,22 @@
 "use server";
 
-import type { UserCredentials, UserDecryptedCredentials } from "@repo/types";
+import {
+  type Credential,
+  type CredentialsEndpoints,
+  type RevealedCredential,
+} from "@repo/types/src/api-client/credentials-endpoints";
 import {
   type CreateCredentialSchemaType,
   validateCredentialInput,
 } from "@/schemas/credential";
 import { CredentialsService } from "@/actions/credentials/credentials-service";
-import { type DeleteCredentialRequest } from "@/actions/credentials/types";
 
 /**
  * Creates a new credential
  */
 export async function createCredentialFunction(
   form: Readonly<CreateCredentialSchemaType>,
-): Promise<UserCredentials> {
+): Promise<Credential> {
   // Validate input before processing
   const validatedForm = await validateCredentialInput(form);
   return CredentialsService.createCredential(validatedForm);
@@ -23,15 +26,15 @@ export async function createCredentialFunction(
  * Deletes a credential
  */
 export async function deleteCredentialFunction(
-  request: Readonly<DeleteCredentialRequest>,
-): Promise<UserCredentials> {
+  request: Readonly<CredentialsEndpoints["deleteCredential"]["request"]>,
+): Promise<Credential> {
   return CredentialsService.deleteCredential(request);
 }
 
 /**
  * Fetches all user credentials
  */
-export async function getUserCredentials(): Promise<UserCredentials[]> {
+export async function getUserCredentials(): Promise<Credential[]> {
   return CredentialsService.getUserCredentials();
 }
 
@@ -40,6 +43,6 @@ export async function getUserCredentials(): Promise<UserCredentials[]> {
  */
 export async function getRevealedCredentialValue(
   credentialId: number,
-): Promise<UserDecryptedCredentials> {
+): Promise<RevealedCredential> {
   return CredentialsService.getRevealedCredentialValue(credentialId);
 }
