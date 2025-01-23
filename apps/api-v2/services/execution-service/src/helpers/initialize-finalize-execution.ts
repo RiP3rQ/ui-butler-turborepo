@@ -1,4 +1,4 @@
-import { WorkflowExecutionStatus } from '@repo/types';
+import { WorkflowExecutionStatus } from '@shared/types';
 import {
   InternalServerErrorException,
   NotFoundException,

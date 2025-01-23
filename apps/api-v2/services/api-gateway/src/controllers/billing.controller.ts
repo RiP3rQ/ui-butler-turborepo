@@ -10,7 +10,7 @@ import {
 import { type ClientGrpc } from '@nestjs/microservices';
 import { CurrentUser, JwtAuthGuard } from '@app/common';
 import { BillingProto } from '@app/proto';
-import { BalancePackId } from '@repo/types';
+import { BalancePackId } from '@shared/types';
 import { handleGrpcError } from '../utils/grpc-error.util';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 

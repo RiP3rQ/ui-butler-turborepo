@@ -10,7 +10,7 @@ import {
   WorkflowExecutionStatus,
   WorkflowExecutionTrigger,
   WorkflowStatus,
-} from '@repo/types';
+} from '@shared/types';
 import { Edge } from '@nestjs/core/inspector/interfaces/edge.interface';
 import {
   and,
@@ -40,7 +40,7 @@ import {
   createFlowNodeFunction,
   parseFlowToExecutionPlan,
   ServerTaskRegister,
-} from '@repo/tasks-registry';
+} from '@shared/tasks-registry';
 import { type ExecutionProto, type WorkflowsProto } from '@app/proto';
 
 @Injectable()

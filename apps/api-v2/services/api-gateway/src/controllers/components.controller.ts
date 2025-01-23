@@ -25,7 +25,7 @@ import {
   SaveComponentDto,
   UpdateComponentCodeDto,
 } from '@app/common';
-import { codeTypeValues } from '@repo/types';
+import { codeTypeValues } from '@shared/types';
 import { type Request, type Response } from 'express';
 import HttpProxy from 'http-proxy';
 import { Throttle } from '@nestjs/throttler';

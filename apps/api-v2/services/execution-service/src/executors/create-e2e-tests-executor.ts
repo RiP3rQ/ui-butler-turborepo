@@ -1,8 +1,8 @@
-import { type ExecutionEnvironment } from '@repo/types';
-import { type ServerCreateE2ETestsTaskType } from '@repo/tasks-registry';
+import { type ExecutionEnvironment } from '@shared/types';
+import { type ServerCreateE2ETestsTaskType } from '@shared/tasks-registry';
 import { generateObject } from 'ai';
 import { z } from 'zod';
-import { CreateE2eTestsPrompt } from '@repo/prompts';
+import { CreateE2eTestsPrompt } from '@shared/prompts';
 import { GET_GEMINI_MODEL } from '@app/common';
 
 export async function createE2ETestsExecutor(

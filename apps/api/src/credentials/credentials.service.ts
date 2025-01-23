@@ -7,7 +7,7 @@ import {
   userCredentials,
 } from '../database/schemas/credentials';
 import { and, desc, eq } from 'drizzle-orm';
-import type { UserCredentials } from '@repo/types';
+import type { UserCredentials } from '@shared/types';
 import { CreateCredentialDto } from './dto/create-credential.dto';
 import { symmetricEncrypt } from '../common/encryption/symmetric-encryption';
 

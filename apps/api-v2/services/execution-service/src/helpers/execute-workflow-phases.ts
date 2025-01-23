@@ -4,7 +4,7 @@ import {
   type ServerSaveEdge,
   type WorkflowExecution,
   WorkflowExecutionStatus,
-} from '@repo/types';
+} from '@shared/types';
 import { type DrizzleDatabase, eq, workflowExecutions } from '@app/database';
 import { executeWorkflowPhase } from './execute-workflow-phase';
 import { initializeFinalizeExecution } from './initialize-finalize-execution';

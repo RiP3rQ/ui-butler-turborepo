@@ -2,7 +2,7 @@ import {
   ExecutionPhaseStatus,
   type LogCollector,
   WorkflowExecutionStatus,
-} from '@repo/types';
+} from '@shared/types';
 import { NotFoundException } from '@nestjs/common';
 import {
   type DrizzleDatabase,

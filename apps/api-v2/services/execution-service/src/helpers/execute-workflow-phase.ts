@@ -4,9 +4,9 @@ import {
   type ExecutionPhase,
   type ServerSaveEdge,
   WorkflowExecutionStatus,
-} from '@repo/types';
+} from '@shared/types';
 import { type DrizzleDatabase, eq, executionPhase } from '@app/database';
-import { ServerTaskRegister } from '@repo/tasks-registry';
+import { ServerTaskRegister } from '@shared/tasks-registry';
 import { createLogCollector } from './create-workflow-log-collector';
 import { decrementUserCredits } from './decrement-user-credits';
 import { setupPhaseEnvironment } from './setup-phase-environment';

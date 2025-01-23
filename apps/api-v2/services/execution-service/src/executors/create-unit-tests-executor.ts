@@ -1,8 +1,8 @@
-import { type ExecutionEnvironment } from '@repo/types';
-import { type ServerCreateUnitTestsTaskType } from '@repo/tasks-registry';
+import { type ExecutionEnvironment } from '@shared/types';
+import { type ServerCreateUnitTestsTaskType } from '@shared/tasks-registry';
 import { generateObject } from 'ai';
 import { z } from 'zod';
-import { CreateUnitTestsPrompt } from '@repo/prompts';
+import { CreateUnitTestsPrompt } from '@shared/prompts';
 import { GET_GEMINI_MODEL } from '@app/common';
 
 export async function createUnitTestsExecutor(

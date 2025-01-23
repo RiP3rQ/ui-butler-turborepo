@@ -3,7 +3,7 @@ import {
   type ExecutionEnvironment,
   TaskType,
   type WorkflowExecutionStatus,
-} from '@repo/types';
+} from '@shared/types';
 import { type DrizzleDatabase } from '@app/database';
 import { setCodeContextExecutor } from './set-code-context-executor';
 import { optimizeCodeExecutor } from './optimize-code-executor';

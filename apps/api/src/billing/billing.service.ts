@@ -8,7 +8,7 @@ import {
   BalancePackId,
   getCreditPackById,
   UserBasicCredits,
-} from '@repo/types';
+} from '@shared/types';
 
 @Injectable()
 export class BillingService {

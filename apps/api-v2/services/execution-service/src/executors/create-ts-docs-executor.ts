@@ -1,8 +1,8 @@
-import { type ExecutionEnvironment } from '@repo/types';
-import { type ServerCreateTypeScriptDocsTaskType } from '@repo/tasks-registry';
+import { type ExecutionEnvironment } from '@shared/types';
+import { type ServerCreateTypeScriptDocsTaskType } from '@shared/tasks-registry';
 import { generateObject } from 'ai';
 import { z } from 'zod';
-import { CreateTypescriptDocsPrompt } from '@repo/prompts';
+import { CreateTypescriptDocsPrompt } from '@shared/prompts';
 import { GET_GEMINI_MODEL } from '@app/common';
 
 export async function createTsDocsExecutor(

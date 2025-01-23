@@ -3,7 +3,7 @@ import {
   type Environment,
   type ExecutionEnvironment,
   type LogCollector,
-} from '@repo/types';
+} from '@shared/types';
 
 export function createExecutionEnvironment(
   node: AppNode,

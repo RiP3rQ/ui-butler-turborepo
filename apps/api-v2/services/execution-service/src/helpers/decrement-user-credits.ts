@@ -1,4 +1,4 @@
-import { type LogCollector } from '@repo/types';
+import { type LogCollector } from '@shared/types';
 import {
   and,
   type DrizzleDatabase,

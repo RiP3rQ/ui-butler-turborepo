@@ -11,7 +11,7 @@ import {
   sql,
   userBalance,
 } from '@app/database';
-import { BalancePackId, getCreditPackById } from '@repo/types';
+import { BalancePackId, getCreditPackById } from '@shared/types';
 import { RpcException } from '@nestjs/microservices';
 import { status } from '@grpc/grpc-js';
 import { BillingProto } from '@app/proto';

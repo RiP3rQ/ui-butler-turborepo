@@ -1,4 +1,4 @@
-import { LogCollector } from '@repo/types';
+import { LogCollector } from '@shared/types';
 import { DrizzleDatabase } from '../../database/merged-schemas';
 import { userBalance } from '../../database/schemas/billing';
 import { and, eq, gte, sql } from 'drizzle-orm';

@@ -5,7 +5,7 @@ import { User } from '../database/schemas/users';
 import { CreateProjectDto } from './dto/create-new-project.dto';
 import { NewProject, projects } from '../database/schemas/projects';
 import { and, eq, sql } from 'drizzle-orm';
-import { ProjectDetailsType, type ProjectType } from '@repo/types';
+import { ProjectDetailsType, type ProjectType } from '@shared/types';
 import { components } from '../database/schemas/components';
 
 @Injectable()

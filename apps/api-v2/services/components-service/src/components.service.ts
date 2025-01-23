@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
-import { CodeType } from '@repo/types';
+import { CodeType } from '@shared/types';
 import { generateText, pipeDataStreamToResponse, streamText } from 'ai';
 import { type Response } from 'express';
-import { singleGeneratedPrompts } from '@repo/prompts';
+import { singleGeneratedPrompts } from '@shared/prompts';
 import {
   and,
   Component,

@@ -1,9 +1,9 @@
-import { ExecutionEnvironment } from '@repo/types';
-import { ServerImproveStylesTaskType } from '@repo/tasks-registry';
+import { ExecutionEnvironment } from '@shared/types';
+import { ServerImproveStylesTaskType } from '@shared/tasks-registry';
 import { generateObject } from 'ai';
 import { GEMINI_MODEL } from '../../common/openai/ai';
 import { z } from 'zod';
-import { ImproveCssPrompt } from '@repo/prompts';
+import { ImproveCssPrompt } from '@shared/prompts';
 
 export async function improveStylesExecutor(
   environment: ExecutionEnvironment<ServerImproveStylesTaskType>,

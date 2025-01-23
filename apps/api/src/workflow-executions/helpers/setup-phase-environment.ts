@@ -1,10 +1,10 @@
-import { ServerTaskRegister } from '@repo/tasks-registry';
+import { ServerTaskRegister } from '@shared/tasks-registry';
 import {
   AppNode,
   Environment,
   ServerSaveEdge,
   TaskParamType,
-} from '@repo/types';
+} from '@shared/types';
 
 export function setupPhaseEnvironment(
   node: AppNode,

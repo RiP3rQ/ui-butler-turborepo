@@ -1,7 +1,7 @@
 import { Body, Controller, Logger, Post, Req, Res } from '@nestjs/common';
 import { GenerateComponentRequestDto } from '@app/common';
 import { ComponentsProto } from '@app/proto';
-import { CodeType } from '@repo/types';
+import { CodeType } from '@shared/types';
 import { type Response } from 'express';
 import { GrpcMethod, RpcException } from '@nestjs/microservices';
 import { ComponentsService } from './components.service';

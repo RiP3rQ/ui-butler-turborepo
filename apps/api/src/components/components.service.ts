@@ -19,7 +19,7 @@ import {
   CodeType,
   type ComponentType,
   SingleComponentApiResponseType,
-} from '@repo/types';
+} from '@shared/types';
 import { projects } from '../database/schemas/projects';
 import { FavoriteComponentDto } from './dto/favorite-component.dto';
 import { generateText, streamText } from 'ai';
@@ -27,7 +27,7 @@ import { GEMINI_MODEL } from '../common/openai/ai';
 import { Response } from 'express';
 import { UpdateComponentCodeDto } from './dto/update-component.dto';
 import { GenerateCodeDto } from './dto/generate-code.dto';
-import { singleGeneratedPrompts } from '@repo/prompts';
+import { singleGeneratedPrompts } from '@shared/prompts';
 
 @Injectable()
 export class ComponentsService {

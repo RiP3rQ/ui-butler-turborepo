@@ -1,4 +1,4 @@
-import { ExecutionPhase, ExecutionPhaseStatus } from '@repo/types';
+import { ExecutionPhase, ExecutionPhaseStatus } from '@shared/types';
 import { DrizzleDatabase } from '../../database/merged-schemas';
 import { executionPhase } from '../../database/schemas/workflow-executions';
 import { inArray } from 'drizzle-orm/sql/expressions/conditions';

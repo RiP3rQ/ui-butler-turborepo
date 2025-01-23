@@ -1,5 +1,5 @@
 import { IsIn, IsNotEmpty, IsNumber } from "class-validator";
-import { codeTypeValues } from "@repo/types";
+import { codeTypeValues } from "@shared/types";
 import { ComponentsProto } from "@app/proto";
 
 export class GenerateCodeDto {

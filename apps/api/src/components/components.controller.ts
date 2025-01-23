@@ -21,7 +21,7 @@ import { SaveComponentDto } from './dto/save-component.dto';
 import { FavoriteComponentDto } from './dto/favorite-component.dto';
 import { GenerateComponentRequestDto } from './dto/component-generate-message.dto';
 import type { Response } from 'express';
-import { type CodeType, codeTypeValues } from '@repo/types';
+import { type CodeType, codeTypeValues } from '@shared/types';
 import { UpdateComponentCodeDto } from './dto/update-component.dto';
 import { GenerateCodeDto } from './dto/generate-code.dto';
 

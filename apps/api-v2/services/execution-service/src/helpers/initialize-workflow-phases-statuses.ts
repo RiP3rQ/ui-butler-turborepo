@@ -1,4 +1,4 @@
-import { type ExecutionPhase, ExecutionPhaseStatus } from '@repo/types';
+import { type ExecutionPhase, ExecutionPhaseStatus } from '@shared/types';
 import { type DrizzleDatabase, executionPhase, inArray } from '@app/database';
 
 export async function initializeWorkflowPhasesStatuses(

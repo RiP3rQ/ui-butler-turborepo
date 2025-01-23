@@ -6,7 +6,7 @@ import {
   ExecutionPhaseStatus,
   IWorkflowExecutionStatus,
   WorkflowExecutionStatus,
-} from '@repo/types';
+} from '@shared/types';
 import {
   and,
   DATABASE_CONNECTION,
