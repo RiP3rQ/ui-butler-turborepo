@@ -1,15 +1,16 @@
 import {
   type AppNode,
+  type BaseWorkflowTask,
   type Environment,
   type ExecutionEnvironment,
   type LogCollector,
 } from '@shared/types';
 
-export function createExecutionEnvironment(
+export function createExecutionEnvironment<T extends BaseWorkflowTask>(
   node: AppNode,
   environment: Environment,
   logCollector: LogCollector,
-): ExecutionEnvironment<any> {
+): ExecutionEnvironment<T> {
   return {
     getComponentId(): number {
       return environment.componentId ?? 0;
@@ -30,6 +31,7 @@ export function createExecutionEnvironment(
     getInput: (name: string) => environment.phases[node.id]?.inputs[name] ?? '',
     setOutput: (name: string, value: string) => {
       if (environment.phases[node.id]) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion --- This type is tweaking, on god
         environment.phases[node.id]!.outputs[name] = value;
       }
     },
@@ -39,6 +41,7 @@ export function createExecutionEnvironment(
     },
     setTemp(name: string, value: string): void {
       if (environment.phases[node.id]) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion --- This type is tweaking, on god
         environment.phases[node.id]!.temp[name] = value;
       }
     },
