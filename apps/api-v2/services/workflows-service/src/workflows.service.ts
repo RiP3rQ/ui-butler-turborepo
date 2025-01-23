@@ -1,17 +1,11 @@
-import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
-import { type ClientGrpc, RpcException } from '@nestjs/microservices';
-import { firstValueFrom } from 'rxjs';
 import {
-  AppNode,
-  ExecutionPhaseStatus,
-  IExecutionPhaseStatus,
-  TaskType,
-  WorkflowExecutionPlan,
-  WorkflowExecutionStatus,
-  WorkflowExecutionTrigger,
-  WorkflowStatus,
-} from '@shared/types';
-import { Edge } from '@nestjs/core/inspector/interfaces/edge.interface';
+  CreateWorkflowDto,
+  DuplicateWorkflowDto,
+  PublishWorkflowDto,
+  RunWorkflowDto,
+  UpdateWorkflowDto,
+  User,
+} from '@app/common';
 import {
   and,
   asc,
@@ -27,21 +21,27 @@ import {
   workflowExecutions,
   workflows,
 } from '@app/database';
-import {
-  CreateWorkflowDto,
-  DuplicateWorkflowDto,
-  PublishWorkflowDto,
-  RunWorkflowDto,
-  UpdateWorkflowDto,
-  User,
-} from '@app/common';
+import { type ExecutionProto, type WorkflowsProto } from '@microservices/proto';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import { Edge } from '@nestjs/core/inspector/interfaces/edge.interface';
+import { type ClientGrpc, RpcException } from '@nestjs/microservices';
 import {
   calculateWorkflowCost,
   createFlowNodeFunction,
   parseFlowToExecutionPlan,
   ServerTaskRegister,
 } from '@shared/tasks-registry';
-import { type ExecutionProto, type WorkflowsProto } from '@app/proto';
+import {
+  AppNode,
+  ExecutionPhaseStatus,
+  IExecutionPhaseStatus,
+  TaskType,
+  WorkflowExecutionPlan,
+  WorkflowExecutionStatus,
+  WorkflowExecutionTrigger,
+  WorkflowStatus,
+} from '@shared/types';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class WorkflowsService implements OnModuleInit {

@@ -1,6 +1,6 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
 import { status } from '@grpc/grpc-js';
-import { type GrpcError } from '@app/common';
+import { type GrpcError } from '@microservices/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 const GRPC_TO_HTTP_STATUS = {
   [status.OK]: HttpStatus.OK,

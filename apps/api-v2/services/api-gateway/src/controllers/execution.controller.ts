@@ -1,4 +1,11 @@
 import {
+  ApproveChangesDto,
+  CurrentUser,
+  JwtAuthGuard,
+  type User,
+} from '@app/common';
+import { ExecutionProto } from '@microservices/proto';
+import {
   Body,
   Controller,
   Get,
@@ -10,13 +17,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
-import {
-  ApproveChangesDto,
-  CurrentUser,
-  JwtAuthGuard,
-  type User,
-} from '@app/common';
-import { ExecutionProto } from '@app/proto';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 
 @Controller('executions')

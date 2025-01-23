@@ -1,8 +1,4 @@
 // analytics.service.ts
-import { Inject, Injectable } from '@nestjs/common';
-import { RpcException } from '@nestjs/microservices';
-import { status } from '@grpc/grpc-js';
-import { eachDayOfInterval, format } from 'date-fns';
 import {
   and,
   components,
@@ -18,7 +14,11 @@ import {
   sql,
   workflowExecutions,
 } from '@app/database';
-import { AnalyticsProto } from '@app/proto';
+import { status } from '@grpc/grpc-js';
+import { AnalyticsProto } from '@microservices/proto';
+import { Inject, Injectable } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
+import { eachDayOfInterval, format } from 'date-fns';
 import { dateToTimestamp } from './utils/timestamp.util';
 
 @Injectable()

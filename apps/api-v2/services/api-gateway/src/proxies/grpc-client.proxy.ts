@@ -1,9 +1,9 @@
+import { status } from '@grpc/grpc-js';
+import { GrpcError } from '@microservices/common';
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { firstValueFrom, Observable, throwError, timer } from 'rxjs';
 import { mergeMap, retryWhen } from 'rxjs/operators';
-import { status } from '@grpc/grpc-js';
-import { ConfigService } from '@nestjs/config';
-import { GrpcError } from '@app/common';
 
 @Injectable()
 export class GrpcClientProxy {

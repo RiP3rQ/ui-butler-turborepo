@@ -1,5 +1,3 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { hash } from 'bcryptjs';
 import {
   and,
   eq,
@@ -8,9 +6,11 @@ import {
   User,
   users,
 } from '@app/database';
-import { UsersProto } from '@app/proto';
-import { RpcException } from '@nestjs/microservices';
 import { status } from '@grpc/grpc-js';
+import { UsersProto } from '@microservices/proto';
+import { Inject, Injectable } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
+import { hash } from 'bcryptjs';
 
 @Injectable()
 export class UsersService {

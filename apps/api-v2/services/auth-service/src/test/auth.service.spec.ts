@@ -1,12 +1,12 @@
 // auth.service.spec.ts
-import { Test, TestingModule } from '@nestjs/testing';
+import { status } from '@grpc/grpc-js';
+import { AuthProto, UsersProto } from '@microservices/proto';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { RpcException } from '@nestjs/microservices';
-import { AuthProto, UsersProto } from '@app/proto';
-import { of, throwError } from 'rxjs';
+import { Test, TestingModule } from '@nestjs/testing';
 import * as bcrypt from 'bcryptjs';
-import { status } from '@grpc/grpc-js';
+import { of, throwError } from 'rxjs';
 import { AuthService } from '../auth.service';
 
 // Add interfaces for mocked services

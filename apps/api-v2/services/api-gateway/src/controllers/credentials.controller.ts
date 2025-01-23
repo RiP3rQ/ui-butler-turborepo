@@ -1,4 +1,11 @@
 import {
+  CreateCredentialDto,
+  CurrentUser,
+  JwtAuthGuard,
+  type User,
+} from '@app/common';
+import { UsersProto } from '@microservices/proto';
+import {
   Body,
   Controller,
   Delete,
@@ -11,13 +18,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
-import {
-  CreateCredentialDto,
-  CurrentUser,
-  JwtAuthGuard,
-  type User,
-} from '@app/common';
-import { UsersProto } from '@app/proto';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 
 @Controller('credentials')

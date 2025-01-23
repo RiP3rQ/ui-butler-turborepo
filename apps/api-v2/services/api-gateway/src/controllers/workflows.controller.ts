@@ -1,4 +1,15 @@
 import {
+  CreateWorkflowDto,
+  CurrentUser,
+  DuplicateWorkflowDto,
+  JwtAuthGuard,
+  PublishWorkflowDto,
+  RunWorkflowDto,
+  UpdateWorkflowDto,
+  type User,
+} from '@app/common';
+import { WorkflowsProto } from '@microservices/proto';
+import {
   Body,
   Controller,
   Delete,
@@ -13,17 +24,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
-import {
-  CreateWorkflowDto,
-  CurrentUser,
-  DuplicateWorkflowDto,
-  JwtAuthGuard,
-  PublishWorkflowDto,
-  RunWorkflowDto,
-  UpdateWorkflowDto,
-  type User,
-} from '@app/common';
-import { WorkflowsProto } from '@app/proto';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 
 @Controller('workflows')

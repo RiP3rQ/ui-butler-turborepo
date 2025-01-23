@@ -1,17 +1,21 @@
 import {
+  type DrizzleDatabase,
+  eq,
+  executionPhase,
+} from '@microservices/database';
+import { ServerTaskRegister } from '@shared/tasks-registry';
+import {
   type AppNode,
   type Environment,
   type ExecutionPhase,
   type ServerSaveEdge,
   WorkflowExecutionStatus,
 } from '@shared/types';
-import { type DrizzleDatabase, eq, executionPhase } from '@app/database';
-import { ServerTaskRegister } from '@shared/tasks-registry';
 import { createLogCollector } from './create-workflow-log-collector';
 import { decrementUserCredits } from './decrement-user-credits';
-import { setupPhaseEnvironment } from './setup-phase-environment';
 import { executePhase } from './execute-phase';
 import { finalizeExecutionPhase } from './finalize-execution-phase';
+import { setupPhaseEnvironment } from './setup-phase-environment';
 
 export async function executeWorkflowPhase(
   database: DrizzleDatabase,

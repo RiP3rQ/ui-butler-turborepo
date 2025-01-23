@@ -1,9 +1,9 @@
+import { UsersProto } from "@microservices/proto";
 import { Inject, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { type ClientGrpc } from "@nestjs/microservices";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-google-oauth20";
-import { type ClientGrpc } from "@nestjs/microservices";
-import { UsersProto } from "@app/proto";
 import { firstValueFrom } from "rxjs";
 import { UsersServiceClient } from "../types/grpc-clients.interface";
 

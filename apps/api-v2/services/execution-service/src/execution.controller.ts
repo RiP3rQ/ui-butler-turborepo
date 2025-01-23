@@ -1,7 +1,7 @@
+import { User } from '@app/common';
+import { ExecutionProto } from '@microservices/proto';
 import { Controller, Logger } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
-import { User } from '@app/common';
-import { ExecutionProto } from '@app/proto';
 import { ExecutionsService } from './execution.service';
 
 @Controller()

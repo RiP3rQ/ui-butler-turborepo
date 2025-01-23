@@ -1,11 +1,15 @@
 import {
+  type DrizzleDatabase,
+  eq,
+  workflowExecutions,
+} from '@microservices/database';
+import {
   type Environment,
   type ExecutionPhase,
   type ServerSaveEdge,
   type WorkflowExecution,
   WorkflowExecutionStatus,
 } from '@shared/types';
-import { type DrizzleDatabase, eq, workflowExecutions } from '@app/database';
 import { executeWorkflowPhase } from './execute-workflow-phase';
 import { initializeFinalizeExecution } from './initialize-finalize-execution';
 

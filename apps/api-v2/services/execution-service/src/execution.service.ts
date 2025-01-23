@@ -1,12 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { RpcException } from '@nestjs/microservices';
-import { Edge } from '@nestjs/core/inspector/interfaces/edge.interface';
-import {
-  Environment,
-  ExecutionPhaseStatus,
-  IWorkflowExecutionStatus,
-  WorkflowExecutionStatus,
-} from '@shared/types';
+import { ApproveChangesDto } from '@app/common';
 import {
   and,
   DATABASE_CONNECTION,
@@ -15,9 +7,17 @@ import {
   executionPhase,
   workflowExecutions,
 } from '@app/database';
-import { ApproveChangesDto } from '@app/common';
-import { ExecutionProto } from '@app/proto';
 import { status } from '@grpc/grpc-js';
+import { ExecutionProto } from '@microservices/proto';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Edge } from '@nestjs/core/inspector/interfaces/edge.interface';
+import { RpcException } from '@nestjs/microservices';
+import {
+  Environment,
+  ExecutionPhaseStatus,
+  IWorkflowExecutionStatus,
+  WorkflowExecutionStatus,
+} from '@shared/types';
 import { executeWorkflowPhases } from './helpers/execute-workflow-phases';
 import { initializeWorkflowExecution } from './helpers/initialize-workflow-execution';
 import { initializeWorkflowPhasesStatuses } from './helpers/initialize-workflow-phases-statuses';

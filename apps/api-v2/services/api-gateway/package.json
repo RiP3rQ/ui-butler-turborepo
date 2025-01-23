@@ -21,9 +21,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@app/common": "workspace:*",
-    "@app/database": "workspace:*",
-    "@app/proto": "workspace:*",
+    "@microservices/common": "workspace:*",
+    "@microservices/database": "workspace:*",
+    "@microservices/proto": "workspace:*",
     "@grpc/grpc-js": "^1.12.5",
     "@nestjs/axios": "^3.1.3",
     "@nestjs/cache-manager": "^2.3.0",

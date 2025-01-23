@@ -1,3 +1,5 @@
+import { CurrentUser, JwtAuthGuard } from '@app/common';
+import { BillingProto } from '@microservices/proto';
 import {
   Controller,
   Get,
@@ -8,11 +10,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
-import { CurrentUser, JwtAuthGuard } from '@app/common';
-import { BillingProto } from '@app/proto';
 import { BalancePackId } from '@shared/types';
-import { handleGrpcError } from '../utils/grpc-error.util';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
+import { handleGrpcError } from '../utils/grpc-error.util';
 
 @Controller('billing')
 @UseGuards(JwtAuthGuard)

@@ -1,4 +1,4 @@
-import { type Timestamp } from '@app/proto';
+import { type Timestamp } from '@microservices/proto';
 
 export function dateToTimestamp(date: string | number): Timestamp {
   const dateObj = new Date(date);

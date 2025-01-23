@@ -1,5 +1,9 @@
+import {
+  type DrizzleDatabase,
+  executionPhase,
+  inArray,
+} from '@microservices/database';
 import { type ExecutionPhase, ExecutionPhaseStatus } from '@shared/types';
-import { type DrizzleDatabase, executionPhase, inArray } from '@app/database';
 
 export async function initializeWorkflowPhasesStatuses(
   database: DrizzleDatabase,

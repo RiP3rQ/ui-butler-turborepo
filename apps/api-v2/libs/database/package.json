@@ -1,5 +1,5 @@
 {
-  "name": "@app/database",
+  "name": "@microservices/database",
   "version": "0.0.0",
   "description": "",
   "exports": {

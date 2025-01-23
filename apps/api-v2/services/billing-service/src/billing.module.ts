@@ -1,7 +1,7 @@
-import { Module } from '@nestjs/common';
-import { DatabaseModule } from '@app/database';
-import { APP_INTERCEPTOR } from '@nestjs/core';
 import { GrpcErrorInterceptor } from '@app/common';
+import { DatabaseModule } from '@microservices/database';
+import { Module } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { BillingController } from './billing.controller';
 import { BillingService } from './billing.service';
 

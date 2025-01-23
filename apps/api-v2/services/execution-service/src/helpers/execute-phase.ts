@@ -1,3 +1,4 @@
+import { type DrizzleDatabase } from '@microservices/database';
 import {
   type AppNode,
   type Environment,
@@ -6,7 +7,6 @@ import {
   type LogCollector,
   type WorkflowExecutionStatus,
 } from '@shared/types';
-import { type DrizzleDatabase } from '@app/database';
 import { ExecutorRegistry } from '../executors/executor';
 import { createExecutionEnvironment } from './create-execution-environment';
 

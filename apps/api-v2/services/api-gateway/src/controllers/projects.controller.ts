@@ -1,3 +1,5 @@
+import { CurrentUser, JwtAuthGuard } from '@app/common';
+import { ProjectsProto } from '@microservices/proto';
 import {
   Body,
   Controller,
@@ -10,10 +12,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
-import { CurrentUser, JwtAuthGuard } from '@app/common';
-import { ProjectsProto } from '@app/proto';
-import { handleGrpcError } from '../utils/grpc-error.util';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
+import { handleGrpcError } from '../utils/grpc-error.util';
 
 @Controller('projects')
 @UseGuards(JwtAuthGuard)

@@ -1,8 +1,8 @@
 // auth.controller.spec.ts
-import { type AuthProto } from '@app/proto';
+import { status } from '@grpc/grpc-js';
+import { type AuthProto } from '@microservices/proto';
 import { RpcException } from '@nestjs/microservices';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { status } from '@grpc/grpc-js';
 import { AuthController } from '../auth.controller';
 import { AuthService } from '../auth.service';
 

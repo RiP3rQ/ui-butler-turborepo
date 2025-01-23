@@ -1,20 +1,20 @@
 import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import {
   DATABASE_CONNECTION,
   eq,
   type NeonDatabaseType,
   sql,
   userBalance,
 } from '@app/database';
-import { BalancePackId, getCreditPackById } from '@shared/types';
-import { RpcException } from '@nestjs/microservices';
 import { status } from '@grpc/grpc-js';
-import { BillingProto } from '@app/proto';
+import { BillingProto } from '@microservices/proto';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
+import { BalancePackId, getCreditPackById } from '@shared/types';
 
 @Injectable()
 export class BillingService {

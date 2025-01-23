@@ -1,9 +1,9 @@
-import { type ExecutionEnvironment } from '@shared/types';
+import { GET_GEMINI_MODEL } from '@microservices/common';
+import { CreateTypescriptDocsPrompt } from '@shared/prompts';
 import { type ServerCreateTypeScriptDocsTaskType } from '@shared/tasks-registry';
+import { type ExecutionEnvironment } from '@shared/types';
 import { generateObject } from 'ai';
 import { z } from 'zod';
-import { CreateTypescriptDocsPrompt } from '@shared/prompts';
-import { GET_GEMINI_MODEL } from '@app/common';
 
 export async function createTsDocsExecutor(
   environment: ExecutionEnvironment<ServerCreateTypeScriptDocsTaskType>,

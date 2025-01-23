@@ -1,12 +1,12 @@
-import { WorkflowExecutionStatus } from '@shared/types';
-import { NotFoundException } from '@nestjs/common';
 import {
   type DrizzleDatabase,
   eq,
-  type WorkflowUpdate,
   workflowExecutions,
   workflows,
-} from '@app/database';
+  type WorkflowUpdate,
+} from '@microservices/database';
+import { NotFoundException } from '@nestjs/common';
+import { WorkflowExecutionStatus } from '@shared/types';
 
 export async function initializeWorkflowExecution(
   database: DrizzleDatabase,

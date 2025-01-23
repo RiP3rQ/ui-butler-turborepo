@@ -1,5 +1,5 @@
 {
-  "name": "@app/common",
+  "name": "@microservices/common",
   "private": true,
   "scripts": {
     "build": "tsc",
@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "@ai-sdk/google": "^1.0.16",
-    "@app/proto": "workspace:*",
+    "@microservices/proto": "workspace:*",
     "@grpc/grpc-js": "^1.12.5",
     "@nestjs/config": "^3.3.0",
     "@nestjs/microservices": "^10.4.15",

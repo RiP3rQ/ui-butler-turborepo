@@ -1,4 +1,3 @@
-import { type LogCollector } from '@shared/types';
 import {
   and,
   type DrizzleDatabase,
@@ -6,7 +5,8 @@ import {
   gte,
   sql,
   userBalance,
-} from '@app/database';
+} from '@microservices/database';
+import { type LogCollector } from '@shared/types';
 
 export async function decrementUserCredits(
   database: DrizzleDatabase,

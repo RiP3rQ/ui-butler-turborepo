@@ -1,5 +1,5 @@
 {
-  "name": "@app/proto",
+  "name": "@microservices/proto",
   "version": "0.0.0",
   "description": "",
   "exports": {

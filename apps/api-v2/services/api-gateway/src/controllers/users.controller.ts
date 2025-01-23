@@ -1,3 +1,6 @@
+import { CurrentUser, JwtAuthGuard } from '@app/common';
+import { UsersProto } from '@microservices/proto';
+import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 import {
   Body,
   Controller,
@@ -9,9 +12,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
-import { CurrentUser, JwtAuthGuard } from '@app/common';
-import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
-import { UsersProto } from '@app/proto';
 import { GrpcClientProxy } from 'src/proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
 

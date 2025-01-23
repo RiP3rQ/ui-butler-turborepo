@@ -1,6 +1,6 @@
-import { IsIn, IsNotEmpty, IsNumber } from "class-validator";
+import { ComponentsProto } from "@microservices/proto";
 import { codeTypeValues } from "@shared/types";
-import { ComponentsProto } from "@app/proto";
+import { IsIn, IsNotEmpty, IsNumber } from "class-validator";
 
 export class GenerateCodeDto {
   @IsNumber()

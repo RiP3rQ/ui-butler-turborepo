@@ -1,5 +1,5 @@
+import { DatabaseModule } from '@microservices/database';
 import { Module } from '@nestjs/common';
-import { DatabaseModule } from '@app/database';
 import { AnalyticsController } from './analytics.controller';
 import { AnalyticsService } from './analytics.service';
 

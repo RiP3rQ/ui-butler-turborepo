@@ -1,9 +1,9 @@
-import { type ExecutionEnvironment } from '@shared/types';
+import { GET_GEMINI_MODEL } from '@microservices/common';
+import { CreateUnitTestsPrompt } from '@shared/prompts';
 import { type ServerCreateUnitTestsTaskType } from '@shared/tasks-registry';
+import { type ExecutionEnvironment } from '@shared/types';
 import { generateObject } from 'ai';
 import { z } from 'zod';
-import { CreateUnitTestsPrompt } from '@shared/prompts';
-import { GET_GEMINI_MODEL } from '@app/common';
 
 export async function createUnitTestsExecutor(
   environment: ExecutionEnvironment<ServerCreateUnitTestsTaskType>,

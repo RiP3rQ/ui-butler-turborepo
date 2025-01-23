@@ -1,6 +1,6 @@
-import { type ExecutionEnvironment } from '@shared/types';
+import { components, type DrizzleDatabase, eq } from '@microservices/database';
 import { type ServerSetCodeContextTaskType } from '@shared/tasks-registry';
-import { components, type DrizzleDatabase, eq } from '@app/database';
+import { type ExecutionEnvironment } from '@shared/types';
 
 export async function setCodeContextExecutor(
   environment: ExecutionEnvironment<ServerSetCodeContextTaskType>,

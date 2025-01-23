@@ -1,10 +1,10 @@
 // libs/common/src/strategies/github.strategy.ts
+import { UsersProto } from "@microservices/proto";
 import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { type ClientGrpc } from "@nestjs/microservices";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-github2";
-import { type ClientGrpc } from "@nestjs/microservices";
-import { UsersProto } from "@app/proto";
 import { firstValueFrom } from "rxjs";
 import { UsersServiceClient } from "../types/grpc-clients.interface";
 

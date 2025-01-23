@@ -1,13 +1,13 @@
 // auth.service.ts
+import { GrpcError } from '@app/common';
+import { status } from '@grpc/grpc-js';
+import { AuthProto, UsersProto } from '@microservices/proto';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { compare, hash } from 'bcryptjs';
 import { type ClientGrpc, RpcException } from '@nestjs/microservices';
+import { compare, hash } from 'bcryptjs';
 import { firstValueFrom } from 'rxjs';
-import { AuthProto, UsersProto } from '@app/proto';
-import { GrpcError } from '@app/common';
-import { status } from '@grpc/grpc-js';
 
 @Injectable()
 export class AuthService {

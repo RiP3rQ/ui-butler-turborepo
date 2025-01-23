@@ -1,4 +1,7 @@
 // controllers/analytics.controller.ts
+import { CurrentUser, JwtAuthGuard } from '@app/common';
+import { AnalyticsProto } from '@microservices/proto';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import {
   Controller,
   Get,
@@ -11,9 +14,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
-import { CurrentUser, JwtAuthGuard } from '@app/common';
-import { AnalyticsProto } from '@app/proto';
-import { firstValueFrom } from 'rxjs';
 import {
   ApiBearerAuth,
   ApiNotFoundResponse,
@@ -22,9 +22,9 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
-import { handleGrpcError } from '../utils/grpc-error.util';
+import { firstValueFrom } from 'rxjs';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
+import { handleGrpcError } from '../utils/grpc-error.util';
 
 @ApiTags('Analytics')
 @ApiBearerAuth()

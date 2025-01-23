@@ -1,4 +1,12 @@
-import { ClientRequest, IncomingMessage } from 'node:http';
+import {
+  CurrentUser,
+  FavoriteComponentDto,
+  GenerateCodeDto,
+  JwtAuthGuard,
+  SaveComponentDto,
+  UpdateComponentCodeDto,
+} from '@app/common';
+import { ComponentsProto } from '@microservices/proto';
 import {
   All,
   Body,
@@ -17,22 +25,14 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
-import {
-  CurrentUser,
-  FavoriteComponentDto,
-  GenerateCodeDto,
-  JwtAuthGuard,
-  SaveComponentDto,
-  UpdateComponentCodeDto,
-} from '@app/common';
+import { Throttle } from '@nestjs/throttler';
 import { codeTypeValues } from '@shared/types';
 import { type Request, type Response } from 'express';
 import HttpProxy from 'http-proxy';
-import { Throttle } from '@nestjs/throttler';
-import { ComponentsProto } from '@app/proto';
+import { ClientRequest, IncomingMessage } from 'node:http';
 import { rateLimitConfigs } from '../config/rate-limit.config';
-import { handleGrpcError } from '../utils/grpc-error.util';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
+import { handleGrpcError } from '../utils/grpc-error.util';
 
 @Controller('components')
 @UseGuards(JwtAuthGuard)

@@ -1,5 +1,5 @@
-import { type Timestamp, type ProjectsProto } from '@app/proto';
-import { type projects, type components } from '@app/database';
+import { type components, type projects } from '@app/database';
+import { type ProjectsProto, type Timestamp } from '@microservices/proto';
 
 /**
  * Converts a JavaScript Date to a Google Protobuf Timestamp

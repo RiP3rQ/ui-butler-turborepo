@@ -1,6 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { status } from '@grpc/grpc-js';
-import { RpcException } from '@nestjs/microservices';
+import { symmetricDecrypt, symmetricEncrypt } from '@app/common';
 import {
   and,
   DATABASE_CONNECTION,
@@ -10,8 +8,10 @@ import {
   NewUserCredential,
   userCredentials,
 } from '@app/database';
-import { symmetricDecrypt, symmetricEncrypt } from '@app/common';
-import { UsersProto } from '@app/proto';
+import { status } from '@grpc/grpc-js';
+import { UsersProto } from '@microservices/proto';
+import { Inject, Injectable } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class CredentialsService {

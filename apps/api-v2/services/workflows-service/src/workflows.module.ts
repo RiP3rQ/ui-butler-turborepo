@@ -1,7 +1,7 @@
-import { join } from 'node:path';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { DatabaseModule } from '@microservices/database';
 import { Module } from '@nestjs/common';
-import { DatabaseModule } from '@app/database';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { join } from 'node:path';
 import { WorkflowsController } from './workflows.controller';
 import { WorkflowsService } from './workflows.service';
 

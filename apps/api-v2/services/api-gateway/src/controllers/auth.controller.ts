@@ -1,5 +1,13 @@
 // auth.controller.ts
 import {
+  CurrentUser,
+  GithubAuthGuard,
+  GoogleAuthGuard,
+  JwtRefreshAuthGuard,
+  LocalAuthGuard,
+} from '@app/common';
+import { AuthProto } from '@microservices/proto';
+import {
   Body,
   Controller,
   Get,
@@ -9,15 +17,6 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { type Response } from 'express';
-import {
-  CurrentUser,
-  GithubAuthGuard,
-  GoogleAuthGuard,
-  JwtRefreshAuthGuard,
-  LocalAuthGuard,
-} from '@app/common';
-import { AuthProto } from '@app/proto';
 import {
   ApiBody,
   ApiCookieAuth,
@@ -28,6 +27,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { type Response } from 'express';
 import { AuthProxyService } from '../proxies/auth.proxy.service';
 
 @ApiTags('Authentication')
