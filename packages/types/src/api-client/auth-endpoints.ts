@@ -1,3 +1,5 @@
+import type { ProtoTimestamp } from "../others/proto-timestamp";
+
 /**
  * Auth API endpoint types
  */
@@ -8,7 +10,10 @@ export interface AuthResponse {
     id: number;
     email: string;
     username: string;
+    createdAt: ProtoTimestamp;
+    updatedAt: ProtoTimestamp;
   };
+  redirect?: boolean;
   redirectUrl?: string;
 }
 
@@ -18,7 +23,7 @@ export interface AuthEndpoints {
     body: {
       email: string;
       password: string;
-      username: string;
+      username?: string;
     };
     response: AuthResponse;
   };
@@ -34,6 +39,10 @@ export interface AuthEndpoints {
 
   /** POST /auth/refresh */
   refresh: {
+    body: {
+      refreshToken: string;
+      email: string;
+    };
     response: AuthResponse;
   };
 

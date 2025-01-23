@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package api.workflows;
 
+import "google/protobuf/timestamp.proto";
+
 service WorkflowsService {
     rpc GetAllUserWorkflows (GetAllUserWorkflowsRequest) returns (WorkflowsResponse) {}
     rpc GetWorkflowById (GetWorkflowByIdRequest) returns (WorkflowResponse) {}
@@ -26,45 +28,54 @@ message Workflow {
     int32 id = 1;
     string name = 2;
     string description = 3;
-    string userId = 4;
+    int32 userId = 4;
     string definition = 5;
     string status = 6;
     string executionPlan = 7;
     int32 creditsCost = 8;
-    google.protobuf.Timestamp createdAt = 9;
-    google.protobuf.Timestamp updatedAt = 10;
+    bool isPublished = 9;
+    google.protobuf.Timestamp createdAt = 10;
+    google.protobuf.Timestamp updatedAt = 11;
+    optional google.protobuf.Timestamp lastRunAt = 12;
+    optional string lastRunId = 13;
+    optional string lastRunStatus = 14;
+    optional google.protobuf.Timestamp nextRunAt = 15;
 }
 
 message WorkflowExecution {
     int32 id = 1;
     int32 workflowId = 2;
-    string userId = 3;
+    int32 userId = 3;
     string status = 4;
-    google.protobuf.Timestamp startedAt = 5;
-    google.protobuf.Timestamp endedAt = 6;
-    string trigger = 7;
+    optional google.protobuf.Timestamp startedAt = 5;
+    optional google.protobuf.Timestamp completedAt = 6;
+    optional string trigger = 7;
     string definition = 8;
-    string createdAt = 9;
+    optional google.protobuf.Timestamp createdAt = 9;
+    optional int32 creditsConsumed = 10;
 }
 
 message ExecutionPhase {
     int32 id = 1;
     int32 workflowExecutionId = 2;
-    string userId = 3;
+    int32 userId = 3;
     string status = 4;
     int32 number = 5;
-    string node = 6;
+    optional string node = 6;
     string name = 7;
-    google.protobuf.Timestamp startedAt = 8;
-    google.protobuf.Timestamp endedAt = 9;
+    optional int32 creditsCost = 8;
+    optional string inputs = 9;
+    optional string outputs = 10;
+    optional google.protobuf.Timestamp startedAt = 11;
+    optional google.protobuf.Timestamp completedAt = 12;
 }
 
 message ExecutionLog {
     int32 id = 1;
     int32 executionPhaseId = 2;
     string message = 3;
-    string level = 4;
-    string timestamp = 5;
+    string logLevel = 4;
+    google.protobuf.Timestamp timestamp = 5;
 }
 
 // Request messages

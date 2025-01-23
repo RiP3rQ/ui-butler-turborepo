@@ -53,10 +53,14 @@ export interface StatCardsValuesResponse {
   phasesExecuted: number;
 }
 
-export interface UsedCreditsInPeriodResponse {
+export interface DailyStats {
+  date: ProtoTimestamp;
   successful: number;
   failed: number;
-  date: ProtoTimestamp;
+}
+
+export interface UsedCreditsInPeriod {
+  stats: DailyStats[];
 }
 
 export interface DashboardStatCardsValuesResponse {
@@ -87,9 +91,7 @@ export interface AnalyticsEndpoints {
       month: number;
       year: number;
     };
-    response: {
-      cards: StatCard[];
-    };
+    response: StatCardsValuesResponse;
   };
 
   /** GET /analytics/workflow-execution-stats */
@@ -107,7 +109,7 @@ export interface AnalyticsEndpoints {
       month: number;
       year: number;
     };
-    response: CreditStats;
+    response: UsedCreditsInPeriod;
   };
 
   /** GET /analytics/dashboard-stat-cards-values */

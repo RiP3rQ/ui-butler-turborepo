@@ -1,47 +1,45 @@
 {
   "folders": [
-    // PACKAGES
     {
       "name": "prompts",
-      "path": "../packages/prompts",
+      "path": "../packages/prompts"
     },
     {
       "name": "ui",
-      "path": "../packages/ui",
-    },
-    {
-      "name": "types",
-      "path": "../packages/types",
+      "path": "../packages/ui"
     },
     {
       "name": "tasks-registry",
-      "path": "../packages/tasks-registry",
+      "path": "../packages/tasks-registry"
     },
-    // APPS
     {
       "name": "web",
-      "path": "../apps/web",
+      "path": "../apps/web"
     },
     {
       "name": "landing-page",
-      "path": "../apps/web-landing-page",
+      "path": "../apps/web-landing-page"
     },
     {
       "name": "auth-pages",
-      "path": "../apps/web-auth",
+      "path": "../apps/web-auth"
     },
     {
       "name": "standard-api-v1",
-      "path": "../apps/api",
+      "path": "../apps/api"
+    },
+    {
+      "name": "types",
+      "path": "../packages/types"
     },
     {
       "name": "microservices-api-v2",
-      "path": "../apps/api-v2",
+      "path": "../apps/api-v2"
     },
     {
       "name": "ROOT",
-      "path": "../",
-    },
+      "path": ".."
+    }
   ],
   "settings": {
     "files.exclude": {

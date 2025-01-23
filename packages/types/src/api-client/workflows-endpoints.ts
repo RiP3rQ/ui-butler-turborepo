@@ -15,7 +15,7 @@ export interface ApproveChangesRequest {
 export interface Workflow {
   id: number;
   name: string;
-  userId: number | null;
+  userId: number;
   description: string | null;
   definition: string;
   executionPlan: string | null;
@@ -61,7 +61,7 @@ export interface WorkflowExecution {
   status: string;
   createdAt: ProtoTimestamp | null;
   workflowId: number;
-  trigger: string;
+  trigger: string | null;
   creditsConsumed: number | null;
   startedAt: ProtoTimestamp | null;
   completedAt: ProtoTimestamp | null;

@@ -3,15 +3,18 @@ import { type ProtoTimestamp } from "../others/proto-timestamp";
 export interface Credential {
   id: number;
   name: string;
-  type: string;
-  value: string;
+  userId: number;
   createdAt: ProtoTimestamp;
   updatedAt: ProtoTimestamp;
 }
 
 export interface RevealedCredential {
   id: number;
+  name: string;
   value: string;
+  userId: number;
+  createdAt: ProtoTimestamp;
+  updatedAt: ProtoTimestamp;
 }
 
 export interface UserCredentials {
@@ -26,6 +29,11 @@ export interface UserDecryptedCredentials extends UserCredentials {
   value: string;
 }
 
+export interface CreateCredentialDto {
+  name: string;
+  value: string;
+}
+
 export interface CredentialsEndpoints {
   /** GET /credentials */
   getUserCredentials: {
@@ -34,10 +42,7 @@ export interface CredentialsEndpoints {
 
   /** POST /credentials */
   createCredential: {
-    body: {
-      name: string;
-      value: string;
-    };
+    body: CreateCredentialDto;
     response: Credential;
   };
 

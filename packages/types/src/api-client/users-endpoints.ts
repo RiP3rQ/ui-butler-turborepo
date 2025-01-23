@@ -1,16 +1,19 @@
 export interface User {
   id: number;
-  username: string;
   email: string;
-  avatar?: string;
+  username?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Profile {
   id: number;
   userId: number;
-  firstName: string;
-  lastName: string;
-  avatarUrl?: string;
+  bio: string;
+  location: string;
+  website: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface UsersEndpoints {
@@ -24,18 +27,20 @@ export interface UsersEndpoints {
   /** GET /users/current-basic */
   getCurrentUser: {
     response: {
-      user: User & {
-        profile?: Profile;
-      };
+      id: number;
+      username?: string;
+      email: string;
+      avatar?: string;
     };
   };
 
   /** POST /users/profile */
   createProfile: {
     body: {
-      firstName: string;
-      lastName: string;
-      avatarUrl?: string;
+      userId: number;
+      bio: string;
+      location: string;
+      website: string;
     };
     response: Profile;
   };
@@ -44,8 +49,8 @@ export interface UsersEndpoints {
   createUser: {
     body: {
       email: string;
-      username?: string;
       password: string;
+      username?: string;
     };
     response: User;
   };

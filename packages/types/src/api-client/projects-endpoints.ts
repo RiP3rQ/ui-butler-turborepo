@@ -7,10 +7,10 @@ export interface Project {
   title: string;
   description: string;
   color: string;
-  createdAt?: ProtoTimestamp | undefined;
-  updatedAt?: ProtoTimestamp | undefined;
+  createdAt: ProtoTimestamp;
+  updatedAt: ProtoTimestamp;
   userId: number;
-  numberOfComponents?: number | undefined;
+  numberOfComponents?: number;
 }
 
 export interface ProjectDetails extends Project {

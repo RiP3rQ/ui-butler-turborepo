@@ -50,7 +50,7 @@ message WorkflowStatsRequest {
 }
 
 message DailyStats {
-    string date = 1;
+    google.protobuf.Timestamp date = 1;
     int32 successful = 2;
     int32 failed = 3;
 }

@@ -41,7 +41,7 @@ message ApproveChangesResponse {
 message ExecuteWorkflowRequest {
     int32 workflowExecutionId = 1;
     int32 componentId = 2;
-    optional string nextRunAt = 3;
+    optional google.protobuf.Timestamp nextRunAt = 3;
 }
 
 message Empty {}

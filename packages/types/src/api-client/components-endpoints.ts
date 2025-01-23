@@ -1,5 +1,5 @@
-import { type ProtoTimestamp } from "../others/proto-timestamp";
 import { type CodeType } from "../others/code-types";
+import { type ProtoTimestamp } from "../others/proto-timestamp";
 
 export interface Component {
   id: number;
@@ -34,6 +34,12 @@ export interface ComponentsEndpoints {
       projectId: number;
       componentId: number;
     };
+    body: {
+      user: {
+        id: number;
+        email: string;
+      };
+    };
     response: Component;
     request: {
       projectId: number;
@@ -44,6 +50,10 @@ export interface ComponentsEndpoints {
   /** POST /components */
   saveComponent: {
     body: {
+      user: {
+        id: number;
+        email: string;
+      };
       title: string;
       code: string;
       projectId: number;
@@ -73,8 +83,11 @@ export interface ComponentsEndpoints {
 
   /** ALL /components/generate */
   generate: {
+    body: {
+      prompt: string;
+    };
     response: {
-      success: boolean;
+      content: string;
     };
   };
 
@@ -86,6 +99,10 @@ export interface ComponentsEndpoints {
     };
     body: {
       content: string;
+      user: {
+        id: number;
+        email: string;
+      };
     };
     response: Component;
   };

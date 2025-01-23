@@ -59,8 +59,9 @@ message ProjectDetails {
     google.protobuf.Timestamp createdAt = 5;
     google.protobuf.Timestamp updatedAt = 6;
     int32 userId = 7;
-    int32 numberOfComponents = 8;
+    optional int32 numberOfComponents = 8;
     repeated Component components = 9;
+    repeated Workflow workflows = 10;
 }
 
 message CreateProjectRequest {
@@ -72,4 +73,12 @@ message CreateProjectDto {
     string title = 1;
     string description = 2;
     string color = 3;
+}
+
+message Workflow {
+    int32 id = 1;
+    string name = 2;
+    int32 projectId = 3;
+    google.protobuf.Timestamp createdAt = 4;
+    google.protobuf.Timestamp updatedAt = 5;
 }
