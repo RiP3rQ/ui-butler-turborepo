@@ -2,6 +2,7 @@
 import { favoriteComponentFunction } from "@/actions/components/server-actions";
 import CodeEditor from "@/components/code-editor/editor";
 import { FavoriteButton } from "@/components/components/favorite-button";
+import { protoTimestampToDate } from "@/lib/dates";
 import { type Component, type ProjectDetails } from "@shared/types";
 import {
   Accordion,
@@ -110,7 +111,9 @@ export function MultipleComponentsView({
                 <div className="flex items-center gap-3">
                   <span className="font-medium">{component.title}</span>
                   <div className="text-sm text-muted-foreground">
-                    {moment(component.createdAt).format("DD/MM/YYYY")}
+                    {moment(protoTimestampToDate(component.updatedAt)).format(
+                      "DD/MM/YYYY",
+                    )}
                   </div>
                 </div>
               </div>

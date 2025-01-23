@@ -1,11 +1,11 @@
+import { ApiClient } from "@/lib/api-client";
+import { getErrorMessage } from "@/lib/get-error-message";
+import { type CreateNewProjectSchemaType } from "@/schemas/project";
 import {
   type Project,
   type ProjectDetails,
   type ProjectsEndpoints,
 } from "@shared/types";
-import { ApiClient } from "@/lib/api-client";
-import { type CreateNewProjectSchemaType } from "@/schemas/project";
-import { getErrorMessage } from "@/lib/get-error-message";
 
 /**
  * Service class for project-related API calls
@@ -72,6 +72,8 @@ export class ProjectsService {
       const response = await ApiClient.get<
         ProjectsEndpoints["getProjects"]["response"]
       >(this.BASE_PATH);
+
+      console.log("response", response);
 
       if (!response.success) {
         throw new Error("Failed to get user projects");

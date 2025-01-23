@@ -1,5 +1,5 @@
-import { cookies } from "next/headers";
 import { type RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
+import { cookies } from "next/headers";
 
 /**
  * Supported HTTP methods for API requests
@@ -10,8 +10,8 @@ type RequestMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
  * Base interface for API responses
  */
 interface ApiResponse {
-  readonly success: boolean;
-  readonly timestamp: string;
+  readonly success?: boolean;
+  readonly timestamp?: string;
 }
 
 /**
@@ -255,7 +255,13 @@ export class ApiClient {
       });
     }
 
-    return response.json() as Promise<ApiSuccessResponse<T>>;
+    const apiResponse = (await response.json()) as ApiSuccessResponse<T>;
+
+    return {
+      success: apiResponse.success ?? true,
+      timestamp: apiResponse.timestamp ?? new Date().toISOString(),
+      data: apiResponse.data ?? null,
+    };
   }
 
   private static handleError(error: unknown): never {

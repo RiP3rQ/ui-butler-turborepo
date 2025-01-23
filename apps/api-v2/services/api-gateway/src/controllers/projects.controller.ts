@@ -29,7 +29,6 @@ import { handleGrpcError } from '../utils/grpc-error.util';
 
 const CACHE_TTL_5_MINUTES = 300000;
 const CACHE_KEY_PROJECTS = 'user-projects';
-const CACHE_KEY_PROJECT_DETAILS = 'project-details';
 
 /**
  * Controller handling project-related operations through gRPC communication
@@ -121,9 +120,6 @@ export class ProjectsController implements OnModuleInit {
   })
   @ApiResponse({ status: 404, description: 'Project not found' })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
-  @UseInterceptors(CacheInterceptor)
-  @CacheKey(CACHE_KEY_PROJECT_DETAILS)
-  @CacheTTL(CACHE_TTL_5_MINUTES)
   @Get(':projectId')
   public async getProjectDetails(
     @CurrentUser() user: ProjectsProto.User,
@@ -144,6 +140,16 @@ export class ProjectsController implements OnModuleInit {
         },
         projectId,
       };
+
+      console.log('request', request);
+
+      console.log(
+        'RESPONSE',
+        await this.grpcClient.call(
+          this.projectsService.getProjectDetails(request),
+          'Projects.getProjectDetails',
+        ),
+      );
 
       return await this.grpcClient.call(
         this.projectsService.getProjectDetails(request),
