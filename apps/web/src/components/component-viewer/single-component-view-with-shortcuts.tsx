@@ -14,8 +14,8 @@ export default function SingleComponentViewWithShortcuts(
     queryKey: ["single-component", props.projectId, props.componentId],
     queryFn: () =>
       getSingleComponentsDataFunction({
-        projectId: props.projectId,
-        componentId: props.componentId,
+        projectId: Number(props.projectId),
+        componentId: Number(props.componentId),
       }),
     initialData: props.componentsData,
   });

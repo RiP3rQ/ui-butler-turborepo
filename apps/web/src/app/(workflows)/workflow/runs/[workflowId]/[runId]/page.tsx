@@ -15,7 +15,7 @@ export default async function WorkflowRunPage({
     const { workflowId, runId } = await params;
     const workflowExecution =
       await getWorkflowExecutionWithPhasesDetailsFunction({
-        executionId: runId,
+        executionId: Number(runId),
       });
     return (
       <div className="flex flex-col h-screen w-full overflow-hidden">

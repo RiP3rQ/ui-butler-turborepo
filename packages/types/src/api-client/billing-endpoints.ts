@@ -1,8 +1,13 @@
-import { type BalancePackId } from "../billing";
+import { type BalancePackId } from "../others/credit-packs";
 
 export interface UserCredits {
   balance: number;
   totalUsed: number;
+}
+
+export interface UserBasicCredits {
+  userId: number;
+  credits: number;
 }
 
 export interface BillingEndpoints {

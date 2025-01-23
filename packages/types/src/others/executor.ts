@@ -1,6 +1,6 @@
-import { type BaseWorkflowTask } from "./workflow";
 import { type LogCollector } from "./log-collector";
-import { type TaskParam } from "./task";
+import { type TaskParam } from "./tasks";
+import { type BaseWorkflowTask } from "./workflow";
 
 export interface Environment {
   workflowExecutionId: number;

@@ -1,3 +1,5 @@
+import { type ProtoTimestamp } from "../others/proto-timestamp";
+
 export interface Credential {
   id: number;
   name: string;
@@ -9,6 +11,18 @@ export interface Credential {
 
 export interface RevealedCredential {
   id: number;
+  value: string;
+}
+
+export interface UserCredentials {
+  userId: number;
+  id: number;
+  name: string;
+  createdAt: ProtoTimestamp;
+  updatedAt: ProtoTimestamp;
+}
+
+export interface UserDecryptedCredentials extends UserCredentials {
   value: string;
 }
 

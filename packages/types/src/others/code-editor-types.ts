@@ -1,8 +1,6 @@
 import type { LucideIcon } from "lucide-react";
-import {
-  type CodeType,
-  type SingleComponentApiResponseType,
-} from "./components";
+import { type Component } from "../api-client/components-endpoints";
+import { type CodeType } from "./code-types";
 
 export interface EditorActionsType {
   title: string;
@@ -15,8 +13,8 @@ export interface AccordionItemConfig {
   value: string;
   title: string;
   codeType: CodeType;
-  getCode: (data: SingleComponentApiResponseType) => string;
-  checkImplemented: (data: SingleComponentApiResponseType) => boolean;
+  getCode: (data: Component) => string;
+  checkImplemented: (data: Component) => boolean;
   action?: {
     title: string;
     icon: LucideIcon;
@@ -24,7 +22,7 @@ export interface AccordionItemConfig {
 }
 
 export interface SingleComponentViewProps {
-  componentsData: SingleComponentApiResponseType;
+  componentsData: Component;
   projectId: string;
   componentId: string;
 }

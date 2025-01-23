@@ -26,8 +26,8 @@ export default async function SingleComponentPage({
   }
 
   const componentsData = await getSingleComponentsDataFunction({
-    projectId,
-    componentId,
+    projectId: Number(projectId),
+    componentId: Number(componentId),
   });
 
   return (

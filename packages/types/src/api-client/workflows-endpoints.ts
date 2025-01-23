@@ -1,22 +1,83 @@
-import { type WorkflowExecution } from "../workflow-execution";
+import {
+  type IWorkflowStatus,
+  type IWorkflowExecutionStatus,
+} from "../others/workflow";
+
+export interface ApproveChangesRequest {
+  status: IWorkflowExecutionStatus;
+  pendingApproval: {
+    "Original code": string;
+    "Pending code": string;
+  };
+}
 
 export interface Workflow {
   id: number;
   name: string;
-  description: string;
-  definition?: string;
+  userId: number | null;
+  description: string | null;
+  definition: string;
+  executionPlan: string | null;
+  creditsCost: number | null;
   isPublished: boolean;
-  createdAt: string;
-  updatedAt: string;
+  status: IWorkflowStatus;
+  lastRunAt?: Date;
+  lastRunId?: string;
+  lastRunStatus?: string;
+  nextRunAt?: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export interface WorkflowPhase {
+export interface ExecutionLog {
+  id: number;
+  executionPhaseId: number;
+  logLevel: string;
+  message: string;
+  timestamp: Date;
+}
+
+export interface ExecutionPhase {
+  number: number;
   id: number;
   name: string;
+  userId: number;
+  creditsCost: number | null;
   status: string;
-  logs: string[];
-  startedAt: string;
-  completedAt?: string;
+  startedAt: Date | null;
+  completedAt: Date | null;
+  workflowExecutionId: number;
+  node: string | null;
+  inputs: string | null;
+  outputs: string | null;
+  logs?: ExecutionLog[];
+}
+
+export interface WorkflowExecution {
+  id: number;
+  userId: number;
+  definition: string;
+  status: string;
+  createdAt: Date | null;
+  workflowId: number;
+  trigger: string;
+  creditsConsumed: number | null;
+  startedAt: Date | null;
+  completedAt: Date | null;
+}
+
+export interface WorkflowExecutionWithPhases {
+  id: number;
+  userId: number;
+  definition: string;
+  status: string;
+  createdAt: Date | null;
+  workflowId: number;
+  trigger: string;
+  creditsConsumed: number | null;
+  startedAt: Date | null;
+  completedAt: Date | null;
+  phases: ExecutionPhase[];
 }
 
 export interface WorkflowsEndpoints {
@@ -153,7 +214,7 @@ export interface WorkflowsEndpoints {
     };
     response: {
       execution: WorkflowExecution;
-      phases: WorkflowPhase[];
+      phases: ExecutionPhase[];
     };
     request: {
       executionId: string | number;
@@ -166,7 +227,7 @@ export interface WorkflowsEndpoints {
       id: number;
     };
     response: {
-      phase: WorkflowPhase;
+      phase: ExecutionPhase;
       logs: string[];
     };
     request: {

@@ -50,11 +50,11 @@ export function ExecutionViewer({
 
   const query = useQuery({
     queryKey: ["execution", executionId],
-    initialData,
     queryFn: () =>
       getWorkflowExecutionWithPhasesDetailsFunction({
         executionId: String(initialData.id),
       }),
+    initialData,
     refetchInterval: (q) =>
       q.state.data?.status === WorkflowExecutionStatus.FAILED ||
       q.state.data?.status === WorkflowExecutionStatus.COMPLETED

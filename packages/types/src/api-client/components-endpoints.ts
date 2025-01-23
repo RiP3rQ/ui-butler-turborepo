@@ -1,13 +1,30 @@
-import { type CodeType } from "../components";
+import { type ProtoTimestamp } from "../others/proto-timestamp";
+import { type CodeType } from "../others/code-types";
 
 export interface Component {
   id: number;
   title: string;
   code: string;
+  // Project
   projectId: number;
-  isFavorite: boolean;
-  createdAt: string;
-  updatedAt: string;
+  projectName: string;
+  // Dates
+  createdAt?: ProtoTimestamp | undefined;
+  updatedAt?: ProtoTimestamp | undefined;
+  // User
+  userId: number;
+  // Unit Tests
+  wasUnitTested: boolean;
+  unitTests: string;
+  // E2E Tests
+  wasE2eTested: boolean;
+  e2eTests: string;
+  // MDX Docs
+  hasMdxDocs: boolean;
+  mdxDocs: string;
+  // Typescript Docs
+  hasTypescriptDocs: boolean;
+  tsDocs: string;
 }
 
 export interface ComponentsEndpoints {

@@ -1,22 +1,21 @@
+import { type ProtoTimestamp } from "../others/proto-timestamp";
+import { type Component } from "./components-endpoints";
+import { type Workflow } from "./workflows-endpoints";
+
 export interface Project {
   id: number;
-  name: string;
+  title: string;
   description: string;
-  createdAt: string;
-  updatedAt: string;
+  color: string;
+  createdAt?: ProtoTimestamp | undefined;
+  updatedAt?: ProtoTimestamp | undefined;
+  userId: number;
+  numberOfComponents?: number | undefined;
 }
 
 export interface ProjectDetails extends Project {
-  components: {
-    id: number;
-    title: string;
-    createdAt: string;
-  }[];
-  workflows: {
-    id: number;
-    name: string;
-    createdAt: string;
-  }[];
+  components: Component[];
+  workflows: Workflow[];
 }
 
 export interface ProjectsEndpoints {
