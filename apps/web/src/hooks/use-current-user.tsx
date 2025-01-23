@@ -1,6 +1,6 @@
 "use client";
 
-import { type BasicUser } from "@repo/types";
+import { type BasicUser } from "@shared/types";
 import { useQuery } from "@tanstack/react-query";
 import getCurrentUser from "@/actions/user/server-actions";
 

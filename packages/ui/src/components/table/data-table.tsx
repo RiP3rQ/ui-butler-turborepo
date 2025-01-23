@@ -20,9 +20,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@repo/ui/components/ui/table";
-import { Input } from "@repo/ui/components/ui/input";
-import { DataTablePagination } from "@repo/ui/components/table/data-table-pagination";
+} from "@shared/ui/components/ui/table";
+import { Input } from "@shared/ui/components/ui/input";
+import { DataTablePagination } from "@shared/ui/components/table/data-table-pagination";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

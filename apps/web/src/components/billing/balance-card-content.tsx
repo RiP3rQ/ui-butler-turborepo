@@ -1,6 +1,6 @@
 "use client";
 import { CoinsIcon } from "lucide-react";
-import { type UserBasicCredits } from "@repo/types";
+import { type UserBasicCredits } from "@shared/types";
 import { useQuery } from "@tanstack/react-query";
 import { type JSX } from "react";
 import CountUpWrapper from "@/components/credits/count-up-wrapper";

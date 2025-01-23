@@ -1,6 +1,6 @@
-import type { ExecutionPhase, IExecutionPhaseStatus } from "@repo/types";
-import { Badge } from "@repo/ui/components/ui/badge";
-import { Button } from "@repo/ui/components/ui/button";
+import type { ExecutionPhase, IExecutionPhaseStatus } from "@shared/types";
+import { Badge } from "@shared/ui/components/ui/badge";
+import { Button } from "@shared/ui/components/ui/button";
 import { type JSX } from "react";
 import ExecutionPhaseStatusBadge from "@/components/execution-viewer/execution-phase-status-badge";
 

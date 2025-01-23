@@ -1,7 +1,7 @@
 import {
   type BillingEndpoints,
   type UserCredits,
-} from "@repo/types/src/api-client/billing-endpoints";
+} from "@shared/types/src/api-client/billing-endpoints";
 import { ApiClient } from "@/lib/api-client";
 import { getErrorMessage } from "@/lib/get-error-message";
 

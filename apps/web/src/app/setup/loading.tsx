@@ -1,7 +1,7 @@
-import { Separator } from "@repo/ui/components/ui/separator";
+import { Separator } from "@shared/ui/components/ui/separator";
 import { Loader2Icon } from "lucide-react";
 import { type JSX } from "react";
-import { Logo } from "@repo/ui/components/logo";
+import { Logo } from "@shared/ui/components/logo";
 
 export default function LoadingPage(): JSX.Element {
   return (

@@ -8,14 +8,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { CustomDialogHeader } from "@repo/ui/components/custom-dialog-header";
-import { Button } from "@repo/ui/components/ui/button";
+import { CustomDialogHeader } from "@shared/ui/components/custom-dialog-header";
+import { Button } from "@shared/ui/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogTrigger,
-} from "@repo/ui/components/ui/dialog";
-import { cn } from "@repo/ui/lib/utils";
+} from "@shared/ui/components/ui/dialog";
+import { cn } from "@shared/ui/lib/utils";
 import type { DuplicateWorkflowSchemaType } from "@/schemas/workflow";
 import { duplicateWorkflowSchema } from "@/schemas/workflow";
 import { WorkflowDuplicateForm } from "@/app/(workflows)/workflows-list/_components/forms/workflow-duplicate-form";

@@ -1,6 +1,6 @@
 "use client";
 
-import type { AppNodeMissingInputs } from "@repo/types";
+import type { AppNodeMissingInputs } from "@shared/types";
 import type { JSX, Dispatch, SetStateAction } from "react";
 import { createContext, useState } from "react";
 

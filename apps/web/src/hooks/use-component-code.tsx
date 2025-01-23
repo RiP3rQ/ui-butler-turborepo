@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { type CodeType, type ComponentType } from "@repo/types";
+import { type CodeType, type ComponentType } from "@shared/types";
 import { type UseMutationResult } from "@tanstack/react-query";
 import { getErrorMessage } from "@/lib/get-error-message";
 import {

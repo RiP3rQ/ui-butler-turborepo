@@ -4,12 +4,12 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@repo/ui/components/ui/accordion";
-import { type ComponentType, type ProjectDetailsType } from "@repo/types";
+} from "@shared/ui/components/ui/accordion";
+import { type ComponentType, type ProjectDetailsType } from "@shared/types";
 import moment from "moment";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@shared/ui/components/ui/button";
 import { NavigationIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { type JSX, useState } from "react";

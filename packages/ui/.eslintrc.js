@@ -1,6 +1,6 @@
 module.exports = {
   root: true,
-  extends: ["@repo/eslint-config/nest.js"],
+  extends: ["@shared/eslint-config/nest.js"],
   parserOptions: {
     tsconfigRootDir: __dirname,
     project: ["./tsconfig.json"],

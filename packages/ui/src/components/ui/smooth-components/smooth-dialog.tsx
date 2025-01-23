@@ -14,8 +14,8 @@ import type { Transition, Variant } from "framer-motion";
 import { AnimatePresence, motion, MotionConfig } from "framer-motion";
 import { createPortal } from "react-dom";
 import { XIcon } from "lucide-react";
-import { useClickOutside } from "@repo/ui/hooks/use-click-outside";
-import { cn } from "@repo/ui/lib/utils";
+import { useClickOutside } from "@shared/ui/hooks/use-click-outside";
+import { cn } from "@shared/ui/lib/utils";
 
 interface SmoothDialogContextType {
   isOpen: boolean;

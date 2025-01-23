@@ -5,13 +5,13 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@repo/ui/components/ui/accordion";
-import { TaskType } from "@repo/types";
+} from "@shared/ui/components/ui/accordion";
+import { TaskType } from "@shared/types";
 import { CoinsIcon } from "lucide-react";
-import { Button } from "@repo/ui/components/ui/button";
-import { Badge } from "@repo/ui/components/ui/badge";
+import { Button } from "@shared/ui/components/ui/button";
+import { Badge } from "@shared/ui/components/ui/badge";
 import { type JSX } from "react";
-import { ClientTaskRegister } from "@repo/tasks-registry";
+import { ClientTaskRegister } from "@shared/tasks-registry";
 
 function TasksMenuSidebar(): JSX.Element {
   return (

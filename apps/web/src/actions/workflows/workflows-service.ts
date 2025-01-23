@@ -2,8 +2,8 @@ import {
   type Workflow,
   type WorkflowPhase,
   type WorkflowsEndpoints,
-} from "@repo/types/src/api-client/workflows-endpoints";
-import { type WorkflowExecution } from "@repo/types/src/workflow-execution";
+} from "@shared/types/src/api-client/workflows-endpoints";
+import { type WorkflowExecution } from "@shared/types/src/workflow-execution";
 import { ApiClient } from "@/lib/api-client";
 import { getErrorMessage } from "@/lib/get-error-message";
 import {

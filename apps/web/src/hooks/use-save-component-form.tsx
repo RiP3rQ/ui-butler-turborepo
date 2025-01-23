@@ -7,7 +7,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useCallback, useTransition } from "react";
 import { useShallow } from "zustand/react/shallow";
-import { type ComponentType, type ProjectType } from "@repo/types";
+import { type ComponentType, type ProjectType } from "@shared/types";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useModalsStateStore } from "@/store/modals-store";
 import { getUserProjects } from "@/actions/projects/server-actions";

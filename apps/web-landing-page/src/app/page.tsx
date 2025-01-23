@@ -1,12 +1,12 @@
 import Image from "next/image";
 import { ArrowRight, ChevronRight, UserIcon, Zap } from "lucide-react";
-import { Wrapper } from "@repo/ui/components/landing-page/wrapper";
-import { Container } from "@repo/ui/components/landing-page/container";
+import { Wrapper } from "@shared/ui/components/landing-page/wrapper";
+import { Container } from "@shared/ui/components/landing-page/container";
 import Link from "next/link";
-import { Button } from "@repo/ui/components/ui/button";
-import { BorderBeam } from "@repo/ui/components/landing-page/custom-ui/border-beam";
-import { SectionBadge } from "@repo/ui/components/landing-page/custom-ui/section-badge";
-import { cn } from "@repo/ui/lib/utils";
+import { Button } from "@shared/ui/components/ui/button";
+import { BorderBeam } from "@shared/ui/components/landing-page/custom-ui/border-beam";
+import { SectionBadge } from "@shared/ui/components/landing-page/custom-ui/section-badge";
+import { cn } from "@shared/ui/lib/utils";
 import {
   Card,
   CardContent,
@@ -14,13 +14,13 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@repo/ui/components/ui/card";
-import { Marquee } from "@repo/ui/components/landing-page/custom-ui/marquee";
-import { LampContainer } from "@repo/ui/components/landing-page/custom-ui/lamp";
-import { Footer } from "@repo/ui/components/landing-page/footer";
-import { Input } from "@repo/ui/components/ui/input";
-import { Icons } from "@repo/ui/components/landing-page/icons";
-import { Navbar } from "@repo/ui/components/landing-page/navbar";
+} from "@shared/ui/components/ui/card";
+import { Marquee } from "@shared/ui/components/landing-page/custom-ui/marquee";
+import { LampContainer } from "@shared/ui/components/landing-page/custom-ui/lamp";
+import { Footer } from "@shared/ui/components/landing-page/footer";
+import { Input } from "@shared/ui/components/ui/input";
+import { Icons } from "@shared/ui/components/landing-page/icons";
+import { Navbar } from "@shared/ui/components/landing-page/navbar";
 import { features, perks, pricingCards, reviews } from "../constants";
 import { isUserLoggerIn } from "../helpers/logged-in-user";
 import {

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { cn } from "@repo/ui/lib/utils";
+import { cn } from "@shared/ui/lib/utils";
 
 interface ContainerProps {
   className?: string;

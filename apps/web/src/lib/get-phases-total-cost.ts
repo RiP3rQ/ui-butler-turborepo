@@ -1,4 +1,4 @@
-import type { ExecutionPhase } from "@repo/types";
+import type { ExecutionPhase } from "@shared/types";
 
 type Phase = Pick<ExecutionPhase, "creditsCost">;
 

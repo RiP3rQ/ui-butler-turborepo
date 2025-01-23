@@ -11,9 +11,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@repo/ui/components/ui/table";
-import { Badge } from "@repo/ui/components/ui/badge";
-import type { IWorkflowExecutionStatus } from "@repo/types";
+} from "@shared/ui/components/ui/table";
+import { Badge } from "@shared/ui/components/ui/badge";
+import type { IWorkflowExecutionStatus } from "@shared/types";
 import { type JSX } from "react";
 import { dateToDurationString } from "@/lib/dates";
 import { ExecutionStatusIndicator } from "@/components/execution-viewer/execution-status-indicator";

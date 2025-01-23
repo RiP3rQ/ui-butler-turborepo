@@ -7,10 +7,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@repo/ui/components/ui/dialog";
+} from "@shared/ui/components/ui/dialog";
 import { DiffEditor } from "@monaco-editor/react";
-import { type ApproveChangesRequest } from "@repo/types";
-import { Button } from "@repo/ui/components/ui/button";
+import { type ApproveChangesRequest } from "@shared/types";
+import { Button } from "@shared/ui/components/ui/button";
 import { CheckCircle2Icon, Loader2Icon, TrashIcon } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";

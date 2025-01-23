@@ -1,6 +1,6 @@
 import localFont from "next/font/local";
-import "@repo/ui/globals.css";
-import { ThemeProvider } from "@repo/ui/providers/theme-provider";
+import "@shared/ui/globals.css";
+import { ThemeProvider } from "@shared/ui/providers/theme-provider";
 import type { Metadata } from "next";
 import { SITE_CONFIG } from "../config";
 

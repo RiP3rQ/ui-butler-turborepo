@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { type Metadata } from "next";
-import { Icons } from "@repo/ui/components/landing-page/icons";
-import { Separator } from "@repo/ui/components/ui/separator";
+import { Icons } from "@shared/ui/components/landing-page/icons";
+import { Separator } from "@shared/ui/components/ui/separator";
 import * as React from "react";
 import { RegisterForm } from "./_components/register-form/register-form";
 

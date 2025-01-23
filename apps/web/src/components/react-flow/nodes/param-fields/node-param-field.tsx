@@ -1,4 +1,4 @@
-import { type AppNode, type TaskParam, TaskParamType } from "@repo/types";
+import { type AppNode, type TaskParam, TaskParamType } from "@shared/types";
 import { useReactFlow } from "@xyflow/react";
 import { type JSX, useCallback } from "react";
 import StringParamField from "@/components/react-flow/nodes/param-fields/string-param-field";

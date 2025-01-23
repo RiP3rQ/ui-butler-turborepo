@@ -10,7 +10,7 @@ jest.mock("@/components/ui/form", () => ({
   Form: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
-jest.mock("@repo/ui/components/ui/button", () => ({
+jest.mock("@shared/ui/components/ui/button", () => ({
   Button: ({
     children,
     disabled,

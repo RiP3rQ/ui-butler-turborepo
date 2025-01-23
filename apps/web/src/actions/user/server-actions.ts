@@ -3,7 +3,7 @@
 import {
   type User,
   type UsersEndpoints,
-} from "@repo/types/src/api-client/users-endpoints";
+} from "@shared/types/src/api-client/users-endpoints";
 import { UserService } from "@/actions/user/user-service";
 
 /**

@@ -2,7 +2,7 @@ import {
   type AnalyticsEndpoints,
   type DashboardStats,
   type FavoritedComponent,
-} from "@repo/types/src/api-client/analytics-endpoints";
+} from "@shared/types/src/api-client/analytics-endpoints";
 import { ApiClient } from "@/lib/api-client";
 import { getErrorMessage } from "@/lib/get-error-message";
 

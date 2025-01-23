@@ -1,7 +1,7 @@
 import Link from "next/link";
 import * as React from "react";
-import { Icons } from "@repo/ui/components/landing-page/icons";
-import { useSidebar } from "@repo/ui/components/ui/sidebar";
+import { Icons } from "@shared/ui/components/landing-page/icons";
+import { useSidebar } from "@shared/ui/components/ui/sidebar";
 import { type JSX } from "react";
 
 export function CustomSidebarHeader(): JSX.Element {

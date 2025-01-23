@@ -1,8 +1,8 @@
 import {
   type Component,
   type ComponentsEndpoints,
-} from "@repo/types/src/api-client/components-endpoints";
-import { type CodeType } from "@repo/types/src/components";
+} from "@shared/types/src/api-client/components-endpoints";
+import { type CodeType } from "@shared/types/src/components";
 import { ApiClient } from "@/lib/api-client";
 import { getErrorMessage } from "@/lib/get-error-message";
 

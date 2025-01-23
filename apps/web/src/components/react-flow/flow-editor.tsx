@@ -19,12 +19,12 @@ import {
   type FlowType,
   TaskType,
   type WorkflowType,
-} from "@repo/types";
+} from "@shared/types";
 import { type JSX, useCallback, useEffect } from "react";
 import {
   ClientTaskRegister,
   createFlowNodeFunction,
-} from "@repo/tasks-registry";
+} from "@shared/tasks-registry";
 import { toast } from "sonner";
 import NodeComponent from "@/components/react-flow/nodes/node-component";
 import DeletableEdge from "@/components/react-flow/edges/deletable-edge";

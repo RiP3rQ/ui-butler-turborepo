@@ -13,18 +13,18 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@repo/ui/components/ui/form";
-import { Input } from "@repo/ui/components/ui/input";
+} from "@shared/ui/components/ui/form";
+import { Input } from "@shared/ui/components/ui/input";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Textarea } from "@repo/ui/components/ui/textarea";
+import { Textarea } from "@shared/ui/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
   DialogTrigger,
-} from "@repo/ui/components/ui/dialog";
-import { Button } from "@repo/ui/components/ui/button";
-import { CustomDialogHeader } from "@repo/ui/components/custom-dialog-header";
+} from "@shared/ui/components/ui/dialog";
+import { Button } from "@shared/ui/components/ui/button";
+import { CustomDialogHeader } from "@shared/ui/components/custom-dialog-header";
 import {
   createCredentialSchema,
   type CreateCredentialSchemaType,

@@ -4,7 +4,7 @@ import {
   TabletSmartphoneIcon,
   TestTubeDiagonalIcon,
 } from "lucide-react";
-import { type AccordionItemConfig } from "@repo/types";
+import { type AccordionItemConfig } from "@shared/types";
 
 export const ACCORDION_ITEMS: readonly AccordionItemConfig[] = [
   {

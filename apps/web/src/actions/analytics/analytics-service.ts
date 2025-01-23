@@ -3,7 +3,7 @@ import {
   type Period,
   type StatCardsValuesResponse,
   type UsedCreditsInPeriodResponse,
-} from "@repo/types";
+} from "@shared/types";
 import { ApiClient } from "@/lib/api-client";
 import { getErrorMessage } from "@/lib/get-error-message";
 

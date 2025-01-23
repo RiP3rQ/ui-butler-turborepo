@@ -7,9 +7,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@repo/ui/components/ui/form";
-import { Input } from "@repo/ui/components/ui/input";
-import { Separator } from "@repo/ui/components/ui/separator";
+} from "@shared/ui/components/ui/form";
+import { Input } from "@shared/ui/components/ui/input";
+import { Separator } from "@shared/ui/components/ui/separator";
 import { FormDescription } from "@/components/ui/form";
 import { type registerFormSchema } from "@/schemas/register-schema";
 

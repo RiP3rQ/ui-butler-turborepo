@@ -1,20 +1,20 @@
 "use client";
 
 import { type Row } from "@tanstack/react-table";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@shared/ui/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@repo/ui/components/ui/dropdown-menu";
+} from "@shared/ui/components/ui/dropdown-menu";
 import {
   HeartOffIcon,
   MoreHorizontal,
   SquareArrowUpRightIcon,
 } from "lucide-react";
-import { type DashboardTableFavoritedContentResponse } from "@repo/types";
+import { type DashboardTableFavoritedContentResponse } from "@shared/types";
 import { useRouter } from "next/navigation";
 import { type JSX } from "react";
 

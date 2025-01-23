@@ -4,7 +4,7 @@ import {
   type Period,
   type StatCardsValuesResponse,
   type UsedCreditsInPeriodResponse,
-} from "@repo/types";
+} from "@shared/types";
 import { useQuery } from "@tanstack/react-query";
 import { type JSX } from "react";
 import { StatCards } from "@/components/analytics/stat-cards/stat-cards";

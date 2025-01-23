@@ -12,8 +12,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@repo/ui/components/ui/alert-dialog";
-import { Input } from "@repo/ui/components/ui/input";
+} from "@shared/ui/components/ui/alert-dialog";
+import { Input } from "@shared/ui/components/ui/input";
 import { deleteWorkflow } from "@/actions/workflows/server-actions";
 
 interface DeleteWorkflowDialogProps {

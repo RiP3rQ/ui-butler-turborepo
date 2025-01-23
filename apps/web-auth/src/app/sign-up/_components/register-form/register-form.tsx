@@ -1,8 +1,8 @@
 "use client";
 
 import { type JSX } from "react";
-import { Button } from "@repo/ui/components/ui/button";
-import { cn } from "@repo/ui/lib/utils";
+import { Button } from "@shared/ui/components/ui/button";
+import { cn } from "@shared/ui/lib/utils";
 import { Form } from "@/components/ui/form";
 import { useRegisterForm } from "@/hooks/use-register-form";
 import { RegisterFormFields } from "@/app/sign-up/_components/register-form/register-form-fields";

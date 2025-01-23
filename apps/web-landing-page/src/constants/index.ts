@@ -1,4 +1,4 @@
-import { Icons } from "@repo/ui/components/landing-page/icons";
+import { Icons } from "@shared/ui/components/landing-page/icons";
 
 export const perks = [
   {

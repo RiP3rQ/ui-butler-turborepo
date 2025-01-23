@@ -1,4 +1,4 @@
-import { TaskParamType } from "@repo/types";
+import { TaskParamType } from "@shared/types";
 
 export const ColorForHandle: Record<TaskParamType, string> = {
   [TaskParamType.CODE_INSTANCE]: "!bg-sky-400",

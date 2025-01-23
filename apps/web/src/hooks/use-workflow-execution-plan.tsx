@@ -4,9 +4,9 @@ import type {
   AppNode,
   WorkflowExecutionPlan,
   WorkflowExecutionPlanError,
-} from "@repo/types";
+} from "@shared/types";
 import { toast } from "sonner";
-import { parseFlowToExecutionPlan } from "@repo/tasks-registry";
+import { parseFlowToExecutionPlan } from "@shared/tasks-registry";
 import useFlowValidation from "@/hooks/use-flow-validation";
 
 const useWorkflowExecutionPlan = (): (() =>

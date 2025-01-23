@@ -1,6 +1,10 @@
 "use server";
 
-import type { BalancePackId, BillingEndpoints, UserCredits } from "@repo/types";
+import type {
+  BalancePackId,
+  BillingEndpoints,
+  UserCredits,
+} from "@shared/types";
 import { BillingService } from "./billing-service";
 
 /**

@@ -1,7 +1,7 @@
 "use client";
 
 import { Editor } from "@monaco-editor/react";
-import { cn } from "@repo/ui/lib/utils";
+import { cn } from "@shared/ui/lib/utils";
 import { type Dispatch, type JSX, type SetStateAction } from "react";
 
 interface CodeEditorProps {

@@ -1,5 +1,5 @@
 {
-  "name": "@repo/ui",
+  "name": "@shared/ui",
   "version": "0.0.0",
   "sideEffects": [
     "**/*.css"
@@ -75,10 +75,10 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@repo/config-tailwindcss": "workspace:*",
-    "@repo/eslint-config": "workspace:*",
-    "@repo/types": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
+    "@shared/config-tailwindcss": "workspace:*",
+    "@shared/eslint-config": "workspace:*",
+    "@shared/types": "workspace:*",
+    "@shared/typescript-config": "workspace:*",
     "@types/react": "^19.0.6",
     "@types/react-color": "^3.0.13",
     "autoprefixer": "^10.4.20",

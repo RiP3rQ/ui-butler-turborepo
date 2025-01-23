@@ -1,5 +1,5 @@
 import { endOfMonth, intervalToDuration, startOfMonth } from "date-fns";
-import type { Period, ProtoTimestamp } from "@repo/types";
+import type { Period, ProtoTimestamp } from "@shared/types";
 
 export function dateToDurationString(
   start?: string | null,

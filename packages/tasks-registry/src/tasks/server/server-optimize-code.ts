@@ -1,4 +1,4 @@
-import { type BaseWorkflowTask, TaskParamType, TaskType } from "@repo/types";
+import { type BaseWorkflowTask, TaskParamType, TaskType } from "@shared/types";
 
 export const ServerOptimizeCodeTask = {
   type: TaskType.OPTIMIZE_CODE,

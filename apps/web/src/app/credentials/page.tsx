@@ -3,7 +3,7 @@ import {
   Alert,
   AlertDescription,
   AlertTitle,
-} from "@repo/ui/components/ui/alert";
+} from "@shared/ui/components/ui/alert";
 import { type JSX } from "react";
 import { CreateCredentialDialog } from "@/components/credentials/create-credential-dialog";
 import { UserCredentials } from "@/components/credentials/user-credentials";

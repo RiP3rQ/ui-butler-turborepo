@@ -5,9 +5,9 @@ import {
   Alert,
   AlertDescription,
   AlertTitle,
-} from "@repo/ui/components/ui/alert";
+} from "@shared/ui/components/ui/alert";
 import { useQuery } from "@tanstack/react-query";
-import { type WorkflowType } from "@repo/types";
+import { type WorkflowType } from "@shared/types";
 import { type JSX } from "react";
 import { WorkflowCard } from "@/app/(workflows)/workflows-list/_components/workflow-card";
 import { CreateWorkflowDialog } from "@/app/(workflows)/workflows-list/_components/create-workflow-dialog";

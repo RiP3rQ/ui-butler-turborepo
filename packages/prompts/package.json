@@ -1,5 +1,5 @@
 {
-  "name": "@repo/prompts",
+  "name": "@shared/prompts",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -21,10 +21,10 @@
     "react": "19.0.0-rc-02c0e824-20241028"
   },
   "devDependencies": {
-    "@repo/config-tailwindcss": "workspace:*",
-    "@repo/eslint-config": "workspace:*",
-    "@repo/types": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
+    "@shared/config-tailwindcss": "workspace:*",
+    "@shared/eslint-config": "workspace:*",
+    "@shared/types": "workspace:*",
+    "@shared/typescript-config": "workspace:*",
     "@types/eslint": "^9.6.1",
     "@types/node": "^22.10.6",
     "eslint": "^8.57.1",

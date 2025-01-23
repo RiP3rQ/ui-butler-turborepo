@@ -1,12 +1,12 @@
 import { Layers2Icon } from "lucide-react";
-import type { UsedCreditsInPeriodResponse } from "@repo/types";
+import type { UsedCreditsInPeriodResponse } from "@shared/types";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@repo/ui/components/ui/card";
+} from "@shared/ui/components/ui/card";
 import { type JSX } from "react";
 import StatsChart from "@/components/analytics/stat-chart/stats-chart";
 

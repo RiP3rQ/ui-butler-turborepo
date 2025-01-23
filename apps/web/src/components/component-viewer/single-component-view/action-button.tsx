@@ -1,9 +1,9 @@
 "use client";
 
 import { Loader2Icon, type LucideIcon } from "lucide-react";
-import { Button } from "@repo/ui/components/ui/button";
-import { type CodeType } from "@repo/types";
-import { cn } from "@repo/ui/lib/utils";
+import { Button } from "@shared/ui/components/ui/button";
+import { type CodeType } from "@shared/types";
+import { cn } from "@shared/ui/lib/utils";
 import { type JSX } from "react";
 import { useConfirmationModalStore } from "@/store/confirmation-modal-store";
 import { getErrorMessage } from "@/lib/get-error-message";

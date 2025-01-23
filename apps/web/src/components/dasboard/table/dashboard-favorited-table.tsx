@@ -1,8 +1,8 @@
 "use client";
 
-import { type DashboardTableFavoritedContentResponse } from "@repo/types";
-import { DataTable } from "@repo/ui/components/table/data-table";
-import { Button } from "@repo/ui/components/ui/button";
+import { type DashboardTableFavoritedContentResponse } from "@shared/types";
+import { DataTable } from "@shared/ui/components/table/data-table";
+import { Button } from "@shared/ui/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { type JSX } from "react";

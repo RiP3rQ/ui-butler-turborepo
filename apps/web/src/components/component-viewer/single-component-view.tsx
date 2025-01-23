@@ -4,10 +4,10 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@repo/ui/components/ui/accordion";
-import { Badge } from "@repo/ui/components/ui/badge";
-import { cn } from "@repo/ui/lib/utils";
-import { type CodeType, type SingleComponentViewProps } from "@repo/types";
+} from "@shared/ui/components/ui/accordion";
+import { Badge } from "@shared/ui/components/ui/badge";
+import { cn } from "@shared/ui/lib/utils";
+import { type CodeType, type SingleComponentViewProps } from "@shared/types";
 import { useComponentCode } from "@/hooks/use-component-code";
 import { useCodeEditorStore } from "@/store/code-editor-store";
 import { ACCORDION_ITEMS } from "@/constants/single-component-accordion-items";

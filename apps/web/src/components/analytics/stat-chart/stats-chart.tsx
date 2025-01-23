@@ -1,13 +1,13 @@
 "use client";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
-import type { UsedCreditsInPeriodResponse } from "@repo/types";
+import type { UsedCreditsInPeriodResponse } from "@shared/types";
 import {
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-} from "@repo/ui/components/ui/chart";
+} from "@shared/ui/components/ui/chart";
 import { type JSX } from "react";
 
 const chartConfig = {

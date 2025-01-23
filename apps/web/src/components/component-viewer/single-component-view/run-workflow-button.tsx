@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@repo/ui/components/ui/button";
-import { type WorkflowType } from "@repo/types";
+import { Button } from "@shared/ui/components/ui/button";
+import { type WorkflowType } from "@shared/types";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   DropdownMenu,
@@ -9,9 +9,9 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@repo/ui/components/ui/dropdown-menu";
+} from "@shared/ui/components/ui/dropdown-menu";
 import { ChevronDownIcon } from "lucide-react";
-import { Skeleton } from "@repo/ui/components/ui/skeleton";
+import { Skeleton } from "@shared/ui/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { type JSX } from "react";

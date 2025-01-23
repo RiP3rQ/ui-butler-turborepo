@@ -1,7 +1,7 @@
 import { type JSX } from "react";
 import { Heart } from "lucide-react";
 import Link from "next/link";
-import { Icons } from "@repo/ui/components/landing-page/icons";
+import { Icons } from "@shared/ui/components/landing-page/icons";
 
 export function Footer(): JSX.Element {
   return (

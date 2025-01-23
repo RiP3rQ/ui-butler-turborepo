@@ -1,7 +1,7 @@
 import {
   type User,
   type UsersEndpoints,
-} from "@repo/types/src/api-client/users-endpoints";
+} from "@shared/types/src/api-client/users-endpoints";
 import { ApiClient } from "@/lib/api-client";
 import { getErrorMessage } from "@/lib/get-error-message";
 

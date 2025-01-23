@@ -4,7 +4,7 @@ import { useReactFlow } from "@xyflow/react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Loader2Icon } from "lucide-react";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@shared/ui/components/ui/button";
 import { type JSX } from "react";
 import { updateWorkflowByIdFunction } from "@/actions/workflows/server-actions";
 

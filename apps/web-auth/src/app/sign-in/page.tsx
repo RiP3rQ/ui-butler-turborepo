@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { type Metadata } from "next";
-import { Icons } from "@repo/ui/components/landing-page/icons";
+import { Icons } from "@shared/ui/components/landing-page/icons";
 import * as React from "react";
-import { Separator } from "@repo/ui/components/ui/separator";
+import { Separator } from "@shared/ui/components/ui/separator";
 import { LoginForm } from "./_components/login-form/login-form";
 
 export const metadata: Metadata = {

@@ -1,6 +1,6 @@
 import { type JSX, useEffect, useState } from "react";
 import CountUp from "react-countup";
-import { Skeleton } from "@repo/ui/components/ui/skeleton";
+import { Skeleton } from "@shared/ui/components/ui/skeleton";
 
 interface CountUpWrapperProps {
   value: number;

@@ -2,7 +2,7 @@ import {
   type Credential,
   type CredentialsEndpoints,
   type RevealedCredential,
-} from "@repo/types/src/api-client/credentials-endpoints";
+} from "@shared/types/src/api-client/credentials-endpoints";
 import { ApiClient } from "@/lib/api-client";
 import { getErrorMessage } from "@/lib/get-error-message";
 import type { CreateCredentialSchemaType } from "@/schemas/credential";

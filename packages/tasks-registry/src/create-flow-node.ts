@@ -1,4 +1,4 @@
-import type { AppNode, TaskType } from "@repo/types";
+import type { AppNode, TaskType } from "@shared/types";
 
 export function createFlowNodeFunction(
   nodeType: TaskType,

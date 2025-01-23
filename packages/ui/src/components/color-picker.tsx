@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTheme } from "next-themes";
 import { type Color, SketchPicker } from "react-color";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@shared/ui/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "@repo/ui/components/ui/dropdown-menu";
+} from "@shared/ui/components/ui/dropdown-menu";
 
 interface ColorPickerProps {
   selectedColor: Color | string | undefined;

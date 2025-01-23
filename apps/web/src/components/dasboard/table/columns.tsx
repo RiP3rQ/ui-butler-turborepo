@@ -1,7 +1,7 @@
 "use client";
-import type { DashboardTableFavoritedContentResponse } from "@repo/types";
+import type { DashboardTableFavoritedContentResponse } from "@shared/types";
 import { type ColumnDef } from "@tanstack/react-table";
-import { DataTableColumnHeader } from "@repo/ui/components/table/data-table-header";
+import { DataTableColumnHeader } from "@shared/ui/components/table/data-table-header";
 import moment from "moment";
 import { ActionsTableColumns } from "@/components/dasboard/table/table-actions-column";
 

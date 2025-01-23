@@ -17,8 +17,8 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@repo/ui/components/ui/sidebar";
-import type { ProjectType } from "@repo/types";
+} from "@shared/ui/components/ui/sidebar";
+import type { ProjectType } from "@shared/types";
 import { SidebarMainContent } from "@/components/sidebar/sidebar-main-content";
 import { SidebarFooterContent } from "@/components/sidebar/sidebar-footer-content";
 import { CustomSidebarHeader } from "@/components/sidebar/sidebar-header";

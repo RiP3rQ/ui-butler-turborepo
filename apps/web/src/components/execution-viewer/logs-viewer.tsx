@@ -4,7 +4,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@repo/ui/components/ui/card";
+} from "@shared/ui/components/ui/card";
 import {
   Table,
   TableBody,
@@ -12,10 +12,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@repo/ui/components/ui/table";
+} from "@shared/ui/components/ui/table";
 import { format } from "date-fns";
-import { cn } from "@repo/ui/lib/utils";
-import type { ExecutionLog, LogLevel } from "@repo/types";
+import { cn } from "@shared/ui/lib/utils";
+import type { ExecutionLog, LogLevel } from "@shared/types";
 import { type JSX } from "react";
 
 interface LogsViewerProps {

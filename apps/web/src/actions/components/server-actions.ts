@@ -3,7 +3,7 @@
 import {
   type Component,
   type ComponentsEndpoints,
-} from "@repo/types/src/api-client/components-endpoints";
+} from "@shared/types/src/api-client/components-endpoints";
 import {
   type SaveComponentSchemaType,
   validateComponentInput,

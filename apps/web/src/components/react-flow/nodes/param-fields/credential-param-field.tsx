@@ -1,6 +1,6 @@
 "use client";
 
-import type { ParamProps } from "@repo/types";
+import type { ParamProps } from "@shared/types";
 import { type JSX } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,7 +12,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-} from "@repo/ui/components/ui/form";
+} from "@shared/ui/components/ui/form";
 import {
   Select,
   SelectContent,
@@ -21,7 +21,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@repo/ui/components/ui/select";
+} from "@shared/ui/components/ui/select";
 import { getUserCredentials } from "@/actions/credentials/server-actions";
 
 const formSchema = z.object({

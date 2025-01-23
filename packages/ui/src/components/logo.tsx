@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { cn } from "@repo/ui/lib/utils";
-import { Icons } from "@repo/ui/components/landing-page/icons";
+import { cn } from "@shared/ui/lib/utils";
+import { Icons } from "@shared/ui/components/landing-page/icons";
 
 interface LogoProps {
   fontSize?: string;
