@@ -20,7 +20,6 @@ export interface Workflow {
   definition: string;
   executionPlan: string | null;
   creditsCost: number | null;
-  isPublished: boolean;
   status: IWorkflowStatus;
   lastRunAt?: ProtoTimestamp;
   lastRunId?: string;

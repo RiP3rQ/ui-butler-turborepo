@@ -33,13 +33,12 @@ message Workflow {
     string status = 6;
     string executionPlan = 7;
     int32 creditsCost = 8;
-    bool isPublished = 9;
-    google.protobuf.Timestamp createdAt = 10;
-    google.protobuf.Timestamp updatedAt = 11;
-    optional google.protobuf.Timestamp lastRunAt = 12;
-    optional string lastRunId = 13;
-    optional string lastRunStatus = 14;
-    optional google.protobuf.Timestamp nextRunAt = 15;
+    google.protobuf.Timestamp createdAt = 9;
+    google.protobuf.Timestamp updatedAt = 10;
+    optional google.protobuf.Timestamp lastRunAt = 11;
+    optional string lastRunId = 12;
+    optional string lastRunStatus = 13;
+    optional google.protobuf.Timestamp nextRunAt = 14;
 }
 
 message WorkflowExecution {

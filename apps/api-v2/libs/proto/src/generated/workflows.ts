@@ -29,7 +29,6 @@ export interface Workflow {
   status: string;
   executionPlan: string;
   creditsCost: number;
-  isPublished: boolean;
   createdAt?: Timestamp | undefined;
   updatedAt?: Timestamp | undefined;
   lastRunAt?: Timestamp | undefined;
@@ -258,7 +257,6 @@ function createBaseWorkflow(): Workflow {
     status: "",
     executionPlan: "",
     creditsCost: 0,
-    isPublished: false,
   };
 }
 
@@ -293,26 +291,23 @@ export const Workflow: MessageFns<Workflow, "api.workflows.Workflow"> = {
     if (message.creditsCost !== 0) {
       writer.uint32(64).int32(message.creditsCost);
     }
-    if (message.isPublished !== false) {
-      writer.uint32(72).bool(message.isPublished);
-    }
     if (message.createdAt !== undefined) {
-      Timestamp.encode(message.createdAt, writer.uint32(82).fork()).join();
+      Timestamp.encode(message.createdAt, writer.uint32(74).fork()).join();
     }
     if (message.updatedAt !== undefined) {
-      Timestamp.encode(message.updatedAt, writer.uint32(90).fork()).join();
+      Timestamp.encode(message.updatedAt, writer.uint32(82).fork()).join();
     }
     if (message.lastRunAt !== undefined) {
-      Timestamp.encode(message.lastRunAt, writer.uint32(98).fork()).join();
+      Timestamp.encode(message.lastRunAt, writer.uint32(90).fork()).join();
     }
     if (message.lastRunId !== undefined) {
-      writer.uint32(106).string(message.lastRunId);
+      writer.uint32(98).string(message.lastRunId);
     }
     if (message.lastRunStatus !== undefined) {
-      writer.uint32(114).string(message.lastRunStatus);
+      writer.uint32(106).string(message.lastRunStatus);
     }
     if (message.nextRunAt !== undefined) {
-      Timestamp.encode(message.nextRunAt, writer.uint32(122).fork()).join();
+      Timestamp.encode(message.nextRunAt, writer.uint32(114).fork()).join();
     }
     return writer;
   },
@@ -390,11 +385,11 @@ export const Workflow: MessageFns<Workflow, "api.workflows.Workflow"> = {
           continue;
         }
         case 9: {
-          if (tag !== 72) {
+          if (tag !== 74) {
             break;
           }
 
-          message.isPublished = reader.bool();
+          message.createdAt = Timestamp.decode(reader, reader.uint32());
           continue;
         }
         case 10: {
@@ -402,7 +397,7 @@ export const Workflow: MessageFns<Workflow, "api.workflows.Workflow"> = {
             break;
           }
 
-          message.createdAt = Timestamp.decode(reader, reader.uint32());
+          message.updatedAt = Timestamp.decode(reader, reader.uint32());
           continue;
         }
         case 11: {
@@ -410,7 +405,7 @@ export const Workflow: MessageFns<Workflow, "api.workflows.Workflow"> = {
             break;
           }
 
-          message.updatedAt = Timestamp.decode(reader, reader.uint32());
+          message.lastRunAt = Timestamp.decode(reader, reader.uint32());
           continue;
         }
         case 12: {
@@ -418,7 +413,7 @@ export const Workflow: MessageFns<Workflow, "api.workflows.Workflow"> = {
             break;
           }
 
-          message.lastRunAt = Timestamp.decode(reader, reader.uint32());
+          message.lastRunId = reader.string();
           continue;
         }
         case 13: {
@@ -426,19 +421,11 @@ export const Workflow: MessageFns<Workflow, "api.workflows.Workflow"> = {
             break;
           }
 
-          message.lastRunId = reader.string();
+          message.lastRunStatus = reader.string();
           continue;
         }
         case 14: {
           if (tag !== 114) {
-            break;
-          }
-
-          message.lastRunStatus = reader.string();
-          continue;
-        }
-        case 15: {
-          if (tag !== 122) {
             break;
           }
 
