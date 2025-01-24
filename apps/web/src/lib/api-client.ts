@@ -260,7 +260,7 @@ export class ApiClient {
     return {
       success: apiResponse.success ?? true,
       timestamp: apiResponse.timestamp ?? new Date().toISOString(),
-      data: apiResponse.data ?? null,
+      data: apiResponse.data,
     };
   }
 

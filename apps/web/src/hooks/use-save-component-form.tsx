@@ -1,21 +1,21 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { useCallback, useTransition } from "react";
-import { useShallow } from "zustand/react/shallow";
-import { type Component, type Project } from "@shared/types";
-import { getErrorMessage } from "@/lib/get-error-message";
-import { useModalsStateStore } from "@/store/modals-store";
+import { saveComponentFunction } from "@/actions/components/server-actions";
 import { getUserProjects } from "@/actions/projects/server-actions";
+import { getErrorMessage } from "@/lib/get-error-message";
 import {
   type SaveComponentSchemaType,
   saveComponentSchema,
 } from "@/schemas/component";
-import { saveComponentFunction } from "@/actions/components/server-actions";
+import { useModalsStateStore } from "@/store/modals-store";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { type Component, type Project } from "@shared/types";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { useShallow } from "zustand/react/shallow";
 
 export function useSaveComponentForm(): {
   form: ReturnType<typeof useForm<SaveComponentSchemaType>>;
@@ -39,7 +39,7 @@ export function useSaveComponentForm(): {
     defaultValues: {
       title: "",
       projectId: "",
-      code: createNewComponentModal.code,
+      code: "",
     },
   });
 
@@ -81,6 +81,7 @@ export function useSaveComponentForm(): {
 
   const handleSubmit = useCallback(
     (values: SaveComponentSchemaType): void => {
+      console.log(values);
       try {
         toast.loading("Saving component...", { id: "save-component" });
         saveComponent(values);
@@ -92,6 +93,10 @@ export function useSaveComponentForm(): {
     },
     [saveComponent],
   );
+
+  useEffect(() => {
+    form.setValue("code", createNewComponentModal.code);
+  }, [createNewComponentModal.code]);
 
   return {
     form,
