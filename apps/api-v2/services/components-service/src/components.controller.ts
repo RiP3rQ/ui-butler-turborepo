@@ -19,6 +19,7 @@ export class ComponentsController {
     request: ComponentsProto.GetComponentRequest,
   ): Promise<ComponentsProto.Component> {
     if (!request.user) {
+      console.error('User is required');
       throw new RpcException('User is required');
     }
 
@@ -41,18 +42,22 @@ export class ComponentsController {
   ): Promise<ComponentsProto.Component> {
     console.log('request', request);
     if (!request.user) {
+      console.error('User is required');
       throw new RpcException('User is required');
     }
 
     if (!request.title) {
+      console.error('Title is required');
       throw new RpcException('Title is required');
     }
 
     if (!request.projectId) {
+      console.error('Project ID is required');
       throw new RpcException('Project ID is required');
     }
 
     if (!request.code) {
+      console.error('Code is required');
       throw new RpcException('Code is required');
     }
 
@@ -72,14 +77,17 @@ export class ComponentsController {
   ): Promise<ComponentsProto.Component> {
     console.log('request', request);
     if (!request.user) {
+      console.error('User is required');
       throw new RpcException('User is required');
     }
 
     if (!request.componentId) {
+      console.error('Component ID is required');
       throw new RpcException('Component ID is required');
     }
 
     if (!request.favoriteValue) {
+      console.error('Favorite value is required');
       throw new RpcException('Favorite value is required');
     }
 
@@ -98,14 +106,17 @@ export class ComponentsController {
     request: ComponentsProto.UpdateCodeRequest,
   ): Promise<ComponentsProto.Component> {
     if (!request.user) {
+      console.error('User is required');
       throw new RpcException('User is required');
     }
 
     if (!request.componentId) {
+      console.error('Component ID is required');
       throw new RpcException('Component ID is required');
     }
 
     if (!request.codeType) {
+      console.error('Code type is required');
       throw new RpcException('Code type is required');
     }
 
@@ -128,16 +139,20 @@ export class ComponentsController {
     request: ComponentsProto.GenerateCodeRequest,
   ): Promise<ComponentsProto.Component> {
     if (!request.user) {
+      console.error('User is required');
       throw new RpcException('User is required');
     }
 
     if (!request.codeType) {
+      console.error('Code type is required');
       throw new RpcException('Code type is required');
     }
 
     this.logger.debug(
       `GenerateCodeBasedOnType request received for user ${String(request.user.id)} and type ${String(request.codeType)}`,
     );
+
+    console.log('request', request);
 
     return this.componentsService.generateCodeFunction(request.user, {
       codeType: request.codeType,
@@ -155,6 +170,7 @@ export class ComponentsController {
       const prompt = body.messages[body.messages.length - 1]?.content;
 
       if (!prompt) {
+        console.error('Prompt is required');
         throw new Error('Prompt is required');
       }
 

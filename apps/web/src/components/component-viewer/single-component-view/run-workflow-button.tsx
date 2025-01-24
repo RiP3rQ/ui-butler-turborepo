@@ -81,6 +81,8 @@ export function RunWorkflowButton({
     return <Skeleton className="w-56 h-10" />;
   }
 
+  console.log("data", data);
+
   return (
     <div className="w-full flex items-center">
       <DropdownMenu>

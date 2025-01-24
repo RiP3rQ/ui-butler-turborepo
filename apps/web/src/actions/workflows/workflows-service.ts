@@ -195,7 +195,7 @@ export class WorkflowService {
         throw new Error("Failed to fetch user workflows");
       }
 
-      return response.data;
+      return response.data.workflows;
     } catch (error) {
       console.error("Failed to fetch user workflows:", error);
       throw new Error(getErrorMessage(error));

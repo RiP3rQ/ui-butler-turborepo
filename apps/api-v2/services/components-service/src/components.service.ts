@@ -1,5 +1,4 @@
 import {
-  GenerateCodeDto,
   GET_GEMINI_MODEL,
   SaveComponentDto,
   UpdateComponentCodeDto,
@@ -19,7 +18,7 @@ import { ComponentsProto } from '@microservices/proto';
 import { Inject, Injectable } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { singleGeneratedPrompts } from '@shared/prompts';
-import { CodeType } from '@shared/types';
+import { CodeType, protoCodeTypeToEnumMap } from '@shared/types';
 import { generateText, pipeDataStreamToResponse, streamText } from 'ai';
 import { type Response } from 'express';
 
@@ -67,6 +66,7 @@ export class ComponentsService {
         );
 
       if (!component) {
+        console.error('Component not found');
         throw new RpcException('Component not found');
       }
 
@@ -99,6 +99,7 @@ export class ComponentsService {
         hasTypescriptDocs: Boolean(component.tsDocs),
       };
     } catch (error) {
+      console.error('Error in getSingleComponent:', error);
       throw new RpcException(
         error instanceof Error ? error.message : JSON.stringify(error),
       );
@@ -125,6 +126,7 @@ export class ComponentsService {
         .returning();
 
       if (!newComponent) {
+        console.error('Failed to create component');
         throw new RpcException('Failed to create component');
       }
 
@@ -157,6 +159,7 @@ export class ComponentsService {
         hasTypescriptDocs: false,
       };
     } catch (error) {
+      console.error('Error in saveComponent:', error);
       throw new RpcException(
         error instanceof Error ? error.message : JSON.stringify(error),
       );
@@ -184,6 +187,7 @@ export class ComponentsService {
         .returning();
 
       if (!component) {
+        console.error('Component not found');
         throw new RpcException('Component not found');
       }
 
@@ -216,6 +220,7 @@ export class ComponentsService {
         hasTypescriptDocs: Boolean(component.tsDocs),
       };
     } catch (error) {
+      console.error('Error in favoriteComponent:', error);
       throw new RpcException(
         error instanceof Error ? error.message : JSON.stringify(error),
       );
@@ -271,6 +276,7 @@ export class ComponentsService {
         .returning();
 
       if (!updatedComponent) {
+        console.error('Component not found');
         throw new RpcException(
           `Component with ID ${String(componentId)} not found`,
         );
@@ -305,6 +311,7 @@ export class ComponentsService {
         hasTypescriptDocs: Boolean(updatedComponent.tsDocs),
       };
     } catch (error) {
+      console.error('Error in updateComponentCode:', error);
       throw new RpcException(
         error instanceof Error ? error.message : JSON.stringify(error),
       );
@@ -329,62 +336,103 @@ export class ComponentsService {
       case 'mdxDocs':
         return { ...baseUpdate, mdxDocs: content };
       default:
+        console.error(`Invalid code type: ${String(codeType)}`);
         throw new RpcException(`Invalid code type: ${String(codeType)}`);
     }
   }
 
   public async generateCodeFunction(
     user: User,
-    body: GenerateCodeDto,
+    body: { componentId: number; codeType: ComponentsProto.CodeType },
   ): Promise<ComponentsProto.Component> {
     try {
-      const { componentId, codeType } = body;
-
       const [component] = await this.database
         .select()
         .from(components)
         .where(
-          and(eq(components.id, componentId), eq(components.userId, user.id)),
+          and(
+            eq(components.id, body.componentId),
+            eq(components.userId, user.id),
+          ),
         );
 
       if (!component) {
+        console.error('Component not found');
         throw new RpcException('Component not found');
       }
 
       const generatedCode = await this.generateCode(
-        codeType as unknown as CodeType,
+        body.codeType,
         component.code,
       );
 
+      // Map the gRPC CodeType to the CodeType enum
+      const codeTypeEnum = protoCodeTypeToEnumMap[body.codeType];
+
+      if (!codeTypeEnum) {
+        console.error(`Invalid code type: ${String(body.codeType)}`);
+        throw new RpcException(`Invalid code type: ${String(body.codeType)}`);
+      }
+
+      const updatedData = {
+        [codeTypeEnum]: generatedCode,
+        updatedAt: new Date(),
+      };
+
+      console.log(
+        'QUERY-TEST',
+        this.database
+          .update(components)
+          .set(updatedData)
+          .where(eq(components.id, body.componentId))
+          .returning()
+          .toSQL(),
+      );
+
+      // Update the component with the generated code
+      const [updatedComponent] = await this.database
+        .update(components)
+        .set(updatedData)
+        .where(eq(components.id, body.componentId))
+        .returning();
+
+      if (!updatedComponent) {
+        console.error('Failed to update component');
+        throw new RpcException(
+          `Failed to update component with ID ${String(body.componentId)}`,
+        );
+      }
+
       return {
         $type: 'api.components.Component',
-        id: component.id,
-        title: component.title,
-        code: generatedCode,
-        e2eTests: component.e2eTests ?? '',
-        unitTests: component.unitTests ?? '',
-        mdxDocs: component.mdxDocs ?? '',
-        tsDocs: component.tsDocs ?? '',
-        projectId: component.projectId,
-        isFavorite: component.isFavorite ?? false,
+        id: updatedComponent.id,
+        title: updatedComponent.title,
+        code: updatedComponent.code,
+        e2eTests: updatedComponent.e2eTests ?? '',
+        unitTests: updatedComponent.unitTests ?? '',
+        mdxDocs: updatedComponent.mdxDocs ?? '',
+        tsDocs: updatedComponent.tsDocs ?? '',
+        projectId: updatedComponent.projectId,
+        isFavorite: updatedComponent.isFavorite ?? false,
         createdAt: {
           $type: 'google.protobuf.Timestamp',
-          seconds: component.createdAt.getTime(),
-          nanos: component.createdAt.getMilliseconds(),
+          seconds: updatedComponent.createdAt.getTime(),
+          nanos: updatedComponent.createdAt.getMilliseconds(),
         },
         updatedAt: {
           $type: 'google.protobuf.Timestamp',
-          seconds: component.updatedAt.getTime(),
-          nanos: component.updatedAt.getMilliseconds(),
+          seconds: updatedComponent.updatedAt.getTime(),
+          nanos: updatedComponent.updatedAt.getMilliseconds(),
         },
         projectName: '',
-        userId: component.userId,
-        wasE2eTested: Boolean(component.e2eTests),
-        wasUnitTested: Boolean(component.unitTests),
-        hasMdxDocs: Boolean(component.mdxDocs),
-        hasTypescriptDocs: Boolean(component.tsDocs),
+        userId: updatedComponent.userId,
+        wasE2eTested: Boolean(updatedComponent.e2eTests),
+        wasUnitTested: Boolean(updatedComponent.unitTests),
+        hasMdxDocs: Boolean(updatedComponent.mdxDocs),
+        hasTypescriptDocs: Boolean(updatedComponent.tsDocs),
       };
     } catch (error) {
+      console.error('Error in generateCodeFunction:', error);
       throw new RpcException(
         error instanceof Error ? error.message : JSON.stringify(error),
       );
@@ -392,15 +440,23 @@ export class ComponentsService {
   }
 
   private async generateCode(
-    codeType: CodeType,
+    codeType: ComponentsProto.CodeType,
     sourceCode: string,
   ): Promise<string> {
-    if (codeType === 'code') {
+    if (codeType === ComponentsProto.CodeType.CODE) {
       return sourceCode;
     }
 
-    const prompt = singleGeneratedPrompts[codeType](sourceCode);
+    // Map the gRPC CodeType to the CodeType enum
+    const codeTypeEnum = protoCodeTypeToEnumMap[codeType];
+
+    if (!codeTypeEnum) {
+      return sourceCode;
+    }
+
+    const prompt = singleGeneratedPrompts[codeTypeEnum](sourceCode);
     if (!prompt) {
+      console.error(`No prompt defined for code type: ${codeType}`);
       throw new RpcException(`No prompt defined for code type: ${codeType}`);
     }
 
@@ -415,7 +471,7 @@ export class ComponentsService {
         .replace(/\n```$/, '')
         .trim();
     } catch (error) {
-      console.error('Error generating code:', error);
+      console.error(`Error generating code for ${codeType}:`, error);
       throw new RpcException(`Failed to generate ${codeType}`);
     }
   }

@@ -82,7 +82,9 @@ export interface WorkflowExecutionWithDatesInsteadOfProtoTimestamp
 export interface WorkflowsEndpoints {
   /** GET /workflows */
   getAllUserWorkflows: {
-    response: Workflow[];
+    response: {
+      workflows: Workflow[];
+    };
   };
 
   /** GET /workflows/get-by-id/:workflowId */
