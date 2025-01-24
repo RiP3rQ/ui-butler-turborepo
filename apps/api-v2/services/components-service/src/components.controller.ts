@@ -1,6 +1,6 @@
 import { GenerateComponentRequestDto } from '@microservices/common';
 import { ComponentsProto } from '@microservices/proto';
-import { Body, Controller, Logger, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Logger, Post, Res } from '@nestjs/common';
 import { GrpcMethod, RpcException } from '@nestjs/microservices';
 import { CodeType } from '@shared/types';
 import { type Response } from 'express';
@@ -39,6 +39,7 @@ export class ComponentsController {
   public async saveComponent(
     request: ComponentsProto.SaveComponentRequest,
   ): Promise<ComponentsProto.Component> {
+    console.log('request', request);
     if (!request.user) {
       throw new RpcException('User is required');
     }
@@ -60,7 +61,7 @@ export class ComponentsController {
     );
     return this.componentsService.saveComponent(request.user, {
       title: request.title,
-      projectId: String(request.projectId),
+      projectId: Number(request.projectId),
       code: request.code,
     });
   }
@@ -69,6 +70,7 @@ export class ComponentsController {
   public async favoriteComponent(
     request: ComponentsProto.FavoriteComponentRequest,
   ): Promise<ComponentsProto.Component> {
+    console.log('request', request);
     if (!request.user) {
       throw new RpcException('User is required');
     }
@@ -146,7 +148,6 @@ export class ComponentsController {
   // HTTP Endpoint for generating components (Stream)
   @Post('api/components/generate')
   public async generateComponent(
-    @Req() req: Request,
     @Body() body: GenerateComponentRequestDto,
     @Res() res: Response,
   ) {
