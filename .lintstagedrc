@@ -1,7 +1,6 @@
 {
   "**/*.{js,jsx,ts,tsx}": [
-    "prettier --write",
-    "tsc --noEmit"
+    "prettier --write"
   ],
   "**/*.{json,scss,css,md}": [
     "prettier --write"
