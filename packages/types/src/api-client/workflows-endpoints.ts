@@ -50,7 +50,6 @@ export interface ExecutionPhase {
   node: string | null;
   inputs: string | null;
   outputs: string | null;
-  logs?: ExecutionLog[];
 }
 
 export interface ExecutionPhaseWithDatesInsteadOfProtoTimestamp
@@ -229,7 +228,7 @@ export interface WorkflowsEndpoints {
     };
     response: {
       phase: ExecutionPhase;
-      logs: string[];
+      logs?: ExecutionLog[];
     };
     request: {
       phaseId: number;

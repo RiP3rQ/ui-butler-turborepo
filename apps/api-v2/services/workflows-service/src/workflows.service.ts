@@ -736,7 +736,7 @@ export class WorkflowsService implements OnModuleInit {
             : undefined,
           creditsCost: phaseWithLogs[0].phase.creditsCost
             ? Number(phaseWithLogs[0].phase.creditsCost)
-            : undefined,
+            : 0,
           inputs: phaseWithLogs[0].phase.inputs
             ? JSON.stringify(JSON.parse(phaseWithLogs[0].phase.inputs))
             : undefined,

@@ -19,8 +19,6 @@ export default async function WorkflowRunPage({
         executionId: Number(runId),
       });
 
-    console.log("workflowExecution", workflowExecution);
-
     return (
       <div className="flex flex-col h-screen w-full overflow-hidden">
         <Topbar
