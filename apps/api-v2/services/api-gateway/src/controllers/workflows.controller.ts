@@ -9,11 +9,7 @@ import {
   type User,
 } from '@microservices/common';
 import { WorkflowsProto } from '@microservices/proto';
-import {
-  CacheInterceptor,
-  CacheTTL,
-  CACHE_MANAGER,
-} from '@nestjs/cache-manager';
+import { CacheTTL, CACHE_MANAGER, CacheKey } from '@nestjs/cache-manager';
 import {
   Body,
   Controller,
@@ -37,6 +33,7 @@ import {
   ApiBody,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -45,6 +42,7 @@ import { type Cache } from 'cache-manager';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
 import {
+  CUSTOM_CACHE_KEY_PREFIX,
   CustomCacheInterceptor,
   IGNORE_CACHE_KEY,
 } from '../interceptors/custom-cache.interceptor';
@@ -70,7 +68,7 @@ export class WorkflowsController implements OnModuleInit {
     @Inject('WORKFLOWS_SERVICE') private readonly client: ClientGrpc,
     private readonly grpcClient: GrpcClientProxy,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-    private readonly cacheInterceptor: CustomCacheInterceptor,
+    private readonly customCacheInterceptor: CustomCacheInterceptor,
   ) {}
 
   public onModuleInit(): void {
@@ -118,18 +116,19 @@ export class WorkflowsController implements OnModuleInit {
   /**
    * Retrieves all workflows for the authenticated user
    * @param {User} user - The authenticated user
-   * @returns {Promise<WorkflowsProto.Workflow[]>} List of user's workflows
+   * @returns {Promise<WorkflowsProto.WorkflowsResponse>} List of user's workflows
+   * @throws {NotFoundException} When user is not found
    */
-  @ApiOperation({ summary: 'Get all user workflows' })
+  @ApiOperation({ summary: 'Get all workflows for authenticated user' })
   @ApiResponse({
     status: 200,
     description: 'Workflows retrieved successfully',
-    type: JSON.stringify(WorkflowsProto.Workflow),
-    isArray: true,
+    type: 'WorkflowsResponse',
   })
-  @ApiResponse({ status: 404, description: 'User not found' })
-  @ApiResponse({ status: 500, description: 'gRPC service error' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'No workflows found' })
   @CacheTTL(CACHE_TTL_5_MINUTES)
+  @CacheKey('workflows:list')
   @Get()
   public async getAllUserWorkflows(
     @CurrentUser() user: User,
@@ -160,34 +159,30 @@ export class WorkflowsController implements OnModuleInit {
   /**
    * Retrieves a specific workflow by ID
    * @param {User} user - The authenticated user
-   * @param {number} workflowId - Workflow identifier
-   * @returns {Promise<WorkflowsProto.Workflow>} The requested workflow
+   * @param {number} workflowId - The ID of the workflow to retrieve
+   * @returns {Promise<WorkflowsProto.WorkflowResponse>} The requested workflow
+   * @throws {NotFoundException} When workflow is not found
    */
   @ApiOperation({ summary: 'Get workflow by ID' })
-  @ApiParam({ name: 'workflowId', type: Number, description: 'Workflow ID' })
+  @ApiParam({
+    name: 'workflowId',
+    type: 'number',
+    description: 'Workflow identifier',
+  })
   @ApiResponse({
     status: 200,
     description: 'Workflow retrieved successfully',
-    type: JSON.stringify(WorkflowsProto.Workflow),
+    type: 'WorkflowResponse',
   })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Workflow not found' })
-  @UseInterceptors(CacheInterceptor)
   @CacheTTL(CACHE_TTL_1_MINUTE)
+  @CacheKey('workflows:detail') // This will be combined with user ID in the interceptor
   @Get('get-by-id/:workflowId')
   public async getWorkflowById(
     @CurrentUser() user: User,
     @Param('workflowId', ParseIntPipe) workflowId: number,
   ): Promise<WorkflowsProto.WorkflowResponse> {
-    const cacheKey = this.getCacheKey(user.id, 'detail', workflowId);
-    const cachedData =
-      await this.cacheManager.get<WorkflowsProto.WorkflowResponse>(cacheKey);
-
-    console.log('cacheKey', cacheKey);
-    console.log('cachedData', cachedData);
-    if (cachedData) {
-      return cachedData;
-    }
-
     try {
       const response = await this.grpcClient.call(
         this.workflowsService.getWorkflowById({
@@ -197,7 +192,6 @@ export class WorkflowsController implements OnModuleInit {
         }),
         'WorkflowsController.getWorkflowById',
       );
-      await this.cacheManager.set(cacheKey, response, CACHE_TTL_1_MINUTE);
       return response;
     } catch (error) {
       handleGrpcError(error);
@@ -207,19 +201,22 @@ export class WorkflowsController implements OnModuleInit {
   /**
    * Creates a new workflow
    * @param {User} user - The authenticated user
-   * @param {CreateWorkflowDto} createWorkflowDto - Workflow creation data
-   * @returns {Promise<WorkflowsProto.Workflow>} The created workflow
+   * @param {CreateWorkflowDto} createWorkflowDto - The workflow creation data
+   * @returns {Promise<WorkflowsProto.WorkflowResponse>} The created workflow
    */
   @ApiOperation({ summary: 'Create new workflow' })
   @ApiBody({ type: CreateWorkflowDto })
   @ApiResponse({
     status: 201,
     description: 'Workflow created successfully',
-    type: JSON.stringify(WorkflowsProto.Workflow),
+    type: 'WorkflowResponse',
   })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 400, description: 'Invalid input' })
   @Throttle({ default: { ttl: 60000, limit: 5 } }) // 5 requests per minute
   @Post()
   @SetMetadata(IGNORE_CACHE_KEY, true)
+  @Post()
   public async createWorkflow(
     @CurrentUser() user: User,
     @Body() createWorkflowDto: CreateWorkflowDto,
@@ -234,8 +231,8 @@ export class WorkflowsController implements OnModuleInit {
         }),
         'WorkflowsController.createWorkflow',
       );
-      await this.cacheInterceptor.invalidateCache(
-        `${CACHE_KEY_PREFIX}:*:user:${String(user.id)}*`,
+      await this.customCacheInterceptor.invalidateCache(
+        `${CUSTOM_CACHE_KEY_PREFIX}:workflows:*:user:${String(user.id)}*`,
       );
       return response;
     } catch (error) {
@@ -243,6 +240,18 @@ export class WorkflowsController implements OnModuleInit {
     }
   }
 
+  /**
+   * Deletes a workflow
+   * @param {User} user - The authenticated user
+   * @param {number} workflowId - The ID of the workflow to delete
+   * @returns {Promise<WorkflowsProto.WorkflowResponse>} The deleted workflow
+   */
+  @ApiOperation({ summary: 'Delete workflow' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Workflow identifier' })
+  @ApiResponse({ status: 200, description: 'Workflow deleted successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Workflow not found' })
+  @SetMetadata(IGNORE_CACHE_KEY, true)
   @Delete(':id')
   public async deleteWorkflow(
     @CurrentUser() user: User,
@@ -264,6 +273,23 @@ export class WorkflowsController implements OnModuleInit {
     }
   }
 
+  /**
+   * Duplicates an existing workflow
+   * @param {User} user - The authenticated user
+   * @param {DuplicateWorkflowDto} duplicateWorkflowDto - Workflow duplication parameters
+   * @returns {Promise<WorkflowsProto.WorkflowResponse>} The duplicated workflow
+   * @throws {NotFoundException} When source workflow is not found
+   */
+  @ApiOperation({ summary: 'Duplicate existing workflow' })
+  @ApiBody({ type: DuplicateWorkflowDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Workflow duplicated successfully',
+    type: 'WorkflowResponse',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Source workflow not found' })
+  @SetMetadata(IGNORE_CACHE_KEY, true)
   @Post('duplicate')
   public async duplicateWorkflow(
     @CurrentUser() user: User,
@@ -287,6 +313,23 @@ export class WorkflowsController implements OnModuleInit {
     }
   }
 
+  /**
+   * Publishes a workflow making it available for execution
+   * @param {User} user - The authenticated user
+   * @param {PublishWorkflowDto} publishWorkflowDto - Workflow publication data
+   * @returns {Promise<WorkflowsProto.WorkflowResponse>} The published workflow
+   * @throws {NotFoundException} When workflow is not found
+   */
+  @ApiOperation({ summary: 'Publish workflow' })
+  @ApiBody({ type: PublishWorkflowDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Workflow published successfully',
+    type: 'WorkflowResponse',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Workflow not found' })
+  @SetMetadata(IGNORE_CACHE_KEY, true)
   @Post(':id/publish')
   public async publishWorkflow(
     @CurrentUser() user: User,
@@ -309,6 +352,23 @@ export class WorkflowsController implements OnModuleInit {
     }
   }
 
+  /**
+   * Unpublishes a workflow, making it unavailable for execution
+   * @param {User} user - The authenticated user
+   * @param {number} workflowId - The ID of the workflow to unpublish
+   * @returns {Promise<WorkflowsProto.WorkflowResponse>} The unpublished workflow
+   * @throws {NotFoundException} When workflow is not found
+   */
+  @ApiOperation({ summary: 'Unpublish workflow' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Workflow identifier' })
+  @ApiResponse({
+    status: 200,
+    description: 'Workflow unpublished successfully',
+    type: 'WorkflowResponse',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Workflow not found' })
+  @SetMetadata(IGNORE_CACHE_KEY, true)
   @Post(':id/unpublish')
   public async unpublishWorkflow(
     @CurrentUser() user: User,
@@ -366,6 +426,24 @@ export class WorkflowsController implements OnModuleInit {
     }
   }
 
+  /**
+   * Updates an existing workflow
+   * @param {User} user - The authenticated user
+   * @param {UpdateWorkflowDto} updateWorkflowDto - Workflow update data
+   * @returns {Promise<WorkflowsProto.WorkflowResponse>} The updated workflow
+   * @throws {NotFoundException} When workflow is not found
+   */
+  @ApiOperation({ summary: 'Update workflow' })
+  @ApiBody({ type: UpdateWorkflowDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Workflow updated successfully',
+    type: 'WorkflowResponse',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Workflow not found' })
+  @Throttle({ default: { ttl: 60000, limit: 1 } }) // 1 requests per minute
+  @SetMetadata(IGNORE_CACHE_KEY, true)
   @Patch('')
   public async updateWorkflow(
     @CurrentUser() user: User,
@@ -381,8 +459,9 @@ export class WorkflowsController implements OnModuleInit {
         }),
         'WorkflowsController.updateWorkflow',
       );
-      await this.cacheInterceptor.invalidateCache(
-        `${CACHE_KEY_PREFIX}:*:user:${String(user.id)}*`,
+      // Invalidate all workflow-related caches for this user
+      await this.customCacheInterceptor.invalidateCache(
+        `${CUSTOM_CACHE_KEY_PREFIX}:workflows:*:user:${String(user.id)}*`,
       );
       return response;
     } catch (error) {
@@ -390,6 +469,25 @@ export class WorkflowsController implements OnModuleInit {
     }
   }
 
+  /**
+   * Retrieves workflow execution history
+   * @param {User} user - The authenticated user
+   * @param {number} workflowId - The workflow ID to get history for
+   * @returns {Promise<WorkflowsProto.WorkflowExecutionsResponse>} List of workflow executions
+   */
+  @ApiOperation({ summary: 'Get workflow execution history' })
+  @ApiQuery({
+    name: 'workflowId',
+    type: 'number',
+    description: 'Workflow identifier',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Execution history retrieved successfully',
+    type: 'WorkflowExecutionsResponse',
+  })
+  @CacheTTL(CACHE_TTL_1_MINUTE)
+  @CacheKey('workflows:history')
   @Get('historic')
   public async getHistoricWorkflowExecutions(
     @CurrentUser() user: User,
@@ -410,6 +508,28 @@ export class WorkflowsController implements OnModuleInit {
     }
   }
 
+  /**
+   * Retrieves detailed execution information for a workflow
+   * @param {User} user - The authenticated user
+   * @param {string | number} executionId - The execution identifier
+   * @returns {Promise<WorkflowsProto.WorkflowExecutionDetailResponse>} Detailed execution information
+   * @throws {NotFoundException} When execution is not found
+   */
+  @ApiOperation({ summary: 'Get workflow execution details' })
+  @ApiQuery({
+    name: 'executionId',
+    type: 'string',
+    description: 'Execution identifier',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Execution details retrieved successfully',
+    type: 'WorkflowExecutionDetailResponse',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Execution not found' })
+  @CacheTTL(CACHE_TTL_1_MINUTE)
+  @CacheKey('workflows:execution')
   @Get('executions')
   public async getWorkflowExecutions(
     @CurrentUser() user: User,
@@ -430,6 +550,28 @@ export class WorkflowsController implements OnModuleInit {
     }
   }
 
+  /**
+   * Retrieves details of a specific execution phase
+   * @param {User} user - The authenticated user
+   * @param {number} phaseId - The phase identifier
+   * @returns {Promise<WorkflowsProto.PhaseResponse>} Phase details
+   * @throws {NotFoundException} When phase is not found
+   */
+  @ApiOperation({ summary: 'Get workflow phase details' })
+  @ApiParam({
+    name: 'id',
+    type: 'number',
+    description: 'Phase identifier',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Phase details retrieved successfully',
+    type: 'PhaseResponse',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Phase not found' })
+  @CacheTTL(CACHE_TTL_1_MINUTE)
+  @CacheKey('workflows:phase')
   @Get('phases/:id')
   public async getWorkflowPhase(
     @CurrentUser() user: User,

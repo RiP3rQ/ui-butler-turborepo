@@ -1,3 +1,4 @@
+import { ClientRequest, IncomingMessage } from 'node:http';
 import {
   CurrentUser,
   FavoriteComponentDto,
@@ -36,11 +37,10 @@ import { Throttle } from '@nestjs/throttler';
 import { codeTypeValues } from '@shared/types';
 import { type Request, type Response } from 'express';
 import HttpProxy from 'http-proxy';
-import { ClientRequest, IncomingMessage } from 'node:http';
+import type { ClientGrpc } from '@nestjs/microservices';
 import { rateLimitConfigs } from '../config/rate-limit.config';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
-import type { ClientGrpc } from '@nestjs/microservices';
 
 /**
  * Controller handling component-related operations through gRPC communication

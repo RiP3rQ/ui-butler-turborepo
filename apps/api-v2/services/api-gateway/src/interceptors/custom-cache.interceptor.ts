@@ -1,3 +1,5 @@
+// custom-cache.interceptor.ts
+
 import {
   CACHE_KEY_METADATA,
   CACHE_MANAGER,
@@ -53,7 +55,7 @@ export class CustomCacheInterceptor implements NestInterceptor {
   private trackCacheMetrics(metrics: CacheMetrics): void {
     this.metrics.push(metrics);
     console.debug(
-      `Cache ${metrics.hit ? 'HIT' : 'MISS'} - Key: ${metrics.key} - Duration: ${String(metrics.duration)}ms`,
+      `Cache ${metrics.hit ? '!_HIT_!' : 'MISS'} - Key: ${metrics.key} - Duration: ${String(metrics.duration)}ms`,
     );
   }
 
@@ -68,15 +70,12 @@ export class CustomCacheInterceptor implements NestInterceptor {
     defaultKey?: string,
   ): string {
     const request = context.switchToHttp().getRequest<Request>();
-    // @ts-ignore
+    // @ts-expect-error --- We get proper values from the request
     const userId = String(request.user?.id ?? 'anonymous');
-    console.log('userId', userId);
     const path = request.path;
     const queryString = new URLSearchParams(
       request.query as Record<string, string>,
     ).toString();
-
-    console.log('queryString', queryString);
 
     const keyParts = [
       CUSTOM_CACHE_KEY_PREFIX,
@@ -84,8 +83,6 @@ export class CustomCacheInterceptor implements NestInterceptor {
       `user:${userId}`,
       queryString && `query:${queryString}`,
     ].filter(Boolean);
-
-    console.log('keyParts', keyParts.join(':'));
 
     return keyParts.join(':');
   }
@@ -107,6 +104,25 @@ export class CustomCacheInterceptor implements NestInterceptor {
     );
 
     return !ignoreCaching;
+  }
+
+  /**
+   * Matches a string against a glob-like pattern
+   * @param str - String to match
+   * @param pattern - Pattern to match against
+   * @returns Boolean indicating if string matches pattern
+   */
+  private matchesPattern(str: string, pattern: string): boolean {
+    const regexPattern = pattern
+      .replace(/\*/g, '.*')
+      .replace(/\?/g, '.')
+      .replace(/\[!/g, '[^')
+      .replace(/\[/g, '[')
+      .replace(/\]/g, ']')
+      .replace(/\./g, '\\.');
+
+    const regex = new RegExp(`^${regexPattern}$`);
+    return regex.test(str);
   }
 
   /**
@@ -172,26 +188,25 @@ export class CustomCacheInterceptor implements NestInterceptor {
   public async invalidateCache(pattern: string): Promise<void> {
     try {
       const store = this.cacheManager.store;
-      console.log('store', store.keys());
-      const keys = await store.keys(pattern);
+      const allKeys = await store.keys();
 
-      if (keys.length === 0) {
+      const matchingKeys = allKeys.filter((key) =>
+        this.matchesPattern(key, pattern),
+      );
+
+      if (matchingKeys.length === 0) {
         console.debug(`No cache keys found matching pattern: ${pattern}`);
         return;
       }
 
-      console.log('keys', keys);
-
-      await Promise.all(
-        keys.map(async (key) => {
-          await this.cacheManager.del(key);
-        }),
-      );
-
-      console.log('keys', keys);
-
       console.debug(
-        `Invalidated ${String(keys.length)} cache keys matching pattern: ${pattern}`,
+        `Found ${String(matchingKeys.length)} keys matching pattern: ${pattern}`,
+      );
+      console.debug('Matching keys:', matchingKeys);
+
+      await Promise.all(matchingKeys.map((key) => this.cacheManager.del(key)));
+      console.debug(
+        `Invalidated ${String(matchingKeys.length)} cache keys matching pattern: ${pattern}`,
       );
     } catch (error) {
       const errorMessage = `Error invalidating cache pattern ${pattern}`;
