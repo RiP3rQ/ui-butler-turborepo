@@ -73,13 +73,8 @@
     "editor.formatOnPaste": true,
     "editor.defaultFormatter": "dbaeumer.vscode-eslint",
     "editor.codeActionsOnSave": {
-      "source.fixAll": "always",
       "source.addMissingImports": "always",
       "source.fixAll.sortJSON": "always",
-      "source.organizeImports": "always",
-      "source.removeUnused": "always",
-      "source.sortImports": "always",
-      "source.removeUnusedImports": "always",
     },
     "eslint.run": "onSave",
     "eslint.format.enable": true,

@@ -458,14 +458,13 @@ export class WorkflowsService implements OnModuleInit {
           }
         }
 
-        // Use gRPC call instead of TCP emit
-        await firstValueFrom(
-          this.executionsService.execute({
-            $type: 'api.execution.ExecuteWorkflowRequest',
-            workflowExecutionId: execution.id,
-            componentId: runWorkflowDto.componentId ?? 0,
-          }),
-        );
+        // Executing the workflow but without the `await` as we don't need to wait for it to finish
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises --- This is a workaround to avoid blocking the main thread
+        this.executeWorkflow({
+          $type: 'api.execution.ExecuteWorkflowRequest',
+          workflowExecutionId: execution.id,
+          componentId: runWorkflowDto.componentId ?? 0,
+        });
 
         return {
           $type: 'api.workflows.RunWorkflowResponse',
@@ -473,6 +472,20 @@ export class WorkflowsService implements OnModuleInit {
         };
       });
     } catch (error) {
+      throw new RpcException(
+        error instanceof Error ? error.message : JSON.stringify(error),
+      );
+    }
+  }
+
+  private async executeWorkflow(
+    request: ExecutionProto.ExecuteWorkflowRequest,
+  ): Promise<ExecutionProto.Empty> {
+    try {
+      console.log('Executing workflow', request);
+      return await firstValueFrom(this.executionsService.execute(request));
+    } catch (error) {
+      console.error('Error executing workflow', error);
       throw new RpcException(
         error instanceof Error ? error.message : JSON.stringify(error),
       );
@@ -579,7 +592,7 @@ export class WorkflowsService implements OnModuleInit {
   public async getWorkflowExecutions(
     user: User,
     executionId: number,
-  ): Promise<WorkflowsProto.WorkflowExecutionsResponse> {
+  ): Promise<WorkflowsProto.WorkflowExecutionDetailResponse> {
     try {
       const workflowExecutionsWithPhases = await this.database
         .select({
@@ -604,26 +617,72 @@ export class WorkflowsService implements OnModuleInit {
       }
 
       return {
-        $type: 'api.workflows.WorkflowExecutionsResponse',
-        executions: workflowExecutionsWithPhases.map((row) => ({
+        $type: 'api.workflows.WorkflowExecutionDetailResponse',
+        execution: {
           $type: 'api.workflows.WorkflowExecution',
-          ...row.workflowExecution,
-          userId: Number(row.workflowExecution.userId),
-          createdAt: dateToTimestamp(row.workflowExecution.createdAt),
-          startedAt: row.workflowExecution.startedAt
-            ? dateToTimestamp(row.workflowExecution.startedAt)
+          ...workflowExecutionsWithPhases[0]?.workflowExecution,
+          id: workflowExecutionsWithPhases[0]?.workflowExecution?.id ?? 0,
+          workflowId:
+            workflowExecutionsWithPhases[0]?.workflowExecution?.workflowId ?? 0,
+          status:
+            workflowExecutionsWithPhases[0]?.workflowExecution?.status ??
+            WorkflowStatus.DRAFT,
+          userId: Number(
+            workflowExecutionsWithPhases[0]?.workflowExecution?.userId,
+          ),
+          definition:
+            workflowExecutionsWithPhases[0]?.workflowExecution?.definition ??
+            '',
+          creditsConsumed:
+            workflowExecutionsWithPhases[0]?.workflowExecution
+              ?.creditsConsumed ?? undefined,
+          createdAt: workflowExecutionsWithPhases[0]?.workflowExecution
+            ?.createdAt
+            ? dateToTimestamp(
+                workflowExecutionsWithPhases[0].workflowExecution.createdAt,
+              )
             : undefined,
-          endedAt: row.workflowExecution.completedAt
-            ? dateToTimestamp(row.workflowExecution.completedAt)
+          startedAt: workflowExecutionsWithPhases[0]?.workflowExecution
+            ?.startedAt
+            ? dateToTimestamp(
+                workflowExecutionsWithPhases[0].workflowExecution.startedAt,
+              )
             : undefined,
-          completedAt: row.workflowExecution.completedAt
-            ? dateToTimestamp(row.workflowExecution.completedAt)
+          completedAt: workflowExecutionsWithPhases[0]?.workflowExecution
+            ?.completedAt
+            ? dateToTimestamp(
+                workflowExecutionsWithPhases[0].workflowExecution.completedAt,
+              )
             : undefined,
-          creditsConsumed: row.workflowExecution.creditsConsumed
-            ? Number(row.workflowExecution.creditsConsumed)
-            : undefined,
-          phases: row.phases,
-        })),
+        } satisfies WorkflowsProto.WorkflowExecution,
+        phases: workflowExecutionsWithPhases.map(
+          (row) =>
+            ({
+              $type: 'api.workflows.ExecutionPhase',
+              ...row.phases,
+              id: row.phases?.id ?? 0,
+              name: row.phases?.name ?? '',
+              workflowExecutionId: row.phases?.workflowExecutionId ?? 0,
+              userId: row.phases?.userId ?? 0,
+              status: row.phases?.status ?? '',
+              number: row.phases?.number ?? 0,
+              startedAt: row.phases?.startedAt
+                ? dateToTimestamp(row.phases.startedAt)
+                : undefined,
+              completedAt: row.phases?.completedAt
+                ? dateToTimestamp(row.phases.completedAt)
+                : undefined,
+              creditsCost: row.phases?.creditsCost
+                ? Number(row.phases.creditsCost)
+                : undefined,
+              inputs: row.phases?.inputs
+                ? JSON.stringify(JSON.parse(row.phases.inputs))
+                : undefined,
+              outputs: row.phases?.outputs
+                ? JSON.stringify(JSON.parse(row.phases.outputs))
+                : undefined,
+            }) satisfies WorkflowsProto.ExecutionPhase,
+        ),
       };
     } catch (error) {
       throw new RpcException(

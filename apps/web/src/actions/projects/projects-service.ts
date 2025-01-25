@@ -73,8 +73,6 @@ export class ProjectsService {
         ProjectsEndpoints["getProjects"]["response"]
       >(this.BASE_PATH);
 
-      console.log("response", response);
-
       if (!response.success) {
         throw new Error("Failed to get user projects");
       }

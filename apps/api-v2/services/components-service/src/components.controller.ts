@@ -86,7 +86,7 @@ export class ComponentsController {
       throw new RpcException('Component ID is required');
     }
 
-    if (!request.favoriteValue) {
+    if (typeof request.favoriteValue !== 'boolean') {
       console.error('Favorite value is required');
       throw new RpcException('Favorite value is required');
     }

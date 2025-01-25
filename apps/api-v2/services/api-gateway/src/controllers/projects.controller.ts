@@ -141,16 +141,6 @@ export class ProjectsController implements OnModuleInit {
         projectId,
       };
 
-      console.log('request', request);
-
-      console.log(
-        'RESPONSE',
-        await this.grpcClient.call(
-          this.projectsService.getProjectDetails(request),
-          'Projects.getProjectDetails',
-        ),
-      );
-
       return await this.grpcClient.call(
         this.projectsService.getProjectDetails(request),
         'Projects.getProjectDetails',
