@@ -36,7 +36,7 @@ export interface Component {
   $type: "api.projects.Component";
   id: number;
   title: string;
-  description: string;
+  code: string;
   projectId: number;
   userId: number;
   isFavorite: boolean;
@@ -299,7 +299,7 @@ function createBaseComponent(): Component {
     $type: "api.projects.Component",
     id: 0,
     title: "",
-    description: "",
+    code: "",
     projectId: 0,
     userId: 0,
     isFavorite: false,
@@ -319,8 +319,8 @@ export const Component: MessageFns<Component, "api.projects.Component"> = {
     if (message.title !== "") {
       writer.uint32(18).string(message.title);
     }
-    if (message.description !== "") {
-      writer.uint32(26).string(message.description);
+    if (message.code !== "") {
+      writer.uint32(26).string(message.code);
     }
     if (message.projectId !== 0) {
       writer.uint32(32).int32(message.projectId);
@@ -369,7 +369,7 @@ export const Component: MessageFns<Component, "api.projects.Component"> = {
             break;
           }
 
-          message.description = reader.string();
+          message.code = reader.string();
           continue;
         }
         case 4: {

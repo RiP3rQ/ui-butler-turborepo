@@ -1,17 +1,17 @@
 "use client";
+import { getDashboardStatCardsValues } from "@/actions/dashboard/server-actions";
+import SingleStatCard from "@/components/analytics/stat-cards/single-stat-card";
+import type { DashboardStats } from "@shared/types";
+import { useQuery } from "@tanstack/react-query";
 import {
   ComponentIcon,
   FolderGit2Icon,
   MessageCircleHeartIcon,
 } from "lucide-react";
-import type { DashboardStatCardsValuesResponse } from "@shared/types";
-import { useQuery } from "@tanstack/react-query";
 import { type JSX } from "react";
-import SingleStatCard from "@/components/analytics/stat-cards/single-stat-card";
-import { getDashboardStatCardsValues } from "@/actions/dashboard/server-actions";
 
 interface StatCardsProps {
-  initialData: DashboardStatCardsValuesResponse;
+  initialData: DashboardStats;
 }
 
 function DashboardStatCards({
@@ -28,17 +28,17 @@ function DashboardStatCards({
       <SingleStatCard
         icon={FolderGit2Icon}
         title="Projects"
-        value={data.currentActiveProjects}
+        value={Number(data.currentActiveProjects)}
       />
       <SingleStatCard
         icon={ComponentIcon}
         title="Components"
-        value={data.numberOfCreatedComponents}
+        value={Number(data.numberOfCreatedComponents)}
       />
       <SingleStatCard
         icon={MessageCircleHeartIcon}
         title="Favorited"
-        value={data.favoritesComponents}
+        value={Number(data.favoritesComponents)}
       />
     </div>
   );

@@ -9,7 +9,7 @@ import {
   type User,
 } from '@microservices/common';
 import { WorkflowsProto } from '@microservices/proto';
-import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
+import { CacheTTL, CACHE_MANAGER, CacheKey } from '@nestjs/cache-manager';
 import {
   Body,
   Controller,
@@ -25,6 +25,7 @@ import {
   Query,
   UseGuards,
   UseInterceptors,
+  SetMetadata,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
 import {
@@ -32,17 +33,23 @@ import {
   ApiBody,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { type Cache } from 'cache-manager';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
+import {
+  CUSTOM_CACHE_KEY_PREFIX,
+  CustomCacheInterceptor,
+  IGNORE_CACHE_KEY,
+} from '../interceptors/custom-cache.interceptor';
 
 const CACHE_TTL_1_MINUTE = 60000;
 const CACHE_TTL_5_MINUTES = 300000;
-const CACHE_KEY_USER_WORKFLOWS = 'user-workflows';
-const CACHE_KEY_WORKFLOW_DETAILS = 'workflow-details';
+const CACHE_KEY_PREFIX = 'workflows';
 
 /**
  * Controller handling workflow-related operations through gRPC communication
@@ -53,12 +60,15 @@ const CACHE_KEY_WORKFLOW_DETAILS = 'workflow-details';
 @ApiBearerAuth()
 @Controller('workflows')
 @UseGuards(JwtAuthGuard)
+@UseInterceptors(CustomCacheInterceptor)
 export class WorkflowsController implements OnModuleInit {
   private workflowsService: WorkflowsProto.WorkflowsServiceClient;
 
   constructor(
     @Inject('WORKFLOWS_SERVICE') private readonly client: ClientGrpc,
     private readonly grpcClient: GrpcClientProxy,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private readonly customCacheInterceptor: CustomCacheInterceptor,
   ) {}
 
   public onModuleInit(): void {
@@ -88,40 +98,59 @@ export class WorkflowsController implements OnModuleInit {
   }
 
   /**
+   * Generates cache key for workflow data
+   */
+  private getCacheKey(userId: number, type: string, id?: number): string {
+    return `${CACHE_KEY_PREFIX}:${type}:user:${String(userId)}${id ? `:workflow:${String(id)}` : ''}`;
+  }
+
+  /**
+   * Invalidates all workflow-related caches for a user
+   */
+  private async invalidateUserCaches(userId: number): Promise<void> {
+    const pattern = `${CACHE_KEY_PREFIX}:*:user:${String(userId)}*`;
+    const keys = await this.cacheManager.store.keys(pattern);
+    await Promise.all(keys.map((key) => this.cacheManager.del(key)));
+  }
+
+  /**
    * Retrieves all workflows for the authenticated user
    * @param {User} user - The authenticated user
-   * @returns {Promise<WorkflowsProto.Workflow[]>} List of user's workflows
+   * @returns {Promise<WorkflowsProto.WorkflowsResponse>} List of user's workflows
+   * @throws {NotFoundException} When user is not found
    */
-  @ApiOperation({ summary: 'Get all user workflows' })
+  @ApiOperation({ summary: 'Get all workflows for authenticated user' })
   @ApiResponse({
     status: 200,
     description: 'Workflows retrieved successfully',
-    type: JSON.stringify(WorkflowsProto.Workflow),
-    isArray: true,
+    type: 'WorkflowsResponse',
   })
-  @ApiResponse({ status: 404, description: 'User not found' })
-  @ApiResponse({ status: 500, description: 'gRPC service error' })
-  @UseInterceptors(CacheInterceptor)
-  @CacheKey(CACHE_KEY_USER_WORKFLOWS)
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'No workflows found' })
   @CacheTTL(CACHE_TTL_5_MINUTES)
+  @CacheKey('workflows:list')
   @Get()
   public async getAllUserWorkflows(
     @CurrentUser() user: User,
   ): Promise<WorkflowsProto.WorkflowsResponse> {
+    const cacheKey = this.getCacheKey(user.id, 'list');
+    const cachedData =
+      await this.cacheManager.get<WorkflowsProto.WorkflowsResponse>(cacheKey);
+
+    if (cachedData) {
+      return cachedData;
+    }
+
     try {
-      if (!user.id) {
-        throw new NotFoundException('Unauthorized: User not found');
-      }
-
-      const request: WorkflowsProto.GetAllUserWorkflowsRequest = {
-        $type: 'api.workflows.GetAllUserWorkflowsRequest',
-        user: this.userToProtoUser(user),
-      };
-
-      return await this.grpcClient.call(
-        this.workflowsService.getAllUserWorkflows(request),
+      const response = await this.grpcClient.call(
+        this.workflowsService.getAllUserWorkflows({
+          $type: 'api.workflows.GetAllUserWorkflowsRequest',
+          user: this.userToProtoUser(user),
+        }),
         'WorkflowsController.getAllUserWorkflows',
       );
+      await this.cacheManager.set(cacheKey, response, CACHE_TTL_5_MINUTES);
+      return response;
     } catch (error) {
       handleGrpcError(error);
     }
@@ -130,40 +159,40 @@ export class WorkflowsController implements OnModuleInit {
   /**
    * Retrieves a specific workflow by ID
    * @param {User} user - The authenticated user
-   * @param {number} workflowId - Workflow identifier
-   * @returns {Promise<WorkflowsProto.Workflow>} The requested workflow
+   * @param {number} workflowId - The ID of the workflow to retrieve
+   * @returns {Promise<WorkflowsProto.WorkflowResponse>} The requested workflow
+   * @throws {NotFoundException} When workflow is not found
    */
   @ApiOperation({ summary: 'Get workflow by ID' })
-  @ApiParam({ name: 'workflowId', type: Number, description: 'Workflow ID' })
+  @ApiParam({
+    name: 'workflowId',
+    type: 'number',
+    description: 'Workflow identifier',
+  })
   @ApiResponse({
     status: 200,
     description: 'Workflow retrieved successfully',
-    type: JSON.stringify(WorkflowsProto.Workflow),
+    type: 'WorkflowResponse',
   })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Workflow not found' })
-  @UseInterceptors(CacheInterceptor)
-  @CacheKey(CACHE_KEY_WORKFLOW_DETAILS)
   @CacheTTL(CACHE_TTL_1_MINUTE)
+  @CacheKey('workflows:detail') // This will be combined with user ID in the interceptor
   @Get('get-by-id/:workflowId')
   public async getWorkflowById(
     @CurrentUser() user: User,
     @Param('workflowId', ParseIntPipe) workflowId: number,
   ): Promise<WorkflowsProto.WorkflowResponse> {
     try {
-      if (!user.id) {
-        throw new NotFoundException('Unauthorized: User not found');
-      }
-
-      const request: WorkflowsProto.GetWorkflowByIdRequest = {
-        $type: 'api.workflows.GetWorkflowByIdRequest',
-        user: this.userToProtoUser(user),
-        workflowId,
-      };
-
-      return await this.grpcClient.call(
-        this.workflowsService.getWorkflowById(request),
+      const response = await this.grpcClient.call(
+        this.workflowsService.getWorkflowById({
+          $type: 'api.workflows.GetWorkflowByIdRequest',
+          user: this.userToProtoUser(user),
+          workflowId,
+        }),
         'WorkflowsController.getWorkflowById',
       );
+      return response;
     } catch (error) {
       handleGrpcError(error);
     }
@@ -172,141 +201,190 @@ export class WorkflowsController implements OnModuleInit {
   /**
    * Creates a new workflow
    * @param {User} user - The authenticated user
-   * @param {CreateWorkflowDto} createWorkflowDto - Workflow creation data
-   * @returns {Promise<WorkflowsProto.Workflow>} The created workflow
+   * @param {CreateWorkflowDto} createWorkflowDto - The workflow creation data
+   * @returns {Promise<WorkflowsProto.WorkflowResponse>} The created workflow
    */
   @ApiOperation({ summary: 'Create new workflow' })
   @ApiBody({ type: CreateWorkflowDto })
   @ApiResponse({
     status: 201,
     description: 'Workflow created successfully',
-    type: JSON.stringify(WorkflowsProto.Workflow),
+    type: 'WorkflowResponse',
   })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 400, description: 'Invalid input' })
   @Throttle({ default: { ttl: 60000, limit: 5 } }) // 5 requests per minute
+  @Post()
+  @SetMetadata(IGNORE_CACHE_KEY, true)
   @Post()
   public async createWorkflow(
     @CurrentUser() user: User,
     @Body() createWorkflowDto: CreateWorkflowDto,
   ): Promise<WorkflowsProto.WorkflowResponse> {
     try {
-      if (!user.id) {
-        throw new NotFoundException('Unauthorized: User not found');
-      }
-
-      const request: WorkflowsProto.CreateWorkflowRequest = {
-        $type: 'api.workflows.CreateWorkflowRequest',
-        user: this.userToProtoUser(user),
-        name: createWorkflowDto.name,
-        description: createWorkflowDto.description,
-      };
-
-      return await this.grpcClient.call(
-        this.workflowsService.createWorkflow(request),
+      const response = await this.grpcClient.call(
+        this.workflowsService.createWorkflow({
+          $type: 'api.workflows.CreateWorkflowRequest',
+          user: this.userToProtoUser(user),
+          name: createWorkflowDto.name,
+          description: createWorkflowDto.description,
+        }),
         'WorkflowsController.createWorkflow',
       );
+      await this.customCacheInterceptor.invalidateCache(
+        `${CUSTOM_CACHE_KEY_PREFIX}:workflows:*:user:${String(user.id)}*`,
+      );
+      return response;
     } catch (error) {
       handleGrpcError(error);
     }
   }
 
+  /**
+   * Deletes a workflow
+   * @param {User} user - The authenticated user
+   * @param {number} workflowId - The ID of the workflow to delete
+   * @returns {Promise<WorkflowsProto.WorkflowResponse>} The deleted workflow
+   */
+  @ApiOperation({ summary: 'Delete workflow' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Workflow identifier' })
+  @ApiResponse({ status: 200, description: 'Workflow deleted successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Workflow not found' })
+  @SetMetadata(IGNORE_CACHE_KEY, true)
   @Delete(':id')
   public async deleteWorkflow(
     @CurrentUser() user: User,
     @Param('id', ParseIntPipe) workflowId: number,
   ): Promise<WorkflowsProto.WorkflowResponse> {
     try {
-      if (!user.id) {
-        throw new NotFoundException('Unauthorized: User not found');
-      }
-
-      const request: WorkflowsProto.DeleteWorkflowRequest = {
-        $type: 'api.workflows.DeleteWorkflowRequest',
-        user: this.userToProtoUser(user),
-        workflowId,
-      };
-
-      return await this.grpcClient.call(
-        this.workflowsService.deleteWorkflow(request),
+      const response = await this.grpcClient.call(
+        this.workflowsService.deleteWorkflow({
+          $type: 'api.workflows.DeleteWorkflowRequest',
+          user: this.userToProtoUser(user),
+          workflowId,
+        }),
         'WorkflowsController.deleteWorkflow',
       );
+      await this.invalidateUserCaches(user.id);
+      return response;
     } catch (error) {
       handleGrpcError(error);
     }
   }
 
+  /**
+   * Duplicates an existing workflow
+   * @param {User} user - The authenticated user
+   * @param {DuplicateWorkflowDto} duplicateWorkflowDto - Workflow duplication parameters
+   * @returns {Promise<WorkflowsProto.WorkflowResponse>} The duplicated workflow
+   * @throws {NotFoundException} When source workflow is not found
+   */
+  @ApiOperation({ summary: 'Duplicate existing workflow' })
+  @ApiBody({ type: DuplicateWorkflowDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Workflow duplicated successfully',
+    type: 'WorkflowResponse',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Source workflow not found' })
+  @SetMetadata(IGNORE_CACHE_KEY, true)
   @Post('duplicate')
   public async duplicateWorkflow(
     @CurrentUser() user: User,
     @Body() duplicateWorkflowDto: DuplicateWorkflowDto,
   ): Promise<WorkflowsProto.WorkflowResponse> {
     try {
-      if (!user.id) {
-        throw new NotFoundException('Unauthorized: User not found');
-      }
-
-      const request: WorkflowsProto.DuplicateWorkflowRequest = {
-        $type: 'api.workflows.DuplicateWorkflowRequest',
-        user: this.userToProtoUser(user),
-        workflowId: duplicateWorkflowDto.workflowId,
-        name: duplicateWorkflowDto.name,
-        description: duplicateWorkflowDto.description,
-      };
-
-      return await this.grpcClient.call(
-        this.workflowsService.duplicateWorkflow(request),
+      const response = await this.grpcClient.call(
+        this.workflowsService.duplicateWorkflow({
+          $type: 'api.workflows.DuplicateWorkflowRequest',
+          user: this.userToProtoUser(user),
+          workflowId: duplicateWorkflowDto.workflowId,
+          name: duplicateWorkflowDto.name,
+          description: duplicateWorkflowDto.description,
+        }),
         'WorkflowsController.duplicateWorkflow',
       );
+      await this.invalidateUserCaches(user.id);
+      return response;
     } catch (error) {
       handleGrpcError(error);
     }
   }
 
+  /**
+   * Publishes a workflow making it available for execution
+   * @param {User} user - The authenticated user
+   * @param {PublishWorkflowDto} publishWorkflowDto - Workflow publication data
+   * @returns {Promise<WorkflowsProto.WorkflowResponse>} The published workflow
+   * @throws {NotFoundException} When workflow is not found
+   */
+  @ApiOperation({ summary: 'Publish workflow' })
+  @ApiBody({ type: PublishWorkflowDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Workflow published successfully',
+    type: 'WorkflowResponse',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Workflow not found' })
+  @SetMetadata(IGNORE_CACHE_KEY, true)
   @Post(':id/publish')
   public async publishWorkflow(
     @CurrentUser() user: User,
     @Body() publishWorkflowDto: PublishWorkflowDto,
   ): Promise<WorkflowsProto.WorkflowResponse> {
     try {
-      if (!user.id) {
-        throw new NotFoundException('Unauthorized: User not found');
-      }
-
-      const request: WorkflowsProto.PublishWorkflowRequest = {
-        $type: 'api.workflows.PublishWorkflowRequest',
-        user: this.userToProtoUser(user),
-        workflowId: publishWorkflowDto.workflowId,
-        flowDefinition: publishWorkflowDto.flowDefinition,
-      };
-
-      return await this.grpcClient.call(
-        this.workflowsService.publishWorkflow(request),
+      const response = await this.grpcClient.call(
+        this.workflowsService.publishWorkflow({
+          $type: 'api.workflows.PublishWorkflowRequest',
+          user: this.userToProtoUser(user),
+          workflowId: publishWorkflowDto.workflowId,
+          flowDefinition: publishWorkflowDto.flowDefinition,
+        }),
         'WorkflowsController.publishWorkflow',
       );
+      await this.invalidateUserCaches(user.id);
+      return response;
     } catch (error) {
       handleGrpcError(error);
     }
   }
 
+  /**
+   * Unpublishes a workflow, making it unavailable for execution
+   * @param {User} user - The authenticated user
+   * @param {number} workflowId - The ID of the workflow to unpublish
+   * @returns {Promise<WorkflowsProto.WorkflowResponse>} The unpublished workflow
+   * @throws {NotFoundException} When workflow is not found
+   */
+  @ApiOperation({ summary: 'Unpublish workflow' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Workflow identifier' })
+  @ApiResponse({
+    status: 200,
+    description: 'Workflow unpublished successfully',
+    type: 'WorkflowResponse',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Workflow not found' })
+  @SetMetadata(IGNORE_CACHE_KEY, true)
   @Post(':id/unpublish')
   public async unpublishWorkflow(
     @CurrentUser() user: User,
     @Param('id', ParseIntPipe) workflowId: number,
   ): Promise<WorkflowsProto.WorkflowResponse> {
     try {
-      if (!user.id) {
-        throw new NotFoundException('Unauthorized: User not found');
-      }
-
-      const request: WorkflowsProto.UnpublishWorkflowRequest = {
-        $type: 'api.workflows.UnpublishWorkflowRequest',
-        user: this.userToProtoUser(user),
-        workflowId,
-      };
-
-      return await this.grpcClient.call(
-        this.workflowsService.unpublishWorkflow(request),
+      const response = await this.grpcClient.call(
+        this.workflowsService.unpublishWorkflow({
+          $type: 'api.workflows.UnpublishWorkflowRequest',
+          user: this.userToProtoUser(user),
+          workflowId,
+        }),
         'WorkflowsController.unpublishWorkflow',
       );
+      await this.invalidateUserCaches(user.id);
+      return response;
     } catch (error) {
       handleGrpcError(error);
     }
@@ -332,123 +410,183 @@ export class WorkflowsController implements OnModuleInit {
     @Body() runWorkflowDto: RunWorkflowDto,
   ): Promise<WorkflowsProto.RunWorkflowResponse> {
     try {
-      if (!user.id) {
-        throw new NotFoundException('Unauthorized: User not found');
-      }
-
-      const request: WorkflowsProto.RunWorkflowRequest = {
-        $type: 'api.workflows.RunWorkflowRequest',
-        user: this.userToProtoUser(user),
-        workflowId: runWorkflowDto.workflowId,
-        flowDefinition: runWorkflowDto.flowDefinition ?? '',
-        componentId: String(runWorkflowDto.componentId),
-      };
-
-      return await this.grpcClient.call(
-        this.workflowsService.runWorkflow(request),
+      const response = await this.grpcClient.call(
+        this.workflowsService.runWorkflow({
+          $type: 'api.workflows.RunWorkflowRequest',
+          user: this.userToProtoUser(user),
+          workflowId: runWorkflowDto.workflowId,
+          flowDefinition: runWorkflowDto.flowDefinition ?? '',
+          componentId: String(runWorkflowDto.componentId),
+        }),
         'WorkflowsController.runWorkflow',
       );
+      return response;
     } catch (error) {
       handleGrpcError(error);
     }
   }
 
+  /**
+   * Updates an existing workflow
+   * @param {User} user - The authenticated user
+   * @param {UpdateWorkflowDto} updateWorkflowDto - Workflow update data
+   * @returns {Promise<WorkflowsProto.WorkflowResponse>} The updated workflow
+   * @throws {NotFoundException} When workflow is not found
+   */
+  @ApiOperation({ summary: 'Update workflow' })
+  @ApiBody({ type: UpdateWorkflowDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Workflow updated successfully',
+    type: 'WorkflowResponse',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Workflow not found' })
+  @Throttle({ default: { ttl: 60000, limit: 1 } }) // 1 requests per minute
+  @SetMetadata(IGNORE_CACHE_KEY, true)
   @Patch('')
   public async updateWorkflow(
     @CurrentUser() user: User,
     @Body() updateWorkflowDto: UpdateWorkflowDto,
   ): Promise<WorkflowsProto.WorkflowResponse> {
     try {
-      if (!user.id) {
-        throw new NotFoundException('Unauthorized: User not found');
-      }
-
-      const request: WorkflowsProto.UpdateWorkflowRequest = {
-        $type: 'api.workflows.UpdateWorkflowRequest',
-        user: this.userToProtoUser(user),
-        workflowId: updateWorkflowDto.workflowId,
-        definition: updateWorkflowDto.definition,
-      };
-
-      return await this.grpcClient.call(
-        this.workflowsService.updateWorkflow(request),
+      const response = await this.grpcClient.call(
+        this.workflowsService.updateWorkflow({
+          $type: 'api.workflows.UpdateWorkflowRequest',
+          user: this.userToProtoUser(user),
+          workflowId: updateWorkflowDto.workflowId,
+          definition: updateWorkflowDto.definition,
+        }),
         'WorkflowsController.updateWorkflow',
       );
+      // Invalidate all workflow-related caches for this user
+      await this.customCacheInterceptor.invalidateCache(
+        `${CUSTOM_CACHE_KEY_PREFIX}:workflows:*:user:${String(user.id)}*`,
+      );
+      return response;
     } catch (error) {
       handleGrpcError(error);
     }
   }
 
+  /**
+   * Retrieves workflow execution history
+   * @param {User} user - The authenticated user
+   * @param {number} workflowId - The workflow ID to get history for
+   * @returns {Promise<WorkflowsProto.WorkflowExecutionsResponse>} List of workflow executions
+   */
+  @ApiOperation({ summary: 'Get workflow execution history' })
+  @ApiQuery({
+    name: 'workflowId',
+    type: 'number',
+    description: 'Workflow identifier',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Execution history retrieved successfully',
+    type: 'WorkflowExecutionsResponse',
+  })
+  @CacheTTL(CACHE_TTL_1_MINUTE)
+  @CacheKey('workflows:history')
   @Get('historic')
   public async getHistoricWorkflowExecutions(
     @CurrentUser() user: User,
     @Query('workflowId', ParseIntPipe) workflowId: number,
   ): Promise<WorkflowsProto.WorkflowExecutionsResponse> {
     try {
-      if (!user.id) {
-        throw new NotFoundException('Unauthorized: User not found');
-      }
-
-      const request: WorkflowsProto.GetHistoricRequest = {
-        $type: 'api.workflows.GetHistoricRequest',
-        user: this.userToProtoUser(user),
-        workflowId,
-      };
-
-      return await this.grpcClient.call(
-        this.workflowsService.getHistoricWorkflowExecutions(request),
+      const response = await this.grpcClient.call(
+        this.workflowsService.getHistoricWorkflowExecutions({
+          $type: 'api.workflows.GetHistoricRequest',
+          user: this.userToProtoUser(user),
+          workflowId,
+        }),
         'WorkflowsController.getHistoricWorkflowExecutions',
       );
+      return response;
     } catch (error) {
       handleGrpcError(error);
     }
   }
 
+  /**
+   * Retrieves detailed execution information for a workflow
+   * @param {User} user - The authenticated user
+   * @param {string | number} executionId - The execution identifier
+   * @returns {Promise<WorkflowsProto.WorkflowExecutionDetailResponse>} Detailed execution information
+   * @throws {NotFoundException} When execution is not found
+   */
+  @ApiOperation({ summary: 'Get workflow execution details' })
+  @ApiQuery({
+    name: 'executionId',
+    type: 'string',
+    description: 'Execution identifier',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Execution details retrieved successfully',
+    type: 'WorkflowExecutionDetailResponse',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Execution not found' })
+  @CacheTTL(CACHE_TTL_1_MINUTE)
+  @CacheKey('workflows:execution')
   @Get('executions')
   public async getWorkflowExecutions(
     @CurrentUser() user: User,
     @Query('executionId') executionId: string | number,
   ): Promise<WorkflowsProto.WorkflowExecutionDetailResponse> {
     try {
-      if (!user.id) {
-        throw new NotFoundException('Unauthorized: User not found');
-      }
-
-      const request: WorkflowsProto.GetExecutionsRequest = {
-        $type: 'api.workflows.GetExecutionsRequest',
-        user: this.userToProtoUser(user),
-        executionId: Number(executionId),
-      };
-
-      return await this.grpcClient.call(
-        this.workflowsService.getWorkflowExecutions(request),
+      const response = await this.grpcClient.call(
+        this.workflowsService.getWorkflowExecutions({
+          $type: 'api.workflows.GetExecutionsRequest',
+          user: this.userToProtoUser(user),
+          executionId: Number(executionId),
+        }),
         'WorkflowsController.getWorkflowExecutions',
       );
+      return response;
     } catch (error) {
       handleGrpcError(error);
     }
   }
 
+  /**
+   * Retrieves details of a specific execution phase
+   * @param {User} user - The authenticated user
+   * @param {number} phaseId - The phase identifier
+   * @returns {Promise<WorkflowsProto.PhaseResponse>} Phase details
+   * @throws {NotFoundException} When phase is not found
+   */
+  @ApiOperation({ summary: 'Get workflow phase details' })
+  @ApiParam({
+    name: 'id',
+    type: 'number',
+    description: 'Phase identifier',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Phase details retrieved successfully',
+    type: 'PhaseResponse',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Phase not found' })
+  @CacheTTL(CACHE_TTL_1_MINUTE)
+  @CacheKey('workflows:phase')
   @Get('phases/:id')
   public async getWorkflowPhase(
     @CurrentUser() user: User,
     @Param('id', ParseIntPipe) phaseId: number,
   ): Promise<WorkflowsProto.PhaseResponse> {
     try {
-      if (!user.id) {
-        throw new NotFoundException('Unauthorized: User not found');
-      }
-
-      const request: WorkflowsProto.GetPhaseRequest = {
-        $type: 'api.workflows.GetPhaseRequest',
-        user: this.userToProtoUser(user),
-        phaseId,
-      };
-
-      return await this.grpcClient.call(
-        this.workflowsService.getWorkflowPhase(request),
+      const response = await this.grpcClient.call(
+        this.workflowsService.getWorkflowPhase({
+          $type: 'api.workflows.GetPhaseRequest',
+          user: this.userToProtoUser(user),
+          phaseId,
+        }),
         'WorkflowsController.getWorkflowPhase',
       );
+      return response;
     } catch (error) {
       handleGrpcError(error);
     }

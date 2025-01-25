@@ -176,7 +176,7 @@ export class WorkflowsController {
   @GrpcMethod('WorkflowsService', 'GetWorkflowExecutions')
   public async getWorkflowExecutions(
     request: WorkflowsProto.GetExecutionsRequest,
-  ): Promise<WorkflowsProto.WorkflowExecutionsResponse> {
+  ): Promise<WorkflowsProto.WorkflowExecutionDetailResponse> {
     this.logger.debug('Getting workflow executions');
     return await this.workflowsService.getWorkflowExecutions(
       this.protoUserToUser(request.user),

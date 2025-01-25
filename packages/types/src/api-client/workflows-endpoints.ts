@@ -50,7 +50,6 @@ export interface ExecutionPhase {
   node: string | null;
   inputs: string | null;
   outputs: string | null;
-  logs?: ExecutionLog[];
 }
 
 export interface ExecutionPhaseWithDatesInsteadOfProtoTimestamp
@@ -79,24 +78,12 @@ export interface WorkflowExecutionWithDatesInsteadOfProtoTimestamp
   completedAt: Date | null;
 }
 
-export interface WorkflowExecutionWithPhases {
-  id: number;
-  userId: number;
-  definition: string;
-  status: string;
-  createdAt: ProtoTimestamp | null;
-  workflowId: number;
-  trigger: string;
-  creditsConsumed: number | null;
-  startedAt: ProtoTimestamp | null;
-  completedAt: ProtoTimestamp | null;
-  phases: ExecutionPhase[];
-}
-
 export interface WorkflowsEndpoints {
   /** GET /workflows */
   getAllUserWorkflows: {
-    response: Workflow[];
+    response: {
+      workflows: Workflow[];
+    };
   };
 
   /** GET /workflows/get-by-id/:workflowId */
@@ -104,7 +91,9 @@ export interface WorkflowsEndpoints {
     params: {
       workflowId: number;
     };
-    response: Workflow;
+    response: {
+      workflow: Workflow;
+    };
     request: {
       workflowId: number;
     };
@@ -241,7 +230,7 @@ export interface WorkflowsEndpoints {
     };
     response: {
       phase: ExecutionPhase;
-      logs: string[];
+      logs?: ExecutionLog[];
     };
     request: {
       phaseId: number;

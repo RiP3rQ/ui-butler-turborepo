@@ -1,10 +1,10 @@
-import {
-  type Component,
-  type ComponentsEndpoints,
-} from "@shared/types/src/api-client/components-endpoints";
-import { type CodeType } from "@shared/types/src/components";
 import { ApiClient } from "@/lib/api-client";
 import { getErrorMessage } from "@/lib/get-error-message";
+import {
+  type CodeType,
+  type Component,
+  type ComponentsEndpoints,
+} from "@shared/types";
 
 /**
  * Service for handling component-related operations

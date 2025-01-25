@@ -27,7 +27,7 @@ export class GrpcClientProxy {
         retryWhen((errors) =>
           errors.pipe(
             mergeMap((error: GrpcError) => {
-              this.logger.debug(`Received error in ${context}:`, error);
+              console.error(`Received error in ${context}:`, error);
 
               if (!this.isRetryableError(error)) {
                 return throwError(() => error);

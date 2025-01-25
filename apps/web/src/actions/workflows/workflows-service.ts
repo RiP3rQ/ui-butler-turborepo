@@ -8,7 +8,7 @@ import {
   type Workflow,
   type WorkflowExecution,
   type WorkflowsEndpoints,
-} from "@shared/types/src/api-client/workflows-endpoints";
+} from "@shared/types";
 
 /**
  * Service class for workflow-related API calls
@@ -115,7 +115,7 @@ export class WorkflowService {
    */
   static async getWorkflowById(
     request: Readonly<WorkflowsEndpoints["getWorkflowById"]["request"]>,
-  ): Promise<Workflow> {
+  ): Promise<WorkflowsEndpoints["getWorkflowById"]["response"]> {
     try {
       if (!request.workflowId) {
         throw new Error("Workflow ID is required");
@@ -195,7 +195,7 @@ export class WorkflowService {
         throw new Error("Failed to fetch user workflows");
       }
 
-      return response.data;
+      return response.data.workflows;
     } catch (error) {
       console.error("Failed to fetch user workflows:", error);
       throw new Error(getErrorMessage(error));

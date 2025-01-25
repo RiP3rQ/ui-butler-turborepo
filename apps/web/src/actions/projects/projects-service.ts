@@ -1,11 +1,11 @@
+import { ApiClient } from "@/lib/api-client";
+import { getErrorMessage } from "@/lib/get-error-message";
+import { type CreateNewProjectSchemaType } from "@/schemas/project";
 import {
   type Project,
   type ProjectDetails,
   type ProjectsEndpoints,
-} from "@shared/types/src/api-client/projects-endpoints";
-import { ApiClient } from "@/lib/api-client";
-import { type CreateNewProjectSchemaType } from "@/schemas/project";
-import { getErrorMessage } from "@/lib/get-error-message";
+} from "@shared/types";
 
 /**
  * Service class for project-related API calls

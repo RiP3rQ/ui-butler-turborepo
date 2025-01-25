@@ -1,4 +1,5 @@
 "use client";
+import { protoTimestampToDate } from "@/lib/dates";
 import type { FavoritedComponent } from "@shared/types";
 import { DataTableColumnHeader } from "@shared/ui/components/table/data-table-header";
 import { type ColumnDef } from "@tanstack/react-table";
@@ -30,7 +31,9 @@ export const columns: ColumnDef<FavoritedComponent>[] = [
       <DataTableColumnHeader column={column} title="CreatedAt" />
     ),
     cell: ({ row }) => {
-      const date = moment(row.original.createdAt).format("DD.MM.YYYY");
+      const date = moment(protoTimestampToDate(row.original.createdAt)).format(
+        "DD.MM.YYYY",
+      );
       return <div>{date}</div>;
     },
   },
@@ -40,7 +43,9 @@ export const columns: ColumnDef<FavoritedComponent>[] = [
       <DataTableColumnHeader column={column} title="UpdatedAt" />
     ),
     cell: ({ row }) => {
-      const date = moment(row.original.updatedAt).format("DD.MM.YYYY");
+      const date = moment(protoTimestampToDate(row.original.updatedAt)).format(
+        "DD.MM.YYYY",
+      );
       return <div>{date}</div>;
     },
   },

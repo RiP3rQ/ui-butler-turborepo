@@ -1,4 +1,8 @@
 "use client";
+import { getProjectsDetailsFunction } from "@/actions/projects/server-actions";
+import { MultipleComponentsView } from "@/components/component-viewer/multiple-component-view";
+import { protoTimestampToDate } from "@/lib/dates";
+import { type ProjectDetails } from "@shared/types";
 import {
   Card,
   CardContent,
@@ -7,12 +11,9 @@ import {
   CardTitle,
 } from "@shared/ui/components/ui/card";
 import { Label } from "@shared/ui/components/ui/label";
-import moment from "moment";
-import { type ProjectDetails } from "@shared/types";
 import { useQuery } from "@tanstack/react-query";
+import moment from "moment";
 import { type JSX, useMemo } from "react";
-import { MultipleComponentsView } from "@/components/component-viewer/multiple-component-view";
-import { getProjectsDetailsFunction } from "@/actions/projects/server-actions";
 
 interface ProjectCardProps {
   projectData: ProjectDetails;
@@ -61,11 +62,19 @@ export function ProjectCard({
             <div className="flex items-center justify-between w-full space-x-4">
               <div>
                 Created at:{" "}
-                <span>{moment(data.createdAt).format("DD/MM/YYYY")}</span>
+                <span>
+                  {moment(protoTimestampToDate(data.createdAt)).format(
+                    "DD/MM/YYYY",
+                  )}
+                </span>
               </div>
               <div>
                 Updated at:{" "}
-                <span>{moment(data.updatedAt).format("DD/MM/YYYY")}</span>
+                <span>
+                  {moment(protoTimestampToDate(data.updatedAt)).format(
+                    "DD/MM/YYYY",
+                  )}
+                </span>
               </div>
             </div>
           </CardDescription>

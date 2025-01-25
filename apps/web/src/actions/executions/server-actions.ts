@@ -2,9 +2,9 @@
 
 import {
   type ExecutionsEndpoints,
-  type PendingChange,
-} from "@shared/types/src/api-client/executions-endpoints";
-import { type WorkflowsEndpoints } from "@shared/types/src/api-client/workflows-endpoints";
+  type WorkflowsEndpoints,
+} from "@shared/types";
+
 import { ExecutionsService } from "@/actions/executions/executions-service";
 
 /**
@@ -21,10 +21,7 @@ export async function approvePendingChanges(
  */
 export async function getPendingChanges(
   request: Readonly<ExecutionsEndpoints["getPendingChanges"]["request"]>,
-): Promise<{
-  pendingApproval: PendingChange[];
-  status: string;
-}> {
+): Promise<ExecutionsEndpoints["getPendingChanges"]["response"]> {
   return ExecutionsService.getPendingChanges(request);
 }
 

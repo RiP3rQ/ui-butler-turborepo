@@ -1,8 +1,8 @@
-import { redirect } from "next/navigation";
-import { toast } from "sonner";
-import { type JSX } from "react";
-import { ProjectCard } from "@/components/project-viewer/project-card";
 import { getProjectsDetailsFunction } from "@/actions/projects/server-actions";
+import { ProjectCard } from "@/components/project-viewer/project-card";
+import { redirect } from "next/navigation";
+import { type JSX } from "react";
+import { toast } from "sonner";
 
 type Params = Promise<{ projectId: string }>;
 export default async function SingleProjectPage({

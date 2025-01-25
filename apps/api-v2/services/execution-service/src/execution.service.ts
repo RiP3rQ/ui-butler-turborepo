@@ -209,8 +209,6 @@ export class ExecutionsService {
         });
       }
 
-      this.logger.debug('executing workflow', request.workflowExecutionId);
-
       const execution = await this.database.query.workflowExecutions.findFirst({
         where: eq(workflowExecutions.id, Number(request.workflowExecutionId)),
         with: {
@@ -218,8 +216,6 @@ export class ExecutionsService {
           executionPhases: true,
         },
       });
-
-      this.logger.debug('execution', execution);
 
       if (!execution) {
         throw new RpcException('Execution not found');

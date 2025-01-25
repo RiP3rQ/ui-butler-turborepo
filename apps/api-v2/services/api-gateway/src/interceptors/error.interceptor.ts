@@ -1,16 +1,15 @@
-import { IncomingHttpHeaders } from 'node:http';
 import {
   CallHandler,
   ExecutionContext,
   HttpException,
   HttpStatus,
   Injectable,
-  Logger,
   NestInterceptor,
 } from '@nestjs/common';
+import { Request as ExpressRequest } from 'express';
+import { IncomingHttpHeaders } from 'node:http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { Request as ExpressRequest } from 'express';
 
 interface TypedRequest extends ExpressRequest {
   body: Record<string, unknown>;
@@ -21,8 +20,6 @@ type SanitizedData = Record<string, string>;
 
 @Injectable()
 export class ErrorInterceptor implements NestInterceptor {
-  private readonly logger = new Logger(ErrorInterceptor.name);
-
   public intercept(
     context: ExecutionContext,
     next: CallHandler,
@@ -32,7 +29,7 @@ export class ErrorInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       catchError((err: Error | HttpException) => {
-        this.logger.error(`Error in ${method} ${url}`, {
+        console.error(`Error in ${method} ${url}`, {
           error: err.message,
           stack: err.stack,
           body: this.sanitizeBody(body),

@@ -1,6 +1,6 @@
 import { GenerateComponentRequestDto } from '@microservices/common';
 import { ComponentsProto } from '@microservices/proto';
-import { Body, Controller, Logger, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Logger, Post, Res } from '@nestjs/common';
 import { GrpcMethod, RpcException } from '@nestjs/microservices';
 import { CodeType } from '@shared/types';
 import { type Response } from 'express';
@@ -19,6 +19,7 @@ export class ComponentsController {
     request: ComponentsProto.GetComponentRequest,
   ): Promise<ComponentsProto.Component> {
     if (!request.user) {
+      console.error('User is required');
       throw new RpcException('User is required');
     }
 
@@ -39,19 +40,24 @@ export class ComponentsController {
   public async saveComponent(
     request: ComponentsProto.SaveComponentRequest,
   ): Promise<ComponentsProto.Component> {
+    console.log('request', request);
     if (!request.user) {
+      console.error('User is required');
       throw new RpcException('User is required');
     }
 
     if (!request.title) {
+      console.error('Title is required');
       throw new RpcException('Title is required');
     }
 
     if (!request.projectId) {
+      console.error('Project ID is required');
       throw new RpcException('Project ID is required');
     }
 
     if (!request.code) {
+      console.error('Code is required');
       throw new RpcException('Code is required');
     }
 
@@ -60,7 +66,7 @@ export class ComponentsController {
     );
     return this.componentsService.saveComponent(request.user, {
       title: request.title,
-      projectId: String(request.projectId),
+      projectId: Number(request.projectId),
       code: request.code,
     });
   }
@@ -69,15 +75,19 @@ export class ComponentsController {
   public async favoriteComponent(
     request: ComponentsProto.FavoriteComponentRequest,
   ): Promise<ComponentsProto.Component> {
+    console.log('request', request);
     if (!request.user) {
+      console.error('User is required');
       throw new RpcException('User is required');
     }
 
     if (!request.componentId) {
+      console.error('Component ID is required');
       throw new RpcException('Component ID is required');
     }
 
-    if (!request.favoriteValue) {
+    if (typeof request.favoriteValue !== 'boolean') {
+      console.error('Favorite value is required');
       throw new RpcException('Favorite value is required');
     }
 
@@ -96,14 +106,17 @@ export class ComponentsController {
     request: ComponentsProto.UpdateCodeRequest,
   ): Promise<ComponentsProto.Component> {
     if (!request.user) {
+      console.error('User is required');
       throw new RpcException('User is required');
     }
 
     if (!request.componentId) {
+      console.error('Component ID is required');
       throw new RpcException('Component ID is required');
     }
 
     if (!request.codeType) {
+      console.error('Code type is required');
       throw new RpcException('Code type is required');
     }
 
@@ -126,16 +139,20 @@ export class ComponentsController {
     request: ComponentsProto.GenerateCodeRequest,
   ): Promise<ComponentsProto.Component> {
     if (!request.user) {
+      console.error('User is required');
       throw new RpcException('User is required');
     }
 
     if (!request.codeType) {
+      console.error('Code type is required');
       throw new RpcException('Code type is required');
     }
 
     this.logger.debug(
       `GenerateCodeBasedOnType request received for user ${String(request.user.id)} and type ${String(request.codeType)}`,
     );
+
+    console.log('request', request);
 
     return this.componentsService.generateCodeFunction(request.user, {
       codeType: request.codeType,
@@ -146,7 +163,6 @@ export class ComponentsController {
   // HTTP Endpoint for generating components (Stream)
   @Post('api/components/generate')
   public async generateComponent(
-    @Req() req: Request,
     @Body() body: GenerateComponentRequestDto,
     @Res() res: Response,
   ) {
@@ -154,6 +170,7 @@ export class ComponentsController {
       const prompt = body.messages[body.messages.length - 1]?.content;
 
       if (!prompt) {
+        console.error('Prompt is required');
         throw new Error('Prompt is required');
       }
 

@@ -1,4 +1,7 @@
-import { redirect } from "next/navigation";
+import { getSingleComponentsDataFunction } from "@/actions/components/server-actions";
+import SingleComponentViewWithShortcuts from "@/components/component-viewer/single-component-view-with-shortcuts";
+import { RunWorkflowButton } from "@/components/component-viewer/single-component-view/run-workflow-button";
+import { protoTimestampToDate } from "@/lib/dates";
 import {
   Card,
   CardContent,
@@ -6,12 +9,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@shared/ui/components/ui/card";
-import moment from "moment";
 import { Label } from "@shared/ui/components/ui/label";
+import moment from "moment";
+import { redirect } from "next/navigation";
 import { type JSX } from "react";
-import SingleComponentViewWithShortcuts from "@/components/component-viewer/single-component-view-with-shortcuts";
-import { RunWorkflowButton } from "@/components/component-viewer/single-component-view/run-workflow-button";
-import { getSingleComponentsDataFunction } from "@/actions/components/server-actions";
 
 type Params = Promise<{ projectId: string; componentId: string }>;
 export default async function SingleComponentPage({
@@ -29,6 +30,8 @@ export default async function SingleComponentPage({
     projectId: Number(projectId),
     componentId: Number(componentId),
   });
+
+  console.log("componentsData", componentsData);
 
   return (
     <div className="flex flex-col items-center min-h-[calc(100vh-200px)] w-full max-w-full px-8 py-4">
@@ -50,13 +53,17 @@ export default async function SingleComponentPage({
               <div>
                 Created at:{" "}
                 <span>
-                  {moment(componentsData.createdAt).format("yyyy-MM-DD HH:mm")}
+                  {moment(
+                    protoTimestampToDate(componentsData.createdAt),
+                  ).format("yyyy-MM-DD HH:mm")}
                 </span>
               </div>
               <div>
                 Updated at:{" "}
                 <span>
-                  {moment(componentsData.updatedAt).format("yyyy-MM-DD HH:mm")}
+                  {moment(
+                    protoTimestampToDate(componentsData.updatedAt),
+                  ).format("yyyy-MM-DD HH:mm")}
                 </span>
               </div>
             </div>

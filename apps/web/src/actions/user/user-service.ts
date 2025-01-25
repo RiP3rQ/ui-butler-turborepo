@@ -1,9 +1,6 @@
-import {
-  type User,
-  type UsersEndpoints,
-} from "@shared/types/src/api-client/users-endpoints";
 import { ApiClient } from "@/lib/api-client";
 import { getErrorMessage } from "@/lib/get-error-message";
+import { type User, type UsersEndpoints } from "@shared/types";
 
 /**
  * Service class for user-related API calls
@@ -24,7 +21,7 @@ export class UserService {
         throw new Error("Failed to fetch current user");
       }
 
-      return response.data.user;
+      return response.data;
     } catch (error) {
       console.error("Failed to fetch current user:", error);
       throw new Error(getErrorMessage(error));

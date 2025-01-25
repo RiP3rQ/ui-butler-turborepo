@@ -6,7 +6,7 @@ import {
   LocalStrategy,
 } from '@microservices/common';
 import { DatabaseModule } from '@microservices/database';
-import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
+import { CacheModule } from '@nestjs/cache-manager';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
@@ -34,6 +34,7 @@ import { MetricsModule } from './metrics/metrics.module';
 import { HelmetMiddleware } from './middlewares/helmet.middleware';
 import { AuthProxyService } from './proxies/auth.proxy.service';
 import { GrpcClientProxy } from './proxies/grpc-client.proxy';
+import { CustomCacheInterceptor } from './interceptors/custom-cache.interceptor';
 
 @Module({
   imports: [
@@ -216,10 +217,7 @@ import { GrpcClientProxy } from './proxies/grpc-client.proxy';
     // gRPC CLIENT PROXY WITH RETRIES
     GrpcClientProxy,
     // CACHING
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: CacheInterceptor,
-    },
+    CustomCacheInterceptor,
   ],
 })
 export class ApiGatewayModule implements NestModule {

@@ -1,5 +1,5 @@
-import { CoinsIcon } from "lucide-react";
-import type { UsedCreditsInPeriodResponse } from "@shared/types";
+import CreditsChart from "@/components/analytics/stat-chart/credits-chart";
+import type { DailyStats } from "@shared/types";
 import {
   Card,
   CardContent,
@@ -7,11 +7,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@shared/ui/components/ui/card";
+import { CoinsIcon } from "lucide-react";
 import { type JSX } from "react";
-import CreditsChart from "@/components/analytics/stat-chart/credits-chart";
 
 interface CreditsUserChartWrapperProps {
-  data: UsedCreditsInPeriodResponse[];
+  data: DailyStats[];
   title: string;
   description: string;
 }

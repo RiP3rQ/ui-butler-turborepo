@@ -1,4 +1,3 @@
-import { User } from '@microservices/common';
 import { ExecutionProto } from '@microservices/proto';
 import { Controller, Logger } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
@@ -9,13 +8,6 @@ export class ExecutionsController {
   private readonly logger = new Logger(ExecutionsController.name);
 
   constructor(private readonly executionsService: ExecutionsService) {}
-
-  private protoUserToUser(protoUser: ExecutionProto.User): User {
-    return {
-      id: Number(protoUser.id),
-      email: protoUser.email,
-    };
-  }
 
   @GrpcMethod('ExecutionsService', 'GetPendingChanges')
   public async getPendingChanges(

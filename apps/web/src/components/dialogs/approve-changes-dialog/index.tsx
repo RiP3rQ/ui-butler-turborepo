@@ -1,5 +1,9 @@
 "use client";
 
+import { approvePendingChanges } from "@/actions/executions/server-actions";
+import { DiffEditor } from "@monaco-editor/react";
+import { type PendingChange } from "@shared/types";
+import { Button } from "@shared/ui/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -8,19 +12,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@shared/ui/components/ui/dialog";
-import { DiffEditor } from "@monaco-editor/react";
-import { type ApproveChangesRequest } from "@shared/types";
-import { Button } from "@shared/ui/components/ui/button";
-import { CheckCircle2Icon, Loader2Icon, TrashIcon } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { CheckCircle2Icon, Loader2Icon, TrashIcon } from "lucide-react";
 import { type JSX } from "react";
-import { approvePendingChanges } from "@/actions/executions/server-actions";
+import { toast } from "sonner";
 
 interface ApproveChangesDialogProps {
   executionId: number;
   open: boolean;
-  data?: ApproveChangesRequest["pendingApproval"];
+  data?: PendingChange;
 }
 
 export function ApproveChangesDialog({
@@ -42,7 +42,19 @@ export function ApproveChangesDialog({
     },
   });
 
-  if (!data?.["Original code"] || !data["Pending code"]) {
+  const isPendingChange = (data: unknown): data is PendingChange => {
+    return (
+      Boolean(data) &&
+      typeof data === "object" &&
+      data !== null &&
+      "Original code" in data &&
+      "Pending code" in data &&
+      typeof data["Original code"] === "string" &&
+      typeof data["Pending code"] === "string"
+    );
+  };
+
+  if (!data || !isPendingChange(data)) {
     return null;
   }
 
@@ -58,6 +70,9 @@ export function ApproveChangesDialog({
     );
   };
 
+  const originalCode = String(data?.["Original code"] ?? "");
+  const pendingCode = String(data?.["Pending code"] ?? "");
+
   return (
     <Dialog open={open}>
       <DialogContent className="min-w-[90vw] w-[90vw]  max-w-[90vw] min-h-[80vh] h-[80vh] max-h-[80vh] my-auto">
@@ -71,8 +86,8 @@ export function ApproveChangesDialog({
         <DiffEditor
           height="60vh"
           language="typescript"
-          original={data["Original code"]}
-          modified={data["Pending code"]}
+          original={originalCode}
+          modified={pendingCode}
         />
         <DialogFooter>
           <Button

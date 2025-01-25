@@ -1,21 +1,17 @@
 "use client";
 
-import { type ProjectType } from "@shared/types";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@shared/ui/components/ui/avatar";
-import { Button } from "@shared/ui/components/ui/button";
-import { useShallow } from "zustand/react/shallow";
-import { useQuery } from "@tanstack/react-query";
-import { type JSX } from "react";
+import { getUserProjects } from "@/actions/projects/server-actions";
 import { NewProjectDialog } from "@/components/dialogs/new-project-dialog";
 import { useModalsStateStore } from "@/store/modals-store";
-import { getUserProjects } from "@/actions/projects/server-actions";
+import { type Project } from "@shared/types";
+import { Button } from "@shared/ui/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { type JSX } from "react";
+import { useShallow } from "zustand/react/shallow";
+import Link from "next/link";
 
 interface DashboardGridProps {
-  initialData: ProjectType[];
+  initialData: Project[];
 }
 
 export function DashboardGrid({
@@ -62,16 +58,14 @@ export function DashboardGrid({
             className="p-4 rounded-lg shadow-md flex flex-col items-center justify-center border-2 border-white"
             style={{ backgroundColor: item.color }}
           >
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-              <AvatarFallback>{item.title}</AvatarFallback>
-            </Avatar>
-            <h3 className="text-xl font-semibold">{item.title}</h3>
-            <p className="text-sm font-light">
-              {item.numberOfComponents
-                ? `${item.numberOfComponents.toString()} components`
-                : "0"}
-            </p>
+            <Link href={`/projects/${String(item.id)}`}>
+              <h3 className="text-xl font-semibold">{item.title}</h3>
+              <p className="text-sm font-light">
+                {item.numberOfComponents
+                  ? `${item.numberOfComponents.toString()} components`
+                  : "0 components"}
+              </p>
+            </Link>
           </div>
         ))}
       </div>

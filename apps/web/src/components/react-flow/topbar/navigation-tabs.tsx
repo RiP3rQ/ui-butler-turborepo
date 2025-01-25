@@ -17,12 +17,12 @@ function NavigationTabs({
   return (
     <Tabs className="w-[400px]" value={activeValue}>
       <TabsList className="grid grid-cols-2 w-full text-center">
-        <Link href={`/workflow/editor/${workflowId.toString()}`}>
+        <Link href={`/workflow/editor/${String(workflowId)}`}>
           <TabsTrigger className="h-full w-full" value="editor">
             Editor
           </TabsTrigger>
         </Link>
-        <Link href={`/workflow/runs/${workflowId.toString()}`}>
+        <Link href={`/workflow/runs/${String(workflowId)}`}>
           <TabsTrigger className="h-full w-full" value="runs">
             Runs history
           </TabsTrigger>

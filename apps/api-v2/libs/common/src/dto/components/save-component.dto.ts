@@ -1,13 +1,13 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export class SaveComponentDto {
   @IsString()
   @IsNotEmpty()
   title = "";
 
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  projectId = "";
+  projectId = 0;
 
   @IsString()
   @IsNotEmpty()

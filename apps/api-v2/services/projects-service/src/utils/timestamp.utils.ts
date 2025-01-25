@@ -8,6 +8,7 @@ type ProjectWithNumberOfComponents = typeof projects.$inferSelect & {
 
 type ComponentWithIsFavorite = typeof components.$inferSelect & {
   isFavorite: boolean | null;
+  code: string;
 };
 
 /**
@@ -61,7 +62,7 @@ export function convertToGrpcComponent(
     $type: 'api.projects.Component',
     id: component.id,
     title: component.title,
-    description: '',
+    code: component.code,
     projectId: component.projectId,
     userId: component.userId,
     isFavorite: component.isFavorite ?? false,

@@ -33,39 +33,40 @@ message Component {
     int32 id = 1;
     string title = 2;
     string code = 3;
-    string e2e_tests = 4;
-    string unit_tests = 5;
-    string mdx_docs = 6;
-    string ts_docs = 7;
-    int32 project_id = 8;
-    google.protobuf.Timestamp created_at = 9;
-    google.protobuf.Timestamp updated_at = 10;
-    string project_name = 11;
-    int32 user_id = 12;
-    bool was_e2e_tested = 13;
-    bool was_unit_tested = 14;
-    bool has_mdx_docs = 15;
-    bool has_typescript_docs = 16;
+    string e2eTests = 4;
+    string unitTests = 5;
+    string mdxDocs = 6;
+    string tsDocs = 7;
+    int32 projectId = 8;
+    google.protobuf.Timestamp createdAt = 9;
+    google.protobuf.Timestamp updatedAt = 10;
+    string projectName = 11;
+    int32 userId = 12;
+    bool wasE2eTested = 13;
+    bool wasUnitTested = 14;
+    bool hasMdxDocs = 15;
+    bool hasTypescriptDocs = 16;
+    bool isFavorite = 17;
 }
 
 message GetComponentRequest {
     User user = 1;
-    int32 project_id = 2;
-    int32 component_id = 3;
+    int32 projectId = 2;
+    int32 componentId = 3;
 }
 
 message SaveComponentRequest {
     User user = 1;
     string title = 2;
     string code = 3;
-    int32 project_id = 4;
+    int32 projectId = 4;
 }
 
 message FavoriteComponentRequest {
     User user = 1;
-    int32 project_id = 2;
-    int32 component_id = 3;
-    bool favorite_value = 4;
+    int32 projectId = 2;
+    int32 componentId = 3;
+    bool favoriteValue = 4;
 }
 
 message GenerateRequest {
@@ -78,15 +79,15 @@ message GenerateResponse {
 
 message UpdateCodeRequest {
     User user = 1;
-    int32 component_id = 2;
-    CodeType code_type = 3;
+    int32 componentId = 2;
+    CodeType codeType = 3;
     string content = 4;
 }
 
 message GenerateCodeRequest {
     User user = 1;
-    int32 component_id = 2;
-    CodeType code_type = 3;
+    int32 componentId = 2;
+    CodeType codeType = 3;
 }
 
 enum CodeType {

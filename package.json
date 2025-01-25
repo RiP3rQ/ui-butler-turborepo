@@ -11,13 +11,13 @@
     "lint-staged": "lint-staged"
   },
   "devDependencies": {
-    "husky": "^9.1.7",
-    "lint-staged": "^15.3.0",
-    "prettier": "^3.4.2",
-    "prettier-plugin-tailwindcss": "^0.6.9",
-    "turbo": "^2.3.3",
     "eslint-import-resolver-typescript": "^3.7.0",
-    "eslint-plugin-import": "^2.31.0"
+    "eslint-plugin-import": "^2.31.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.2",
+    "prettier": "^3.4.2",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "turbo": "^2.3.4"
   },
   "packageManager": "pnpm@8.15.6",
   "engines": {

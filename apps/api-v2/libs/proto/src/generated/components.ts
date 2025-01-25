@@ -46,6 +46,7 @@ export interface Component {
   wasUnitTested: boolean;
   hasMdxDocs: boolean;
   hasTypescriptDocs: boolean;
+  isFavorite: boolean;
 }
 
 export interface GetComponentRequest {
@@ -171,6 +172,7 @@ function createBaseComponent(): Component {
     wasUnitTested: false,
     hasMdxDocs: false,
     hasTypescriptDocs: false,
+    isFavorite: false,
   };
 }
 
@@ -228,6 +230,9 @@ export const Component: MessageFns<Component, "api.components.Component"> = {
     }
     if (message.hasTypescriptDocs !== false) {
       writer.uint32(128).bool(message.hasTypescriptDocs);
+    }
+    if (message.isFavorite !== false) {
+      writer.uint32(136).bool(message.isFavorite);
     }
     return writer;
   },
@@ -366,6 +371,14 @@ export const Component: MessageFns<Component, "api.components.Component"> = {
           }
 
           message.hasTypescriptDocs = reader.bool();
+          continue;
+        }
+        case 17: {
+          if (tag !== 136) {
+            break;
+          }
+
+          message.isFavorite = reader.bool();
           continue;
         }
       }

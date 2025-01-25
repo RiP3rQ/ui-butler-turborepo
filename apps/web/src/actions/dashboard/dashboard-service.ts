@@ -1,10 +1,6 @@
-import {
-  type AnalyticsEndpoints,
-  type DashboardStats,
-  type FavoritedComponent,
-} from "@shared/types/src/api-client/analytics-endpoints";
 import { ApiClient } from "@/lib/api-client";
 import { getErrorMessage } from "@/lib/get-error-message";
+import { type AnalyticsEndpoints } from "@shared/types";
 
 /**
  * Service class for dashboard-related API calls
@@ -15,7 +11,9 @@ export class DashboardService {
   /**
    * Fetches dashboard stat cards values
    */
-  static async getStatCardsValues(): Promise<DashboardStats> {
+  static async getStatCardsValues(): Promise<
+    AnalyticsEndpoints["getDashboardStatCardsValues"]["response"]
+  > {
     try {
       const response = await ApiClient.get<
         AnalyticsEndpoints["getDashboardStatCardsValues"]["response"]
@@ -35,7 +33,9 @@ export class DashboardService {
   /**
    * Fetches dashboard favorited content
    */
-  static async getFavoritedContent(): Promise<FavoritedComponent[]> {
+  static async getFavoritedContent(): Promise<
+    AnalyticsEndpoints["getFavoritedTableContent"]["response"]
+  > {
     try {
       const response = await ApiClient.get<
         AnalyticsEndpoints["getFavoritedTableContent"]["response"]

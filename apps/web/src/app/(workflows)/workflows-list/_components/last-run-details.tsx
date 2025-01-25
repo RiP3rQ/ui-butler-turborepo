@@ -1,15 +1,16 @@
+import { ExecutionStatusIndicator } from "@/components/execution-viewer/execution-status-indicator";
+import { ExecutionStatusLabel } from "@/components/execution-viewer/execution-status-label";
+import { protoTimestampToDate } from "@/lib/dates";
+import type { IWorkflowExecutionStatus, Workflow } from "@shared/types";
+import { WorkflowStatus } from "@shared/types";
 import { format, formatDistanceToNow } from "date-fns";
-import Link from "next/link";
 import { formatInTimeZone } from "date-fns-tz";
 import { ChevronRightIcon, ClockIcon } from "lucide-react";
-import type { IWorkflowExecutionStatus, WorkflowType } from "@shared/types";
-import { WorkflowStatus } from "@shared/types";
+import Link from "next/link";
 import { type JSX } from "react";
-import { ExecutionStatusLabel } from "@/components/execution-viewer/execution-status-label";
-import { ExecutionStatusIndicator } from "@/components/execution-viewer/execution-status-indicator";
 
 interface LastRunDetailsProps {
-  workflow: WorkflowType;
+  workflow: Workflow;
 }
 export function LastRunDetails({
   workflow,
@@ -21,10 +22,13 @@ export function LastRunDetails({
   }
 
   const formattedStartedAt =
-    lastRunAt && formatDistanceToNow(lastRunAt, { addSuffix: true });
-  const nextSchedule = nextRunAt && format(nextRunAt, "yyyy-MM-dd HH:mm");
+    lastRunAt &&
+    formatDistanceToNow(protoTimestampToDate(lastRunAt), { addSuffix: true });
+  const nextSchedule =
+    nextRunAt && format(protoTimestampToDate(nextRunAt), "yyyy-MM-dd HH:mm");
   const nextSchduleUTC =
-    nextRunAt && formatInTimeZone(nextRunAt, "UTC", "HH:mm");
+    nextRunAt &&
+    formatInTimeZone(protoTimestampToDate(nextRunAt), "UTC", "HH:mm");
 
   return (
     <div className="bg-primary/5 px-4 py-1 flex justify-between items-center text-muted-foreground">

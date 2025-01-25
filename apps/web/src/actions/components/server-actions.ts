@@ -1,9 +1,6 @@
 "use server";
 
-import {
-  type Component,
-  type ComponentsEndpoints,
-} from "@shared/types/src/api-client/components-endpoints";
+import { type Component, type ComponentsEndpoints } from "@shared/types";
 import {
   type SaveComponentSchemaType,
   validateComponentInput,

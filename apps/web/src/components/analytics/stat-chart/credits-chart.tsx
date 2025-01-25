@@ -1,6 +1,6 @@
 "use client";
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
-import type { UsedCreditsInPeriodResponse } from "@shared/types";
+import { protoTimestampToDate } from "@/lib/dates";
+import type { DailyStats } from "@shared/types";
 import {
   ChartContainer,
   ChartLegend,
@@ -8,28 +8,36 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@shared/ui/components/ui/chart";
-import { type JSX } from "react";
+import { useMemo, type JSX } from "react";
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
 const chartConfig = {
   successful: {
     label: "Successful",
-    color: "hsl(var(--chart-2))",
+    color: "hsl(var(--chart-1))",
   },
   failed: {
     label: "Failed",
-    color: "hsl(var(--chart-1))",
+    color: "hsl(var(--chart-2))",
   },
 };
 
 interface CreditsChartProps {
-  data: UsedCreditsInPeriodResponse[];
+  data: DailyStats[];
 }
 function CreditsChart({ data }: Readonly<CreditsChartProps>): JSX.Element {
+  const mappedData = useMemo(() => {
+    return data.map((item) => ({
+      date: protoTimestampToDate(item.date),
+      successful: item.successful,
+      failed: item.failed,
+    }));
+  }, [data]);
   return (
     <ChartContainer className="max-h-[200px] w-full" config={chartConfig}>
       <BarChart
         accessibilityLayer
-        data={data}
+        data={mappedData}
         height={200}
         margin={{ top: 20 }}
       >

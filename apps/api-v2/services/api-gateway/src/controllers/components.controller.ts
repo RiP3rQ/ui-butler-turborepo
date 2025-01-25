@@ -8,7 +8,6 @@ import {
   UpdateComponentCodeDto,
 } from '@microservices/common';
 import { ComponentsProto } from '@microservices/proto';
-import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import {
   All,
   Body,
@@ -25,9 +24,7 @@ import {
   Req,
   Res,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
-import { type ClientGrpc } from '@nestjs/microservices';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -40,6 +37,7 @@ import { Throttle } from '@nestjs/throttler';
 import { codeTypeValues } from '@shared/types';
 import { type Request, type Response } from 'express';
 import HttpProxy from 'http-proxy';
+import type { ClientGrpc } from '@nestjs/microservices';
 import { rateLimitConfigs } from '../config/rate-limit.config';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
@@ -112,8 +110,6 @@ export class ComponentsController implements OnModuleInit {
     type: 'ComponentsProto.Component',
   })
   @ApiResponse({ status: 404, description: 'Component not found' })
-  @UseInterceptors(CacheInterceptor)
-  @CacheTTL(300000) // 5 minutes cache
   @Get('/:projectId/:componentId')
   public async getComponent(
     @CurrentUser() user: ComponentsProto.User,
@@ -375,7 +371,7 @@ export class ComponentsController implements OnModuleInit {
           email: user.email,
         },
         componentId: generateCodeDto.componentId,
-        codeType: generateCodeDto.codeType,
+        codeType: generateCodeDto.toProto().codeType,
       };
 
       return await this.grpcClient.call(

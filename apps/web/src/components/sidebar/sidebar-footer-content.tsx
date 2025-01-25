@@ -1,13 +1,7 @@
 "use client";
 
-import {
-  BadgeCheck,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles,
-} from "lucide-react";
-import { toast } from "sonner";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { logoutUser } from "@shared/ui/actions/auth/logout-user";
 import {
   Avatar,
   AvatarFallback,
@@ -28,11 +22,17 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@shared/ui/components/ui/sidebar";
-import { logoutUser } from "@shared/ui/actions/auth/logout-user";
 import { Skeleton } from "@shared/ui/components/ui/skeleton";
+import {
+  BadgeCheck,
+  ChevronsUpDown,
+  CreditCard,
+  LogOut,
+  Sparkles,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { type JSX } from "react";
-import { useCurrentUser } from "@/hooks/use-current-user";
+import { toast } from "sonner";
 
 export function SidebarFooterContent(): JSX.Element {
   const router = useRouter();
@@ -58,9 +58,12 @@ export function SidebarFooterContent(): JSX.Element {
               size="lg"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage alt={user.username} src={user.avatar} />
+                <AvatarImage
+                  alt={user.username ?? "UNKNOWN"}
+                  src={String(user.avatar ?? "https://github.com/shadcn.png")}
+                />
                 <AvatarFallback className="rounded-lg">
-                  {user.username.slice(0, 2)}
+                  {user.username?.slice(0, 2) ?? "UN"}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -79,9 +82,12 @@ export function SidebarFooterContent(): JSX.Element {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage alt={user.username} src={user.avatar} />
+                  <AvatarImage
+                    alt={user.username ?? "UNKNOWN"}
+                    src={String(user.avatar ?? "https://github.com/shadcn.png")}
+                  />
                   <AvatarFallback className="rounded-lg">
-                    {user.username.slice(0, 2)}
+                    {user.username?.slice(0, 2)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">

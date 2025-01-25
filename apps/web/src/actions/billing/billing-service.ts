@@ -1,7 +1,4 @@
-import {
-  type BillingEndpoints,
-  type UserCredits,
-} from "@shared/types/src/api-client/billing-endpoints";
+import { type BillingEndpoints, type UserCredits } from "@shared/types";
 import { ApiClient } from "@/lib/api-client";
 import { getErrorMessage } from "@/lib/get-error-message";
 
