@@ -123,8 +123,6 @@ export class WorkflowsService implements OnModuleInit {
         throw new RpcException('Workflow not found');
       }
 
-      console.log('workflowData', workflowData);
-
       return {
         $type: 'api.workflows.WorkflowResponse',
         workflow: {
