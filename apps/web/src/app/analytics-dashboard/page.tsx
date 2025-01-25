@@ -33,8 +33,6 @@ export default async function AnalyticsPage({
     getUsedCreditsInPeriod(period),
   ]);
 
-  console.log(periods);
-
   return (
     <div className="flex flex-1 flex-col h-full gap-2 mx-auto max-w-6xl mt-4">
       <div className="flex justify-between">

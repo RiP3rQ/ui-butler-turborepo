@@ -123,9 +123,32 @@ export class WorkflowsService implements OnModuleInit {
         throw new RpcException('Workflow not found');
       }
 
+      console.log('workflowData', workflowData);
+
       return {
         $type: 'api.workflows.WorkflowResponse',
-        ...workflowData,
+        workflow: {
+          $type: 'api.workflows.Workflow',
+          ...workflowData,
+          description: workflowData.description ?? '',
+          status: workflowData.status ?? WorkflowStatus.DRAFT,
+          executionPlan: workflowData.executionPlan ?? '',
+          creditsCost: workflowData.creditsCost ?? 0,
+          createdAt: dateToTimestamp(workflowData.createdAt),
+          updatedAt: dateToTimestamp(workflowData.updatedAt),
+          lastRunAt: workflowData.lastRunAt
+            ? dateToTimestamp(workflowData.lastRunAt)
+            : undefined,
+          lastRunId: workflowData.lastRunId
+            ? workflowData.lastRunId
+            : undefined,
+          lastRunStatus: workflowData.lastRunStatus
+            ? workflowData.lastRunStatus
+            : undefined,
+          nextRunAt: workflowData.nextRunAt
+            ? dateToTimestamp(workflowData.nextRunAt)
+            : undefined,
+        },
       };
     } catch (error) {
       throw new RpcException(

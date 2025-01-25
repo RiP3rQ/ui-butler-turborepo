@@ -1,5 +1,5 @@
 import CreditsChart from "@/components/analytics/stat-chart/credits-chart";
-import type { UsedCreditsInPeriod } from "@shared/types";
+import type { DailyStats } from "@shared/types";
 import {
   Card,
   CardContent,
@@ -11,7 +11,7 @@ import { CoinsIcon } from "lucide-react";
 import { type JSX } from "react";
 
 interface CreditsUserChartWrapperProps {
-  data: UsedCreditsInPeriod[];
+  data: DailyStats[];
   title: string;
   description: string;
 }

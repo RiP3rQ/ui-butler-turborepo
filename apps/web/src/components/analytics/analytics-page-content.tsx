@@ -8,19 +8,15 @@ import {
 import { StatCards } from "@/components/analytics/stat-cards/stat-cards";
 import { CreditsUserChartWrapper } from "@/components/analytics/stat-chart/credits-user-chart-wrapper";
 import { StatsChartWrapper } from "@/components/analytics/stat-chart/stats-chart-wrapper";
-import {
-  type Period,
-  type StatCardsValuesResponse,
-  type UsedCreditsInPeriod,
-} from "@shared/types";
+import { type AnalyticsEndpoints, type Period } from "@shared/types";
 import { useQuery } from "@tanstack/react-query";
 import { type JSX } from "react";
 
 interface AnalyticsPageContentProps {
   period: Period;
-  statCardsValues: StatCardsValuesResponse;
-  workflowExecutionStatsAction: UsedCreditsInPeriod[];
-  usedCreditsInPeriodAction: UsedCreditsInPeriod[];
+  statCardsValues: AnalyticsEndpoints["getStatCardsValues"]["response"];
+  workflowExecutionStatsAction: AnalyticsEndpoints["getWorkflowExecutionStats"]["response"];
+  usedCreditsInPeriodAction: AnalyticsEndpoints["getUsedCreditsInPeriod"]["response"];
 }
 
 export function AnalyticsPageContent({

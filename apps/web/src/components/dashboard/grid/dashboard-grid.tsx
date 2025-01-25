@@ -8,6 +8,7 @@ import { Button } from "@shared/ui/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { type JSX } from "react";
 import { useShallow } from "zustand/react/shallow";
+import Link from "next/link";
 
 interface DashboardGridProps {
   initialData: Project[];
@@ -57,12 +58,14 @@ export function DashboardGrid({
             className="p-4 rounded-lg shadow-md flex flex-col items-center justify-center border-2 border-white"
             style={{ backgroundColor: item.color }}
           >
-            <h3 className="text-xl font-semibold">{item.title}</h3>
-            <p className="text-sm font-light">
-              {item.numberOfComponents
-                ? `${item.numberOfComponents.toString()} components`
-                : "0 components"}
-            </p>
+            <Link href={`/projects/${String(item.id)}`}>
+              <h3 className="text-xl font-semibold">{item.title}</h3>
+              <p className="text-sm font-light">
+                {item.numberOfComponents
+                  ? `${item.numberOfComponents.toString()} components`
+                  : "0 components"}
+              </p>
+            </Link>
           </div>
         ))}
       </div>

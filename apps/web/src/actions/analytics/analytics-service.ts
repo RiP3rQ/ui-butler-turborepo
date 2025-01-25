@@ -1,11 +1,6 @@
 import { ApiClient } from "@/lib/api-client";
 import { getErrorMessage } from "@/lib/get-error-message";
-import {
-  type AnalyticsEndpoints,
-  type Period,
-  type StatCardsValuesResponse,
-  type UsedCreditsInPeriod,
-} from "@shared/types";
+import { type AnalyticsEndpoints, type Period } from "@shared/types";
 
 /**
  * Service class for analytics-related API calls
@@ -16,7 +11,9 @@ export class AnalyticsService {
   /**
    * Fetches all available periods
    */
-  static async getPeriods(): Promise<Period[]> {
+  static async getPeriods(): Promise<
+    AnalyticsEndpoints["getPeriods"]["response"]
+  > {
     try {
       const response = await ApiClient.get<
         AnalyticsEndpoints["getPeriods"]["response"]
@@ -38,17 +35,16 @@ export class AnalyticsService {
    */
   static async getStatCardsValues(
     period: Period,
-  ): Promise<StatCardsValuesResponse> {
+  ): Promise<AnalyticsEndpoints["getStatCardsValues"]["response"]> {
     try {
-      const response = await ApiClient.get<StatCardsValuesResponse>(
-        `${this.BASE_PATH}/stat-cards-values`,
-        {
-          params: {
-            month: String(period.month),
-            year: String(period.year),
-          },
+      const response = await ApiClient.get<
+        AnalyticsEndpoints["getStatCardsValues"]["response"]
+      >(`${this.BASE_PATH}/stat-cards-values`, {
+        params: {
+          month: String(period.month),
+          year: String(period.year),
         },
-      );
+      });
 
       if (!response.success) {
         throw new Error("Failed to fetch stat cards values");
@@ -66,17 +62,16 @@ export class AnalyticsService {
    */
   static async getUsedCreditsInPeriod(
     period: Period,
-  ): Promise<UsedCreditsInPeriod[]> {
+  ): Promise<AnalyticsEndpoints["getUsedCreditsInPeriod"]["response"]> {
     try {
-      const response = await ApiClient.get<UsedCreditsInPeriod[]>(
-        `${this.BASE_PATH}/used-credits-in-period`,
-        {
-          params: {
-            month: String(period.month),
-            year: String(period.year),
-          },
+      const response = await ApiClient.get<
+        AnalyticsEndpoints["getUsedCreditsInPeriod"]["response"]
+      >(`${this.BASE_PATH}/used-credits-in-period`, {
+        params: {
+          month: String(period.month),
+          year: String(period.year),
         },
-      );
+      });
 
       if (!response.success) {
         throw new Error("Failed to fetch used credits");
@@ -94,17 +89,16 @@ export class AnalyticsService {
    */
   static async getWorkflowExecutionStats(
     period: Period,
-  ): Promise<UsedCreditsInPeriod[]> {
+  ): Promise<AnalyticsEndpoints["getWorkflowExecutionStats"]["response"]> {
     try {
-      const response = await ApiClient.get<UsedCreditsInPeriod[]>(
-        `${this.BASE_PATH}/workflow-execution-stats`,
-        {
-          params: {
-            month: String(period.month),
-            year: String(period.year),
-          },
+      const response = await ApiClient.get<
+        AnalyticsEndpoints["getWorkflowExecutionStats"]["response"]
+      >(`${this.BASE_PATH}/workflow-execution-stats`, {
+        params: {
+          month: String(period.month),
+          year: String(period.year),
         },
-      );
+      });
 
       if (!response.success) {
         throw new Error("Failed to fetch workflow execution stats");
@@ -120,11 +114,13 @@ export class AnalyticsService {
   /**
    * Fetches dashboard statistics
    */
-  static async getDashboardStatCardsValues(): Promise<StatCardsValuesResponse> {
+  static async getDashboardStatCardsValues(): Promise<
+    AnalyticsEndpoints["getDashboardStatCardsValues"]["response"]
+  > {
     try {
-      const response = await ApiClient.get<StatCardsValuesResponse>(
-        `${this.BASE_PATH}/dashboard-stat-cards-values`,
-      );
+      const response = await ApiClient.get<
+        AnalyticsEndpoints["getDashboardStatCardsValues"]["response"]
+      >(`${this.BASE_PATH}/dashboard-stat-cards-values`);
 
       if (!response.success) {
         throw new Error("Failed to fetch dashboard stats");
@@ -140,11 +136,13 @@ export class AnalyticsService {
   /**
    * Fetches favorited components
    */
-  static async getFavoritedTableContent(): Promise<UsedCreditsInPeriod[]> {
+  static async getFavoritedTableContent(): Promise<
+    AnalyticsEndpoints["getFavoritedTableContent"]["response"]
+  > {
     try {
-      const response = await ApiClient.get<UsedCreditsInPeriod[]>(
-        `${this.BASE_PATH}/favorited-table-content`,
-      );
+      const response = await ApiClient.get<
+        AnalyticsEndpoints["getFavoritedTableContent"]["response"]
+      >(`${this.BASE_PATH}/favorited-table-content`);
 
       if (!response.success) {
         throw new Error("Failed to fetch favorited components");

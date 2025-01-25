@@ -53,7 +53,7 @@ export async function getHistoricWorkflowExecutions(
  */
 export async function getWorkflowByIdFunction(
   request: Readonly<WorkflowsEndpoints["getWorkflowById"]["request"]>,
-): Promise<Workflow> {
+): Promise<WorkflowsEndpoints["getWorkflowById"]["response"]> {
   return WorkflowService.getWorkflowById(request);
 }
 

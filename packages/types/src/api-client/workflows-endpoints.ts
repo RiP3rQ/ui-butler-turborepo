@@ -91,7 +91,9 @@ export interface WorkflowsEndpoints {
     params: {
       workflowId: number;
     };
-    response: Workflow;
+    response: {
+      workflow: Workflow;
+    };
     request: {
       workflowId: number;
     };

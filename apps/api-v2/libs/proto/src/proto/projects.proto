@@ -30,7 +30,7 @@ message Project {
 message Component {
     int32 id = 1;
     string title = 2;
-    string description = 3;
+    string code = 3;
     int32 projectId = 4;
     int32 userId = 5;
     bool isFavorite = 6;

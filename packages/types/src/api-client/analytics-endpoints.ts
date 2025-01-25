@@ -11,13 +11,6 @@ export interface StatCard {
   trend: "up" | "down" | "neutral";
 }
 
-export interface WorkflowStats {
-  totalExecutions: number;
-  successfulExecutions: number;
-  failedExecutions: number;
-  averageExecutionTime: number;
-}
-
 export interface CreditStats {
   used: number;
   remaining: number;
@@ -58,10 +51,6 @@ export interface DailyStats {
   failed: number;
 }
 
-export interface UsedCreditsInPeriod {
-  stats: DailyStats[];
-}
-
 export interface DashboardStatCardsValuesResponse {
   currentActiveProjects: number;
   numberOfCreatedComponents: number;
@@ -99,7 +88,7 @@ export interface AnalyticsEndpoints {
       month: number;
       year: number;
     };
-    response: WorkflowStats;
+    response: DailyStats[];
   };
 
   /** GET /analytics/used-credits-in-period */
@@ -108,7 +97,7 @@ export interface AnalyticsEndpoints {
       month: number;
       year: number;
     };
-    response: UsedCreditsInPeriod;
+    response: DailyStats[];
   };
 
   /** GET /analytics/dashboard-stat-cards-values */

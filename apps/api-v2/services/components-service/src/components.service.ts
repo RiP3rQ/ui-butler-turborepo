@@ -1,4 +1,5 @@
 import {
+  dateToTimestamp,
   GET_GEMINI_MODEL,
   SaveComponentDto,
   UpdateComponentCodeDto,
@@ -81,16 +82,8 @@ export class ComponentsService {
         tsDocs: component.tsDocs ?? '',
         projectId: component.projectId,
         isFavorite: component.isFavorite ?? false,
-        createdAt: {
-          $type: 'google.protobuf.Timestamp',
-          seconds: component.createdAt.getTime(),
-          nanos: component.createdAt.getMilliseconds(),
-        },
-        updatedAt: {
-          $type: 'google.protobuf.Timestamp',
-          seconds: component.updatedAt.getTime(),
-          nanos: component.updatedAt.getMilliseconds(),
-        },
+        createdAt: dateToTimestamp(component.createdAt),
+        updatedAt: dateToTimestamp(component.updatedAt),
         projectName: component.projectName,
         userId: component.userId,
         wasE2eTested: Boolean(component.e2eTests),
@@ -141,16 +134,8 @@ export class ComponentsService {
         tsDocs: '',
         projectId: newComponent.projectId,
         isFavorite: newComponent.isFavorite ?? false,
-        createdAt: {
-          $type: 'google.protobuf.Timestamp',
-          seconds: newComponent.createdAt.getTime(),
-          nanos: newComponent.createdAt.getMilliseconds(),
-        },
-        updatedAt: {
-          $type: 'google.protobuf.Timestamp',
-          seconds: newComponent.updatedAt.getTime(),
-          nanos: newComponent.updatedAt.getMilliseconds(),
-        },
+        createdAt: dateToTimestamp(newComponent.createdAt),
+        updatedAt: dateToTimestamp(newComponent.updatedAt),
         projectName: '',
         userId: newComponent.userId,
         wasE2eTested: false,
@@ -202,16 +187,8 @@ export class ComponentsService {
         tsDocs: component.tsDocs ?? '',
         projectId: component.projectId,
         isFavorite: component.isFavorite ?? false,
-        createdAt: {
-          $type: 'google.protobuf.Timestamp',
-          seconds: component.createdAt.getTime(),
-          nanos: component.createdAt.getMilliseconds(),
-        },
-        updatedAt: {
-          $type: 'google.protobuf.Timestamp',
-          seconds: component.updatedAt.getTime(),
-          nanos: component.updatedAt.getMilliseconds(),
-        },
+        createdAt: dateToTimestamp(component.createdAt),
+        updatedAt: dateToTimestamp(component.updatedAt),
         projectName: '',
         userId: component.userId,
         wasE2eTested: Boolean(component.e2eTests),
@@ -293,16 +270,8 @@ export class ComponentsService {
         tsDocs: updatedComponent.tsDocs ?? '',
         projectId: updatedComponent.projectId,
         isFavorite: updatedComponent.isFavorite ?? false,
-        createdAt: {
-          $type: 'google.protobuf.Timestamp',
-          seconds: updatedComponent.createdAt.getTime(),
-          nanos: updatedComponent.createdAt.getMilliseconds(),
-        },
-        updatedAt: {
-          $type: 'google.protobuf.Timestamp',
-          seconds: updatedComponent.updatedAt.getTime(),
-          nanos: updatedComponent.updatedAt.getMilliseconds(),
-        },
+        createdAt: dateToTimestamp(updatedComponent.createdAt),
+        updatedAt: dateToTimestamp(updatedComponent.updatedAt),
         projectName: '',
         userId: updatedComponent.userId,
         wasE2eTested: Boolean(updatedComponent.e2eTests),
@@ -439,15 +408,21 @@ export class ComponentsService {
 
     // Map the gRPC CodeType to the CodeType enum
     const codeTypeEnum = protoCodeTypeToEnumMap[codeType];
-
-    if (!codeTypeEnum) {
+    if (!codeTypeEnum || !(codeTypeEnum in singleGeneratedPrompts)) {
       return sourceCode;
     }
 
-    const prompt = singleGeneratedPrompts[codeTypeEnum](sourceCode);
+    const promptFn =
+      singleGeneratedPrompts[
+        codeTypeEnum as keyof typeof singleGeneratedPrompts
+      ];
+    const prompt = promptFn(sourceCode);
+
     if (!prompt) {
-      console.error(`No prompt defined for code type: ${codeType}`);
-      throw new RpcException(`No prompt defined for code type: ${codeType}`);
+      console.error(`No prompt defined for code type: ${codeTypeEnum}`);
+      throw new RpcException(
+        `No prompt defined for code type: ${codeTypeEnum}`,
+      );
     }
 
     try {
@@ -461,8 +436,13 @@ export class ComponentsService {
         .replace(/\n```$/, '')
         .trim();
     } catch (error) {
-      console.error(`Error generating code for ${codeType}:`, error);
-      throw new RpcException(`Failed to generate ${codeType}`);
+      console.error(
+        `Error generating code for ${String(protoCodeTypeToEnumMap[codeType])}:`,
+        error,
+      );
+      throw new RpcException(
+        `Failed to generate ${String(protoCodeTypeToEnumMap[codeType])}`,
+      );
     }
   }
 }

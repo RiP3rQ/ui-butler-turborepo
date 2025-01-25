@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactFlowProvider } from "@xyflow/react";
-import { WorkflowStatus, type Workflow } from "@shared/types";
+import { WorkflowStatus, type WorkflowsEndpoints } from "@shared/types";
 import { useQuery } from "@tanstack/react-query";
 import { type JSX } from "react";
 import Topbar from "@/components/react-flow/topbar/topbar";
@@ -11,7 +11,7 @@ import { FlowValidationContextProvider } from "@/context/flow-validation-context
 import { getWorkflowByIdFunction } from "@/actions/workflows/server-actions";
 
 interface EditorProps {
-  workflow: Workflow;
+  workflow: WorkflowsEndpoints["getWorkflowById"]["response"];
   workflowId: string;
 }
 
@@ -27,14 +27,14 @@ function Editor({ workflow, workflowId }: Readonly<EditorProps>): JSX.Element {
       <ReactFlowProvider>
         <div className="flex flex-col h-full w-full overflow-hidden">
           <Topbar
-            isPublished={data.status === WorkflowStatus.PUBLISHED}
-            subtitle={data.name}
+            isPublished={data.workflow.status === WorkflowStatus.PUBLISHED}
+            subtitle={data.workflow.name}
             title="Workflow editor"
-            workflowId={data.id}
+            workflowId={data.workflow.id}
           />
           <section className="flex h-full overflow-auto">
             <TasksMenuSidebar />
-            <FlowEditor workflow={data} />
+            <FlowEditor workflow={data.workflow} />
           </section>
         </div>
       </ReactFlowProvider>

@@ -54,6 +54,7 @@ function FlowEditor({ workflow }: Readonly<FlowEditorProps>): JSX.Element {
   const { setViewport, screenToFlowPosition, updateNodeData } = useReactFlow();
 
   useEffect(() => {
+    if (!workflow.definition) return;
     const flow = JSON.parse(workflow.definition) as FlowType | undefined;
     if (!flow) return;
     setNodes(flow.nodes);
@@ -62,12 +63,15 @@ function FlowEditor({ workflow }: Readonly<FlowEditorProps>): JSX.Element {
     setViewport({ x, y, zoom }).catch((e: unknown) => {
       console.error("Error setting viewport", e);
     });
-  }, []);
+  }, [workflow.definition]);
 
-  const onDragOver = useCallback((event: React.DragEvent) => {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = "move";
-  }, []);
+  const onDragOver = useCallback(
+    (event: React.DragEvent) => {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "move";
+    },
+    [workflow],
+  );
 
   const onDrop = useCallback(
     (event: React.DragEvent) => {

@@ -115,7 +115,7 @@ export class WorkflowService {
    */
   static async getWorkflowById(
     request: Readonly<WorkflowsEndpoints["getWorkflowById"]["request"]>,
-  ): Promise<Workflow> {
+  ): Promise<WorkflowsEndpoints["getWorkflowById"]["response"]> {
     try {
       if (!request.workflowId) {
         throw new Error("Workflow ID is required");

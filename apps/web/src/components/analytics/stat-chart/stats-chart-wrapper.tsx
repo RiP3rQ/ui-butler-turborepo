@@ -1,5 +1,5 @@
 import StatsChart from "@/components/analytics/stat-chart/stats-chart";
-import type { UsedCreditsInPeriod } from "@shared/types";
+import type { DailyStats } from "@shared/types";
 import {
   Card,
   CardContent,
@@ -11,7 +11,7 @@ import { Layers2Icon } from "lucide-react";
 import { type JSX } from "react";
 
 interface StatsChartWrapperProps {
-  data: UsedCreditsInPeriod[];
+  data: DailyStats[];
 }
 
 export function StatsChartWrapper({
