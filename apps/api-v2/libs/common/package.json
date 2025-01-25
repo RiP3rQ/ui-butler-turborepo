@@ -31,9 +31,10 @@
   },
   "dependencies": {
     "@ai-sdk/google": "^1.0.16",
-    "@microservices/proto": "workspace:*",
     "@grpc/grpc-js": "^1.12.5",
+    "@microservices/proto": "workspace:*",
     "@nestjs/config": "^3.3.0",
+    "@nestjs/core": "^10.4.15",
     "@nestjs/microservices": "^10.4.15",
     "@nestjs/passport": "^10.0.3",
     "class-transformer": "^0.5.1",

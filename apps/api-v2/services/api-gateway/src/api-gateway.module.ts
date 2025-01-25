@@ -14,10 +14,8 @@ import { ClientsModule } from '@nestjs/microservices';
 import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TerminusModule } from '@nestjs/terminus';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import Joi from 'joi';
 import { createGrpcOptions } from './config/grpc.config';
-import { getRateLimitConfig } from './config/rate-limit.config';
 import { AnalyticsController } from './controllers/analytics.controller';
 import { AuthController } from './controllers/auth.controller';
 import { BillingController } from './controllers/billing.controller';
@@ -35,6 +33,10 @@ import { HelmetMiddleware } from './middlewares/helmet.middleware';
 import { AuthProxyService } from './proxies/auth.proxy.service';
 import { GrpcClientProxy } from './proxies/grpc-client.proxy';
 import { CustomCacheInterceptor } from './interceptors/custom-cache.interceptor';
+import { RateLimitGuard } from './guards/throttle.guard';
+import { MemoryStorage } from './throttling/memory-storage.service';
+import { RateLimitStorage } from './throttling/rate-limit-storage.abstract';
+import { rateLimitConfig } from './throttling/rate-limit.config';
 
 @Module({
   imports: [
@@ -48,6 +50,7 @@ import { CustomCacheInterceptor } from './interceptors/custom-cache.interceptor'
     }),
     ConfigModule.forRoot({
       isGlobal: true,
+      load: [rateLimitConfig],
       validationSchema: Joi.object({
         PORT: Joi.number().default(3333),
 
@@ -68,6 +71,12 @@ import { CustomCacheInterceptor } from './interceptors/custom-cache.interceptor'
 
         COMPONENTS_SERVICE_HOST: Joi.string().default('localhost'),
         COMPONENTS_SERVICE_PORT: Joi.number().default(3345),
+
+        RATE_LIMIT_TTL: Joi.number().default(60),
+        RATE_LIMIT_MAX_REQUESTS: Joi.number().default(100),
+        RATE_LIMIT_STORAGE: Joi.string()
+          .valid('memory', 'redis')
+          .default('memory'),
       }),
     }),
     ClientsModule.registerAsync([
@@ -169,9 +178,6 @@ import { CustomCacheInterceptor } from './interceptors/custom-cache.interceptor'
         inject: [ConfigService],
       },
     ]),
-    ThrottlerModule.forRootAsync({
-      useFactory: getRateLimitConfig,
-    }),
     // GRAFANA
     HealthModule,
     // PROMETHEUS
@@ -205,8 +211,12 @@ import { CustomCacheInterceptor } from './interceptors/custom-cache.interceptor'
     },
     // THROTTLER
     {
+      provide: RateLimitStorage,
+      useClass: MemoryStorage, // or RedisStorage
+    },
+    {
       provide: APP_GUARD,
-      useClass: ThrottlerGuard,
+      useClass: RateLimitGuard,
     },
     // Register all strategies
     LocalStrategy,
