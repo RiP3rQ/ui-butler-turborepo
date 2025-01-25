@@ -379,16 +379,6 @@ export class ComponentsService {
         updatedAt: new Date(),
       };
 
-      console.log(
-        'QUERY-TEST',
-        this.database
-          .update(components)
-          .set(updatedData)
-          .where(eq(components.id, body.componentId))
-          .returning()
-          .toSQL(),
-      );
-
       // Update the component with the generated code
       const [updatedComponent] = await this.database
         .update(components)

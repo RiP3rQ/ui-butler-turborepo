@@ -12,18 +12,18 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { ComponentsService } from './components.service';
-import { LogErrors } from '../common/error-handling/log-errors.decorator';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CurrentUser } from '../auth/current-user.decorator';
-import type { User } from '../database/schemas/users';
-import { SaveComponentDto } from './dto/save-component.dto';
-import { FavoriteComponentDto } from './dto/favorite-component.dto';
-import { GenerateComponentRequestDto } from './dto/component-generate-message.dto';
-import type { Response } from 'express';
 import { type CodeType, codeTypeValues } from '@shared/types';
-import { UpdateComponentCodeDto } from './dto/update-component.dto';
+import type { Response } from 'express';
+import { CurrentUser } from '../auth/current-user.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { LogErrors } from '../common/error-handling/log-errors.decorator';
+import type { User } from '../database/schemas/users';
+import { ComponentsService } from './components.service';
+import { GenerateComponentRequestDto } from './dto/component-generate-message.dto';
+import { FavoriteComponentDto } from './dto/favorite-component.dto';
 import { GenerateCodeDto } from './dto/generate-code.dto';
+import { SaveComponentDto } from './dto/save-component.dto';
+import { UpdateComponentCodeDto } from './dto/update-component.dto';
 
 @Controller('components')
 export class ComponentsController {

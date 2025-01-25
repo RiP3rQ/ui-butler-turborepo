@@ -7,7 +7,6 @@ import {
   UpdateComponentCodeDto,
 } from '@microservices/common';
 import { ComponentsProto } from '@microservices/proto';
-import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import {
   All,
   Body,
@@ -24,9 +23,7 @@ import {
   Req,
   Res,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
-import { type ClientGrpc } from '@nestjs/microservices';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -43,6 +40,7 @@ import { ClientRequest, IncomingMessage } from 'node:http';
 import { rateLimitConfigs } from '../config/rate-limit.config';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
+import type { ClientGrpc } from '@nestjs/microservices';
 
 /**
  * Controller handling component-related operations through gRPC communication
@@ -112,8 +110,6 @@ export class ComponentsController implements OnModuleInit {
     type: 'ComponentsProto.Component',
   })
   @ApiResponse({ status: 404, description: 'Component not found' })
-  @UseInterceptors(CacheInterceptor)
-  @CacheTTL(300000) // 5 minutes cache
   @Get('/:projectId/:componentId')
   public async getComponent(
     @CurrentUser() user: ComponentsProto.User,
