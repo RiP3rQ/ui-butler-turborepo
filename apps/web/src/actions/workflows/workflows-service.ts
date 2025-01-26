@@ -288,6 +288,8 @@ export class WorkflowService {
         body: request,
       });
 
+      console.log("response", response);
+
       if (!response.success) {
         throw new Error("Failed to update workflow");
       }

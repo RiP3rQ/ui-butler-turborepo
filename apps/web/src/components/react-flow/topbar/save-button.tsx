@@ -7,6 +7,7 @@ import { Loader2Icon } from "lucide-react";
 import { Button } from "@shared/ui/components/ui/button";
 import { type JSX } from "react";
 import { updateWorkflowByIdFunction } from "@/actions/workflows/server-actions";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 interface SaveButtonProps {
   workflowId: number;
@@ -20,8 +21,8 @@ function SaveButton({ workflowId }: Readonly<SaveButtonProps>): JSX.Element {
     onSuccess: () => {
       toast.success("Workflow updated successfully", { id: "update-workflow" });
     },
-    onError: () => {
-      toast.error("Failed to update workflow", { id: "update-workflow" });
+    onError: (error: unknown) => {
+      toast.error(getErrorMessage(error), { id: "update-workflow" });
     },
   });
 

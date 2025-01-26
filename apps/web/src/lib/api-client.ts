@@ -18,11 +18,11 @@ interface ApiResponse {
  * Base interface for API error responses
  */
 interface ApiErrorResponse extends ApiResponse {
-  readonly error: {
-    readonly code: string;
-    readonly message: string;
-    readonly details?: unknown;
-  };
+  readonly statusCode: number;
+  readonly timestamp: string;
+  readonly path: string;
+  readonly method: string;
+  readonly message: string;
 }
 
 /**
@@ -239,7 +239,8 @@ export class ApiClient {
   ): Promise<ApiSuccessResponse<T>> {
     if (!response.ok) {
       const errorData = (await response.json()) as ApiErrorResponse;
-      throw new ApiError(errorData.error.message, response.status, errorData);
+
+      throw new ApiError(errorData.message, response.status, errorData);
     }
 
     const contentType = response.headers.get("content-type");
@@ -248,11 +249,11 @@ export class ApiClient {
       throw new ApiError("Invalid response type", response.status, {
         success: false,
         timestamp: new Date().toISOString(),
-        error: {
-          code: "INVALID_RESPONSE_TYPE",
-          message: "Expected JSON response",
-        },
-      });
+        statusCode: response.status,
+        path: response.url,
+        method: "GET",
+        message: "Expected JSON response",
+      } as ApiErrorResponse);
     }
 
     const apiResponse = (await response.json()) as ApiSuccessResponse<T>;
@@ -265,6 +266,8 @@ export class ApiClient {
   }
 
   private static handleError(error: unknown): never {
+    console.debug("error", error);
+
     if (error instanceof ApiError) {
       throw error;
     }
@@ -272,11 +275,10 @@ export class ApiClient {
     throw new ApiError("Network error", 500, {
       success: false,
       timestamp: new Date().toISOString(),
-      error: {
-        code: "NETWORK_ERROR",
-        message: "Failed to complete the request",
-        details: error instanceof Error ? error.message : String(error),
-      },
+      statusCode: 500,
+      path: "",
+      method: "",
+      message: "Failed to complete the request",
     });
   }
 }

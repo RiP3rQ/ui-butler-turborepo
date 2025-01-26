@@ -1,3 +1,6 @@
 export function getErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : JSON.stringify(error);
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return JSON.stringify(error);
 }
