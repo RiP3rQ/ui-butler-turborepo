@@ -23,8 +23,6 @@ import {
   Post,
   Query,
   UseGuards,
-  UseInterceptors,
-  SetMetadata,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
 import {
@@ -36,7 +34,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { RateLimit } from 'src/decorators/rate-limit.decorator';
+import { RateLimit } from '../throttling/rate-limit.decorator';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
 // import {

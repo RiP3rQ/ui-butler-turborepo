@@ -32,11 +32,13 @@ import { MetricsModule } from './metrics/metrics.module';
 import { HelmetMiddleware } from './middlewares/helmet.middleware';
 import { AuthProxyService } from './proxies/auth.proxy.service';
 import { GrpcClientProxy } from './proxies/grpc-client.proxy';
-import { CustomCacheInterceptor } from './interceptors/custom-cache.interceptor';
+import { CustomCacheInterceptor } from './caching/custom-cache.interceptor';
 import { rateLimitConfig } from './config/rate-limit.config';
 import { RateLimitStorage } from './throttling/rate-limit-storage.abstract';
-import { RateLimitGuard } from './guards/throttle.guard';
+import { RateLimitGuard } from './throttling/throttle.guard';
 import { RedisStorage } from './throttling/memory-storage.service';
+import { CacheService } from './caching/cache.service';
+import { CacheCleanupService } from './caching/cache-cleanup.service';
 
 @Module({
   imports: [
@@ -231,11 +233,15 @@ import { RedisStorage } from './throttling/memory-storage.service';
     // gRPC CLIENT PROXY WITH RETRIES
     GrpcClientProxy,
     // CACHING
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: CustomCacheInterceptor,
-    },
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: CustomCacheInterceptor,
+    // },
+    CustomCacheInterceptor,
+    CacheCleanupService,
+    CacheService,
   ],
+  exports: [CacheService],
 })
 export class ApiGatewayModule implements NestModule {
   public configure(consumer: MiddlewareConsumer) {

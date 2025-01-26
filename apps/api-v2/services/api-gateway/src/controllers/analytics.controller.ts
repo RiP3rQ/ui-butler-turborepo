@@ -11,8 +11,8 @@ import {
   Query,
   SetMetadata,
   UseGuards,
-  UseInterceptors,
   Logger,
+  UseInterceptors,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
 import {
@@ -29,9 +29,10 @@ import {
   CACHE_GROUP_METADATA,
   CACHE_TTL,
   CustomCacheInterceptor,
-} from 'src/interceptors/custom-cache.interceptor';
+} from '../caching/custom-cache.interceptor';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
+import { CacheGroup } from 'src/caching/cache.decorator';
 // import { CustomCacheInterceptor } from '../interceptors/custom-cache.interceptor';
 
 /**
@@ -43,7 +44,8 @@ import { handleGrpcError } from '../utils/grpc-error.util';
 @ApiBearerAuth()
 @Controller('analytics')
 @UseGuards(JwtAuthGuard)
-@SetMetadata(CACHE_GROUP_METADATA, 'analytics')
+@CacheGroup('analytics')
+@UseInterceptors(CustomCacheInterceptor)
 export class AnalyticsController implements OnModuleInit {
   private analyticsService: AnalyticsProto.AnalyticsServiceClient;
   private readonly logger = new Logger(AnalyticsController.name);

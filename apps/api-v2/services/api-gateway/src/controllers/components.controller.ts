@@ -38,7 +38,7 @@ import { type Request, type Response } from 'express';
 import HttpProxy from 'http-proxy';
 import type { ClientGrpc } from '@nestjs/microservices';
 // import { rateLimitConfigs } from '../config/rate-limit.config';
-import { RateLimit } from 'src/decorators/rate-limit.decorator';
+import { RateLimit } from '../throttling/rate-limit.decorator';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
 

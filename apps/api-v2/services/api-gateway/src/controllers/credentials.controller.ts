@@ -18,7 +18,6 @@ import {
   Post,
   Query,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
 import {
@@ -30,13 +29,11 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { RateLimit } from 'src/decorators/rate-limit.decorator';
+import { RateLimit } from '../throttling/rate-limit.decorator';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
 
-const CACHE_TTL_15_MINUTES = 900000;
-const CACHE_KEY_CREDENTIALS = 'user-credentials';
-
+/**
 /**
  * Controller handling user credentials operations through gRPC communication
  * with the users microservice.

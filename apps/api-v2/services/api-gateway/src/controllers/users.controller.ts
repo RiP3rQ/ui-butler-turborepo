@@ -9,7 +9,6 @@ import {
   OnModuleInit,
   Post,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
 import {
@@ -19,7 +18,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { SkipRateLimit } from 'src/decorators/rate-limit.decorator';
+import { SkipRateLimit } from '../throttling/rate-limit.decorator';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
 

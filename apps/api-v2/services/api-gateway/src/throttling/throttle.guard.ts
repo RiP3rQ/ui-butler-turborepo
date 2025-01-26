@@ -8,9 +8,9 @@ import {
 import { Reflector } from '@nestjs/core';
 import type { Request, Response } from 'express';
 import { rateLimitConfig } from '../config/rate-limit.config';
-import { RateLimitStorage } from '../throttling/rate-limit-storage.abstract';
-import { RateLimitConfig } from '../throttling/rate-limit.interface';
-import { RATE_LIMIT_KEY } from '../decorators/rate-limit.decorator';
+import { RATE_LIMIT_KEY } from './rate-limit.decorator';
+import { RateLimitStorage } from './rate-limit-storage.abstract';
+import { RateLimitConfig } from './rate-limit.interface';
 
 @Injectable()
 export class RateLimitGuard implements CanActivate {

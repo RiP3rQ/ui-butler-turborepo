@@ -1,7 +1,7 @@
 import { Controller, Get, Header, Logger, Res } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { type Response } from 'express';
-import { SkipRateLimit } from '../decorators/rate-limit.decorator';
+import { SkipRateLimit } from '../throttling/rate-limit.decorator';
 import { MetricsService } from './metrics.service';
 
 @ApiTags('Metrics')

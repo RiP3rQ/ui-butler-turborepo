@@ -40,7 +40,7 @@ interface CacheConfig {
 }
 
 /** Cached data structure */
-interface CachedData<T = unknown> {
+export interface CachedData<T = unknown> {
   /** Timestamp when the data was cached */
   timestamp: number;
   /** The cached data */

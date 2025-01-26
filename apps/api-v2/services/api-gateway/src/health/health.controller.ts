@@ -6,7 +6,7 @@ import {
   MemoryHealthIndicator,
 } from '@nestjs/terminus';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { SkipRateLimit } from '../decorators/rate-limit.decorator';
+import { SkipRateLimit } from '../throttling/rate-limit.decorator';
 
 @ApiTags('Health')
 @Controller('health')
