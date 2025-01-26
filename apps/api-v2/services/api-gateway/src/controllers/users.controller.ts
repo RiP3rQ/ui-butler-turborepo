@@ -20,7 +20,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Throttle } from '@nestjs/throttler';
+import { SkipRateLimit } from 'src/decorators/rate-limit.decorator';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
 
@@ -99,6 +99,7 @@ export class UsersController implements OnModuleInit {
   @UseInterceptors(CacheInterceptor)
   @CacheKey(CACHE_KEY_USER_DETAIL)
   @CacheTTL(CACHE_TTL_1_MINUTE)
+  @SkipRateLimit()
   @Get('current-basic')
   public async getCurrentUser(
     @CurrentUser() user: UsersProto.User,
@@ -139,7 +140,6 @@ export class UsersController implements OnModuleInit {
     type: JSON.stringify(UsersProto.Profile),
   })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
-  @Throttle({ default: { ttl: 60000, limit: 2 } }) // 2 requests per minute
   @Post('profile')
   public async createProfile(
     @Body() createProfileDto: UsersProto.CreateProfileDto,
@@ -172,7 +172,6 @@ export class UsersController implements OnModuleInit {
     type: JSON.stringify(UsersProto.User),
   })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
-  @Throttle({ default: { ttl: 300000, limit: 3 } }) // 3 requests per 5 minutes
   @Post()
   public async createUser(
     @Body() createUserDto: UsersProto.CreateUserDto,

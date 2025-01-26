@@ -1,12 +1,12 @@
 import { Controller, Get, Header, Logger, Res } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { SkipThrottle } from '@nestjs/throttler';
 import { type Response } from 'express';
+import { SkipRateLimit } from '../decorators/rate-limit.decorator';
 import { MetricsService } from './metrics.service';
 
 @ApiTags('Metrics')
 @Controller('metrics')
-@SkipThrottle()
+@SkipRateLimit()
 export class MetricsController {
   private readonly logger = new Logger(MetricsController.name);
 

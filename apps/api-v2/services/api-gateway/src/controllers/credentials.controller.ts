@@ -31,7 +31,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Throttle } from '@nestjs/throttler';
+import { RateLimit } from 'src/decorators/rate-limit.decorator';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
 
@@ -125,7 +125,6 @@ export class CredentialsController implements OnModuleInit {
   })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
-  @Throttle({ default: { ttl: 60000, limit: 5 } }) // 5 requests per minute
   @Post()
   public async createCredential(
     @CurrentUser() user: User,
@@ -223,7 +222,11 @@ export class CredentialsController implements OnModuleInit {
   })
   @ApiResponse({ status: 404, description: 'User or credential not found' })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
-  @Throttle({ default: { ttl: 60000, limit: 10 } }) // 10 requests per minute
+  @RateLimit({
+    ttl: 60,
+    limit: 10,
+    errorMessage: 'Too many reveal credential requests. Try again in 1 minute.',
+  })
   @Get(':id/reveal')
   public async getRevealedCredentialValue(
     @CurrentUser() user: User,

@@ -37,8 +37,8 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Throttle } from '@nestjs/throttler';
 import { type Cache } from 'cache-manager';
+import { RateLimit } from 'src/decorators/rate-limit.decorator';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
 import {
@@ -213,8 +213,11 @@ export class WorkflowsController implements OnModuleInit {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 400, description: 'Invalid input' })
-  @Throttle({ default: { ttl: 60000, limit: 5 } }) // 5 requests per minute
-  @Post()
+  @RateLimit({
+    ttl: 60,
+    limit: 5,
+    errorMessage: 'Too many create workflow requests. Try again in 1 minute.',
+  })
   @SetMetadata(IGNORE_CACHE_KEY, true)
   @Post()
   public async createWorkflow(
@@ -330,6 +333,11 @@ export class WorkflowsController implements OnModuleInit {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Workflow not found' })
   @SetMetadata(IGNORE_CACHE_KEY, true)
+  @RateLimit({
+    ttl: 60,
+    limit: 3,
+    errorMessage: 'Too many publish workflow requests. Try again in 1 minute.',
+  })
   @Post(':id/publish')
   public async publishWorkflow(
     @CurrentUser() user: User,
@@ -369,6 +377,12 @@ export class WorkflowsController implements OnModuleInit {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Workflow not found' })
   @SetMetadata(IGNORE_CACHE_KEY, true)
+  @RateLimit({
+    ttl: 60,
+    limit: 3,
+    errorMessage:
+      'Too many unpublish workflow requests. Try again in 1 minute.',
+  })
   @Post(':id/unpublish')
   public async unpublishWorkflow(
     @CurrentUser() user: User,
@@ -403,7 +417,11 @@ export class WorkflowsController implements OnModuleInit {
     description: 'Workflow execution started',
     type: JSON.stringify(WorkflowsProto.RunWorkflowResponse),
   })
-  @Throttle({ default: { ttl: 60000, limit: 3 } }) // 3 requests per minute
+  @RateLimit({
+    ttl: 60,
+    limit: 2,
+    errorMessage: 'Too many run workflow requests. Try again in 1 minute.',
+  }) // 2 requests per minute
   @Post('run-workflow')
   public async runWorkflow(
     @CurrentUser() user: User,
@@ -442,7 +460,12 @@ export class WorkflowsController implements OnModuleInit {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Workflow not found' })
-  @Throttle({ default: { ttl: 60000, limit: 1 } }) // 1 requests per minute
+  // 5 requests per minute
+  @RateLimit({
+    limit: 5,
+    ttl: 60,
+    errorMessage: 'Too many save workflow requests. Try again in 1 minute.',
+  })
   @SetMetadata(IGNORE_CACHE_KEY, true)
   @Patch('')
   public async updateWorkflow(

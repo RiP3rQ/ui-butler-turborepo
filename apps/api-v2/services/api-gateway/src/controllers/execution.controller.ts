@@ -28,7 +28,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Throttle } from '@nestjs/throttler';
+import { RateLimit } from 'src/decorators/rate-limit.decorator';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
 
@@ -160,7 +160,11 @@ export class ExecutionsController implements OnModuleInit {
   })
   @ApiResponse({ status: 404, description: 'User or execution not found' })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
-  @Throttle({ default: { ttl: 60000, limit: 10 } }) // 10 requests per minute
+  @RateLimit({
+    ttl: 60,
+    limit: 10,
+    errorMessage: 'Too many approve changes requests. Try again in 1 minute.',
+  })
   @Post(':executionId/approve')
   public async approveChanges(
     @CurrentUser() user: User,

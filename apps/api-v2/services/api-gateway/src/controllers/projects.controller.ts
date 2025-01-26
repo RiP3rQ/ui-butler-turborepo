@@ -23,7 +23,6 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Throttle } from '@nestjs/throttler';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
 
@@ -167,7 +166,6 @@ export class ProjectsController implements OnModuleInit {
   })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
-  @Throttle({ default: { ttl: 60000, limit: 5 } }) // 5 requests per minute
   @Post()
   public async createProject(
     @CurrentUser() user: ProjectsProto.User,
