@@ -1,316 +1,237 @@
 // custom-cache.interceptor.ts
-import crypto from 'node:crypto';
 import {
   CallHandler,
   ExecutionContext,
   Inject,
   Injectable,
+  Logger,
   NestInterceptor,
-  Scope,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Redis } from '@upstash/redis';
-import { Observable, of, tap } from 'rxjs';
-import { Request } from 'express';
+import { Observable, of } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { REDIS_CONNECTION, RedisService } from '@microservices/redis';
+import { Request } from 'express';
 
-/** Prefix for all cache keys */
-export const CUSTOM_CACHE_KEY_PREFIX = 'custom_cache';
+export const CACHE_TTL_METADATA = 'cache_ttl';
+export const CACHE_GROUP_METADATA = 'cache_group';
+export const CACHE_SKIP_METADATA = 'cache_skip';
 
-/** Metadata key to disable caching for specific routes */
-export const IGNORE_CACHE_KEY = 'ignoreCaching';
+export const CACHE_TTL = {
+  DEFAULT: 60,
+  ONE_MINUTE: 60,
+  FIVE_MINUTES: 300,
+  FIFTEEN_MINUTES: 900,
+  ONE_HOUR: 3600,
+} as const;
 
-/** Default TTL in seconds (5 minutes) */
-export const DEFAULT_CACHE_TTL = 300;
-
-/** Interface for cache metrics */
-interface CacheMetrics {
-  key: string;
-  hit: boolean;
-  duration: number;
-  timestamp: number;
+interface CacheConfig {
+  ttl: number;
+  group: string;
+  skip: boolean;
 }
 
-/**
- * Custom cache interceptor that provides caching functionality using Redis
- */
-@Injectable({ scope: Scope.REQUEST })
+interface CachedData<T = unknown> {
+  timestamp: number;
+  data: T;
+}
+
+@Injectable()
 export class CustomCacheInterceptor implements NestInterceptor {
-  private readonly redis: Redis;
-  private readonly metrics: CacheMetrics[] = [];
-  private readonly isCacheEnabled: boolean;
+  private readonly logger = new Logger(CustomCacheInterceptor.name);
+  private readonly debug = process.env.NODE_ENV !== 'production';
 
   constructor(
     @Inject(REDIS_CONNECTION)
     private readonly redisService: RedisService,
     private readonly reflector: Reflector,
   ) {
-    try {
-      this.redis = this.redisService.getClient();
-      this.isCacheEnabled = true;
-    } catch (error) {
-      console.warn('Cache disabled due to Redis connection issues');
-      this.isCacheEnabled = false;
-    }
+    this.logger.log('Cache interceptor initialized');
   }
 
-  /**
-   * Tracks cache metrics for monitoring and debugging purposes
-   * @param metrics - Cache operation metrics
-   */
-  private readonly trackCacheMetrics = (metrics: CacheMetrics): void => {
-    this.metrics.push(metrics);
-    console.debug(
-      `Cache ${metrics.hit ? '!_HIT_!' : 'MISS'} - Key: ${metrics.key} - Duration: ${String(metrics.duration)}ms`,
-    );
-  };
-
-  /**
-   * Generates a unique cache key based on the request context
-   */
-  private readonly generateCacheKey = (
-    context: ExecutionContext,
-    defaultKey?: string,
-  ): string => {
-    const request = context.switchToHttp().getRequest<Request>();
-    const user = request.user as { id: string } | undefined;
-    const userId = user?.id ?? 'anonymous';
-    const path = request.path;
-    const version = process.env.API_VERSION ?? 'v1';
-
-    // Include cache-control directives
-    const cacheControl = request.headers['cache-control'];
-    if (cacheControl?.includes('no-store')) {
-      return '';
-    }
-
-    // Sort query params to ensure consistent cache keys
-    const queryParams = { ...request.query };
-    const sortedQueryString = Object.keys(queryParams)
-      .sort()
-      .map((key) => `${key}=${String(queryParams[key])}`)
-      .join('&');
-
-    const keyParts = [
-      CUSTOM_CACHE_KEY_PREFIX,
-      version,
-      this.reflector.get(CACHE_GROUP_METADATA, context.getHandler()),
-      defaultKey ?? path,
-      request.method,
-      `user:${userId}`,
-      sortedQueryString && `query:${sortedQueryString}`,
-      // Include relevant headers that affect caching
-      request.headers['accept-language'],
-      request.headers.accept,
-    ].filter(Boolean);
-
-    const key = keyParts.join(':');
-    return key.length > 200
-      ? `${CUSTOM_CACHE_KEY_PREFIX}:${version}:${crypto.createHash('sha256').update(key).digest('hex')}`
-      : key;
-  };
-
-  /**
-   * Determines if the request should be cached
-   * @param context - Execution context
-   * @returns Boolean indicating if caching should be applied
-   */
-  private readonly shouldCache = (context: ExecutionContext): boolean => {
-    const request = context.switchToHttp().getRequest<Request>();
-    if (request.method !== 'GET') {
-      return false;
-    }
-
-    const ignoreCaching = this.reflector.get<boolean>(
-      IGNORE_CACHE_KEY,
-      context.getHandler(),
-    );
-
-    return !ignoreCaching;
-  };
-
-  /**
-   * Intercepts the request and handles caching logic
-   * @param context - Execution context
-   * @param next - Call handler
-   * @returns Observable of the response
-   */
   public async intercept(
     context: ExecutionContext,
     next: CallHandler,
   ): Promise<Observable<unknown>> {
-    if (!this.isCacheEnabled || !this.shouldCache(context)) {
-      return next.handle();
-    }
-
-    const startTime = Date.now();
-    const key = this.generateCacheKey(
-      context,
-      this.reflector.get(CACHE_KEY_METADATA, context.getHandler()),
-    );
-
     try {
-      const cachedData = await this.redis.get(key);
-      if (cachedData !== null) {
-        this.trackCacheMetrics({
-          key,
-          hit: true,
-          duration: Date.now() - startTime,
-          timestamp: Date.now(),
-        });
-        return of(JSON.parse(cachedData as string));
+      const config = this.getCacheConfig(context);
+
+      if (this.shouldSkipCache(context, config)) {
+        this.logDebug('Skipping cache');
+        return next.handle();
+      }
+
+      const cacheKey = await this.buildCacheKey(context, config);
+      const cachedValue = await this.getCachedValue(cacheKey);
+
+      if (cachedValue !== null) {
+        this.logDebug('Cache hit', { key: cacheKey });
+        return of(cachedValue);
       }
 
       return next.handle().pipe(
-        tap((response) => {
-          const ttl = Number(
-            this.reflector.get(CACHE_TTL_METADATA, context.getHandler()) ??
-              DEFAULT_CACHE_TTL,
-          );
-
-          void this.redis.setex(key, ttl, JSON.stringify(response)).then(() => {
-            this.trackCacheMetrics({
-              key,
-              hit: false,
-              duration: Date.now() - startTime,
-              timestamp: Date.now(),
-            });
-          });
+        tap({
+          next: async (response: unknown) => {
+            await this.setCachedValue(cacheKey, response, config.ttl);
+          },
+          error: (error: Error) => {
+            this.logError('Error in interceptor pipe', error);
+          },
         }),
       );
     } catch (error) {
-      console.error(`Cache error for key ${key}:`, error);
+      this.logError('Cache operation failed', error);
       return next.handle();
     }
   }
 
-  /**
-   * Invalidates cache entries matching a pattern
-   * @param pattern - Pattern to match cache keys
-   * @throws Error if cache invalidation fails
-   */
-  public readonly invalidateCache = async (pattern: string): Promise<void> => {
+  private getCacheConfig(context: ExecutionContext): CacheConfig {
+    return {
+      ttl:
+        this.reflector.get<number>(CACHE_TTL_METADATA, context.getHandler()) ??
+        CACHE_TTL.DEFAULT,
+      group:
+        this.reflector.getAllAndOverride<string>(CACHE_GROUP_METADATA, [
+          context.getHandler(),
+          context.getClass(),
+        ]) ?? 'default',
+      skip:
+        this.reflector.get<boolean>(
+          CACHE_SKIP_METADATA,
+          context.getHandler(),
+        ) ?? false,
+    };
+  }
+
+  private shouldSkipCache(
+    context: ExecutionContext,
+    config: CacheConfig,
+  ): boolean {
+    const request = context.switchToHttp().getRequest<Request>();
+    const cacheControl = request.headers['cache-control'];
+
+    return (
+      config.skip ||
+      request.method !== 'GET' ||
+      Boolean(cacheControl?.includes('no-cache')) ||
+      Boolean(cacheControl?.includes('no-store'))
+    );
+  }
+
+  private async buildCacheKey(
+    context: ExecutionContext,
+    config: CacheConfig,
+  ): Promise<string> {
+    const request = context.switchToHttp().getRequest<Request>();
+    const user = request.user as { id: string } | undefined;
+
+    const keyParts = [
+      'cache',
+      config.group,
+      request.path,
+      user?.id ?? 'anonymous',
+      this.hashQueryParams(request.query),
+    ];
+
+    return keyParts.join(':');
+  }
+
+  private hashQueryParams(query: Record<string, unknown>): string {
+    const sortedQuery = Object.keys(query)
+      .sort()
+      .reduce<Record<string, unknown>>((acc, key) => {
+        acc[key] = query[key];
+        return acc;
+      }, {});
+
+    return Buffer.from(JSON.stringify(sortedQuery)).toString('base64');
+  }
+
+  private async getCachedValue(key: string): Promise<unknown | null> {
     try {
-      let cursor = 0;
-      const matchingKeys: string[] = [];
+      const client = this.redisService.getClient();
+      const value = await client.get(key);
+
+      if (!value) {
+        return null;
+      }
+
+      const cached = JSON.parse(JSON.stringify(value)) as CachedData;
+      return cached.data;
+    } catch (error) {
+      this.logError('Failed to get cached value', error);
+      return null;
+    }
+  }
+
+  private async setCachedValue(
+    key: string,
+    value: unknown,
+    ttl: number,
+  ): Promise<void> {
+    try {
+      const client = this.redisService.getClient();
+      const cacheData: CachedData = {
+        timestamp: Date.now(),
+        data: value,
+      };
+
+      const serializedValue = JSON.stringify(cacheData);
+      await client.setex(key, ttl, serializedValue);
+
+      this.logDebug('Cached value set', {
+        key,
+        ttl,
+        size: serializedValue.length,
+      });
+    } catch (error) {
+      this.logError('Failed to set cached value', error);
+    }
+  }
+
+  public async clearCacheGroup(group: string): Promise<void> {
+    try {
+      const client = this.redisService.getClient();
+      const pattern = `cache:${group}:*`;
+      let cursor = '0';
+      let totalCleared = 0;
 
       do {
-        const [nextCursor, keys] = await this.redis.scan(cursor, {
+        const [nextCursor, keys] = await client.scan(cursor, {
           match: pattern,
           count: 100,
         });
-        cursor = Number(nextCursor);
-        matchingKeys.push(...keys);
-      } while (cursor !== 0);
 
-      if (matchingKeys.length === 0) {
-        console.debug(`No cache keys found matching pattern: ${pattern}`);
-        return;
-      }
+        if (keys.length > 0) {
+          await client.del(...keys);
+          totalCleared += keys.length;
+          this.logDebug('Cleared cache keys', {
+            group,
+            count: keys.length,
+            keys,
+          });
+        }
 
-      // Delete keys in batches to prevent large single operations
-      const BATCH_SIZE = 100;
-      for (let i = 0; i < matchingKeys.length; i += BATCH_SIZE) {
-        const batch = matchingKeys.slice(i, i + BATCH_SIZE);
-        await this.redis.del(...batch);
-      }
+        cursor = nextCursor;
+      } while (cursor !== '0');
 
-      console.debug(
-        `Invalidated ${String(matchingKeys.length)} cache keys matching pattern: ${pattern}`,
-      );
+      this.logger.log(`Cleared ${totalCleared} keys from group: ${group}`);
     } catch (error) {
-      const errorMessage = `Error invalidating cache pattern ${pattern}`;
-      console.error(errorMessage, error);
-      throw new Error(errorMessage, { cause: error });
+      this.logError(`Failed to clear cache group: ${group}`, error);
+      throw error;
     }
-  };
+  }
 
-  /**
-   * Returns cache metrics for monitoring
-   * @returns Array of cache metrics
-   */
-  public readonly getMetrics = (): CacheMetrics[] => {
-    return [...this.metrics];
-  };
-
-  /**
-   * Invalidates all cache entries for a specific group
-   */
-  public readonly invalidateCacheGroup = async (
-    group: string,
-  ): Promise<void> => {
-    const pattern = `${CUSTOM_CACHE_KEY_PREFIX}:${group}:*`;
-    await this.invalidateCache(pattern);
-  };
-
-  /**
-   * Bulk get operation for multiple cache keys
-   */
-  public readonly mget = async (keys: string[]): Promise<(string | null)[]> => {
-    try {
-      return await this.redis.mget(...keys);
-    } catch (error) {
-      console.error('Bulk cache get error:', error);
-      return new Array<string | null>(keys.length).fill(null);
+  private logDebug(message: string, context?: Record<string, unknown>): void {
+    if (this.debug) {
+      this.logger.debug(`[Cache] ${message}`, context);
     }
-  };
+  }
 
-  /**
-   * Bulk set operation for multiple cache entries
-   */
-  public readonly mset = async (
-    entries: { key: string; value: string; ttl: number }[],
-  ): Promise<void> => {
-    try {
-      const pipeline = this.redis.pipeline();
+  private logError(message: string, error: unknown): void {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorStack = error instanceof Error ? error.stack : undefined;
 
-      for (const { key, value, ttl } of entries) {
-        pipeline.setex(key, ttl, value);
-      }
-
-      await pipeline.exec();
-    } catch (error) {
-      console.error('Bulk cache set error:', error);
-    }
-  };
-
-  /**
-   * Pre-warms cache with provided data
-   */
-  public readonly warmupCache = async (
-    entries: { key: string; value: unknown; ttl: number }[],
-  ): Promise<void> => {
-    try {
-      const pipeline = this.redis.pipeline();
-
-      for (const { key, value, ttl } of entries) {
-        pipeline.setex(key, ttl, JSON.stringify(value));
-      }
-
-      await pipeline.exec();
-      console.debug(`Warmed up cache with ${String(entries.length)} entries`);
-    } catch (error) {
-      console.error('Cache warmup error:', error);
-    }
-  };
-
-  /**
-   * Checks cache health and connectivity
-   */
-  public readonly checkHealth = async (): Promise<boolean> => {
-    try {
-      const testKey = `${CUSTOM_CACHE_KEY_PREFIX}:health:${String(Date.now())}`;
-      await this.redis.setex(testKey, 10, 'health_check');
-      const value = await this.redis.get(testKey);
-      await this.redis.del(testKey);
-      return value === 'health_check';
-    } catch (error) {
-      console.error('Cache health check failed:', error);
-      return false;
-    }
-  };
+    this.logger.error(`[Cache] ${message}: ${errorMessage}`, errorStack);
+  }
 }
-
-export const CACHE_KEY_METADATA = 'cache_module:cache_key';
-export const CACHE_TTL_METADATA = 'cache_module:cache_ttl';
-export const CACHE_GROUP_METADATA = 'cache_module:cache_group';

@@ -173,7 +173,7 @@ export class ApiClient {
     const requestOptions: RequestInit = {
       method,
       headers,
-      cache: "no-store" as const,
+      cache: "default" as const,
       signal: controller?.signal,
     };
 

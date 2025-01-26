@@ -23,11 +23,6 @@ import { SkipRateLimit } from 'src/decorators/rate-limit.decorator';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
 
-const CACHE_TTL_30_SECONDS = 30000;
-const CACHE_TTL_1_MINUTE = 60000;
-const CACHE_KEY_ALL_USERS = 'users:all';
-const CACHE_KEY_USER_DETAIL = 'users:detail';
-
 /**
  * Controller handling user-related operations through gRPC communication
  * with the users microservice.

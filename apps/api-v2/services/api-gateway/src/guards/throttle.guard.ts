@@ -31,8 +31,6 @@ export class RateLimitGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<Request>();
     const key = this.generateKey(request, context);
 
-    console.log('key', key);
-
     const rateLimitInfo = await this.storage.increment(
       key,
       Number(config.ttl),

@@ -6,7 +6,7 @@ import compression, { filter } from 'compression';
 import cookieParser from 'cookie-parser';
 import { Logger } from 'nestjs-pino';
 import { ApiGatewayModule } from './api-gateway.module';
-import { HttpExceptionFilter } from './filters/http-exception.filter';
+// import { HttpExceptionFilter } from './filters/http-exception.filter';
 import { EnhancedResponseInterceptor } from './interceptors/enhanced-response.interceptor';
 import { MetricsInterceptor } from './metrics/metrics.interceptor';
 import { MetricsService } from './metrics/metrics.service';
@@ -57,7 +57,7 @@ async function bootstrap() {
   );
 
   // Global filters and interceptors
-  app.useGlobalFilters(new HttpExceptionFilter());
+  // app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(new EnhancedResponseInterceptor());
 
   // Add metrics interceptor
