@@ -1,35 +1,30 @@
-// rate-limit.guard.ts
 import {
   Injectable,
   CanActivate,
   ExecutionContext,
   HttpException,
   HttpStatus,
-  Inject,
 } from '@nestjs/common';
-import { type ConfigType } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import type { Request, Response } from 'express';
+import { rateLimitConfig } from 'src/throttling/rate-limit.config';
 import { RateLimitConfig } from '../throttling/rate-limit.interface';
 import { RATE_LIMIT_KEY } from '../decorators/rate-limit.decorator';
 import { RateLimitStorage } from '../throttling/rate-limit-storage.abstract';
-import { rateLimitConfig } from '../throttling/rate-limit.config';
 
 @Injectable()
 export class RateLimitGuard implements CanActivate {
   constructor(
-    private reflector: Reflector,
-    private storage: RateLimitStorage,
-    @Inject(rateLimitConfig.KEY)
-    private config: ConfigType<typeof rateLimitConfig>,
+    private readonly reflector: Reflector,
+    private readonly storage: RateLimitStorage,
   ) {}
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {
     // Get route-specific config or fall back to global config
     const routeConfig = this.getRateLimitConfig(context);
     const config = {
-      ttl: routeConfig?.ttl ?? this.config.global.ttl,
-      limit: routeConfig?.limit ?? this.config.global.limit,
+      ttl: routeConfig?.ttl ?? rateLimitConfig().global.ttl,
+      limit: routeConfig?.limit ?? rateLimitConfig().global.limit,
       errorMessage: routeConfig?.errorMessage ?? 'Too Many Requests',
     };
 
@@ -38,8 +33,8 @@ export class RateLimitGuard implements CanActivate {
 
     const rateLimitInfo = await this.storage.increment(
       key,
-      config.ttl,
-      config.limit,
+      Number(config.ttl),
+      Number(config.limit),
     );
 
     console.log('rateLimitInfo', rateLimitInfo);

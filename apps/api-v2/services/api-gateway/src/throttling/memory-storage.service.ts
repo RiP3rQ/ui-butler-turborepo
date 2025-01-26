@@ -1,75 +1,80 @@
 import { Injectable } from '@nestjs/common';
-import type { RateLimitInfo } from './rate-limit.interface';
+import { ConfigService } from '@nestjs/config';
+import { Redis } from '@upstash/redis';
+import { RateLimitInfo } from './rate-limit.interface';
 import { RateLimitStorage } from './rate-limit-storage.abstract';
 
-interface StorageRecord {
-  hits: number;
-  expires: number;
-  limit: number;
-}
-
 @Injectable()
-export class MemoryStorage implements RateLimitStorage {
-  private storage = new Map<string, StorageRecord>();
+export class RedisStorage implements RateLimitStorage {
+  private readonly redis: Redis;
 
-  // eslint-disable-next-line @typescript-eslint/require-await --- This is a sync method
+  constructor(private readonly configService: ConfigService) {
+    const url = String(this.configService.getOrThrow('REDIS_URL'));
+    const token = String(this.configService.getOrThrow('REDIS_TOKEN'));
+
+    this.redis = new Redis({
+      url,
+      token,
+    });
+  }
+
+  /**
+   * Increments the hit count for a given key and returns the rate limit information
+   * @param {string} key - The key to increment the hit count for
+   * @param {number} ttl - The time to live in seconds
+   * @param {number} limit - The rate limit for the key
+   * @returns {Promise<RateLimitInfo>} The rate limit information
+   */
   public async increment(
     key: string,
     ttl: number,
     limit: number,
   ): Promise<RateLimitInfo> {
-    this.cleanup();
+    const pipeline = this.redis.pipeline();
 
-    const now = Date.now();
-    const record = this.storage.get(key);
+    pipeline.incr(key);
+    pipeline.ttl(key);
 
-    if (!record) {
-      const newRecord = {
-        hits: 1,
-        expires: now + ttl * 1000,
-        limit,
-      };
-      this.storage.set(key, newRecord);
+    const [hits, currentTtl] = await pipeline.exec<[number, number]>();
 
-      return {
-        totalHits: 1,
-        remainingHits: limit - 1,
-        resetsIn: ttl,
-      };
+    if (currentTtl === -1) {
+      await this.redis.expire(key, ttl);
     }
 
-    record.hits++;
     return {
-      totalHits: record.hits,
-      remainingHits: limit - record.hits,
-      resetsIn: Math.ceil((record.expires - now) / 1000),
+      totalHits: hits,
+      remainingHits: limit - hits,
+      resetsIn: currentTtl === -1 ? ttl : currentTtl,
     };
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await --- This is a sync method
+  /**
+   * Resets the hit count for a given key
+   * @param {string} key - The key to reset the hit count for
+   */
   public async reset(key: string): Promise<void> {
-    this.storage.delete(key);
+    await this.redis.del(key);
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await --- This is a sync method
+  /**
+   * Retrieves the rate limit information for a given key
+   * @param {string} key - The key to retrieve the rate limit information for
+   * @returns {Promise<RateLimitInfo | null>} The rate limit information or null if the key is not found
+   */
   public async get(key: string): Promise<RateLimitInfo | null> {
-    const record = this.storage.get(key);
-    if (!record) return null;
+    const pipeline = this.redis.pipeline();
 
-    const now = Date.now();
+    pipeline.get<string>(key);
+    pipeline.ttl(key);
+
+    const [hits, ttl] = await pipeline.exec<[string | null, number]>();
+
+    if (!hits) return null;
+
     return {
-      totalHits: record.hits,
+      totalHits: Number(hits),
       remainingHits: 0,
-      resetsIn: Math.ceil((record.expires - now) / 1000),
+      resetsIn: ttl,
     };
-  }
-
-  private cleanup(): void {
-    const now = Date.now();
-    for (const [key, value] of this.storage.entries()) {
-      if (value.expires <= now) {
-        this.storage.delete(key);
-      }
-    }
   }
 }

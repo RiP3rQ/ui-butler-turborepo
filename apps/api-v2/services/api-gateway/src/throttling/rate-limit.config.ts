@@ -8,8 +8,8 @@ export const rateLimitConfig = registerAs('rateLimit', () => ({
   storage: {
     type: process.env.RATE_LIMIT_STORAGE ?? 'memory',
     redis: {
-      host: process.env.REDIS_HOST ?? 'localhost',
-      port: parseInt(process.env.REDIS_PORT ?? '6379', 10),
+      url: process.env.REDIS_URL ?? 'localhost',
+      token: process.env.REDIS_TOKEN ?? 'token',
     },
   },
 }));

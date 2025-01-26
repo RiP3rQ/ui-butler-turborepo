@@ -33,10 +33,10 @@ import { HelmetMiddleware } from './middlewares/helmet.middleware';
 import { AuthProxyService } from './proxies/auth.proxy.service';
 import { GrpcClientProxy } from './proxies/grpc-client.proxy';
 import { CustomCacheInterceptor } from './interceptors/custom-cache.interceptor';
-import { RateLimitGuard } from './guards/throttle.guard';
-import { MemoryStorage } from './throttling/memory-storage.service';
-import { RateLimitStorage } from './throttling/rate-limit-storage.abstract';
 import { rateLimitConfig } from './throttling/rate-limit.config';
+import { RateLimitStorage } from './throttling/rate-limit-storage.abstract';
+import { RateLimitGuard } from './guards/throttle.guard';
+import { RedisStorage } from './throttling/memory-storage.service';
 
 @Module({
   imports: [
@@ -76,7 +76,10 @@ import { rateLimitConfig } from './throttling/rate-limit.config';
         RATE_LIMIT_MAX_REQUESTS: Joi.number().default(100),
         RATE_LIMIT_STORAGE: Joi.string()
           .valid('memory', 'redis')
-          .default('memory'),
+          .default('redis'),
+
+        REDIS_URL: Joi.string().default('localhost'),
+        REDIS_TOKEN: Joi.string().default('localhost'),
       }),
     }),
     ClientsModule.registerAsync([
@@ -209,10 +212,10 @@ import { rateLimitConfig } from './throttling/rate-limit.config';
       provide: APP_INTERCEPTOR,
       useClass: ErrorInterceptor,
     },
-    // THROTTLER
+    // THROTTLER - RATE LIMITING
     {
       provide: RateLimitStorage,
-      useClass: MemoryStorage, // or RedisStorage
+      useClass: RedisStorage, // or MemoryStorage
     },
     {
       provide: APP_GUARD,
