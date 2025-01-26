@@ -224,7 +224,7 @@ export class CredentialsController implements OnModuleInit {
   @ApiResponse({ status: 500, description: 'gRPC service error' })
   @RateLimit({
     ttl: 60,
-    limit: 10,
+    limit: 5,
     errorMessage: 'Too many reveal credential requests. Try again in 1 minute.',
   })
   @Get(':id/reveal')
