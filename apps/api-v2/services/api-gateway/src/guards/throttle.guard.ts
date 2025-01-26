@@ -7,10 +7,10 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import type { Request, Response } from 'express';
-import { rateLimitConfig } from 'src/throttling/rate-limit.config';
+import { rateLimitConfig } from '../config/rate-limit.config';
+import { RateLimitStorage } from '../throttling/rate-limit-storage.abstract';
 import { RateLimitConfig } from '../throttling/rate-limit.interface';
 import { RATE_LIMIT_KEY } from '../decorators/rate-limit.decorator';
-import { RateLimitStorage } from '../throttling/rate-limit-storage.abstract';
 
 @Injectable()
 export class RateLimitGuard implements CanActivate {
@@ -31,13 +31,13 @@ export class RateLimitGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<Request>();
     const key = this.generateKey(request, context);
 
+    console.log('key', key);
+
     const rateLimitInfo = await this.storage.increment(
       key,
       Number(config.ttl),
       Number(config.limit),
     );
-
-    console.log('rateLimitInfo', rateLimitInfo);
 
     if (rateLimitInfo.remainingHits < 0) {
       throw new HttpException(

@@ -1,7 +1,6 @@
 // controllers/analytics.controller.ts
 import { CurrentUser, JwtAuthGuard } from '@microservices/common';
 import { AnalyticsProto } from '@microservices/proto';
-import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import {
   Controller,
   Get,
@@ -23,8 +22,10 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { RateLimit } from 'src/decorators/rate-limit.decorator';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
+// import { CustomCacheInterceptor } from '../interceptors/custom-cache.interceptor';
 
 /**
  * Controller handling analytics-related operations through gRPC communication
@@ -34,7 +35,7 @@ import { handleGrpcError } from '../utils/grpc-error.util';
 @ApiTags('Analytics')
 @ApiBearerAuth()
 @Controller('analytics')
-@UseInterceptors(CacheInterceptor)
+//@UseInterceptors(CustomCacheInterceptor) // TODO: FIX THIS CACHING
 @UseGuards(JwtAuthGuard)
 export class AnalyticsController implements OnModuleInit {
   private analyticsService: AnalyticsProto.AnalyticsServiceClient;
@@ -45,10 +46,15 @@ export class AnalyticsController implements OnModuleInit {
   ) {}
 
   public onModuleInit(): void {
+    console.log('Initializing analytics service...');
     this.analyticsService =
       this.client.getService<AnalyticsProto.AnalyticsServiceClient>(
         'AnalyticsService',
       );
+    console.log(
+      'Analytics service initialized:',
+      Boolean(this.analyticsService),
+    );
   }
 
   /**
@@ -56,8 +62,6 @@ export class AnalyticsController implements OnModuleInit {
    * @param user - Current authenticated user
    * @returns Promise<AnalyticsProto.Period[]> Array of available periods
    */
-  @Get('periods')
-  @CacheTTL(300000) // 5 minutes cache
   @ApiOperation({
     summary: 'Get analytics periods',
     description: 'Retrieves available analytics periods for the current user',
@@ -83,6 +87,7 @@ export class AnalyticsController implements OnModuleInit {
   })
   @ApiNotFoundResponse({ description: 'User not found or unauthorized' })
   @ApiInternalServerErrorResponse({ description: 'gRPC service error' })
+  @Get('periods')
   public async getPeriods(
     @CurrentUser() user: AnalyticsProto.User,
   ): Promise<readonly AnalyticsProto.Period[]> {
@@ -117,8 +122,6 @@ export class AnalyticsController implements OnModuleInit {
    * @param user - Current authenticated user
    * @returns Promise<AnalyticsProto.StatCardsResponse>
    */
-  @Get('stat-cards-values')
-  @CacheTTL(60000) // 1 minute cache
   @ApiOperation({
     summary: 'Get statistics card values',
     description:
@@ -153,6 +156,7 @@ export class AnalyticsController implements OnModuleInit {
   })
   @ApiNotFoundResponse({ description: 'Invalid parameters or unauthorized' })
   @ApiInternalServerErrorResponse({ description: 'gRPC service error' })
+  @Get('stat-cards-values')
   public async getStatCardsValues(
     @Query('month', new ParseIntPipe()) month: number,
     @Query('year', new ParseIntPipe()) year: number,
@@ -184,7 +188,6 @@ export class AnalyticsController implements OnModuleInit {
     }
   }
 
-  @Get('workflow-execution-stats')
   @ApiOperation({
     summary: 'Get workflow execution statistics',
     description:
@@ -206,6 +209,7 @@ export class AnalyticsController implements OnModuleInit {
     status: 200,
     description: 'Workflow execution statistics',
   })
+  @Get('workflow-execution-stats')
   public async getWorkflowExecutionStats(
     @Query('month', new ParseIntPipe()) month: number,
     @Query('year', new ParseIntPipe()) year: number,
@@ -242,7 +246,6 @@ export class AnalyticsController implements OnModuleInit {
     }
   }
 
-  @Get('used-credits-in-period')
   @ApiOperation({
     summary: 'Get used credits for period',
     description: 'Retrieves the amount of credits used in a specific period',
@@ -263,6 +266,7 @@ export class AnalyticsController implements OnModuleInit {
     status: 200,
     description: 'Credit usage statistics',
   })
+  @Get('used-credits-in-period')
   public async getUsedCreditsInPeriod(
     @Query('month', new ParseIntPipe()) month: number,
     @Query('year', new ParseIntPipe()) year: number,
@@ -304,8 +308,6 @@ export class AnalyticsController implements OnModuleInit {
    * @param user - Current authenticated user
    * @returns Promise<AnalyticsProto.DashboardStatsResponse>
    */
-  @Get('dashboard-stat-cards-values')
-  @CacheTTL(30000) // 30 seconds cache
   @ApiOperation({
     summary: 'Get dashboard statistics',
     description: 'Retrieves statistical values for the main dashboard',
@@ -324,6 +326,7 @@ export class AnalyticsController implements OnModuleInit {
   })
   @ApiNotFoundResponse({ description: 'User not found or unauthorized' })
   @ApiInternalServerErrorResponse({ description: 'gRPC service error' })
+  @Get('dashboard-stat-cards-values')
   public async getDashboardStatCardsValues(
     @CurrentUser() user: AnalyticsProto.User,
   ): Promise<Readonly<AnalyticsProto.DashboardStatsResponse>> {
@@ -351,7 +354,6 @@ export class AnalyticsController implements OnModuleInit {
     }
   }
 
-  @Get('favorited-table-content')
   @ApiOperation({
     summary: 'Get favorited components',
     description:
@@ -361,6 +363,7 @@ export class AnalyticsController implements OnModuleInit {
     status: 200,
     description: 'List of favorited components',
   })
+  @Get('favorited-table-content')
   public async getFavoritedTableContent(
     @CurrentUser() user: AnalyticsProto.User,
   ): Promise<AnalyticsProto.FavoritedContentResponse['components']> {

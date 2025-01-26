@@ -1,31 +1,15 @@
-import { type ThrottlerModuleOptions } from '@nestjs/throttler';
+import { registerAs } from '@nestjs/config';
 
-export const getRateLimitConfig = (): ThrottlerModuleOptions => ({
-  throttlers: [
-    {
-      name: 'default',
-      ttl: 60000, // 60 seconds
-      limit: 100,
+export const rateLimitConfig = registerAs('rateLimit', () => ({
+  global: {
+    ttl: parseInt(process.env.RATE_LIMIT_TTL ?? '60', 10),
+    limit: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS ?? '100', 10),
+  },
+  storage: {
+    type: process.env.RATE_LIMIT_STORAGE ?? 'memory',
+    redis: {
+      url: process.env.REDIS_URL ?? 'localhost',
+      token: process.env.REDIS_TOKEN ?? 'token',
     },
-  ],
-});
-
-export interface RateLimitConfig {
-  ttl: number;
-  limit: number;
-}
-
-export const rateLimitConfigs = {
-  default: {
-    ttl: 60000, // 60 seconds
-    limit: 100, // 10 requests per minute for defaults endpoints
   },
-  ai: {
-    ttl: 60000, // 60 seconds
-    limit: 5, // 100 requests per minute for ai related endpoints
-  },
-  health: {
-    ttl: 30000, // 30 seconds
-    limit: 10, // 10 requests per 30 seconds for health checks
-  },
-} as const;
+}));

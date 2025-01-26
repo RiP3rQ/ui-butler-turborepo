@@ -7,7 +7,6 @@ import {
   LocalAuthGuard,
 } from '@microservices/common';
 import { AuthProto } from '@microservices/proto';
-import { CacheInterceptor } from '@nestjs/cache-manager';
 import {
   Body,
   Controller,
@@ -18,7 +17,6 @@ import {
   Res,
   UnauthorizedException,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -167,7 +165,6 @@ export class AuthController {
    */
   @Post('refresh')
   @UseGuards(JwtRefreshAuthGuard)
-  @UseInterceptors(CacheInterceptor)
   @ApiOperation({
     summary: 'Refresh access token',
     description: 'Get new access token using refresh token',

@@ -6,7 +6,6 @@ import {
   LocalStrategy,
 } from '@microservices/common';
 import { DatabaseModule } from '@microservices/database';
-import { CacheModule } from '@nestjs/cache-manager';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
@@ -15,6 +14,7 @@ import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TerminusModule } from '@nestjs/terminus';
 import Joi from 'joi';
+import { RedisModule } from '@microservices/redis';
 import { createGrpcOptions } from './config/grpc.config';
 import { AnalyticsController } from './controllers/analytics.controller';
 import { AuthController } from './controllers/auth.controller';
@@ -32,22 +32,29 @@ import { MetricsModule } from './metrics/metrics.module';
 import { HelmetMiddleware } from './middlewares/helmet.middleware';
 import { AuthProxyService } from './proxies/auth.proxy.service';
 import { GrpcClientProxy } from './proxies/grpc-client.proxy';
-import { CustomCacheInterceptor } from './interceptors/custom-cache.interceptor';
-import { rateLimitConfig } from './throttling/rate-limit.config';
+// import { CustomCacheInterceptor } from './interceptors/custom-cache.interceptor';
+import { rateLimitConfig } from './config/rate-limit.config';
 import { RateLimitStorage } from './throttling/rate-limit-storage.abstract';
 import { RateLimitGuard } from './guards/throttle.guard';
 import { RedisStorage } from './throttling/memory-storage.service';
 
 @Module({
   imports: [
+    // DATABASE
     DatabaseModule,
-    ConfigModule.forRoot({ isGlobal: true }),
-    TerminusModule,
+    // REDIS - CACHING
+    RedisModule,
+    // LOGGER
     loggerConfig,
+    // TERMINUS - HEALTHCHECKS
+    TerminusModule,
+    // SCHEDULE
     ScheduleModule.forRoot(),
+    // PASSPORT
     PassportModule.register({
       defaultStrategy: 'jwt',
     }),
+    // CONFIG
     ConfigModule.forRoot({
       isGlobal: true,
       load: [rateLimitConfig],
@@ -79,7 +86,7 @@ import { RedisStorage } from './throttling/memory-storage.service';
           .default('redis'),
 
         REDIS_URL: Joi.string().default('localhost'),
-        REDIS_TOKEN: Joi.string().default('localhost'),
+        REDIS_TOKEN: Joi.string().default('token'),
       }),
     }),
     ClientsModule.registerAsync([
@@ -185,12 +192,6 @@ import { RedisStorage } from './throttling/memory-storage.service';
     HealthModule,
     // PROMETHEUS
     MetricsModule,
-    // CACHING SYSTEM
-    CacheModule.register({
-      ttl: 60000, // 1 minute default TTL
-      max: 10, // maximum number of items in cache
-      isGlobal: true,
-    }),
   ],
   controllers: [
     // ROUTE CONTROLLERS
@@ -230,7 +231,10 @@ import { RedisStorage } from './throttling/memory-storage.service';
     // gRPC CLIENT PROXY WITH RETRIES
     GrpcClientProxy,
     // CACHING
-    CustomCacheInterceptor,
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: CustomCacheInterceptor,
+    // },
   ],
 })
 export class ApiGatewayModule implements NestModule {

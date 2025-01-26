@@ -1,6 +1,5 @@
 import { CurrentUser, JwtAuthGuard } from '@microservices/common';
 import { UsersProto } from '@microservices/proto';
-import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 import {
   Body,
   Controller,
@@ -63,9 +62,6 @@ export class UsersController implements OnModuleInit {
   })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(CacheInterceptor)
-  @CacheKey(CACHE_KEY_ALL_USERS)
-  @CacheTTL(CACHE_TTL_30_SECONDS)
   @Get()
   public async getUsers(): Promise<UsersProto.GetUsersResponse> {
     try {
@@ -96,9 +92,7 @@ export class UsersController implements OnModuleInit {
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(CacheInterceptor)
-  @CacheKey(CACHE_KEY_USER_DETAIL)
-  @CacheTTL(CACHE_TTL_1_MINUTE)
+  // @UseInterceptors(CacheInterceptor) TODO: FIX THIS CACHING
   @SkipRateLimit()
   @Get('current-basic')
   public async getCurrentUser(

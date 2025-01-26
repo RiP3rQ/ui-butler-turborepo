@@ -5,7 +5,6 @@ import {
   type User,
 } from '@microservices/common';
 import { ExecutionProto } from '@microservices/proto';
-import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 import {
   Body,
   Controller,
@@ -17,7 +16,6 @@ import {
   ParseIntPipe,
   Post,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
 import {
@@ -31,9 +29,6 @@ import {
 import { RateLimit } from 'src/decorators/rate-limit.decorator';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
-
-const CACHE_TTL_1_MINUTE = 60000;
-const CACHE_KEY_PENDING_CHANGES = 'pending-changes';
 
 /**
  * Controller handling workflow execution operations through gRPC communication
@@ -103,9 +98,6 @@ export class ExecutionsController implements OnModuleInit {
   })
   @ApiResponse({ status: 404, description: 'User or execution not found' })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
-  @UseInterceptors(CacheInterceptor)
-  @CacheKey(CACHE_KEY_PENDING_CHANGES)
-  @CacheTTL(CACHE_TTL_1_MINUTE)
   @Get(':executionId/pending-changes')
   public async getPendingChanges(
     @CurrentUser() user: User,

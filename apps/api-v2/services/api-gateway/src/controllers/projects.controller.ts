@@ -1,6 +1,5 @@
 import { CurrentUser, JwtAuthGuard } from '@microservices/common';
 import { ProjectsProto } from '@microservices/proto';
-import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 import {
   Body,
   Controller,
@@ -12,7 +11,6 @@ import {
   ParseIntPipe,
   Post,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
 import {
@@ -25,9 +23,6 @@ import {
 } from '@nestjs/swagger';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
-
-const CACHE_TTL_5_MINUTES = 300000;
-const CACHE_KEY_PROJECTS = 'user-projects';
 
 /**
  * Controller handling project-related operations through gRPC communication
@@ -69,9 +64,7 @@ export class ProjectsController implements OnModuleInit {
   })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
-  @UseInterceptors(CacheInterceptor)
-  @CacheKey(CACHE_KEY_PROJECTS)
-  @CacheTTL(CACHE_TTL_5_MINUTES)
+  // @UseInterceptors(CacheInterceptor) TODO: FIX THIS CACHING
   @Get()
   public async getProjectsByUserId(
     @CurrentUser() user: ProjectsProto.User,

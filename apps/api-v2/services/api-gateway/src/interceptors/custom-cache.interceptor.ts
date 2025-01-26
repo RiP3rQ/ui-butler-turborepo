@@ -1,21 +1,18 @@
 // custom-cache.interceptor.ts
-
-import {
-  CACHE_KEY_METADATA,
-  CACHE_MANAGER,
-  CACHE_TTL_METADATA,
-} from '@nestjs/cache-manager';
+import crypto from 'node:crypto';
 import {
   CallHandler,
   ExecutionContext,
-  Injectable,
   Inject,
+  Injectable,
   NestInterceptor,
+  Scope,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { type Cache } from 'cache-manager';
+import { Redis } from '@upstash/redis';
 import { Observable, of, tap } from 'rxjs';
 import { Request } from 'express';
+import { REDIS_CONNECTION, RedisService } from '@microservices/redis';
 
 /** Prefix for all cache keys */
 export const CUSTOM_CACHE_KEY_PREFIX = 'custom_cache';
@@ -23,8 +20,8 @@ export const CUSTOM_CACHE_KEY_PREFIX = 'custom_cache';
 /** Metadata key to disable caching for specific routes */
 export const IGNORE_CACHE_KEY = 'ignoreCaching';
 
-/** Default TTL in milliseconds (5 minutes) */
-export const DEFAULT_CACHE_TTL = 300000;
+/** Default TTL in seconds (5 minutes) */
+export const DEFAULT_CACHE_TTL = 300;
 
 /** Interface for cache metrics */
 interface CacheMetrics {
@@ -35,64 +32,90 @@ interface CacheMetrics {
 }
 
 /**
- * Custom cache interceptor that provides caching functionality for HTTP requests
- * with support for user-specific caching and query parameters
+ * Custom cache interceptor that provides caching functionality using Redis
  */
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class CustomCacheInterceptor implements NestInterceptor {
-  /** Internal metrics storage */
+  private readonly redis: Redis;
   private readonly metrics: CacheMetrics[] = [];
+  private readonly isCacheEnabled: boolean;
 
   constructor(
-    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+    @Inject(REDIS_CONNECTION)
+    private readonly redisService: RedisService,
     private readonly reflector: Reflector,
-  ) {}
+  ) {
+    try {
+      this.redis = this.redisService.getClient();
+      this.isCacheEnabled = true;
+    } catch (error) {
+      console.warn('Cache disabled due to Redis connection issues');
+      this.isCacheEnabled = false;
+    }
+  }
 
   /**
    * Tracks cache metrics for monitoring and debugging purposes
    * @param metrics - Cache operation metrics
    */
-  private trackCacheMetrics(metrics: CacheMetrics): void {
+  private readonly trackCacheMetrics = (metrics: CacheMetrics): void => {
     this.metrics.push(metrics);
     console.debug(
       `Cache ${metrics.hit ? '!_HIT_!' : 'MISS'} - Key: ${metrics.key} - Duration: ${String(metrics.duration)}ms`,
     );
-  }
+  };
 
   /**
    * Generates a unique cache key based on the request context
-   * @param context - Execution context
-   * @param defaultKey - Optional override key
-   * @returns Generated cache key
    */
-  private generateCacheKey(
+  private readonly generateCacheKey = (
     context: ExecutionContext,
     defaultKey?: string,
-  ): string {
+  ): string => {
     const request = context.switchToHttp().getRequest<Request>();
-    // @ts-expect-error --- We get proper values from the request
-    const userId = String(request.user?.id ?? 'anonymous');
+    const user = request.user as { id: string } | undefined;
+    const userId = user?.id ?? 'anonymous';
     const path = request.path;
-    const queryString = new URLSearchParams(
-      request.query as Record<string, string>,
-    ).toString();
+    const version = process.env.API_VERSION ?? 'v1';
+
+    // Include cache-control directives
+    const cacheControl = request.headers['cache-control'];
+    if (cacheControl?.includes('no-store')) {
+      return '';
+    }
+
+    // Sort query params to ensure consistent cache keys
+    const queryParams = { ...request.query };
+    const sortedQueryString = Object.keys(queryParams)
+      .sort()
+      .map((key) => `${key}=${String(queryParams[key])}`)
+      .join('&');
 
     const keyParts = [
       CUSTOM_CACHE_KEY_PREFIX,
+      version,
+      this.reflector.get(CACHE_GROUP_METADATA, context.getHandler()),
       defaultKey ?? path,
+      request.method,
       `user:${userId}`,
-      queryString && `query:${queryString}`,
+      sortedQueryString && `query:${sortedQueryString}`,
+      // Include relevant headers that affect caching
+      request.headers['accept-language'],
+      request.headers.accept,
     ].filter(Boolean);
 
-    return keyParts.join(':');
-  }
+    const key = keyParts.join(':');
+    return key.length > 200
+      ? `${CUSTOM_CACHE_KEY_PREFIX}:${version}:${crypto.createHash('sha256').update(key).digest('hex')}`
+      : key;
+  };
 
   /**
    * Determines if the request should be cached
    * @param context - Execution context
    * @returns Boolean indicating if caching should be applied
    */
-  private shouldCache(context: ExecutionContext): boolean {
+  private readonly shouldCache = (context: ExecutionContext): boolean => {
     const request = context.switchToHttp().getRequest<Request>();
     if (request.method !== 'GET') {
       return false;
@@ -104,26 +127,7 @@ export class CustomCacheInterceptor implements NestInterceptor {
     );
 
     return !ignoreCaching;
-  }
-
-  /**
-   * Matches a string against a glob-like pattern
-   * @param str - String to match
-   * @param pattern - Pattern to match against
-   * @returns Boolean indicating if string matches pattern
-   */
-  private matchesPattern(str: string, pattern: string): boolean {
-    const regexPattern = pattern
-      .replace(/\*/g, '.*')
-      .replace(/\?/g, '.')
-      .replace(/\[!/g, '[^')
-      .replace(/\[/g, '[')
-      .replace(/\]/g, ']')
-      .replace(/\./g, '\\.');
-
-    const regex = new RegExp(`^${regexPattern}$`);
-    return regex.test(str);
-  }
+  };
 
   /**
    * Intercepts the request and handles caching logic
@@ -135,7 +139,7 @@ export class CustomCacheInterceptor implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler,
   ): Promise<Observable<unknown>> {
-    if (!this.shouldCache(context)) {
+    if (!this.isCacheEnabled || !this.shouldCache(context)) {
       return next.handle();
     }
 
@@ -146,15 +150,15 @@ export class CustomCacheInterceptor implements NestInterceptor {
     );
 
     try {
-      const cachedData = await this.cacheManager.get(key);
-      if (cachedData !== undefined) {
+      const cachedData = await this.redis.get(key);
+      if (cachedData !== null) {
         this.trackCacheMetrics({
           key,
           hit: true,
           duration: Date.now() - startTime,
           timestamp: Date.now(),
         });
-        return of(cachedData);
+        return of(JSON.parse(cachedData as string));
       }
 
       return next.handle().pipe(
@@ -164,7 +168,7 @@ export class CustomCacheInterceptor implements NestInterceptor {
               DEFAULT_CACHE_TTL,
           );
 
-          void this.cacheManager.set(key, response, ttl).then(() => {
+          void this.redis.setex(key, ttl, JSON.stringify(response)).then(() => {
             this.trackCacheMetrics({
               key,
               hit: false,
@@ -185,26 +189,32 @@ export class CustomCacheInterceptor implements NestInterceptor {
    * @param pattern - Pattern to match cache keys
    * @throws Error if cache invalidation fails
    */
-  public async invalidateCache(pattern: string): Promise<void> {
+  public readonly invalidateCache = async (pattern: string): Promise<void> => {
     try {
-      const store = this.cacheManager.store;
-      const allKeys = await store.keys();
+      let cursor = 0;
+      const matchingKeys: string[] = [];
 
-      const matchingKeys = allKeys.filter((key) =>
-        this.matchesPattern(key, pattern),
-      );
+      do {
+        const [nextCursor, keys] = await this.redis.scan(cursor, {
+          match: pattern,
+          count: 100,
+        });
+        cursor = Number(nextCursor);
+        matchingKeys.push(...keys);
+      } while (cursor !== 0);
 
       if (matchingKeys.length === 0) {
         console.debug(`No cache keys found matching pattern: ${pattern}`);
         return;
       }
 
-      console.debug(
-        `Found ${String(matchingKeys.length)} keys matching pattern: ${pattern}`,
-      );
-      console.debug('Matching keys:', matchingKeys);
+      // Delete keys in batches to prevent large single operations
+      const BATCH_SIZE = 100;
+      for (let i = 0; i < matchingKeys.length; i += BATCH_SIZE) {
+        const batch = matchingKeys.slice(i, i + BATCH_SIZE);
+        await this.redis.del(...batch);
+      }
 
-      await Promise.all(matchingKeys.map((key) => this.cacheManager.del(key)));
       console.debug(
         `Invalidated ${String(matchingKeys.length)} cache keys matching pattern: ${pattern}`,
       );
@@ -213,13 +223,94 @@ export class CustomCacheInterceptor implements NestInterceptor {
       console.error(errorMessage, error);
       throw new Error(errorMessage, { cause: error });
     }
-  }
+  };
 
   /**
    * Returns cache metrics for monitoring
    * @returns Array of cache metrics
    */
-  public getMetrics(): CacheMetrics[] {
+  public readonly getMetrics = (): CacheMetrics[] => {
     return [...this.metrics];
-  }
+  };
+
+  /**
+   * Invalidates all cache entries for a specific group
+   */
+  public readonly invalidateCacheGroup = async (
+    group: string,
+  ): Promise<void> => {
+    const pattern = `${CUSTOM_CACHE_KEY_PREFIX}:${group}:*`;
+    await this.invalidateCache(pattern);
+  };
+
+  /**
+   * Bulk get operation for multiple cache keys
+   */
+  public readonly mget = async (keys: string[]): Promise<(string | null)[]> => {
+    try {
+      return await this.redis.mget(...keys);
+    } catch (error) {
+      console.error('Bulk cache get error:', error);
+      return new Array<string | null>(keys.length).fill(null);
+    }
+  };
+
+  /**
+   * Bulk set operation for multiple cache entries
+   */
+  public readonly mset = async (
+    entries: { key: string; value: string; ttl: number }[],
+  ): Promise<void> => {
+    try {
+      const pipeline = this.redis.pipeline();
+
+      for (const { key, value, ttl } of entries) {
+        pipeline.setex(key, ttl, value);
+      }
+
+      await pipeline.exec();
+    } catch (error) {
+      console.error('Bulk cache set error:', error);
+    }
+  };
+
+  /**
+   * Pre-warms cache with provided data
+   */
+  public readonly warmupCache = async (
+    entries: { key: string; value: unknown; ttl: number }[],
+  ): Promise<void> => {
+    try {
+      const pipeline = this.redis.pipeline();
+
+      for (const { key, value, ttl } of entries) {
+        pipeline.setex(key, ttl, JSON.stringify(value));
+      }
+
+      await pipeline.exec();
+      console.debug(`Warmed up cache with ${String(entries.length)} entries`);
+    } catch (error) {
+      console.error('Cache warmup error:', error);
+    }
+  };
+
+  /**
+   * Checks cache health and connectivity
+   */
+  public readonly checkHealth = async (): Promise<boolean> => {
+    try {
+      const testKey = `${CUSTOM_CACHE_KEY_PREFIX}:health:${String(Date.now())}`;
+      await this.redis.setex(testKey, 10, 'health_check');
+      const value = await this.redis.get(testKey);
+      await this.redis.del(testKey);
+      return value === 'health_check';
+    } catch (error) {
+      console.error('Cache health check failed:', error);
+      return false;
+    }
+  };
 }
+
+export const CACHE_KEY_METADATA = 'cache_module:cache_key';
+export const CACHE_TTL_METADATA = 'cache_module:cache_ttl';
+export const CACHE_GROUP_METADATA = 'cache_module:cache_group';

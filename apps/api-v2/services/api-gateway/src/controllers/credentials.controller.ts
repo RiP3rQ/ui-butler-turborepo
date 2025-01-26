@@ -5,7 +5,6 @@ import {
   type User,
 } from '@microservices/common';
 import { UsersProto } from '@microservices/proto';
-import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 import {
   Body,
   Controller,
@@ -75,9 +74,7 @@ export class CredentialsController implements OnModuleInit {
   })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
-  @UseInterceptors(CacheInterceptor)
-  @CacheKey(CACHE_KEY_CREDENTIALS)
-  @CacheTTL(CACHE_TTL_15_MINUTES)
+  // @UseInterceptors(CacheInterceptor) TODO: FIX THIS CACHING
   @Get()
   public async getUserCredentials(
     @CurrentUser() user: User,

@@ -1,80 +1,97 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Redis } from '@upstash/redis';
+import { Inject, Injectable } from '@nestjs/common';
+import { REDIS_CONNECTION, RedisService } from '@microservices/redis';
+import type { Redis } from '@upstash/redis';
 import { RateLimitInfo } from './rate-limit.interface';
 import { RateLimitStorage } from './rate-limit-storage.abstract';
 
+const RATE_LIMIT_PREFIX = 'rate_limit';
+
 @Injectable()
-export class RedisStorage implements RateLimitStorage {
-  private readonly redis: Redis;
+export class RedisStorage extends RateLimitStorage {
+  private redis: Redis;
 
-  constructor(private readonly configService: ConfigService) {
-    const url = String(this.configService.getOrThrow('REDIS_URL'));
-    const token = String(this.configService.getOrThrow('REDIS_TOKEN'));
-
-    this.redis = new Redis({
-      url,
-      token,
-    });
+  constructor(
+    @Inject(REDIS_CONNECTION)
+    private readonly redisService: RedisService,
+  ) {
+    super();
+    try {
+      this.redis = this.redisService.getClient();
+      console.log('RateLimit RedisStorage initialized');
+    } catch (error) {
+      console.error('RateLimit RedisStorage initialization failed:', error);
+      throw error;
+    }
   }
 
-  /**
-   * Increments the hit count for a given key and returns the rate limit information
-   * @param {string} key - The key to increment the hit count for
-   * @param {number} ttl - The time to live in seconds
-   * @param {number} limit - The rate limit for the key
-   * @returns {Promise<RateLimitInfo>} The rate limit information
-   */
+  private getKey(key: string): string {
+    return `${RATE_LIMIT_PREFIX}:${key}`;
+  }
+
   public async increment(
     key: string,
     ttl: number,
     limit: number,
   ): Promise<RateLimitInfo> {
-    const pipeline = this.redis.pipeline();
+    const redisKey = this.getKey(key);
 
-    pipeline.incr(key);
-    pipeline.ttl(key);
+    try {
+      const pipeline = this.redis.pipeline();
 
-    const [hits, currentTtl] = await pipeline.exec<[number, number]>();
+      pipeline.incr(redisKey);
+      pipeline.ttl(redisKey);
 
-    if (currentTtl === -1) {
-      await this.redis.expire(key, ttl);
+      const [hits, currentTtl] = await pipeline.exec<[number, number]>();
+
+      if (currentTtl === -1) {
+        await this.redis.expire(redisKey, ttl);
+      }
+
+      return {
+        totalHits: hits,
+        remainingHits: limit - hits,
+        resetsIn: currentTtl === -1 ? ttl : currentTtl,
+      };
+    } catch (error) {
+      console.error(`Failed to increment rate limit for key ${key}:`, error);
+      // Return a conservative estimate on failure
+      return {
+        totalHits: limit,
+        remainingHits: 0,
+        resetsIn: ttl,
+      };
     }
-
-    return {
-      totalHits: hits,
-      remainingHits: limit - hits,
-      resetsIn: currentTtl === -1 ? ttl : currentTtl,
-    };
   }
 
-  /**
-   * Resets the hit count for a given key
-   * @param {string} key - The key to reset the hit count for
-   */
   public async reset(key: string): Promise<void> {
-    await this.redis.del(key);
+    try {
+      await this.redis.del(this.getKey(key));
+    } catch (error) {
+      console.error(`Failed to reset rate limit for key ${key}:`, error);
+    }
   }
 
-  /**
-   * Retrieves the rate limit information for a given key
-   * @param {string} key - The key to retrieve the rate limit information for
-   * @returns {Promise<RateLimitInfo | null>} The rate limit information or null if the key is not found
-   */
   public async get(key: string): Promise<RateLimitInfo | null> {
-    const pipeline = this.redis.pipeline();
+    const redisKey = this.getKey(key);
 
-    pipeline.get<string>(key);
-    pipeline.ttl(key);
+    try {
+      const pipeline = this.redis.pipeline();
 
-    const [hits, ttl] = await pipeline.exec<[string | null, number]>();
+      pipeline.get<string>(redisKey);
+      pipeline.ttl(redisKey);
 
-    if (!hits) return null;
+      const [hits, ttl] = await pipeline.exec<[string | null, number]>();
 
-    return {
-      totalHits: Number(hits),
-      remainingHits: 0,
-      resetsIn: ttl,
-    };
+      if (!hits) return null;
+
+      return {
+        totalHits: Number(hits),
+        remainingHits: 0,
+        resetsIn: ttl,
+      };
+    } catch (error) {
+      console.error(`Failed to get rate limit for key ${key}:`, error);
+      return null;
+    }
   }
 }
