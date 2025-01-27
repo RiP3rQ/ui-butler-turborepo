@@ -2,7 +2,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { REDIS_CONNECTION, RedisService } from '@microservices/redis';
 import { type CachedData } from './custom-cache.interceptor';
-import { CACHE_MANAGER } from './cache.tokens';
+import chalk from 'chalk';
 
 @Injectable()
 export class CacheService {
@@ -19,6 +19,13 @@ export class CacheService {
     paths: string[],
     userId?: string,
   ): Promise<void> {
+    console.log(
+      chalk.yellow('🔄 Cache Invalidation:'),
+      chalk.blue('Routes'),
+      chalk.gray(`[${paths.join(', ')}]`),
+      userId ? chalk.cyan(`for user: ${userId}`) : '',
+    );
+
     const client = this.redisService.getClient();
 
     for (const path of paths) {
@@ -26,7 +33,12 @@ export class CacheService {
         ? `cache:*:${path}:${userId}:*`
         : `cache:*:${path}:*`;
 
-      await this.deleteByPattern(pattern);
+      const deletedCount = await this.deleteByPattern(pattern);
+      console.log(
+        chalk.green('✓'),
+        chalk.gray(`Cleared ${deletedCount} cache entries for path:`),
+        chalk.white(path),
+      );
     }
   }
 
@@ -35,8 +47,19 @@ export class CacheService {
    * @param group - Cache group name
    */
   public async invalidateGroup(group: string): Promise<void> {
+    console.log(
+      chalk.yellow('🔄 Cache Invalidation:'),
+      chalk.blue('Group'),
+      chalk.gray(group),
+    );
+
     const pattern = `cache:${group}:*:*`;
-    await this.deleteByPattern(pattern);
+    const deletedCount = await this.deleteByPattern(pattern);
+    console.log(
+      chalk.green('✓'),
+      chalk.gray(`Cleared ${deletedCount} cache entries from group:`),
+      chalk.white(group),
+    );
   }
 
   /**
@@ -44,7 +67,26 @@ export class CacheService {
    * @param groups - Array of cache group names
    */
   public async invalidateGroups(groups: string[]): Promise<void> {
-    await Promise.all(groups.map((group) => this.invalidateGroup(group)));
+    console.log(
+      chalk.yellow('🔄 Cache Invalidation:'),
+      chalk.blue('Groups'),
+      chalk.gray(`[${groups.join(', ')}]`),
+    );
+
+    const results = await Promise.all(
+      groups.map(async (group) => {
+        const deletedCount = await this.invalidateGroup(group);
+        return { group, deletedCount };
+      }),
+    );
+
+    results.forEach(({ group, deletedCount }) => {
+      console.log(
+        chalk.green('✓'),
+        chalk.gray(`Cleared ${deletedCount} cache entries from group:`),
+        chalk.white(group),
+      );
+    });
   }
 
   /**
@@ -56,20 +98,42 @@ export class CacheService {
     userId: string,
     groups?: string[],
   ): Promise<void> {
+    console.log(
+      chalk.yellow('🔄 Cache Invalidation:'),
+      chalk.blue('User Cache'),
+      chalk.cyan(`ID: ${userId}`),
+      groups ? chalk.gray(`Groups: [${groups.join(', ')}]`) : '',
+    );
+
     const pattern = groups
       ? groups.map((group) => `cache:${group}:*:${userId}:*`)
       : [`cache:*:*:${userId}:*`];
 
-    await Promise.all(pattern.map((p) => this.deleteByPattern(p)));
+    const results = await Promise.all(
+      pattern.map(async (p) => {
+        const deletedCount = await this.deleteByPattern(p);
+        return { pattern: p, deletedCount };
+      }),
+    );
+
+    results.forEach(({ pattern: p, deletedCount }) => {
+      console.log(
+        chalk.green('✓'),
+        chalk.gray(`Cleared ${deletedCount} cache entries matching pattern:`),
+        chalk.white(p),
+      );
+    });
   }
 
   /**
    * Invalidates cache by pattern
    * @param pattern - Redis key pattern
+   * @returns number of deleted keys
    */
-  private async deleteByPattern(pattern: string): Promise<void> {
+  private async deleteByPattern(pattern: string): Promise<number> {
     const client = this.redisService.getClient();
     let cursor = '0';
+    let totalDeleted = 0;
 
     do {
       const [nextCursor, keys] = await client.scan(cursor, {
@@ -79,10 +143,13 @@ export class CacheService {
 
       if (keys.length > 0) {
         await client.del(...keys);
+        totalDeleted += keys.length;
       }
 
       cursor = nextCursor;
     } while (cursor !== '0');
+
+    return totalDeleted;
   }
 
   /**
@@ -90,9 +157,16 @@ export class CacheService {
    * @param maxAge - Maximum age in milliseconds
    */
   public async invalidateOld(maxAge: number): Promise<void> {
+    console.log(
+      chalk.yellow('🔄 Cache Invalidation:'),
+      chalk.blue('Old Cache'),
+      chalk.gray(`Older than ${maxAge}ms`),
+    );
+
     const client = this.redisService.getClient();
     const now = Date.now();
     let cursor = '0';
+    let totalDeleted = 0;
 
     do {
       const [nextCursor, keys] = await client.scan(cursor, {
@@ -107,14 +181,22 @@ export class CacheService {
             const cached = JSON.parse(JSON.stringify(value)) as CachedData;
             if (now - cached.timestamp > maxAge) {
               await client.del(key);
+              totalDeleted++;
             }
           } catch (error) {
             await client.del(key); // Delete if can't parse
+            totalDeleted++;
           }
         }
       }
 
       cursor = nextCursor;
     } while (cursor !== '0');
+
+    console.log(
+      chalk.green('✓'),
+      chalk.gray(`Cleared ${totalDeleted} expired cache entries`),
+      chalk.white(`(older than ${maxAge}ms)`),
+    );
   }
 }

@@ -12,6 +12,7 @@ import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { REDIS_CONNECTION, RedisService } from '@microservices/redis';
 import { Request } from 'express';
+import chalk from 'chalk';
 import {
   CACHE_GROUP_METADATA,
   CACHE_SKIP_METADATA,
@@ -97,7 +98,7 @@ export class CustomCacheInterceptor implements NestInterceptor {
       const config = this.getCacheConfig(context);
 
       if (this.shouldSkipCache(context, config)) {
-        this.debugLog('Cache skipped', { config });
+        this.debugLog('⏭️ Cache skipped', { config });
         return next.handle();
       }
 
@@ -113,7 +114,7 @@ export class CustomCacheInterceptor implements NestInterceptor {
         debugInfo.hit = true;
 
         this.debugLog('🎯 Cache hit', {
-          ...debugInfo,
+          key: debugInfo.key,
           timing: `${debugInfo.timing.duration.toFixed(2)}ms`,
           metadata: cachedValue.metadata,
         });
@@ -122,7 +123,7 @@ export class CustomCacheInterceptor implements NestInterceptor {
       }
 
       debugInfo.hit = false;
-      this.debugLog('❌ Cache miss', { key: cacheKey });
+      this.debugLog('🔍 Cache miss', { key: cacheKey });
 
       return next.handle().pipe(
         tap({
@@ -135,9 +136,10 @@ export class CustomCacheInterceptor implements NestInterceptor {
               generationTime,
             })
               .then(() => {
-                this.debugLog('🔄 Cache updated', {
+                this.debugLog('✨ Cache updated', {
                   key: cacheKey,
                   timing: `${generationTime.toFixed(2)}ms`,
+                  ttl: `${config.ttl}s`,
                 });
               })
               .catch((error: unknown) => {
@@ -291,12 +293,12 @@ export class CustomCacheInterceptor implements NestInterceptor {
 
       await client.setex(key, ttl, JSON.stringify(cacheData));
 
-      this.debugLog('Cache set', {
+      this.debugLog('💾 Cache set', {
         key,
-        ttl,
+        ttl: `${ttl}s`,
         size: `${(serializedValue.length / 1024).toFixed(2)}KB`,
         generationTime: metadata.generationTime
-          ? `${metadata.generationTime.toFixed(2)}ms`
+          ? `${metadata.generationTime.toFixed(2)}`
           : undefined,
       });
     } catch (error) {
@@ -311,10 +313,47 @@ export class CustomCacheInterceptor implements NestInterceptor {
    */
   private debugLog(message: string, context?: Record<string, unknown>): void {
     if (this.isDebugMode) {
-      console.log(
-        `\x1b[36m[Cache]\x1b[0m ${message}`,
-        context ? JSON.stringify(context, null, 2) : '',
-      );
+      console.log(chalk.cyan('📦 [Cache]'), chalk.white(message));
+
+      if (context) {
+        const output: Record<string, unknown> = {};
+
+        // Format each field with appropriate color
+        if ('key' in context) output.key = chalk.cyan(String(context.key));
+        if ('timing' in context)
+          output.timing = chalk.yellow(String(context.timing));
+        if ('ttl' in context) output.ttl = chalk.blue(String(context.ttl));
+        if ('size' in context) output.size = chalk.yellow(String(context.size));
+        if ('metadata' in context) {
+          const metadata = context.metadata as Record<string, unknown>;
+          output.metadata = {
+            generationTime: metadata.generationTime
+              ? chalk.gray(`${metadata.generationTime}ms`)
+              : undefined,
+            size: metadata.size ? chalk.yellow(`${metadata.size}B`) : undefined,
+          };
+        }
+        if ('config' in context) output.config = context.config;
+
+        // Print each field on a new line with proper indentation
+        console.log('{');
+        Object.entries(output).forEach(([key, value]) => {
+          if (key === 'metadata' && value && typeof value === 'object') {
+            console.log(`  "${key}": {`);
+            Object.entries(value as Record<string, unknown>).forEach(
+              ([mKey, mValue]) => {
+                if (mValue !== undefined) {
+                  console.log(`    "${mKey}": ${mValue}`);
+                }
+              },
+            );
+            console.log('  }');
+          } else {
+            console.log(`  "${key}": ${value}`);
+          }
+        });
+        console.log('}');
+      }
     }
   }
 
@@ -326,11 +365,13 @@ export class CustomCacheInterceptor implements NestInterceptor {
   private logError(message: string, error: unknown): void {
     const errorMessage = error instanceof Error ? error.message : String(error);
     const errorStack = error instanceof Error ? error.stack : undefined;
+    const formattedStack = errorStack ? `\n${chalk.gray(errorStack)}` : '';
 
     if (this.isDebugMode) {
       console.error(
-        `\x1b[31m[Cache Error]\x1b[0m ${message}: ${errorMessage}`,
-        errorStack,
+        chalk.red('❌ [Cache Error]'),
+        chalk.white(message + ': ' + errorMessage),
+        formattedStack,
       );
     } else {
       this.logger.error(`[Cache] ${message}: ${errorMessage}`, errorStack);
