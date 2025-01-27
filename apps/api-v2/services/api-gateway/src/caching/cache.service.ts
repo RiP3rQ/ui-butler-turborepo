@@ -1,7 +1,6 @@
 // cache.service.ts
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { REDIS_CONNECTION, RedisService } from '@microservices/redis';
-// @ts-expect-error chalk is not a module
 import chalk from 'chalk';
 import { type CachedData } from './custom-cache.interceptor';
 

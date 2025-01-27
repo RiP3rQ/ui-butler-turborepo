@@ -12,13 +12,12 @@ import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { RedisService } from '@microservices/redis';
 import { Request } from 'express';
-// @ts-expect-error chalk is not a module
 import chalk from 'chalk';
 import {
   CACHE_GROUP_METADATA,
   CACHE_SKIP_METADATA,
-  CACHE_TTL_METADATA,
   CACHE_TTL,
+  CACHE_TTL_METADATA,
 } from './cache.decorator';
 
 type CacheTTLValues = (typeof CACHE_TTL)[keyof typeof CACHE_TTL];
