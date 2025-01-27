@@ -35,7 +35,7 @@ import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
 import { CACHE_TTL, CacheGroup, CacheTTL } from '../caching/cache.decorator';
 import { CustomCacheInterceptor } from '../caching/custom-cache.interceptor';
-import type { CacheService } from '../caching/cache.service';
+import { CacheService } from '../caching/cache.service';
 
 /**
 /**
@@ -55,14 +55,9 @@ export class CredentialsController implements OnModuleInit {
   constructor(
     @Inject('USERS_SERVICE') private readonly client: ClientGrpc,
     private readonly grpcClient: GrpcClientProxy,
+    @Inject(CacheService)
     private readonly cacheService: CacheService,
-  ) {
-    console.log('Dependencies:', {
-      client: !!client,
-      grpcClient: !!grpcClient,
-      cacheService: !!cacheService,
-    });
-  }
+  ) {}
 
   public onModuleInit(): void {
     this.usersService =

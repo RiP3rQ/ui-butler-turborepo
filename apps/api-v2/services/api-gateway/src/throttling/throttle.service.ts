@@ -7,7 +7,7 @@ import { RateLimitStorage } from './rate-limit-storage.abstract';
 const RATE_LIMIT_PREFIX = 'rate_limit';
 
 @Injectable()
-export class RedisStorage extends RateLimitStorage {
+export class ThrottleService extends RateLimitStorage {
   private redis: Redis;
 
   constructor(

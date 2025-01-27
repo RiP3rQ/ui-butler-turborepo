@@ -7,7 +7,7 @@ import {
   Logger,
   NestInterceptor,
 } from '@nestjs/common';
-import { type Reflector } from '@nestjs/core';
+import { Reflector } from '@nestjs/core';
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { REDIS_CONNECTION, RedisService } from '@microservices/redis';
@@ -18,8 +18,6 @@ import {
   CACHE_TTL_METADATA,
   CACHE_TTL,
 } from './cache.decorator';
-import type { CacheManager } from './cache-manager.service';
-import { CACHE_MANAGER } from './cache.tokens';
 
 type CacheTTLValues = (typeof CACHE_TTL)[keyof typeof CACHE_TTL];
 
@@ -70,11 +68,10 @@ export class CustomCacheInterceptor implements NestInterceptor {
   private readonly isDebugMode: boolean = process.env.NODE_ENV !== 'production';
 
   constructor(
+    @Inject(Reflector)
+    private readonly reflector: Reflector,
     @Inject(REDIS_CONNECTION)
     private readonly redisService: RedisService,
-    @Inject(CACHE_MANAGER)
-    private readonly cacheManager: CacheManager,
-    private readonly reflector: Reflector,
   ) {
     this.debugLog('Cache interceptor initialized', { debug: this.isDebugMode });
   }
@@ -305,14 +302,6 @@ export class CustomCacheInterceptor implements NestInterceptor {
     } catch (error) {
       this.logError('Failed to set cached value', error);
     }
-  }
-
-  /**
-   * Clears all cache entries for a group
-   * @param group - Cache group to clear
-   */
-  public async clearCacheGroup(group: string): Promise<void> {
-    await this.cacheManager.clearCacheGroup(group);
   }
 
   /**

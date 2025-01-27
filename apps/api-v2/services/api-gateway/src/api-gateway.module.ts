@@ -34,10 +34,10 @@ import { AuthProxyService } from './proxies/auth.proxy.service';
 import { GrpcClientProxy } from './proxies/grpc-client.proxy';
 import { CustomCacheInterceptor } from './caching/custom-cache.interceptor';
 import { rateLimitConfig } from './config/rate-limit.config';
-import { RateLimitStorage } from './throttling/rate-limit-storage.abstract';
-import { RateLimitGuard } from './throttling/throttle.guard';
-import { RedisStorage } from './throttling/memory-storage.service';
 import { CacheModule } from './caching/cache.module';
+import { ThrottleModule } from './throttling/throttle.module';
+import { ThrottleGuard } from './throttling/throttle.guard';
+import { Reflector } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -47,6 +47,8 @@ import { CacheModule } from './caching/cache.module';
     RedisModule,
     // CACHING MODULE
     CacheModule,
+    // THROTTLING MODULE
+    ThrottleModule,
     // LOGGER
     loggerConfig,
     // TERMINUS - HEALTHCHECKS
@@ -211,32 +213,32 @@ import { CacheModule } from './caching/cache.module';
   providers: [
     // AUTH PROXY
     AuthProxyService,
+
     // ERROR INTERCEPTOR
     {
       provide: APP_INTERCEPTOR,
       useClass: ErrorInterceptor,
     },
-    // THROTTLER - RATE LIMITING
-    {
-      provide: RateLimitStorage,
-      useClass: RedisStorage, // or MemoryStorage
-    },
-    {
-      provide: APP_GUARD,
-      useClass: RateLimitGuard,
-    },
+
     // Register all strategies
     LocalStrategy,
-    JwtStrategy,
-    JwtRefreshStrategy,
     GoogleStrategy,
     GithubStrategy,
+    JwtStrategy,
+    JwtRefreshStrategy,
+
+    // THROTTLER - RATE LIMITING
+    {
+      provide: APP_GUARD,
+      useClass: ThrottleGuard,
+    },
+
     // CACHING ------------------
-    CustomCacheInterceptor,
     {
       provide: APP_INTERCEPTOR,
-      useExisting: CustomCacheInterceptor,
+      useClass: CustomCacheInterceptor,
     },
+
     // gRPC CLIENT PROXY WITH RETRIES
     GrpcClientProxy,
     {

@@ -26,7 +26,7 @@ import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
 import { CACHE_TTL, CacheGroup, CacheTTL } from 'src/caching/cache.decorator';
 import { CustomCacheInterceptor } from 'src/caching/custom-cache.interceptor';
-import type { CacheService } from 'src/caching/cache.service';
+import { CacheService } from 'src/caching/cache.service';
 
 /**
  * Controller handling project-related operations through gRPC communication
@@ -45,6 +45,7 @@ export class ProjectsController implements OnModuleInit {
   constructor(
     @Inject('PROJECTS_SERVICE') private readonly client: ClientGrpc,
     private readonly grpcClient: GrpcClientProxy,
+    @Inject(CacheService)
     private readonly cacheService: CacheService,
   ) {}
 

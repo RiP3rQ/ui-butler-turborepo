@@ -45,7 +45,7 @@ import {
   CacheTTL,
   SkipCache,
 } from '../caching/cache.decorator';
-import type { CacheService } from 'src/caching/cache.service';
+import { CacheService } from 'src/caching/cache.service';
 
 /**
  * Controller handling workflow-related operations through gRPC communication
@@ -64,6 +64,7 @@ export class WorkflowsController implements OnModuleInit {
   constructor(
     @Inject('WORKFLOWS_SERVICE') private readonly client: ClientGrpc,
     private readonly grpcClient: GrpcClientProxy,
+    @Inject(CacheService)
     private readonly cacheService: CacheService,
   ) {}
 
