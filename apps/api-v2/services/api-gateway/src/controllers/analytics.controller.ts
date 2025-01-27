@@ -1,7 +1,6 @@
 // controllers/analytics.controller.ts
 import { CurrentUser, JwtAuthGuard } from '@microservices/common';
 import { AnalyticsProto } from '@microservices/proto';
-import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import {
   Controller,
   Get,
@@ -10,7 +9,9 @@ import {
   OnModuleInit,
   ParseIntPipe,
   Query,
+  SetMetadata,
   UseGuards,
+  Logger,
   UseInterceptors,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
@@ -23,8 +24,15 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { CustomCacheInterceptor } from '../caching/custom-cache.interceptor';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
+import {
+  CACHE_TTL,
+  CACHE_TTL_METADATA,
+  CacheGroup,
+} from '../caching/cache.decorator';
+// import { CustomCacheInterceptor } from '../interceptors/custom-cache.interceptor';
 
 /**
  * Controller handling analytics-related operations through gRPC communication
@@ -34,10 +42,12 @@ import { handleGrpcError } from '../utils/grpc-error.util';
 @ApiTags('Analytics')
 @ApiBearerAuth()
 @Controller('analytics')
-@UseInterceptors(CacheInterceptor)
 @UseGuards(JwtAuthGuard)
+@CacheGroup('analytics')
+@UseInterceptors(CustomCacheInterceptor)
 export class AnalyticsController implements OnModuleInit {
   private analyticsService: AnalyticsProto.AnalyticsServiceClient;
+  private readonly logger = new Logger(AnalyticsController.name);
 
   constructor(
     @Inject('ANALYTICS_SERVICE') private readonly client: ClientGrpc,
@@ -45,10 +55,15 @@ export class AnalyticsController implements OnModuleInit {
   ) {}
 
   public onModuleInit(): void {
-    this.analyticsService =
-      this.client.getService<AnalyticsProto.AnalyticsServiceClient>(
-        'AnalyticsService',
-      );
+    try {
+      this.analyticsService =
+        this.client.getService<AnalyticsProto.AnalyticsServiceClient>(
+          'AnalyticsService',
+        );
+    } catch (error) {
+      console.error('Failed to initialize analytics service:', error);
+      throw error; // This will prevent the application from starting if service init fails
+    }
   }
 
   /**
@@ -56,8 +71,6 @@ export class AnalyticsController implements OnModuleInit {
    * @param user - Current authenticated user
    * @returns Promise<AnalyticsProto.Period[]> Array of available periods
    */
-  @Get('periods')
-  @CacheTTL(300000) // 5 minutes cache
   @ApiOperation({
     summary: 'Get analytics periods',
     description: 'Retrieves available analytics periods for the current user',
@@ -83,6 +96,7 @@ export class AnalyticsController implements OnModuleInit {
   })
   @ApiNotFoundResponse({ description: 'User not found or unauthorized' })
   @ApiInternalServerErrorResponse({ description: 'gRPC service error' })
+  @Get('periods')
   public async getPeriods(
     @CurrentUser() user: AnalyticsProto.User,
   ): Promise<readonly AnalyticsProto.Period[]> {
@@ -117,8 +131,6 @@ export class AnalyticsController implements OnModuleInit {
    * @param user - Current authenticated user
    * @returns Promise<AnalyticsProto.StatCardsResponse>
    */
-  @Get('stat-cards-values')
-  @CacheTTL(60000) // 1 minute cache
   @ApiOperation({
     summary: 'Get statistics card values',
     description:
@@ -153,6 +165,8 @@ export class AnalyticsController implements OnModuleInit {
   })
   @ApiNotFoundResponse({ description: 'Invalid parameters or unauthorized' })
   @ApiInternalServerErrorResponse({ description: 'gRPC service error' })
+  @SetMetadata(CACHE_TTL_METADATA, CACHE_TTL.ONE_MINUTE)
+  @Get('stat-cards-values')
   public async getStatCardsValues(
     @Query('month', new ParseIntPipe()) month: number,
     @Query('year', new ParseIntPipe()) year: number,
@@ -184,7 +198,6 @@ export class AnalyticsController implements OnModuleInit {
     }
   }
 
-  @Get('workflow-execution-stats')
   @ApiOperation({
     summary: 'Get workflow execution statistics',
     description:
@@ -206,6 +219,8 @@ export class AnalyticsController implements OnModuleInit {
     status: 200,
     description: 'Workflow execution statistics',
   })
+  @Get('workflow-execution-stats')
+  @SetMetadata(CACHE_TTL_METADATA, CACHE_TTL.ONE_MINUTE)
   public async getWorkflowExecutionStats(
     @Query('month', new ParseIntPipe()) month: number,
     @Query('year', new ParseIntPipe()) year: number,
@@ -242,7 +257,6 @@ export class AnalyticsController implements OnModuleInit {
     }
   }
 
-  @Get('used-credits-in-period')
   @ApiOperation({
     summary: 'Get used credits for period',
     description: 'Retrieves the amount of credits used in a specific period',
@@ -263,6 +277,8 @@ export class AnalyticsController implements OnModuleInit {
     status: 200,
     description: 'Credit usage statistics',
   })
+  @Get('used-credits-in-period')
+  @SetMetadata(CACHE_TTL_METADATA, CACHE_TTL.ONE_MINUTE)
   public async getUsedCreditsInPeriod(
     @Query('month', new ParseIntPipe()) month: number,
     @Query('year', new ParseIntPipe()) year: number,
@@ -304,8 +320,6 @@ export class AnalyticsController implements OnModuleInit {
    * @param user - Current authenticated user
    * @returns Promise<AnalyticsProto.DashboardStatsResponse>
    */
-  @Get('dashboard-stat-cards-values')
-  @CacheTTL(30000) // 30 seconds cache
   @ApiOperation({
     summary: 'Get dashboard statistics',
     description: 'Retrieves statistical values for the main dashboard',
@@ -324,14 +338,16 @@ export class AnalyticsController implements OnModuleInit {
   })
   @ApiNotFoundResponse({ description: 'User not found or unauthorized' })
   @ApiInternalServerErrorResponse({ description: 'gRPC service error' })
+  @SetMetadata(CACHE_TTL_METADATA, CACHE_TTL.ONE_MINUTE)
+  @Get('dashboard-stat-cards-values')
   public async getDashboardStatCardsValues(
     @CurrentUser() user: AnalyticsProto.User,
   ): Promise<Readonly<AnalyticsProto.DashboardStatsResponse>> {
-    if (!user.id) {
-      throw new NotFoundException('User not found or unauthorized');
-    }
-
     try {
+      if (!user.id) {
+        throw new NotFoundException('User not found or unauthorized');
+      }
+
       const request: AnalyticsProto.DashboardStatsRequest = {
         $type: 'api.analytics.DashboardStatsRequest',
         user: {
@@ -347,11 +363,11 @@ export class AnalyticsController implements OnModuleInit {
       );
       return Object.freeze(response);
     } catch (error) {
+      this.logger.error('Failed to get dashboard stats:', error);
       handleGrpcError(error);
     }
   }
 
-  @Get('favorited-table-content')
   @ApiOperation({
     summary: 'Get favorited components',
     description:
@@ -361,6 +377,8 @@ export class AnalyticsController implements OnModuleInit {
     status: 200,
     description: 'List of favorited components',
   })
+  @SetMetadata(CACHE_TTL_METADATA, CACHE_TTL.FIVE_MINUTES)
+  @Get('favorited-table-content')
   public async getFavoritedTableContent(
     @CurrentUser() user: AnalyticsProto.User,
   ): Promise<AnalyticsProto.FavoritedContentResponse['components']> {

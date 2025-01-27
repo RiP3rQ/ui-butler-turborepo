@@ -11,6 +11,7 @@ export class AnalyticsController {
   public async getPeriods(
     request: AnalyticsProto.GetPeriodsRequest,
   ): Promise<AnalyticsProto.GetPeriodsResponse> {
+    console.log('getPeriods', request);
     if (!request.user) {
       throw new Error('User is required');
     }
@@ -27,6 +28,7 @@ export class AnalyticsController {
   public async getStatCardsValues(
     request: AnalyticsProto.StatCardsRequest,
   ): Promise<AnalyticsProto.StatCardsResponse> {
+    console.log('getStatCardsValues', request);
     if (!request.user) {
       throw new Error('User is required');
     }
@@ -44,6 +46,7 @@ export class AnalyticsController {
   public async getWorkflowExecutionStats(
     request: AnalyticsProto.WorkflowStatsRequest,
   ): Promise<AnalyticsProto.WorkflowStatsResponse> {
+    console.log('getWorkflowExecutionStats', request);
     if (!request.user) {
       throw new Error('User is required');
     }
@@ -64,6 +67,7 @@ export class AnalyticsController {
   public async getUsedCreditsInPeriod(
     request: AnalyticsProto.UsedCreditsRequest,
   ): Promise<AnalyticsProto.UsedCreditsResponse> {
+    console.log('getUsedCreditsInPeriod', request);
     if (!request.user) {
       throw new Error('User is required');
     }
@@ -84,6 +88,7 @@ export class AnalyticsController {
   public async getDashboardStatCardsValues(
     request: AnalyticsProto.DashboardStatsRequest,
   ): Promise<AnalyticsProto.DashboardStatsResponse> {
+    console.log('getDashboardStatCardsValues', request);
     if (!request.user) {
       throw new Error('User is required');
     }
@@ -99,6 +104,7 @@ export class AnalyticsController {
   public async getFavoritedTableContent(
     request: AnalyticsProto.FavoritedContentRequest,
   ): Promise<AnalyticsProto.FavoritedContentResponse> {
+    console.log('getFavoritedTableContent', request);
     if (!request.user) {
       throw new Error('User is required');
     }

@@ -33,12 +33,12 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Throttle } from '@nestjs/throttler';
 import { codeTypeValues } from '@shared/types';
 import { type Request, type Response } from 'express';
 import HttpProxy from 'http-proxy';
 import type { ClientGrpc } from '@nestjs/microservices';
-import { rateLimitConfigs } from '../config/rate-limit.config';
+// import { rateLimitConfigs } from '../config/rate-limit.config';
+import { RateLimit } from '../throttling/rate-limit.decorator';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
 
@@ -352,7 +352,11 @@ export class ComponentsController implements OnModuleInit {
     description: 'Code generated successfully',
     type: 'ComponentsProto.Component',
   })
-  @Throttle({ ai: rateLimitConfigs.ai })
+  @RateLimit({
+    ttl: 60,
+    limit: 10,
+    errorMessage: 'Too many generate code requests. Try again in 1 minute.',
+  })
   @Post('/generate-code')
   public async generateCodeBasedOnType(
     @CurrentUser() user: ComponentsProto.User,

@@ -1,6 +1,5 @@
 import { CurrentUser, JwtAuthGuard } from '@microservices/common';
 import { UsersProto } from '@microservices/proto';
-import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 import {
   Body,
   Controller,
@@ -20,14 +19,11 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Throttle } from '@nestjs/throttler';
+import { SkipRateLimit } from '../throttling/rate-limit.decorator';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
-
-const CACHE_TTL_30_SECONDS = 30000;
-const CACHE_TTL_1_MINUTE = 60000;
-const CACHE_KEY_ALL_USERS = 'users:all';
-const CACHE_KEY_USER_DETAIL = 'users:detail';
+import { CACHE_TTL, CacheGroup, CacheTTL } from 'src/caching/cache.decorator';
+import { CustomCacheInterceptor } from 'src/caching/custom-cache.interceptor';
 
 /**
  * Controller handling user-related operations through gRPC communication
@@ -37,6 +33,8 @@ const CACHE_KEY_USER_DETAIL = 'users:detail';
 @ApiTags('Users')
 @ApiBearerAuth()
 @Controller('users')
+@UseInterceptors(CustomCacheInterceptor)
+@CacheGroup('users')
 export class UsersController implements OnModuleInit {
   private usersService: UsersProto.UsersServiceClient;
 
@@ -63,9 +61,6 @@ export class UsersController implements OnModuleInit {
   })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(CacheInterceptor)
-  @CacheKey(CACHE_KEY_ALL_USERS)
-  @CacheTTL(CACHE_TTL_30_SECONDS)
   @Get()
   public async getUsers(): Promise<UsersProto.GetUsersResponse> {
     try {
@@ -96,9 +91,8 @@ export class UsersController implements OnModuleInit {
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(CacheInterceptor)
-  @CacheKey(CACHE_KEY_USER_DETAIL)
-  @CacheTTL(CACHE_TTL_1_MINUTE)
+  @CacheTTL(CACHE_TTL.FIFTEEN_MINUTES)
+  @SkipRateLimit()
   @Get('current-basic')
   public async getCurrentUser(
     @CurrentUser() user: UsersProto.User,
@@ -139,7 +133,6 @@ export class UsersController implements OnModuleInit {
     type: JSON.stringify(UsersProto.Profile),
   })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
-  @Throttle({ default: { ttl: 60000, limit: 2 } }) // 2 requests per minute
   @Post('profile')
   public async createProfile(
     @Body() createProfileDto: UsersProto.CreateProfileDto,
@@ -172,7 +165,6 @@ export class UsersController implements OnModuleInit {
     type: JSON.stringify(UsersProto.User),
   })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
-  @Throttle({ default: { ttl: 300000, limit: 3 } }) // 3 requests per 5 minutes
   @Post()
   public async createUser(
     @Body() createUserDto: UsersProto.CreateUserDto,

@@ -9,7 +9,6 @@ import {
   type User,
 } from '@microservices/common';
 import { WorkflowsProto } from '@microservices/proto';
-import { CacheTTL, CACHE_MANAGER, CacheKey } from '@nestjs/cache-manager';
 import {
   Body,
   Controller,
@@ -25,7 +24,6 @@ import {
   Query,
   UseGuards,
   UseInterceptors,
-  SetMetadata,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
 import {
@@ -37,19 +35,17 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Throttle } from '@nestjs/throttler';
-import { type Cache } from 'cache-manager';
+import { RateLimit } from '../throttling/rate-limit.decorator';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
+import { CustomCacheInterceptor } from 'src/caching/custom-cache.interceptor';
 import {
-  CUSTOM_CACHE_KEY_PREFIX,
-  CustomCacheInterceptor,
-  IGNORE_CACHE_KEY,
-} from '../interceptors/custom-cache.interceptor';
-
-const CACHE_TTL_1_MINUTE = 60000;
-const CACHE_TTL_5_MINUTES = 300000;
-const CACHE_KEY_PREFIX = 'workflows';
+  CACHE_TTL,
+  CacheGroup,
+  CacheTTL,
+  SkipCache,
+} from '../caching/cache.decorator';
+import { CacheService } from 'src/caching/cache.service';
 
 /**
  * Controller handling workflow-related operations through gRPC communication
@@ -61,14 +57,15 @@ const CACHE_KEY_PREFIX = 'workflows';
 @Controller('workflows')
 @UseGuards(JwtAuthGuard)
 @UseInterceptors(CustomCacheInterceptor)
+@CacheGroup('workflows')
 export class WorkflowsController implements OnModuleInit {
   private workflowsService: WorkflowsProto.WorkflowsServiceClient;
 
   constructor(
     @Inject('WORKFLOWS_SERVICE') private readonly client: ClientGrpc,
     private readonly grpcClient: GrpcClientProxy,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
-    private readonly customCacheInterceptor: CustomCacheInterceptor,
+    @Inject(CacheService)
+    private readonly cacheService: CacheService,
   ) {}
 
   public onModuleInit(): void {
@@ -98,22 +95,6 @@ export class WorkflowsController implements OnModuleInit {
   }
 
   /**
-   * Generates cache key for workflow data
-   */
-  private getCacheKey(userId: number, type: string, id?: number): string {
-    return `${CACHE_KEY_PREFIX}:${type}:user:${String(userId)}${id ? `:workflow:${String(id)}` : ''}`;
-  }
-
-  /**
-   * Invalidates all workflow-related caches for a user
-   */
-  private async invalidateUserCaches(userId: number): Promise<void> {
-    const pattern = `${CACHE_KEY_PREFIX}:*:user:${String(userId)}*`;
-    const keys = await this.cacheManager.store.keys(pattern);
-    await Promise.all(keys.map((key) => this.cacheManager.del(key)));
-  }
-
-  /**
    * Retrieves all workflows for the authenticated user
    * @param {User} user - The authenticated user
    * @returns {Promise<WorkflowsProto.WorkflowsResponse>} List of user's workflows
@@ -127,20 +108,11 @@ export class WorkflowsController implements OnModuleInit {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'No workflows found' })
-  @CacheTTL(CACHE_TTL_5_MINUTES)
-  @CacheKey('workflows:list')
+  @CacheTTL(CACHE_TTL.FIFTEEN_MINUTES)
   @Get()
   public async getAllUserWorkflows(
     @CurrentUser() user: User,
   ): Promise<WorkflowsProto.WorkflowsResponse> {
-    const cacheKey = this.getCacheKey(user.id, 'list');
-    const cachedData =
-      await this.cacheManager.get<WorkflowsProto.WorkflowsResponse>(cacheKey);
-
-    if (cachedData) {
-      return cachedData;
-    }
-
     try {
       const response = await this.grpcClient.call(
         this.workflowsService.getAllUserWorkflows({
@@ -149,7 +121,6 @@ export class WorkflowsController implements OnModuleInit {
         }),
         'WorkflowsController.getAllUserWorkflows',
       );
-      await this.cacheManager.set(cacheKey, response, CACHE_TTL_5_MINUTES);
       return response;
     } catch (error) {
       handleGrpcError(error);
@@ -176,8 +147,7 @@ export class WorkflowsController implements OnModuleInit {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Workflow not found' })
-  @CacheTTL(CACHE_TTL_1_MINUTE)
-  @CacheKey('workflows:detail') // This will be combined with user ID in the interceptor
+  @CacheTTL(CACHE_TTL.FIFTEEN_MINUTES)
   @Get('get-by-id/:workflowId')
   public async getWorkflowById(
     @CurrentUser() user: User,
@@ -213,9 +183,11 @@ export class WorkflowsController implements OnModuleInit {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 400, description: 'Invalid input' })
-  @Throttle({ default: { ttl: 60000, limit: 5 } }) // 5 requests per minute
-  @Post()
-  @SetMetadata(IGNORE_CACHE_KEY, true)
+  @RateLimit({
+    ttl: 60,
+    limit: 5,
+    errorMessage: 'Too many create workflow requests. Try again in 1 minute.',
+  })
   @Post()
   public async createWorkflow(
     @CurrentUser() user: User,
@@ -231,9 +203,7 @@ export class WorkflowsController implements OnModuleInit {
         }),
         'WorkflowsController.createWorkflow',
       );
-      await this.customCacheInterceptor.invalidateCache(
-        `${CUSTOM_CACHE_KEY_PREFIX}:workflows:*:user:${String(user.id)}*`,
-      );
+      await this.cacheService.invalidateGroup('workflows');
       return response;
     } catch (error) {
       handleGrpcError(error);
@@ -251,7 +221,6 @@ export class WorkflowsController implements OnModuleInit {
   @ApiResponse({ status: 200, description: 'Workflow deleted successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Workflow not found' })
-  @SetMetadata(IGNORE_CACHE_KEY, true)
   @Delete(':id')
   public async deleteWorkflow(
     @CurrentUser() user: User,
@@ -266,7 +235,7 @@ export class WorkflowsController implements OnModuleInit {
         }),
         'WorkflowsController.deleteWorkflow',
       );
-      await this.invalidateUserCaches(user.id);
+      await this.cacheService.invalidateGroup('workflows');
       return response;
     } catch (error) {
       handleGrpcError(error);
@@ -289,7 +258,7 @@ export class WorkflowsController implements OnModuleInit {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Source workflow not found' })
-  @SetMetadata(IGNORE_CACHE_KEY, true)
+  // @SetMetadata(IGNORE_CACHE_KEY, true)
   @Post('duplicate')
   public async duplicateWorkflow(
     @CurrentUser() user: User,
@@ -306,7 +275,7 @@ export class WorkflowsController implements OnModuleInit {
         }),
         'WorkflowsController.duplicateWorkflow',
       );
-      await this.invalidateUserCaches(user.id);
+      await this.cacheService.invalidateGroup('workflows');
       return response;
     } catch (error) {
       handleGrpcError(error);
@@ -329,7 +298,12 @@ export class WorkflowsController implements OnModuleInit {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Workflow not found' })
-  @SetMetadata(IGNORE_CACHE_KEY, true)
+  // @SetMetadata(IGNORE_CACHE_KEY, true)
+  @RateLimit({
+    ttl: 60,
+    limit: 3,
+    errorMessage: 'Too many publish workflow requests. Try again in 1 minute.',
+  })
   @Post(':id/publish')
   public async publishWorkflow(
     @CurrentUser() user: User,
@@ -345,7 +319,7 @@ export class WorkflowsController implements OnModuleInit {
         }),
         'WorkflowsController.publishWorkflow',
       );
-      await this.invalidateUserCaches(user.id);
+      await this.cacheService.invalidateGroup('workflows');
       return response;
     } catch (error) {
       handleGrpcError(error);
@@ -368,7 +342,13 @@ export class WorkflowsController implements OnModuleInit {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Workflow not found' })
-  @SetMetadata(IGNORE_CACHE_KEY, true)
+  // @SetMetadata(IGNORE_CACHE_KEY, true)
+  @RateLimit({
+    ttl: 60,
+    limit: 3,
+    errorMessage:
+      'Too many unpublish workflow requests. Try again in 1 minute.',
+  })
   @Post(':id/unpublish')
   public async unpublishWorkflow(
     @CurrentUser() user: User,
@@ -383,7 +363,7 @@ export class WorkflowsController implements OnModuleInit {
         }),
         'WorkflowsController.unpublishWorkflow',
       );
-      await this.invalidateUserCaches(user.id);
+      await this.cacheService.invalidateGroup('workflows');
       return response;
     } catch (error) {
       handleGrpcError(error);
@@ -403,7 +383,11 @@ export class WorkflowsController implements OnModuleInit {
     description: 'Workflow execution started',
     type: JSON.stringify(WorkflowsProto.RunWorkflowResponse),
   })
-  @Throttle({ default: { ttl: 60000, limit: 3 } }) // 3 requests per minute
+  @RateLimit({
+    ttl: 60,
+    limit: 2,
+    errorMessage: 'Too many run workflow requests. Try again in 1 minute.',
+  }) // 2 requests per minute
   @Post('run-workflow')
   public async runWorkflow(
     @CurrentUser() user: User,
@@ -442,8 +426,12 @@ export class WorkflowsController implements OnModuleInit {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Workflow not found' })
-  @Throttle({ default: { ttl: 60000, limit: 1 } }) // 1 requests per minute
-  @SetMetadata(IGNORE_CACHE_KEY, true)
+  // 5 requests per minute
+  @RateLimit({
+    limit: 5,
+    ttl: 60,
+    errorMessage: 'Too many save workflow requests. Try again in 1 minute.',
+  })
   @Patch('')
   public async updateWorkflow(
     @CurrentUser() user: User,
@@ -459,10 +447,7 @@ export class WorkflowsController implements OnModuleInit {
         }),
         'WorkflowsController.updateWorkflow',
       );
-      // Invalidate all workflow-related caches for this user
-      await this.customCacheInterceptor.invalidateCache(
-        `${CUSTOM_CACHE_KEY_PREFIX}:workflows:*:user:${String(user.id)}*`,
-      );
+      await this.cacheService.invalidateGroup('workflows');
       return response;
     } catch (error) {
       handleGrpcError(error);
@@ -486,8 +471,7 @@ export class WorkflowsController implements OnModuleInit {
     description: 'Execution history retrieved successfully',
     type: 'WorkflowExecutionsResponse',
   })
-  @CacheTTL(CACHE_TTL_1_MINUTE)
-  @CacheKey('workflows:history')
+  @CacheTTL(CACHE_TTL.FIFTEEN_MINUTES)
   @Get('historic')
   public async getHistoricWorkflowExecutions(
     @CurrentUser() user: User,
@@ -528,8 +512,7 @@ export class WorkflowsController implements OnModuleInit {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Execution not found' })
-  @CacheTTL(CACHE_TTL_1_MINUTE)
-  @CacheKey('workflows:execution')
+  @CacheTTL(CACHE_TTL.FIFTEEN_MINUTES)
   @Get('executions')
   public async getWorkflowExecutions(
     @CurrentUser() user: User,
@@ -570,8 +553,7 @@ export class WorkflowsController implements OnModuleInit {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Phase not found' })
-  @CacheTTL(CACHE_TTL_1_MINUTE)
-  @CacheKey('workflows:phase')
+  @SkipCache()
   @Get('phases/:id')
   public async getWorkflowPhase(
     @CurrentUser() user: User,

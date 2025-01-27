@@ -1,6 +1,5 @@
 import { CurrentUser, JwtAuthGuard } from '@microservices/common';
 import { BillingProto } from '@microservices/proto';
-import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import {
   Controller,
   Get,
@@ -9,7 +8,6 @@ import {
   OnModuleInit,
   Query,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
 import {
@@ -152,8 +150,6 @@ export class BillingController implements OnModuleInit {
   })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
-  @UseInterceptors(CacheInterceptor)
-  @CacheTTL(300000) // 5 minutes cache
   @Get('credits')
   public async getUserCredits(
     @CurrentUser() user: BillingProto.User,

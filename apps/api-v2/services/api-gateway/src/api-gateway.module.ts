@@ -6,7 +6,6 @@ import {
   LocalStrategy,
 } from '@microservices/common';
 import { DatabaseModule } from '@microservices/database';
-import { CacheModule } from '@nestjs/cache-manager';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
@@ -14,10 +13,9 @@ import { ClientsModule } from '@nestjs/microservices';
 import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TerminusModule } from '@nestjs/terminus';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import Joi from 'joi';
+import { RedisModule } from '@microservices/redis';
 import { createGrpcOptions } from './config/grpc.config';
-import { getRateLimitConfig } from './config/rate-limit.config';
 import { AnalyticsController } from './controllers/analytics.controller';
 import { AuthController } from './controllers/auth.controller';
 import { BillingController } from './controllers/billing.controller';
@@ -34,20 +32,37 @@ import { MetricsModule } from './metrics/metrics.module';
 import { HelmetMiddleware } from './middlewares/helmet.middleware';
 import { AuthProxyService } from './proxies/auth.proxy.service';
 import { GrpcClientProxy } from './proxies/grpc-client.proxy';
-import { CustomCacheInterceptor } from './interceptors/custom-cache.interceptor';
+import { CustomCacheInterceptor } from './caching/custom-cache.interceptor';
+import { rateLimitConfig } from './config/rate-limit.config';
+import { CacheModule } from './caching/cache.module';
+import { ThrottleModule } from './throttling/throttle.module';
+import { ThrottleGuard } from './throttling/throttle.guard';
+import { Reflector } from '@nestjs/core';
 
 @Module({
   imports: [
+    // DATABASE
     DatabaseModule,
-    ConfigModule.forRoot({ isGlobal: true }),
-    TerminusModule,
+    // REDIS - CACHING
+    RedisModule,
+    // CACHING MODULE
+    CacheModule,
+    // THROTTLING MODULE
+    ThrottleModule,
+    // LOGGER
     loggerConfig,
+    // TERMINUS - HEALTHCHECKS
+    TerminusModule,
+    // SCHEDULE
     ScheduleModule.forRoot(),
+    // PASSPORT
     PassportModule.register({
       defaultStrategy: 'jwt',
     }),
+    // CONFIG
     ConfigModule.forRoot({
       isGlobal: true,
+      load: [rateLimitConfig],
       validationSchema: Joi.object({
         PORT: Joi.number().default(3333),
 
@@ -68,6 +83,15 @@ import { CustomCacheInterceptor } from './interceptors/custom-cache.interceptor'
 
         COMPONENTS_SERVICE_HOST: Joi.string().default('localhost'),
         COMPONENTS_SERVICE_PORT: Joi.number().default(3345),
+
+        RATE_LIMIT_TTL: Joi.number().default(60),
+        RATE_LIMIT_MAX_REQUESTS: Joi.number().default(100),
+        RATE_LIMIT_STORAGE: Joi.string()
+          .valid('memory', 'redis')
+          .default('redis'),
+
+        REDIS_URL: Joi.string().default('localhost'),
+        REDIS_TOKEN: Joi.string().default('token'),
       }),
     }),
     ClientsModule.registerAsync([
@@ -169,19 +193,10 @@ import { CustomCacheInterceptor } from './interceptors/custom-cache.interceptor'
         inject: [ConfigService],
       },
     ]),
-    ThrottlerModule.forRootAsync({
-      useFactory: getRateLimitConfig,
-    }),
     // GRAFANA
     HealthModule,
     // PROMETHEUS
     MetricsModule,
-    // CACHING SYSTEM
-    CacheModule.register({
-      ttl: 60000, // 1 minute default TTL
-      max: 10, // maximum number of items in cache
-      isGlobal: true,
-    }),
   ],
   controllers: [
     // ROUTE CONTROLLERS
@@ -198,26 +213,38 @@ import { CustomCacheInterceptor } from './interceptors/custom-cache.interceptor'
   providers: [
     // AUTH PROXY
     AuthProxyService,
+
     // ERROR INTERCEPTOR
     {
       provide: APP_INTERCEPTOR,
       useClass: ErrorInterceptor,
     },
-    // THROTTLER
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
-    },
+
     // Register all strategies
     LocalStrategy,
-    JwtStrategy,
-    JwtRefreshStrategy,
     GoogleStrategy,
     GithubStrategy,
+    JwtStrategy,
+    JwtRefreshStrategy,
+
+    // THROTTLER - RATE LIMITING
+    {
+      provide: APP_GUARD,
+      useClass: ThrottleGuard,
+    },
+
+    // CACHING ------------------
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CustomCacheInterceptor,
+    },
+
     // gRPC CLIENT PROXY WITH RETRIES
     GrpcClientProxy,
-    // CACHING
-    CustomCacheInterceptor,
+    {
+      provide: GrpcClientProxy,
+      useClass: GrpcClientProxy,
+    },
   ],
 })
 export class ApiGatewayModule implements NestModule {

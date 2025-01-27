@@ -1,6 +1,5 @@
 import { CurrentUser, JwtAuthGuard } from '@microservices/common';
 import { ProjectsProto } from '@microservices/proto';
-import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 import {
   Body,
   Controller,
@@ -23,12 +22,11 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Throttle } from '@nestjs/throttler';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
-
-const CACHE_TTL_5_MINUTES = 300000;
-const CACHE_KEY_PROJECTS = 'user-projects';
+import { CACHE_TTL, CacheGroup, CacheTTL } from 'src/caching/cache.decorator';
+import { CustomCacheInterceptor } from 'src/caching/custom-cache.interceptor';
+import { CacheService } from 'src/caching/cache.service';
 
 /**
  * Controller handling project-related operations through gRPC communication
@@ -39,12 +37,16 @@ const CACHE_KEY_PROJECTS = 'user-projects';
 @ApiBearerAuth()
 @Controller('projects')
 @UseGuards(JwtAuthGuard)
+@UseInterceptors(CustomCacheInterceptor)
+@CacheGroup('projects')
 export class ProjectsController implements OnModuleInit {
   private projectsService: ProjectsProto.ProjectsServiceClient;
 
   constructor(
     @Inject('PROJECTS_SERVICE') private readonly client: ClientGrpc,
     private readonly grpcClient: GrpcClientProxy,
+    @Inject(CacheService)
+    private readonly cacheService: CacheService,
   ) {}
 
   public onModuleInit(): void {
@@ -70,9 +72,7 @@ export class ProjectsController implements OnModuleInit {
   })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
-  @UseInterceptors(CacheInterceptor)
-  @CacheKey(CACHE_KEY_PROJECTS)
-  @CacheTTL(CACHE_TTL_5_MINUTES)
+  @CacheTTL(CACHE_TTL.FIVE_MINUTES)
   @Get()
   public async getProjectsByUserId(
     @CurrentUser() user: ProjectsProto.User,
@@ -120,6 +120,7 @@ export class ProjectsController implements OnModuleInit {
   })
   @ApiResponse({ status: 404, description: 'Project not found' })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
+  @CacheTTL(CACHE_TTL.FIVE_MINUTES)
   @Get(':projectId')
   public async getProjectDetails(
     @CurrentUser() user: ProjectsProto.User,
@@ -167,7 +168,6 @@ export class ProjectsController implements OnModuleInit {
   })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
-  @Throttle({ default: { ttl: 60000, limit: 5 } }) // 5 requests per minute
   @Post()
   public async createProject(
     @CurrentUser() user: ProjectsProto.User,
@@ -191,10 +191,14 @@ export class ProjectsController implements OnModuleInit {
         },
       };
 
-      return await this.grpcClient.call(
+      const response = await this.grpcClient.call(
         this.projectsService.createProject(request),
         'Projects.createProject',
       );
+
+      await this.cacheService.invalidateGroup('projects');
+
+      return response;
     } catch (error) {
       handleGrpcError(error);
     }

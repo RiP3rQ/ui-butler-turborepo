@@ -5,7 +5,6 @@ import {
   type User,
 } from '@microservices/common';
 import { UsersProto } from '@microservices/proto';
-import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 import {
   Body,
   Controller,
@@ -31,13 +30,14 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Throttle } from '@nestjs/throttler';
+import { RateLimit } from '../throttling/rate-limit.decorator';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
+import { CACHE_TTL, CacheGroup, CacheTTL } from '../caching/cache.decorator';
+import { CustomCacheInterceptor } from '../caching/custom-cache.interceptor';
+import { CacheService } from '../caching/cache.service';
 
-const CACHE_TTL_15_MINUTES = 900000;
-const CACHE_KEY_CREDENTIALS = 'user-credentials';
-
+/**
 /**
  * Controller handling user credentials operations through gRPC communication
  * with the users microservice.
@@ -47,12 +47,16 @@ const CACHE_KEY_CREDENTIALS = 'user-credentials';
 @ApiBearerAuth()
 @Controller('credentials')
 @UseGuards(JwtAuthGuard)
+@UseInterceptors(CustomCacheInterceptor)
+@CacheGroup('credentials')
 export class CredentialsController implements OnModuleInit {
   private usersService: UsersProto.UsersServiceClient;
 
   constructor(
     @Inject('USERS_SERVICE') private readonly client: ClientGrpc,
     private readonly grpcClient: GrpcClientProxy,
+    @Inject(CacheService)
+    private readonly cacheService: CacheService,
   ) {}
 
   public onModuleInit(): void {
@@ -75,9 +79,7 @@ export class CredentialsController implements OnModuleInit {
   })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
-  @UseInterceptors(CacheInterceptor)
-  @CacheKey(CACHE_KEY_CREDENTIALS)
-  @CacheTTL(CACHE_TTL_15_MINUTES)
+  @CacheTTL(CACHE_TTL.ONE_MINUTE)
   @Get()
   public async getUserCredentials(
     @CurrentUser() user: User,
@@ -125,7 +127,6 @@ export class CredentialsController implements OnModuleInit {
   })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
-  @Throttle({ default: { ttl: 60000, limit: 5 } }) // 5 requests per minute
   @Post()
   public async createCredential(
     @CurrentUser() user: User,
@@ -150,10 +151,14 @@ export class CredentialsController implements OnModuleInit {
         },
       };
 
-      return await this.grpcClient.call(
+      const response = await this.grpcClient.call(
         this.usersService.createCredential(request),
         'Credentials.createCredential',
       );
+
+      // await this.cacheService.invalidateGroup('credentials');
+
+      return response;
     } catch (error) {
       handleGrpcError(error);
     }
@@ -197,10 +202,14 @@ export class CredentialsController implements OnModuleInit {
         id,
       };
 
-      return await this.grpcClient.call(
+      const response = await this.grpcClient.call(
         this.usersService.deleteCredential(request),
         'Credentials.deleteCredential',
       );
+
+      // await this.cacheService.invalidateGroup('credentials');
+
+      return response;
     } catch (error) {
       handleGrpcError(error);
     }
@@ -223,7 +232,11 @@ export class CredentialsController implements OnModuleInit {
   })
   @ApiResponse({ status: 404, description: 'User or credential not found' })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
-  @Throttle({ default: { ttl: 60000, limit: 10 } }) // 10 requests per minute
+  @RateLimit({
+    ttl: 60,
+    limit: 5,
+    errorMessage: 'Too many reveal credential requests. Try again in 1 minute.',
+  })
   @Get(':id/reveal')
   public async getRevealedCredentialValue(
     @CurrentUser() user: User,

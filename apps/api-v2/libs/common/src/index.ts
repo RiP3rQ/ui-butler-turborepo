@@ -7,7 +7,6 @@ export * from "./types/user.interface";
 
 // decorators
 export * from "./decorators/current-user.decorator";
-export * from "./decorators/throttle.decorator";
 
 // guards
 export * from "./guards/github-auth.guard";

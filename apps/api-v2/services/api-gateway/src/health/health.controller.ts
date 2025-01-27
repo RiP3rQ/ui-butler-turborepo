@@ -6,11 +6,11 @@ import {
   MemoryHealthIndicator,
 } from '@nestjs/terminus';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { SkipThrottle } from '@nestjs/throttler';
+import { SkipRateLimit } from '../throttling/rate-limit.decorator';
 
 @ApiTags('Health')
 @Controller('health')
-@SkipThrottle()
+@SkipRateLimit()
 export class HealthController {
   constructor(
     private readonly health: HealthCheckService,

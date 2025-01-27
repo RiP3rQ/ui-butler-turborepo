@@ -27,7 +27,7 @@
     "@shared/types": "workspace:*",
     "@shared/typescript-config": "workspace:*",
     "@types/eslint": "^9.6.1",
-    "@types/node": "^22.10.6",
+    "@types/node": "^22.10.10",
     "eslint": "^8.57.1",
     "typescript": "^5.7.3"
   }
