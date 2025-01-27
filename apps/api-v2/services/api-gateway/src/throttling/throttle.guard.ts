@@ -10,7 +10,6 @@ import { Reflector } from '@nestjs/core';
 import type { Request, Response } from 'express';
 import { rateLimitConfig } from '../config/rate-limit.config';
 import { RATE_LIMIT_KEY } from './rate-limit.decorator';
-import { RateLimitStorage } from './rate-limit-storage.abstract';
 import { RateLimitConfig } from './rate-limit.interface';
 import { ThrottleService } from './throttle.service';
 
