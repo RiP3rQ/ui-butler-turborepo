@@ -9,6 +9,7 @@ import {
   OnModuleInit,
   Post,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
 import {
@@ -21,6 +22,8 @@ import {
 import { SkipRateLimit } from '../throttling/rate-limit.decorator';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
+import { CACHE_TTL, CacheGroup, CacheTTL } from 'src/caching/cache.decorator';
+import { CustomCacheInterceptor } from 'src/caching/custom-cache.interceptor';
 
 /**
  * Controller handling user-related operations through gRPC communication
@@ -30,6 +33,8 @@ import { handleGrpcError } from '../utils/grpc-error.util';
 @ApiTags('Users')
 @ApiBearerAuth()
 @Controller('users')
+@UseInterceptors(CustomCacheInterceptor)
+@CacheGroup('users')
 export class UsersController implements OnModuleInit {
   private usersService: UsersProto.UsersServiceClient;
 
@@ -86,7 +91,7 @@ export class UsersController implements OnModuleInit {
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
   @UseGuards(JwtAuthGuard)
-  // @UseInterceptors(CacheInterceptor) TODO: FIX THIS CACHING
+  @CacheTTL(CACHE_TTL.FIFTEEN_MINUTES)
   @SkipRateLimit()
   @Get('current-basic')
   public async getCurrentUser(

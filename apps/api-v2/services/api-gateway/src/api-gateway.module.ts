@@ -37,8 +37,7 @@ import { rateLimitConfig } from './config/rate-limit.config';
 import { RateLimitStorage } from './throttling/rate-limit-storage.abstract';
 import { RateLimitGuard } from './throttling/throttle.guard';
 import { RedisStorage } from './throttling/memory-storage.service';
-import { CacheService } from './caching/cache.service';
-import { CacheCleanupService } from './caching/cache-cleanup.service';
+import { CacheModule } from './caching/cache.module';
 
 @Module({
   imports: [
@@ -46,6 +45,8 @@ import { CacheCleanupService } from './caching/cache-cleanup.service';
     DatabaseModule,
     // REDIS - CACHING
     RedisModule,
+    // CACHING MODULE
+    CacheModule,
     // LOGGER
     loggerConfig,
     // TERMINUS - HEALTHCHECKS
@@ -230,18 +231,19 @@ import { CacheCleanupService } from './caching/cache-cleanup.service';
     JwtRefreshStrategy,
     GoogleStrategy,
     GithubStrategy,
+    // CACHING ------------------
+    CustomCacheInterceptor,
+    {
+      provide: APP_INTERCEPTOR,
+      useExisting: CustomCacheInterceptor,
+    },
     // gRPC CLIENT PROXY WITH RETRIES
     GrpcClientProxy,
-    // CACHING
-    // {
-    //   provide: APP_INTERCEPTOR,
-    //   useClass: CustomCacheInterceptor,
-    // },
-    CustomCacheInterceptor,
-    CacheCleanupService,
-    CacheService,
+    {
+      provide: GrpcClientProxy,
+      useClass: GrpcClientProxy,
+    },
   ],
-  exports: [CacheService],
 })
 export class ApiGatewayModule implements NestModule {
   public configure(consumer: MiddlewareConsumer) {

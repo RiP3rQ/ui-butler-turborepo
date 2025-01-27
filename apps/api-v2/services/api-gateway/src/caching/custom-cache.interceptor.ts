@@ -7,25 +7,19 @@ import {
   Logger,
   NestInterceptor,
 } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
+import { type Reflector } from '@nestjs/core';
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { REDIS_CONNECTION, RedisService } from '@microservices/redis';
 import { Request } from 'express';
-
-/** Cache metadata keys */
-export const CACHE_TTL_METADATA = 'cache_ttl';
-export const CACHE_GROUP_METADATA = 'cache_group';
-export const CACHE_SKIP_METADATA = 'cache_skip';
-
-/** Cache TTL options in seconds */
-export const CACHE_TTL = {
-  DEFAULT: 60,
-  ONE_MINUTE: 60,
-  FIVE_MINUTES: 300,
-  FIFTEEN_MINUTES: 900,
-  ONE_HOUR: 3600,
-} as const;
+import {
+  CACHE_GROUP_METADATA,
+  CACHE_SKIP_METADATA,
+  CACHE_TTL_METADATA,
+  CACHE_TTL,
+} from './cache.decorator';
+import type { CacheManager } from './cache-manager.service';
+import { CACHE_MANAGER } from './cache.tokens';
 
 type CacheTTLValues = (typeof CACHE_TTL)[keyof typeof CACHE_TTL];
 
@@ -78,6 +72,8 @@ export class CustomCacheInterceptor implements NestInterceptor {
   constructor(
     @Inject(REDIS_CONNECTION)
     private readonly redisService: RedisService,
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: CacheManager,
     private readonly reflector: Reflector,
   ) {
     this.debugLog('Cache interceptor initialized', { debug: this.isDebugMode });
@@ -316,42 +312,7 @@ export class CustomCacheInterceptor implements NestInterceptor {
    * @param group - Cache group to clear
    */
   public async clearCacheGroup(group: string): Promise<void> {
-    const startTime = performance.now();
-    try {
-      const client = this.redisService.getClient();
-      const pattern = `cache:${group}:*`;
-      let cursor = '0';
-      let totalCleared = 0;
-
-      do {
-        const [nextCursor, keys] = await client.scan(cursor, {
-          match: pattern,
-          count: 100,
-        });
-
-        if (keys.length > 0) {
-          await client.del(...keys);
-          totalCleared += keys.length;
-          this.debugLog('🗑️ Cleared cache keys', {
-            group,
-            count: keys.length,
-            keys,
-          });
-        }
-
-        cursor = nextCursor;
-      } while (cursor !== '0');
-
-      const duration = performance.now() - startTime;
-      this.debugLog(`🧹 Cache group cleared`, {
-        group,
-        totalCleared,
-        duration: `${duration.toFixed(2)}ms`,
-      });
-    } catch (error) {
-      this.logError(`Failed to clear cache group: ${group}`, error);
-      throw error;
-    }
+    await this.cacheManager.clearCacheGroup(group);
   }
 
   /**

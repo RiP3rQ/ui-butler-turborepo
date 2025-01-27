@@ -11,6 +11,7 @@ import {
   ParseIntPipe,
   Post,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
 import {
@@ -23,6 +24,9 @@ import {
 } from '@nestjs/swagger';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
+import { CACHE_TTL, CacheGroup, CacheTTL } from 'src/caching/cache.decorator';
+import { CustomCacheInterceptor } from 'src/caching/custom-cache.interceptor';
+import type { CacheService } from 'src/caching/cache.service';
 
 /**
  * Controller handling project-related operations through gRPC communication
@@ -33,12 +37,15 @@ import { handleGrpcError } from '../utils/grpc-error.util';
 @ApiBearerAuth()
 @Controller('projects')
 @UseGuards(JwtAuthGuard)
+@UseInterceptors(CustomCacheInterceptor)
+@CacheGroup('projects')
 export class ProjectsController implements OnModuleInit {
   private projectsService: ProjectsProto.ProjectsServiceClient;
 
   constructor(
     @Inject('PROJECTS_SERVICE') private readonly client: ClientGrpc,
     private readonly grpcClient: GrpcClientProxy,
+    private readonly cacheService: CacheService,
   ) {}
 
   public onModuleInit(): void {
@@ -64,7 +71,7 @@ export class ProjectsController implements OnModuleInit {
   })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
-  // @UseInterceptors(CacheInterceptor) TODO: FIX THIS CACHING
+  @CacheTTL(CACHE_TTL.FIVE_MINUTES)
   @Get()
   public async getProjectsByUserId(
     @CurrentUser() user: ProjectsProto.User,
@@ -112,6 +119,7 @@ export class ProjectsController implements OnModuleInit {
   })
   @ApiResponse({ status: 404, description: 'Project not found' })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
+  @CacheTTL(CACHE_TTL.FIVE_MINUTES)
   @Get(':projectId')
   public async getProjectDetails(
     @CurrentUser() user: ProjectsProto.User,
@@ -182,10 +190,14 @@ export class ProjectsController implements OnModuleInit {
         },
       };
 
-      return await this.grpcClient.call(
+      const response = await this.grpcClient.call(
         this.projectsService.createProject(request),
         'Projects.createProject',
       );
+
+      await this.cacheService.invalidateGroup('projects');
+
+      return response;
     } catch (error) {
       handleGrpcError(error);
     }

@@ -23,6 +23,7 @@ import {
   Post,
   Query,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
 import {
@@ -37,15 +38,14 @@ import {
 import { RateLimit } from '../throttling/rate-limit.decorator';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
-// import {
-//   CUSTOM_CACHE_KEY_PREFIX,
-//   // CustomCacheInterceptor,
-//   IGNORE_CACHE_KEY,
-//   CACHE_KEY_METADATA,
-//   CACHE_TTL_METADATA,
-// } from '../interceptors/custom-cache.interceptor';
-
-const CACHE_KEY_PREFIX = 'workflows';
+import { CustomCacheInterceptor } from 'src/caching/custom-cache.interceptor';
+import {
+  CACHE_TTL,
+  CacheGroup,
+  CacheTTL,
+  SkipCache,
+} from '../caching/cache.decorator';
+import type { CacheService } from 'src/caching/cache.service';
 
 /**
  * Controller handling workflow-related operations through gRPC communication
@@ -56,14 +56,15 @@ const CACHE_KEY_PREFIX = 'workflows';
 @ApiBearerAuth()
 @Controller('workflows')
 @UseGuards(JwtAuthGuard)
-// @UseInterceptors(CustomCacheInterceptor)
+@UseInterceptors(CustomCacheInterceptor)
+@CacheGroup('workflows')
 export class WorkflowsController implements OnModuleInit {
   private workflowsService: WorkflowsProto.WorkflowsServiceClient;
 
   constructor(
     @Inject('WORKFLOWS_SERVICE') private readonly client: ClientGrpc,
     private readonly grpcClient: GrpcClientProxy,
-    // private readonly customCacheInterceptor: CustomCacheInterceptor,
+    private readonly cacheService: CacheService,
   ) {}
 
   public onModuleInit(): void {
@@ -93,21 +94,6 @@ export class WorkflowsController implements OnModuleInit {
   }
 
   /**
-   * Generates cache key for workflow data
-   */
-  private getCacheKey(userId: number, type: string, id?: number): string {
-    return `${CACHE_KEY_PREFIX}:${type}:user:${String(userId)}${id ? `:workflow:${String(id)}` : ''}`;
-  }
-
-  /**
-   * Invalidates all workflow-related caches for a user
-   */
-  private async invalidateUserCaches(userId: number): Promise<void> {
-    const pattern = `$${CACHE_KEY_PREFIX}:*:user:${String(userId)}*`;
-    // await this.customCacheInterceptor.invalidateCache(pattern);
-  }
-
-  /**
    * Retrieves all workflows for the authenticated user
    * @param {User} user - The authenticated user
    * @returns {Promise<WorkflowsProto.WorkflowsResponse>} List of user's workflows
@@ -121,8 +107,7 @@ export class WorkflowsController implements OnModuleInit {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'No workflows found' })
-  // @SetMetadata(CACHE_TTL_METADATA, CACHE_TTL_5_MINUTES)
-  // @SetMetadata(CACHE_KEY_METADATA, 'workflows:list')
+  @CacheTTL(CACHE_TTL.FIFTEEN_MINUTES)
   @Get()
   public async getAllUserWorkflows(
     @CurrentUser() user: User,
@@ -149,8 +134,6 @@ export class WorkflowsController implements OnModuleInit {
    * @throws {NotFoundException} When workflow is not found
    */
   @ApiOperation({ summary: 'Get workflow by ID' })
-  // @SetMetadata(CACHE_TTL_METADATA, CACHE_TTL_1_MINUTE)
-  // @SetMetadata(CACHE_KEY_METADATA, 'workflows:detail')
   @ApiParam({
     name: 'workflowId',
     type: 'number',
@@ -163,6 +146,7 @@ export class WorkflowsController implements OnModuleInit {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Workflow not found' })
+  @CacheTTL(CACHE_TTL.FIFTEEN_MINUTES)
   @Get('get-by-id/:workflowId')
   public async getWorkflowById(
     @CurrentUser() user: User,
@@ -190,7 +174,6 @@ export class WorkflowsController implements OnModuleInit {
    * @returns {Promise<WorkflowsProto.WorkflowResponse>} The created workflow
    */
   @ApiOperation({ summary: 'Create new workflow' })
-  // @SetMetadata(IGNORE_CACHE_KEY, true)
   @ApiBody({ type: CreateWorkflowDto })
   @ApiResponse({
     status: 201,
@@ -219,7 +202,7 @@ export class WorkflowsController implements OnModuleInit {
         }),
         'WorkflowsController.createWorkflow',
       );
-      await this.invalidateUserCaches(user.id);
+      await this.cacheService.invalidateGroup('workflows');
       return response;
     } catch (error) {
       handleGrpcError(error);
@@ -237,7 +220,6 @@ export class WorkflowsController implements OnModuleInit {
   @ApiResponse({ status: 200, description: 'Workflow deleted successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Workflow not found' })
-  // @SetMetadata(IGNORE_CACHE_KEY, true)
   @Delete(':id')
   public async deleteWorkflow(
     @CurrentUser() user: User,
@@ -252,7 +234,7 @@ export class WorkflowsController implements OnModuleInit {
         }),
         'WorkflowsController.deleteWorkflow',
       );
-      await this.invalidateUserCaches(user.id);
+      await this.cacheService.invalidateGroup('workflows');
       return response;
     } catch (error) {
       handleGrpcError(error);
@@ -292,7 +274,7 @@ export class WorkflowsController implements OnModuleInit {
         }),
         'WorkflowsController.duplicateWorkflow',
       );
-      await this.invalidateUserCaches(user.id);
+      await this.cacheService.invalidateGroup('workflows');
       return response;
     } catch (error) {
       handleGrpcError(error);
@@ -336,7 +318,7 @@ export class WorkflowsController implements OnModuleInit {
         }),
         'WorkflowsController.publishWorkflow',
       );
-      await this.invalidateUserCaches(user.id);
+      await this.cacheService.invalidateGroup('workflows');
       return response;
     } catch (error) {
       handleGrpcError(error);
@@ -380,7 +362,7 @@ export class WorkflowsController implements OnModuleInit {
         }),
         'WorkflowsController.unpublishWorkflow',
       );
-      await this.invalidateUserCaches(user.id);
+      await this.cacheService.invalidateGroup('workflows');
       return response;
     } catch (error) {
       handleGrpcError(error);
@@ -449,7 +431,6 @@ export class WorkflowsController implements OnModuleInit {
     ttl: 60,
     errorMessage: 'Too many save workflow requests. Try again in 1 minute.',
   })
-  // @SetMetadata(IGNORE_CACHE_KEY, true)
   @Patch('')
   public async updateWorkflow(
     @CurrentUser() user: User,
@@ -465,8 +446,7 @@ export class WorkflowsController implements OnModuleInit {
         }),
         'WorkflowsController.updateWorkflow',
       );
-      // Invalidate all workflow-related caches for this user
-      await this.invalidateUserCaches(user.id);
+      await this.cacheService.invalidateGroup('workflows');
       return response;
     } catch (error) {
       handleGrpcError(error);
@@ -480,8 +460,6 @@ export class WorkflowsController implements OnModuleInit {
    * @returns {Promise<WorkflowsProto.WorkflowExecutionsResponse>} List of workflow executions
    */
   @ApiOperation({ summary: 'Get workflow execution history' })
-  // @SetMetadata(CACHE_TTL_METADATA, CACHE_TTL_1_MINUTE)
-  // @SetMetadata(CACHE_KEY_METADATA, 'workflows:history')
   @ApiQuery({
     name: 'workflowId',
     type: 'number',
@@ -492,6 +470,7 @@ export class WorkflowsController implements OnModuleInit {
     description: 'Execution history retrieved successfully',
     type: 'WorkflowExecutionsResponse',
   })
+  @CacheTTL(CACHE_TTL.FIFTEEN_MINUTES)
   @Get('historic')
   public async getHistoricWorkflowExecutions(
     @CurrentUser() user: User,
@@ -520,8 +499,6 @@ export class WorkflowsController implements OnModuleInit {
    * @throws {NotFoundException} When execution is not found
    */
   @ApiOperation({ summary: 'Get workflow execution details' })
-  // @SetMetadata(CACHE_TTL_METADATA, CACHE_TTL_1_MINUTE)
-  // @SetMetadata(CACHE_KEY_METADATA, 'workflows:execution')
   @ApiQuery({
     name: 'executionId',
     type: 'string',
@@ -534,6 +511,7 @@ export class WorkflowsController implements OnModuleInit {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Execution not found' })
+  @CacheTTL(CACHE_TTL.FIFTEEN_MINUTES)
   @Get('executions')
   public async getWorkflowExecutions(
     @CurrentUser() user: User,
@@ -562,8 +540,6 @@ export class WorkflowsController implements OnModuleInit {
    * @throws {NotFoundException} When phase is not found
    */
   @ApiOperation({ summary: 'Get workflow phase details' })
-  // @SetMetadata(CACHE_TTL_METADATA, CACHE_TTL_1_MINUTE)
-  // @SetMetadata(CACHE_KEY_METADATA, 'workflows:phase')
   @ApiParam({
     name: 'id',
     type: 'number',
@@ -576,6 +552,7 @@ export class WorkflowsController implements OnModuleInit {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Phase not found' })
+  @SkipCache()
   @Get('phases/:id')
   public async getWorkflowPhase(
     @CurrentUser() user: User,

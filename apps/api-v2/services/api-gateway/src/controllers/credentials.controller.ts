@@ -18,6 +18,7 @@ import {
   Post,
   Query,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
 import {
@@ -32,6 +33,9 @@ import {
 import { RateLimit } from '../throttling/rate-limit.decorator';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
+import { CACHE_TTL, CacheGroup, CacheTTL } from '../caching/cache.decorator';
+import { CustomCacheInterceptor } from '../caching/custom-cache.interceptor';
+import type { CacheService } from '../caching/cache.service';
 
 /**
 /**
@@ -43,13 +47,22 @@ import { handleGrpcError } from '../utils/grpc-error.util';
 @ApiBearerAuth()
 @Controller('credentials')
 @UseGuards(JwtAuthGuard)
+@UseInterceptors(CustomCacheInterceptor)
+@CacheGroup('credentials')
 export class CredentialsController implements OnModuleInit {
   private usersService: UsersProto.UsersServiceClient;
 
   constructor(
     @Inject('USERS_SERVICE') private readonly client: ClientGrpc,
     private readonly grpcClient: GrpcClientProxy,
-  ) {}
+    private readonly cacheService: CacheService,
+  ) {
+    console.log('Dependencies:', {
+      client: !!client,
+      grpcClient: !!grpcClient,
+      cacheService: !!cacheService,
+    });
+  }
 
   public onModuleInit(): void {
     this.usersService =
@@ -71,7 +84,7 @@ export class CredentialsController implements OnModuleInit {
   })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
-  // @UseInterceptors(CacheInterceptor) TODO: FIX THIS CACHING
+  @CacheTTL(CACHE_TTL.ONE_MINUTE)
   @Get()
   public async getUserCredentials(
     @CurrentUser() user: User,
@@ -143,10 +156,14 @@ export class CredentialsController implements OnModuleInit {
         },
       };
 
-      return await this.grpcClient.call(
+      const response = await this.grpcClient.call(
         this.usersService.createCredential(request),
         'Credentials.createCredential',
       );
+
+      // await this.cacheService.invalidateGroup('credentials');
+
+      return response;
     } catch (error) {
       handleGrpcError(error);
     }
@@ -190,10 +207,14 @@ export class CredentialsController implements OnModuleInit {
         id,
       };
 
-      return await this.grpcClient.call(
+      const response = await this.grpcClient.call(
         this.usersService.deleteCredential(request),
         'Credentials.deleteCredential',
       );
+
+      // await this.cacheService.invalidateGroup('credentials');
+
+      return response;
     } catch (error) {
       handleGrpcError(error);
     }

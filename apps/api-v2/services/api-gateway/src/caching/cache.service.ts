@@ -1,17 +1,15 @@
 // cache.service.ts
 import { Injectable, Inject } from '@nestjs/common';
 import { REDIS_CONNECTION, RedisService } from '@microservices/redis';
-import {
-  CustomCacheInterceptor,
-  type CachedData,
-} from './custom-cache.interceptor';
+import { type CachedData } from './custom-cache.interceptor';
+import type { CacheManager } from './cache-manager.service';
+import { CACHE_MANAGER } from './cache.tokens';
 
 @Injectable()
 export class CacheService {
   constructor(
-    @Inject(REDIS_CONNECTION)
-    private readonly redisService: RedisService,
-    private readonly cacheInterceptor: CustomCacheInterceptor,
+    @Inject(REDIS_CONNECTION) private readonly redisService: RedisService,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
   ) {}
 
   /**
@@ -39,7 +37,7 @@ export class CacheService {
    * @param group - Cache group name
    */
   public async invalidateGroup(group: string): Promise<void> {
-    await this.cacheInterceptor.clearCacheGroup(group);
+    await this.cacheManager.clearCacheGroup(group);
   }
 
   /**

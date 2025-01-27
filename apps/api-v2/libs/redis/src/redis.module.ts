@@ -1,5 +1,5 @@
 import { Global, Module } from "@nestjs/common";
-import { ConfigModule, ConfigService } from "@nestjs/config";
+import { ConfigModule } from "@nestjs/config";
 import { redisConfig } from "./config/redis.config";
 import { RedisService } from "./redis.service";
 import { REDIS_CONNECTION } from "./config/connection-name";
@@ -14,14 +14,12 @@ import { REDIS_CONNECTION } from "./config/connection-name";
     }),
   ],
   providers: [
+    RedisService,
     {
       provide: REDIS_CONNECTION,
-      useFactory: (configService: ConfigService) => {
-        return new RedisService(configService);
-      },
-      inject: [ConfigService],
+      useExisting: RedisService,
     },
   ],
-  exports: [REDIS_CONNECTION],
+  exports: [REDIS_CONNECTION, RedisService],
 })
 export class RedisModule {}
