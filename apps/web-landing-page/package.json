@@ -18,8 +18,8 @@
     "@shared/ui": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "framer-motion": "^11.18.2",
-    "lucide-react": "^0.460.0",
+    "framer-motion": "^12.0.6",
+    "lucide-react": "^0.474.0",
     "next": "^15.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -30,13 +30,13 @@
     "@shared/config-tailwindcss": "workspace:*",
     "@shared/eslint-config": "workspace:*",
     "@shared/typescript-config": "workspace:*",
-    "@types/node": "^22.10.10",
+    "@types/node": "^22.12.0",
     "@types/react": "^19.0.8",
-    "@types/react-dom": "^18.3.5",
-    "eslint": "^8.57.1",
+    "@types/react-dom": "^19.0.3",
+    "eslint": "^9.19.0",
     "eslint-config-next": "^15.1.6",
     "postcss": "^8.5.1",
-    "tailwindcss": "^3.4.17",
+    "tailwindcss": "^4.0.0",
     "typescript": "^5.7.3"
   }
 }

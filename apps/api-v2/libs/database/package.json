@@ -23,17 +23,17 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@nestjs/config": "^3.3.0",
+    "@nestjs/config": "^4.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
-    "drizzle-orm": "^0.36.4",
+    "drizzle-orm": "^0.39.0",
     "pg": "^8.13.1"
   },
   "devDependencies": {
     "@shared/eslint-config": "workspace:*",
     "@shared/typescript-config": "workspace:*",
     "@types/pg": "^8.11.11",
-    "drizzle-kit": "^0.28.1",
+    "drizzle-kit": "^0.30.3",
     "typescript": "^5.7.3"
   },
   "peerDependencies": {
