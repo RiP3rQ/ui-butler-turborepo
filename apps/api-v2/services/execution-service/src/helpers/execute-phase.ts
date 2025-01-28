@@ -28,7 +28,7 @@ export async function executePhase(
   }
 
   // Get values ONLY FOR THIS PHASE from the environment
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any --- This type is tweaking, on god
+
   const executionEnvironment: ExecutionEnvironment<any> =
     createExecutionEnvironment(node, environment, logCollector);
 

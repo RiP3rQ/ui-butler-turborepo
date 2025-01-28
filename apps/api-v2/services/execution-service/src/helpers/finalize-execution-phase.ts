@@ -30,7 +30,6 @@ export async function finalizeExecutionPhase(
   console.log('Finalizing phase', phaseId, success);
 
   const finalStatus =
-    // eslint-disable-next-line no-nested-ternary --- Thats fine chill eslint
     success === WorkflowExecutionStatus.WAITING_FOR_APPROVAL
       ? ExecutionPhaseStatus.WAITING_FOR_APPROVAL
       : success
