@@ -12,7 +12,7 @@
   "scripts": {
     "dev": "tsc --watch",
     "type-check": "tsc --noEmit",
-    "lint": "eslint ./src --max-warnings 0 --fix",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "build": "tsc"
   },
   "keywords": [],

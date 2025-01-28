@@ -209,7 +209,7 @@ export class CustomCacheInterceptor implements NestInterceptor {
    * @param config - Cache configuration
    * @returns Cache key string
    */
-  // eslint-disable-next-line @typescript-eslint/require-await --- ESlint don't trip
+
   private async buildCacheKey(
     context: ExecutionContext,
     config: CacheConfig,

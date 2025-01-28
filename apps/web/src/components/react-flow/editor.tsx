@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactFlowProvider } from "@xyflow/react";
-import { WorkflowStatus, type WorkflowsEndpoints } from "@shared/types";
+import { type WorkflowsEndpoints, WorkflowStatus } from "@shared/types";
 import { useQuery } from "@tanstack/react-query";
 import { type JSX } from "react";
 import Topbar from "@/components/react-flow/topbar/topbar";

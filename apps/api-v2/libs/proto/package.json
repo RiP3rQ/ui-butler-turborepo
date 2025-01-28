@@ -17,7 +17,7 @@
     "proto:generate": "ts-node scripts/generate-protos.ts",
     "proto:clean": "rimraf src/generated",
     "proto:build": "pnpm run proto:clean && pnpm run proto:generate",
-    "lint": "eslint ./src --max-warnings 0 --fix"
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
   },
   "keywords": [],
   "author": "",

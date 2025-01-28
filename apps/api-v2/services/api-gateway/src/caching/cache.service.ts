@@ -73,7 +73,6 @@ export class CacheService {
 
     const results = await Promise.all(
       groups.map(async (group) => {
-        // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression --- Don't trip Eslint
         const deletedCount = await this.invalidateGroup(group);
         return { group, deletedCount };
       }),
