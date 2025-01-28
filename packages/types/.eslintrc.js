@@ -1,6 +1,6 @@
 module.exports = {
   root: true,
-  extends: ["@shared/eslint-config/react.js"],
+  extends: ["@shared/eslint-config/base.js"],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     tsconfigRootDir: __dirname,

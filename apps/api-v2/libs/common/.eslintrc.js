@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ["@shared/eslint-config/library.js"],
+  extends: ["@shared/eslint-config/nest.js"],
   parserOptions: {
     tsconfigRootDir: __dirname,
     project: ["./tsconfig.json"],
