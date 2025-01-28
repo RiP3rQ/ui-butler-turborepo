@@ -37,7 +37,6 @@ import { rateLimitConfig } from './config/rate-limit.config';
 import { CacheModule } from './caching/cache.module';
 import { ThrottleModule } from './throttling/throttle.module';
 import { ThrottleGuard } from './throttling/throttle.guard';
-import { Reflector } from '@nestjs/core';
 
 @Module({
   imports: [
