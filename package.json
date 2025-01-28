@@ -1,4 +1,5 @@
 {
+  "name": "UI-Butler-turborepo",
   "private": true,
   "scripts": {
     "build": "turbo build",
@@ -22,6 +23,5 @@
   "packageManager": "pnpm@8.15.6",
   "engines": {
     "node": ">=18"
-  },
-  "name": "with-tailwind"
+  }
 }
