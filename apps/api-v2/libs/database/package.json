@@ -34,7 +34,7 @@
     "@shared/eslint-config": "workspace:*",
     "@shared/typescript-config": "workspace:*",
     "@types/pg": "^8.11.11",
-    "drizzle-kit": "^0.30.3",
+    "drizzle-kit": "^0.30.4",
     "typescript": "^5.7.3"
   },
   "peerDependencies": {

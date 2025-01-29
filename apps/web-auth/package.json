@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack --port 3002",
-    "clean": "rimraf dist node_modules .turbo",
+    "clean": "rimraf dist node_modules .turbo .next",
     "build": "next build",
     "start": "next start",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -34,7 +34,7 @@
     "react-hook-form": "^7.54.2",
     "react-query": "^3.39.3",
     "react-social-login-buttons": "^4.1.0",
-    "sonner": "^1.7.2",
+    "sonner": "^1.7.3",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.24.1"
