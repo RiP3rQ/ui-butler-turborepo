@@ -65,10 +65,10 @@
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.24.1",
-    "zustand": "^5.0.3"
+    "zustand": "^5.0.3",
+    "next": "^15.1.6"
   },
   "peerDependencies": {
-    "next": "^15.1.4",
     "next-themes": "^0.3.0",
     "react": "^19.0.0-rc-02c0e824-20241028",
     "react-dom": "^19.0.0-rc-02c0e824-20241028",

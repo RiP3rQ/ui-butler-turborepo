@@ -1,5 +1,5 @@
 {
-  "extends": "@shared/typescript-config/react-library.json",
+  "extends": "@shared/typescript-config/nextjs.json",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {

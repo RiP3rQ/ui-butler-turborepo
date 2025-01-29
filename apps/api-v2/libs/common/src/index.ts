@@ -53,7 +53,7 @@ export * from "./dto/execution/approve-changes.dto";
 export * from "./openai/ai";
 
 // cryptography
-export * from "./cryptography/algorythm";
+export * from "./cryptography/algorithm";
 export * from "./cryptography/symmetric-decryption";
 export * from "./cryptography/symmetric-encryption";
 

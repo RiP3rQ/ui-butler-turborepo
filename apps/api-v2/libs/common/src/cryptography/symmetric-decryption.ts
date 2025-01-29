@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { ALG } from "./algorythm";
+import { ALG } from "./algorithm";
 // openssl rand -hex 32      <-- Generate 32-byte hex key for .env ENCRYPTION_KEY secret key
 
 export const symmetricDecrypt = (encrypted: string): string => {
