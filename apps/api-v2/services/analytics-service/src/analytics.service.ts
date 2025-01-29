@@ -228,7 +228,7 @@ export class AnalyticsService {
             stats.failed += phase.creditsCost ?? 0;
           }
         } catch (error) {
-          console.error('Invalid date format:', phase.startedAt);
+          console.error('Invalid date format:', phase.startedAt, `(${error})`);
         }
       });
 

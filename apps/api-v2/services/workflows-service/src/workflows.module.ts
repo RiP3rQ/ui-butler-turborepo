@@ -19,7 +19,7 @@ import { WorkflowsService } from './workflows.service';
             __dirname,
             '../../../libs/proto/src/proto/execution.proto',
           ),
-          url: `${process.env.EXECUTION_SERVICE_HOST ?? 'localhost'}:${process.env.EXECUTION_SERVICES_PORT ?? '3343'}`,
+          url: `${process.env.EXECUTION_SERVICE_HOST ?? 'localhost'}:${process.env.EXECUTION_SERVICE_PORT ?? '3343'}`,
         },
       },
     ]),

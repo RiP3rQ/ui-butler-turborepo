@@ -183,7 +183,10 @@ export class CacheService {
               await client.del(key);
               totalDeleted++;
             }
-          } catch (error) {
+          } catch (error: unknown) {
+            console.error(
+              `Error parsing cache entry: ${key} | ${JSON.stringify(error)}`,
+            );
             await client.del(key); // Delete if can't parse
             totalDeleted++;
           }

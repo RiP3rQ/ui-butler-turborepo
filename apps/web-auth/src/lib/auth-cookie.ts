@@ -67,7 +67,8 @@ export function decodeToken(token: string | undefined): Date | undefined {
     return typeof decoded.exp === "number" && !isNaN(decoded.exp)
       ? new Date(decoded.exp * 1000)
       : undefined;
-  } catch (error) {
+  } catch (error: unknown) {
+    console.error("Error decoding token", error);
     return undefined;
   }
 }
