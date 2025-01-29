@@ -98,7 +98,7 @@ export class CustomCacheInterceptor implements NestInterceptor {
       const config = this.getCacheConfig(context);
 
       if (this.shouldSkipCache(context, config)) {
-        this.debugLog('⏭️ Cache skipped', { config });
+        this.debugLog('⏭️ Cache skipped', { config: JSON.stringify(config) });
         return next.handle();
       }
 
