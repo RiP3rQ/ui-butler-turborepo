@@ -131,16 +131,12 @@ export class UsersService {
         });
       }
 
-      // Create new object without password
-      const { password: _, ...userWithoutPassword } = user;
-
       return {
         $type: 'api.users.User',
-        ...userWithoutPassword,
-        username: userWithoutPassword.username ?? 'UNKNOWN_USERNAME',
-        email: userWithoutPassword.email ?? 'UNKNOWN_EMAIL',
-        refreshToken:
-          userWithoutPassword.refreshToken ?? 'UNKOWN_REFRESH_TOKEN',
+        id: user.id,
+        username: user.username ?? 'UNKNOWN_USERNAME',
+        email: user.email ?? 'UNKNOWN_EMAIL',
+        refreshToken: user.refreshToken ?? 'UNKOWN_REFRESH_TOKEN',
       } satisfies UsersProto.User;
     } catch (error) {
       console.error('[ERROR] Error in getUser function:', error);
@@ -204,16 +200,12 @@ export class UsersService {
         });
       }
 
-      // Create new object without password
-      const { password: _, ...userWithoutPassword } = updatedUser;
-
       return {
         $type: 'api.users.User',
-        ...userWithoutPassword,
-        username: userWithoutPassword.username ?? 'UNKNOWN_USERNAME',
-        email: userWithoutPassword.email ?? 'UNKNOWN_EMAIL',
-        refreshToken:
-          userWithoutPassword.refreshToken ?? 'UNKOWN_REFRESH_TOKEN',
+        id: updatedUser.id,
+        username: updatedUser.username ?? 'UNKNOWN_USERNAME',
+        email: updatedUser.email ?? 'UNKNOWN_EMAIL',
+        refreshToken: updatedUser.refreshToken ?? 'UNKOWN_REFRESH_TOKEN',
       } satisfies UsersProto.User;
     } catch (error) {
       console.error('[ERROR] Error in updateUser function:', error);

@@ -63,7 +63,7 @@ export function useRegisterForm(): {
     const isPasswordMatch = values.password === values.confirmPassword;
 
     return !hasValues || !hasNoErrors || !isPasswordMatch;
-  }, [form.watch(), form.formState.errors]);
+  }, [form]);
 
   return { form, isPending, onSubmit, isSubmitButtonBlocked };
 }

@@ -98,7 +98,7 @@ export class CustomCacheInterceptor implements NestInterceptor {
       const config = this.getCacheConfig(context);
 
       if (this.shouldSkipCache(context, config)) {
-        this.debugLog('⏭️ Cache skipped', { config });
+        this.debugLog('⏭️ Cache skipped', { config: JSON.stringify(config) });
         return next.handle();
       }
 
@@ -209,7 +209,7 @@ export class CustomCacheInterceptor implements NestInterceptor {
    * @param config - Cache configuration
    * @returns Cache key string
    */
-  // eslint-disable-next-line @typescript-eslint/require-await --- ESlint don't trip
+
   private async buildCacheKey(
     context: ExecutionContext,
     config: CacheConfig,

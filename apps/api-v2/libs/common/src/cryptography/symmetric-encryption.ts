@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { ALG } from "./algorythm";
+import { ALG } from "./algorithm";
 
 /**
  * Encrypts a string using AES-256-CBC symmetric encryption.

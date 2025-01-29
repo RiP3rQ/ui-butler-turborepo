@@ -1,10 +1,10 @@
 import {
   consoleMap,
   type Log,
+  LOG_LEVELS,
   type LogCollector,
   type LogFunction,
   type LogLevel,
-  LOG_LEVELS,
 } from '@shared/types';
 
 export function createLogCollector(): LogCollector {
@@ -14,7 +14,7 @@ export function createLogCollector(): LogCollector {
 
   // Dynamic creation of log functions
   const logFunctions = {} as Record<LogLevel, LogFunction>;
-  Object.entries(LOG_LEVELS).forEach(([_, level]) => {
+  Object.entries(LOG_LEVELS).forEach(([, level]) => {
     logFunctions[level] = (message: string) => {
       logs.push({ level, message, timestamp: new Date() });
       consoleMap[level](message);

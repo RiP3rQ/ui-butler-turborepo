@@ -23,8 +23,6 @@ async function bootstrap() {
 }
 
 bootstrap().catch((error: unknown) => {
-  console.error(
-    `Execution Microservice failed to start: ${JSON.stringify(error)}`,
-  );
+  console.error(`Execution Microservice failed to start: ${error}`);
   process.exit(1);
 });

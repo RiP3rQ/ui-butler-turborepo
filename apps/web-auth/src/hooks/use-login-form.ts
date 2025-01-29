@@ -50,7 +50,7 @@ export function useLoginForm(): {
       !form.getValues("email") ||
       !form.getValues("password")
     );
-  }, [form.formState.isValid, form.getValues]);
+  }, [form]);
 
   return { form, isPending, handleSubmit, isSubmitDisabled };
 }

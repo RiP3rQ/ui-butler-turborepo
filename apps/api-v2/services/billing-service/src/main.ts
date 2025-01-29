@@ -23,6 +23,6 @@ async function bootstrap() {
 }
 
 bootstrap().catch((error: unknown) => {
-  console.error('Error starting Billing Microservice:', JSON.stringify(error));
+  console.error('Error starting Billing Microservice:', error);
   process.exit(1);
 });

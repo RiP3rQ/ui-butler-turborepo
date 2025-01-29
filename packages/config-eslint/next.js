@@ -1,62 +1,42 @@
-const { resolve } = require("node:path");
+import pluginNext from "@next/eslint-plugin-next";
+import pluginReact from "eslint-plugin-react";
+import pluginReactHooks from "eslint-plugin-react-hooks";
+import globals from "globals";
+import { config as baseConfig } from "./base.js";
 
-const project = resolve(process.cwd(), "tsconfig.json");
-
-/*
- * This is a custom ESLint configuration for use with
- * Next.js apps.
+/**
+ * A custom ESLint configuration for Next.js applications.
  *
- * This config extends the Vercel Engineering Style Guide.
- * For more information, see https://github.com/vercel/style-guide
- *
+ * @type {import('eslint').Linter.Config}
  */
-
-module.exports = {
-  extends: [
-    ...[
-      "@vercel/style-guide/eslint/node",
-      "@vercel/style-guide/eslint/typescript",
-      "@vercel/style-guide/eslint/browser",
-      "@vercel/style-guide/eslint/react",
-      "@vercel/style-guide/eslint/next",
-    ].map(require.resolve),
-    "turbo",
-  ],
-  parserOptions: {
-    project,
-  },
-  globals: {
-    React: true,
-    JSX: true,
-  },
-  settings: {
-    "import/parsers": {
-      "@typescript-eslint/parser": [".ts", ".tsx"],
-    },
-    "import/resolver": {
-      typescript: {
-        alwaysTryTypes: true,
+export const config = [
+  ...baseConfig,
+  {
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.serviceworker,
+      },
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
       },
     },
-    "import/resolver": {
-      typescript: {
-        project,
-      },
-      node: {
-        extensions: [".mjs", ".js", ".jsx", ".ts", ".tsx"],
-      },
+    plugins: {
+      react: pluginReact,
+      "@next/next": pluginNext,
+      "react-hooks": pluginReactHooks,
     },
-    next: {
-      rootDir: ["apps/*/"],
+    settings: {
+      react: { version: "detect" },
+    },
+    rules: {
+      ...pluginReact.configs.recommended.rules,
+      ...pluginNext.configs.recommended.rules,
+      ...pluginNext.configs["core-web-vitals"].rules,
+      ...pluginReactHooks.configs.recommended.rules,
+      "react/react-in-jsx-scope": "off",
     },
   },
-  ignorePatterns: ["node_modules/", "dist/"],
-  // add rules configurations here
-  rules: {
-    "@typescript-eslint/no-empty-function": "off",
-    "@typescript-eslint/dot-notation": "off",
-    "import/no-default-export": "off",
-    "import/order": "off",
-  },
-  plugins: ["import"],
-};
+];

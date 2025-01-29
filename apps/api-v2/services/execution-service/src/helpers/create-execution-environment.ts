@@ -31,7 +31,6 @@ export function createExecutionEnvironment<T extends BaseWorkflowTask>(
     getInput: (name: string) => environment.phases[node.id]?.inputs[name] ?? '',
     setOutput: (name: string, value: string) => {
       if (environment.phases[node.id]) {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion --- This type is tweaking, on god
         environment.phases[node.id]!.outputs[name] = value;
       }
     },
@@ -41,7 +40,6 @@ export function createExecutionEnvironment<T extends BaseWorkflowTask>(
     },
     setTemp(name: string, value: string): void {
       if (environment.phases[node.id]) {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion --- This type is tweaking, on god
         environment.phases[node.id]!.temp[name] = value;
       }
     },

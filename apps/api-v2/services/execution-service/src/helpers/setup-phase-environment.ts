@@ -36,7 +36,6 @@ export function setupPhaseEnvironment(
 
     const inputValue = node.data.inputs[input.name];
     if (inputValue) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion --- This type is tweaking, on god
       environment.phases[node.id]!.inputs[input.name] = inputValue;
       continue;
     }
@@ -61,7 +60,7 @@ export function setupPhaseEnvironment(
     }
 
     // Assign output value to the environment
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion --- This type is tweaking, on god
+
     environment.phases[node.id]!.inputs[input.name] = outputValue;
   }
 }

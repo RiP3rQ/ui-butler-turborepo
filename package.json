@@ -6,6 +6,7 @@
     "lint": "turbo lint",
     "type-check": "turbo type-check",
     "clean": "turbo clean",
+    "clean:cache": "rimraf .turbo",
     "format": "prettier --write \"**/*.{js,jsx,json,ts,tsx,scss,css,md}\"",
     "prepare": "husky",
     "lint-staged": "lint-staged"
@@ -19,9 +20,9 @@
     "prettier-plugin-tailwindcss": "^0.6.11",
     "turbo": "^2.3.4"
   },
-  "packageManager": "pnpm@8.15.6",
+  "packageManager": "pnpm@9.15.4",
   "engines": {
     "node": ">=18"
   },
-  "name": "with-tailwind"
+  "name": "UI-Butler-turborepo"
 }

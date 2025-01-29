@@ -480,7 +480,7 @@ export class WorkflowsService implements OnModuleInit {
         }
 
         // Executing the workflow but without the `await` as we don't need to wait for it to finish
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises --- This is a workaround to avoid blocking the main thread
+
         this.executeWorkflow({
           $type: 'api.execution.ExecuteWorkflowRequest',
           workflowExecutionId: execution.id,

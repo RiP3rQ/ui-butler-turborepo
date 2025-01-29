@@ -8,7 +8,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@shared/ui/components/ui/chart";
-import { useMemo, type JSX } from "react";
+import { type JSX, useMemo } from "react";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
 const chartConfig = {

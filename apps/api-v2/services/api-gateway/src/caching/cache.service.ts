@@ -73,7 +73,6 @@ export class CacheService {
 
     const results = await Promise.all(
       groups.map(async (group) => {
-        // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression --- Don't trip Eslint
         const deletedCount = await this.invalidateGroup(group);
         return { group, deletedCount };
       }),
@@ -184,7 +183,10 @@ export class CacheService {
               await client.del(key);
               totalDeleted++;
             }
-          } catch (error) {
+          } catch (error: unknown) {
+            console.error(
+              `Error parsing cache entry: ${key} | ${JSON.stringify(error)}`,
+            );
             await client.del(key); // Delete if can't parse
             totalDeleted++;
           }

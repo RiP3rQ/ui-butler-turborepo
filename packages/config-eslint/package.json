@@ -1,16 +1,25 @@
 {
   "name": "@shared/eslint-config",
   "version": "0.0.0",
+  "type": "module",
   "private": true,
-  "dependencies": {
-    "@typescript-eslint/eslint-plugin": "^8.22.0",
-    "@typescript-eslint/parser": "^8.22.0",
-    "@vercel/style-guide": "^6.0.0",
-    "eslint": "^8.57.1",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-config-turbo": "^2.3.4",
-    "eslint-import-resolver-typescript": "^3.7.0",
-    "eslint-plugin-prettier": "^5.2.3",
-    "prettier": "^3.4.2"
+  "exports": {
+    "./base": "./base.js",
+    "./next": "./next.js",
+    "./nest": "./nest.js"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.19.0",
+    "@next/eslint-plugin-next": "^15.1.6",
+    "eslint": "^9.19.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-only-warn": "^1.1.0",
+    "eslint-plugin-prettier": "^5.2.2",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-turbo": "^2.3.4",
+    "globals": "^15.14.0",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.22.0"
   }
 }
