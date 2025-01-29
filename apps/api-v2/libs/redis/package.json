@@ -11,6 +11,7 @@
   },
   "scripts": {
     "dev": "tsc --watch",
+    "clean": "rimraf node_modules",
     "type-check": "tsc --noEmit",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "build": "tsc"

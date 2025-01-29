@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack --port 3000",
+    "clean": "rimraf dist node_modules .turbo",
     "build": "next build",
     "start": "next start",
     "type-check": "tsc --noEmit",

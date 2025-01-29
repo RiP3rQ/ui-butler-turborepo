@@ -25,6 +25,7 @@
   "scripts": {
     "build": "tailwindcss -i src/globals.css -o ./dist/index.css",
     "dev": "tsup --watch",
+    "clean": "rimraf dist node_modules .turbo",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "type-check": "tsc --noEmit",
     "ui": "pnpm dlx shadcn@latest"
