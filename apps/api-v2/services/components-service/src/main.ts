@@ -1,8 +1,7 @@
 import { NestFactory } from '@nestjs/core';
-import { Transport } from '@nestjs/microservices';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
-import { type Express, type Router } from 'express';
 import helmet from 'helmet';
 import { join } from 'node:path';
 import { ComponentsModule } from './components.module';
@@ -19,7 +18,7 @@ async function bootstrap() {
   const GRPC_PORT = parseInt(process.env.COMPONENTS_SERVICE_PORT ?? '3345', 10);
 
   // Add microservice capabilities
-  app.connectMicroservice({
+  app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.GRPC,
     options: {
       package: 'api.components',
@@ -45,22 +44,23 @@ async function bootstrap() {
     credentials: true,
   });
 
-  // Get and display routes
-  const server = app.getHttpServer() as Express;
-  await app.init(); // Initialize the application to get the router
-  // @ts-expect-error This works but is not typed
-  const router = server._events.request._router as Router;
-  console.log('\nRegistered Routes:');
-  router.stack
-    .filter((layer) => layer.route)
-    .forEach((layer) => {
-      const path = layer.route?.path ?? '';
-      // @ts-expect-error This works but is not typed
-      const methods = Object.keys(layer.route?.methods ?? {}).map((m) =>
-        m.toUpperCase(),
-      );
-      console.log(`${methods.join(', ')} ${String(path)}`);
-    });
+  // Get and display routes <-- WORKS FOR NEST.JS v10 BUT NOT v11 (deprecated)
+  // const server = app.getHttpServer() as Express;
+  // await app.init(); // Initialize the application to get the router
+  // // @ts-expect-error This works but is not typed
+  // const router = server._events.request._router as Router;
+  // console.log('\nRegistered Routes:');
+  // console.log('router', router);
+  // router.stack
+  //   .filter((layer) => layer.route)
+  //   .forEach((layer) => {
+  //     const path = layer.route?.path ?? '';
+  //     // @ts-expect-error This works but is not typed
+  //     const methods = Object.keys(layer.route?.methods ?? {}).map((m) =>
+  //       m.toUpperCase(),
+  //     );
+  //     console.log(`${methods.join(', ')} ${String(path)}`);
+  //   });
 
   // Start both HTTP and Microservice
   await app.startAllMicroservices();
@@ -70,10 +70,7 @@ async function bootstrap() {
 }
 
 bootstrap().catch((error: unknown) => {
-  console.error(
-    'Error starting Components Microservice:',
-    JSON.stringify(error),
-  );
+  console.error('Error starting Components Microservice:', error);
   process.exit(1);
 });
 

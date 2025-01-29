@@ -165,6 +165,6 @@ async function bootstrap() {
 }
 
 bootstrap().catch((error: unknown) => {
-  console.error('Error starting api-gateway:', JSON.stringify(error));
+  console.error('Error starting api-gateway:', error);
   process.exit(1);
 });

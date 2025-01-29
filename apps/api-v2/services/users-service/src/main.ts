@@ -18,8 +18,6 @@ async function bootstrap() {
 }
 
 bootstrap().catch((error: unknown) => {
-  console.error(
-    `Error starting Users + Credentials Microservice: ${JSON.stringify(error)}`,
-  );
+  console.error(`Error starting Users + Credentials Microservice: ${error}`);
   process.exit(1);
 });

@@ -27,6 +27,7 @@ import { ENV_VARS } from './constants';
         [ENV_VARS.JWT.REFRESH_TOKEN_EXPIRATION_MS]: Joi.number().required(),
       }),
     }),
+    // @ts-expect-error - In Nest v11 the type of the options is not correct
     ClientsModule.registerAsync([
       {
         name: 'USERS_SERVICE',

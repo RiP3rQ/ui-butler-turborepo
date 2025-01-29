@@ -93,6 +93,7 @@ import { ThrottleGuard } from './throttling/throttle.guard';
         REDIS_TOKEN: Joi.string().default('token'),
       }),
     }),
+    // @ts-expect-error - In Nest v11 the type of the options is not correct
     ClientsModule.registerAsync([
       // AUTH
       {
