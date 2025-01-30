@@ -33,6 +33,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { logoutUser } from "@shared/ui/actions/auth/logout-user";
 import { JSX } from "react";
+import { Separator } from "@shared/ui/components/ui/separator";
 
 /**
  * SidebarFooterContent component renders the footer content of the sidebar
@@ -55,6 +56,8 @@ export function SidebarFooterContent(): JSX.Element {
 
   return (
     <SidebarMenu>
+      <Separator className="my-2" />
+
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

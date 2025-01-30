@@ -92,32 +92,34 @@ function CollapsibleMenuItem({ item }: CollapsibleMenuItemProps): JSX.Element {
             {item.items?.map((subItem) => (
               <SidebarMenuSubItem
                 key={subItem.title}
-                className={"flex items-center justify-between"}
+                className="flex items-center"
               >
                 <SidebarMenuSubButton
                   asChild
                   className={cn(
-                    "group flex w-full items-center justify-between px-3 py-2 transition-colors hover:bg-muted/50",
+                    "flex-1 px-3 py-2 transition-colors hover:bg-muted/50",
                     subItem.url === currentRoute && "bg-muted font-medium",
                   )}
                 >
-                  <Link href={subItem.url} className="flex-1">
-                    <div className="flex items-center">
+                  <Link href={subItem.url} className="flex items-center w-full">
+                    <div className="flex items-center flex-1 min-w-0">
                       {subItem.icon && (
-                        <subItem.icon className="mr-2 h-3 w-3" />
+                        <subItem.icon className="flex-shrink-0 w-4 h-4 mr-2 text-muted-foreground" />
                       )}
                       {subItem.color && (
                         <div
-                          className="mr-2 h-2 w-2 rounded-full"
+                          className="flex-shrink-0 w-2 h-2 mr-2 rounded-full"
                           style={{ backgroundColor: subItem.color }}
                         />
                       )}
-                      <span className="text-sm">{subItem.title}</span>
+                      <span className="text-sm truncate">{subItem.title}</span>
                     </div>
                   </Link>
                 </SidebarMenuSubButton>
                 {subItem.actions && subItem.actions.length > 0 && (
-                  <ActionsDropdown actions={subItem.actions} />
+                  <div className="flex-shrink-0 ml-2">
+                    <ActionsDropdown actions={subItem.actions} />
+                  </div>
                 )}
               </SidebarMenuSubItem>
             ))}
