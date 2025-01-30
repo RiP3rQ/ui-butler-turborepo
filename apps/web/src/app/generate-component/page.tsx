@@ -3,7 +3,6 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -41,6 +40,7 @@ import {
 import CodeEditor from "@/components/code-editor/editor";
 import { useModalsStateStore } from "@/store/modals-store";
 import { CopyButton } from "@/components/copy-code-button";
+import { PageHeader } from "@/components/page-header";
 
 export default function GenerateComponentPage(): JSX.Element {
   const { createNewComponentModal } = useModalsStateStore(
@@ -132,17 +132,13 @@ export default function GenerateComponentPage(): JSX.Element {
   }, [form, handleGenerateComponent]);
 
   return (
-    <div className="flex flex-col items-center min-h-[calc(100vh-200px)] w-full max-w-full px-8 py-4 space-y-6">
+    <div className="flex flex-col space-y-6 container py-6">
+      <PageHeader
+        title="Generate Component"
+        description="Use AI to generate a new component"
+      />
       <Card className="w-full">
-        <CardHeader>
-          <CardTitle>Generate Component</CardTitle>
-          <CardDescription>
-            Using this textarea type your prompt to generate a component. If
-            possible make the prompt as specific as possible for the best
-            results. The generated code can be saved in the selected project.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+        <CardContent className={"pt-4"}>
           <Form {...form}>
             <form
               className="space-y-6 w-full relative"

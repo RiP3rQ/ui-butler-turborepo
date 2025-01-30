@@ -1,14 +1,7 @@
 "use client";
 
 import { SaveIcon } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@shared/ui/components/ui/card";
+import { Card, CardContent, CardFooter } from "@shared/ui/components/ui/card";
 import { Button } from "@shared/ui/components/ui/button";
 import {
   Form,
@@ -42,6 +35,7 @@ import {
 import CodeEditor from "@/components/code-editor/editor";
 import { saveComponentFunction } from "@/actions/components/server-actions";
 import { getUserProjects } from "@/actions/projects/server-actions";
+import { PageHeader } from "@/components/page-header";
 
 export default function SaveNewComponentPage(): JSX.Element {
   const router = useRouter();
@@ -84,15 +78,12 @@ export default function SaveNewComponentPage(): JSX.Element {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-[calc(100vh-200px)] w-full max-w-full px-8 py-4">
-      <Card className="w-full h-full">
-        <CardHeader>
-          <CardTitle>Save component</CardTitle>
-          <CardDescription>
-            Using the code editor below, you can write your component code and
-            then choose to save it and run an action.
-          </CardDescription>
-        </CardHeader>
+    <div className="flex flex-col space-y-6 container py-6">
+      <PageHeader
+        title="Save Component"
+        description="Save a new component to your project"
+      />
+      <Card className="w-full h-full pt-5">
         <CardContent className="h-fit ">
           <Form {...form}>
             <form

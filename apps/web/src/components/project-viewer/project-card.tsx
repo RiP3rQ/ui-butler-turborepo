@@ -37,7 +37,7 @@ export function ProjectCard({
   });
 
   return (
-    <div className="flex flex-col items-center min-h-[calc(100vh-200px)] w-full max-w-full px-8 py-4">
+    <div className="flex flex-col items-center min-h-[calc(100vh-200px)] w-full max-w-full py-4">
       <Card className="w-full h-full">
         <CardHeader>
           <CardTitle>

@@ -7,6 +7,7 @@ import { DashboardGrid } from "@/components/dashboard/grid/dashboard-grid";
 import DashboardStatCards from "@/components/dashboard/stat-cards/dashboard-stat-cards";
 import { DashboardFavoritedTable } from "@/components/dashboard/table/dashboard-favorited-table";
 import { type JSX } from "react";
+import { PageHeader } from "@/components/page-header";
 
 export default async function DashboardPage(): Promise<JSX.Element> {
   const [
@@ -20,15 +21,11 @@ export default async function DashboardPage(): Promise<JSX.Element> {
   ]);
 
   return (
-    <div className="flex flex-1 flex-col h-full gap-4 mx-auto max-w-6xl mt-4 px-4 sm:px-6 lg:px-8">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-white">Your Dashboard</h1>
-      </div>
-      <div className="h-full py-6 flex flex-col space-y-8">
-        <DashboardStatCards initialData={dashboardStatCardsValues} />
-        <DashboardGrid initialData={userProjects} />
-        <DashboardFavoritedTable initialData={dashboardTableFavoritedContent} />
-      </div>
+    <div className="flex flex-col space-y-6 container py-6">
+      <PageHeader title="Your Dashboard" />
+      <DashboardStatCards initialData={dashboardStatCardsValues} />
+      <DashboardGrid initialData={userProjects} />
+      <DashboardFavoritedTable initialData={dashboardTableFavoritedContent} />
     </div>
   );
 }
