@@ -16,5 +16,10 @@ export interface NavMainType {
     url: string;
     icon?: LucideIcon;
     color?: string;
+    actions: {
+      icon: LucideIcon;
+      tooltipInfo: string;
+      action: () => void;
+    }[];
   }[];
 }
