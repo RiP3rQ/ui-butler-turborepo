@@ -1,3 +1,4 @@
+import * as fs from 'node:fs';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
@@ -5,6 +6,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import compression, { filter } from 'compression';
 import cookieParser from 'cookie-parser';
 import { Logger } from 'nestjs-pino';
+import helmet from 'helmet';
 import { ApiGatewayModule } from './api-gateway.module';
 // import { HttpExceptionFilter } from './filters/http-exception.filter';
 import { EnhancedResponseInterceptor } from './interceptors/enhanced-response.interceptor';
@@ -13,17 +15,55 @@ import { MetricsService } from './metrics/metrics.service';
 import { PerformanceMetrics } from './metrics/performance.metrics';
 
 async function bootstrap() {
-  const app = await NestFactory.create(ApiGatewayModule, { bufferLogs: true });
+  const app = await NestFactory.create(ApiGatewayModule, {
+    bufferLogs: true,
+    // Enable HTTPS in production
+    httpsOptions:
+      process.env.NODE_ENV === 'production'
+        ? {
+            key: fs.readFileSync(String(process.env.SSL_KEY_PATH)),
+            cert: fs.readFileSync(String(process.env.SSL_CERT_PATH)),
+          }
+        : undefined,
+  });
 
+  // Logger and request logging
   app.useLogger(app.get(Logger));
 
+  // Get ConfigService instance
   const configService = app.get(ConfigService);
 
   // Cookie-parser
   app.use(cookieParser());
 
   // Security
-  // helmet is being handled by the HelmetMiddleware
+  // Enhanced security headers
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          imgSrc: ["'self'", 'data:', 'https:'],
+          scriptSrc: ["'self'"],
+        },
+      },
+      crossOriginEmbedderPolicy: true,
+      crossOriginOpenerPolicy: true,
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+      dnsPrefetchControl: true,
+      frameguard: { action: 'deny' },
+      hidePoweredBy: true,
+      hsts: true,
+      ieNoOpen: true,
+      noSniff: true,
+      referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+      xssFilter: true,
+    }),
+  );
+  // + HelmetMiddleware
+
+  // Compression
   app.use(
     compression({
       filter: (req, res) => {
@@ -37,11 +77,19 @@ async function bootstrap() {
     }),
   );
 
-  // API prefix and CORS
+  // API prefix
   app.setGlobalPrefix('api');
+
+  // Enhanced CORS configuration
   app.enableCors({
-    origin: true, // or specify your frontend URL
+    origin: configService
+      .get<string>('ALLOWED_ORIGINS', 'http://localhost:3000')
+      .split(','),
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    exposedHeaders: ['Content-Range', 'X-Total-Count'],
     credentials: true,
+    maxAge: 3600,
   });
 
   // Validation and transformation
@@ -58,11 +106,11 @@ async function bootstrap() {
 
   // Global filters and interceptors
   // app.useGlobalFilters(new HttpExceptionFilter());
-  app.useGlobalInterceptors(new EnhancedResponseInterceptor());
-
-  // Add metrics interceptor
-  const metricsService = app.get(MetricsService);
-  app.useGlobalInterceptors(new MetricsInterceptor(metricsService));
+  app.useGlobalInterceptors(
+    new EnhancedResponseInterceptor(),
+    // Add metrics interceptor
+    new MetricsInterceptor(app.get(MetricsService)),
+  );
 
   // Get PerformanceMetrics instance
   const performanceMetrics = app.get(PerformanceMetrics);
@@ -117,6 +165,6 @@ async function bootstrap() {
 }
 
 bootstrap().catch((error: unknown) => {
-  console.error('Error starting api-gateway:', JSON.stringify(error));
+  console.error('Error starting api-gateway:', error);
   process.exit(1);
 });

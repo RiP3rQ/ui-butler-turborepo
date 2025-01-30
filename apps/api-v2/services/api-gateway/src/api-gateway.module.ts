@@ -37,7 +37,6 @@ import { rateLimitConfig } from './config/rate-limit.config';
 import { CacheModule } from './caching/cache.module';
 import { ThrottleModule } from './throttling/throttle.module';
 import { ThrottleGuard } from './throttling/throttle.guard';
-import { Reflector } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -94,6 +93,7 @@ import { Reflector } from '@nestjs/core';
         REDIS_TOKEN: Joi.string().default('token'),
       }),
     }),
+    // @ts-expect-error - In Nest v11 the type of the options is not correct
     ClientsModule.registerAsync([
       // AUTH
       {

@@ -17,6 +17,7 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => ({
   },
   clearPendingChange: (codeType) => {
     set((state) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [codeType]: _, ...rest } = state.pendingChanges;
       return { pendingChanges: rest };
     });

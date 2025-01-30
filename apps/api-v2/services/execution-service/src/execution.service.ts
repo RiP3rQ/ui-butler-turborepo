@@ -168,7 +168,6 @@ export class ExecutionsService {
         })
         .where(eq(executionPhase.id, currentPhase.id));
 
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises --- we don't need to await this
       executeWorkflowPhases(
         this.database,
         environment,

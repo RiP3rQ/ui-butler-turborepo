@@ -1,7 +1,6 @@
 import type { LucideProps } from "lucide-react";
-import { type Viewport } from "@xyflow/react";
 import type { TaskParam, TaskType } from "./tasks";
-import type { AppEdge, AppNode, AppNodeMissingInputs } from "./react-flow";
+import type { AppNode, AppNodeMissingInputs } from "./react-flow";
 
 export const WorkflowStatus = {
   DRAFT: "DRAFT",

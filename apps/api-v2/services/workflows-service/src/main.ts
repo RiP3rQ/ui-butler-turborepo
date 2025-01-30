@@ -21,8 +21,6 @@ async function bootstrap() {
 }
 
 bootstrap().catch((error: unknown) => {
-  console.error(
-    `Workflows Microservice failed to start: ${JSON.stringify(error)}`,
-  );
+  console.error(`Workflows Microservice failed to start: ${error}`);
   process.exit(1);
 });

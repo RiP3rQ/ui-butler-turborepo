@@ -1,6 +1,5 @@
 import type {
   AppNode,
-  AppNodeMissingInputs,
   WorkflowExecutionPlan,
   WorkflowExecutionPlanError,
 } from "@shared/types";
@@ -29,7 +28,6 @@ export function parseFlowToExecutionPlan(
   }
 
   const planned = new Set<string>();
-  const inputsWithErrors: AppNodeMissingInputs[] = [];
   const dependencyMap = createDependencyMap(edges);
   const levelMap = createLevelMap(nodes, dependencyMap);
 

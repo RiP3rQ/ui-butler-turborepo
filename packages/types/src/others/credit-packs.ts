@@ -20,7 +20,7 @@ export const CreditPacks: CreditPack[] = [
     label: "1000 Credits",
     credits: 1000,
     price: 999, // PRICE IN CENTS (9.99$)
-    stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_SMALL_PACK || "", // STRIPE PRICE ID
+    stripePriceId: "small", // STRIPE PRICE ID process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_SMALL_PACK
   },
   {
     id: BalancePackId.MEDIUM,
@@ -28,7 +28,7 @@ export const CreditPacks: CreditPack[] = [
     label: "5000 Credits",
     credits: 5000,
     price: 3399, // PRICE IN CENTS (33.99$)
-    stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MEDIUM_PACK || "", // STRIPE PRICE ID
+    stripePriceId: "medium", // STRIPE PRICE ID process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MEDIUM_PACK
   },
   {
     id: BalancePackId.LARGE,
@@ -36,7 +36,7 @@ export const CreditPacks: CreditPack[] = [
     label: "12000 Credits",
     credits: 12000,
     price: 4999, // PRICE IN CENTS (49.99$)
-    stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_LARGE_PACK || "", // STRIPE PRICE ID
+    stripePriceId: "large", // STRIPE PRICE ID process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_LARGE_PACK
   },
 ] as const;
 

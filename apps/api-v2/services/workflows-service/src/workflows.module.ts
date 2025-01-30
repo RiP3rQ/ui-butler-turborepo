@@ -9,6 +9,7 @@ import { WorkflowsService } from './workflows.service';
   imports: [
     DatabaseModule,
     // Import the ClientsModule and register the EXECUTIONS_SERVICE client for communication with the execution service
+    // @ts-expect-error - In Nest v11 the type of the options is not correct
     ClientsModule.register([
       {
         name: 'EXECUTIONS_SERVICE',
@@ -19,7 +20,7 @@ import { WorkflowsService } from './workflows.service';
             __dirname,
             '../../../libs/proto/src/proto/execution.proto',
           ),
-          url: `${process.env.EXECUTION_SERVICE_HOST ?? 'localhost'}:${process.env.EXECUTION_SERVICES_PORT ?? '3343'}`,
+          url: `${process.env.EXECUTION_SERVICE_HOST ?? 'localhost'}:${process.env.EXECUTION_SERVICE_PORT ?? '3343'}`,
         },
       },
     ]),

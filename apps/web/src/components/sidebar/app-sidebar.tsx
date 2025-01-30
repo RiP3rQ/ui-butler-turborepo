@@ -20,7 +20,7 @@ import {
   SquareTerminal,
   VariableIcon,
 } from "lucide-react";
-import { useMemo, type JSX } from "react";
+import { type JSX, useMemo } from "react";
 
 // This is sample data.
 const data = {

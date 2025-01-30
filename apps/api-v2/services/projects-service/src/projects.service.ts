@@ -8,7 +8,7 @@ import {
   type Project,
   projects,
   sql,
-} from '@app/database';
+} from '@microservices/database';
 import { status } from '@grpc/grpc-js';
 import { type ProjectsProto } from '@microservices/proto';
 import { Inject, Injectable } from '@nestjs/common';

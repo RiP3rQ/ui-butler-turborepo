@@ -379,6 +379,7 @@ describe('AuthService', () => {
 
       try {
         await service.verifyUser('test@test.com', 'password');
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error: unknown) {
         expect(consoleErrorSpy).toHaveBeenCalledWith('Error in verifyUser:', {
           message: mockError.message,

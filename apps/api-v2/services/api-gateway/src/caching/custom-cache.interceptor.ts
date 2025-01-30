@@ -10,14 +10,14 @@ import {
 import { Reflector } from '@nestjs/core';
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { REDIS_CONNECTION, RedisService } from '@microservices/redis';
+import { RedisService } from '@microservices/redis';
 import { Request } from 'express';
 import chalk from 'chalk';
 import {
   CACHE_GROUP_METADATA,
   CACHE_SKIP_METADATA,
-  CACHE_TTL_METADATA,
   CACHE_TTL,
+  CACHE_TTL_METADATA,
 } from './cache.decorator';
 
 type CacheTTLValues = (typeof CACHE_TTL)[keyof typeof CACHE_TTL];
@@ -71,7 +71,7 @@ export class CustomCacheInterceptor implements NestInterceptor {
   constructor(
     @Inject(Reflector)
     private readonly reflector: Reflector,
-    @Inject(REDIS_CONNECTION)
+    @Inject(RedisService)
     private readonly redisService: RedisService,
   ) {
     this.debugLog('Cache interceptor initialized', { debug: this.isDebugMode });
@@ -98,7 +98,7 @@ export class CustomCacheInterceptor implements NestInterceptor {
       const config = this.getCacheConfig(context);
 
       if (this.shouldSkipCache(context, config)) {
-        this.debugLog('⏭️ Cache skipped', { config });
+        this.debugLog('⏭️ Cache skipped', { config: JSON.stringify(config) });
         return next.handle();
       }
 
@@ -139,7 +139,7 @@ export class CustomCacheInterceptor implements NestInterceptor {
                 this.debugLog('✨ Cache updated', {
                   key: cacheKey,
                   timing: `${generationTime.toFixed(2)}ms`,
-                  ttl: `${config.ttl}s`,
+                  ttl: `${String(config.ttl)}s`,
                 });
               })
               .catch((error: unknown) => {
@@ -209,7 +209,7 @@ export class CustomCacheInterceptor implements NestInterceptor {
    * @param config - Cache configuration
    * @returns Cache key string
    */
-  // eslint-disable-next-line @typescript-eslint/require-await --- ESlint don't trip
+
   private async buildCacheKey(
     context: ExecutionContext,
     config: CacheConfig,
@@ -295,10 +295,10 @@ export class CustomCacheInterceptor implements NestInterceptor {
 
       this.debugLog('💾 Cache set', {
         key,
-        ttl: `${ttl}s`,
+        ttl: `${String(ttl)}s`,
         size: `${(serializedValue.length / 1024).toFixed(2)}KB`,
         generationTime: metadata.generationTime
-          ? `${metadata.generationTime.toFixed(2)}`
+          ? metadata.generationTime.toFixed(2)
           : undefined,
       });
     } catch (error) {
@@ -328,9 +328,11 @@ export class CustomCacheInterceptor implements NestInterceptor {
           const metadata = context.metadata as Record<string, unknown>;
           output.metadata = {
             generationTime: metadata.generationTime
-              ? chalk.gray(`${metadata.generationTime}ms`)
+              ? chalk.gray(`${String(metadata.generationTime)}ms`)
               : undefined,
-            size: metadata.size ? chalk.yellow(`${metadata.size}B`) : undefined,
+            size: metadata.size
+              ? chalk.yellow(`${String(metadata.size)}B`)
+              : undefined,
           };
         }
         if ('config' in context) output.config = context.config;
@@ -343,13 +345,13 @@ export class CustomCacheInterceptor implements NestInterceptor {
             Object.entries(value as Record<string, unknown>).forEach(
               ([mKey, mValue]) => {
                 if (mValue !== undefined) {
-                  console.log(`    "${mKey}": ${mValue}`);
+                  console.log(`    "${mKey}": ${String(mValue)}`);
                 }
               },
             );
             console.log('  }');
           } else {
-            console.log(`  "${key}": ${value}`);
+            console.log(`  "${key}": ${String(value)}`);
           }
         });
         console.log('}');
@@ -370,7 +372,7 @@ export class CustomCacheInterceptor implements NestInterceptor {
     if (this.isDebugMode) {
       console.error(
         chalk.red('❌ [Cache Error]'),
-        chalk.white(message + ': ' + errorMessage),
+        chalk.white(`${message}: ${errorMessage}`),
         formattedStack,
       );
     } else {

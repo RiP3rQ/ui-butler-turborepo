@@ -1,8 +1,8 @@
 // cache.service.ts
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { REDIS_CONNECTION, RedisService } from '@microservices/redis';
-import { type CachedData } from './custom-cache.interceptor';
 import chalk from 'chalk';
+import { type CachedData } from './custom-cache.interceptor';
 
 @Injectable()
 export class CacheService {
@@ -26,8 +26,6 @@ export class CacheService {
       userId ? chalk.cyan(`for user: ${userId}`) : '',
     );
 
-    const client = this.redisService.getClient();
-
     for (const path of paths) {
       const pattern = userId
         ? `cache:*:${path}:${userId}:*`
@@ -36,7 +34,7 @@ export class CacheService {
       const deletedCount = await this.deleteByPattern(pattern);
       console.log(
         chalk.green('✓'),
-        chalk.gray(`Cleared ${deletedCount} cache entries for path:`),
+        chalk.gray(`Cleared ${String(deletedCount)} cache entries for path:`),
         chalk.white(path),
       );
     }
@@ -57,7 +55,7 @@ export class CacheService {
     const deletedCount = await this.deleteByPattern(pattern);
     console.log(
       chalk.green('✓'),
-      chalk.gray(`Cleared ${deletedCount} cache entries from group:`),
+      chalk.gray(`Cleared ${String(deletedCount)} cache entries from group:`),
       chalk.white(group),
     );
   }
@@ -83,7 +81,7 @@ export class CacheService {
     results.forEach(({ group, deletedCount }) => {
       console.log(
         chalk.green('✓'),
-        chalk.gray(`Cleared ${deletedCount} cache entries from group:`),
+        chalk.gray(`Cleared ${String(deletedCount)} cache entries from group:`),
         chalk.white(group),
       );
     });
@@ -119,7 +117,9 @@ export class CacheService {
     results.forEach(({ pattern: p, deletedCount }) => {
       console.log(
         chalk.green('✓'),
-        chalk.gray(`Cleared ${deletedCount} cache entries matching pattern:`),
+        chalk.gray(
+          `Cleared ${String(deletedCount)} cache entries matching pattern:`,
+        ),
         chalk.white(p),
       );
     });
@@ -160,7 +160,7 @@ export class CacheService {
     console.log(
       chalk.yellow('🔄 Cache Invalidation:'),
       chalk.blue('Old Cache'),
-      chalk.gray(`Older than ${maxAge}ms`),
+      chalk.gray(`Older than ${String(maxAge)}ms`),
     );
 
     const client = this.redisService.getClient();
@@ -183,7 +183,10 @@ export class CacheService {
               await client.del(key);
               totalDeleted++;
             }
-          } catch (error) {
+          } catch (error: unknown) {
+            console.error(
+              `Error parsing cache entry: ${key} | ${JSON.stringify(error)}`,
+            );
             await client.del(key); // Delete if can't parse
             totalDeleted++;
           }
@@ -195,8 +198,8 @@ export class CacheService {
 
     console.log(
       chalk.green('✓'),
-      chalk.gray(`Cleared ${totalDeleted} expired cache entries`),
-      chalk.white(`(older than ${maxAge}ms)`),
+      chalk.gray(`Cleared ${String(totalDeleted)} expired cache entries`),
+      chalk.white(`(older than ${String(maxAge)}ms)`),
     );
   }
 }
