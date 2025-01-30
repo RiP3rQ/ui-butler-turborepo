@@ -67,6 +67,8 @@ interface DebugInfo {
 export class CustomCacheInterceptor implements NestInterceptor {
   private readonly logger = new Logger(CustomCacheInterceptor.name);
   private readonly isDebugMode: boolean = process.env.NODE_ENV !== 'production';
+  private readonly isCachingDisabled: boolean =
+    process.env.CACHE_DISABLED === 'true';
 
   constructor(
     @Inject(Reflector)
@@ -87,6 +89,12 @@ export class CustomCacheInterceptor implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler,
   ): Promise<Observable<unknown>> {
+    // SKIP CACHING FOR DEVELOPMENT PURPOSES
+    if (this.isCachingDisabled) {
+      console.log(chalk.yellow('⚠️  Cache is disabled'));
+      return next.handle();
+    }
+
     const startTime = performance.now();
     const debugInfo: DebugInfo = {
       timing: { start: startTime, end: 0, duration: 0 },
