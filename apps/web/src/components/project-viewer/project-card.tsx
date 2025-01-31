@@ -10,11 +10,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@shared/ui/components/ui/card";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import moment from "moment";
-import { type JSX, useMemo } from "react";
-import { CalendarIcon, ClockIcon } from "lucide-react";
+import { type JSX, useMemo, useState } from "react";
+import { CalendarIcon, ClockIcon, PencilIcon, TrashIcon } from "lucide-react";
 import { Badge } from "@shared/ui/components/ui/badge";
+import { useRouter } from "next/navigation";
+import { Input } from "@shared/ui/components/ui/input";
+import { Button } from "@shared/ui/components/ui/button";
+import { toast } from "sonner";
 
 interface ProjectCardProps {
   projectData: ProjectDetails;
@@ -25,6 +29,11 @@ export function ProjectCard({
   projectData,
   projectId,
 }: Readonly<ProjectCardProps>): JSX.Element {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(projectData.title);
+
   const queryKey = useMemo(() => {
     return `project-details-${String(projectData.id)}`;
   }, [projectData.id]);
@@ -38,8 +47,45 @@ export function ProjectCard({
     initialData: projectData,
   });
 
+  const testFunction = async () => {
+    await setTimeout(() => console.log("This is a test function"), 1000);
+  };
+
+  const updateMutation = useMutation({
+    mutationFn: testFunction,
+    onSuccess: () => {
+      queryClient.invalidateQueries([queryKey]);
+      setIsEditing(false);
+      toast.success("Project name updated successfully");
+    },
+    onError: () => {
+      toast.error("Failed to update project name");
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: testFunction,
+    onSuccess: () => {
+      router.push("/projects");
+      toast.success("Project deleted successfully");
+    },
+    onError: () => {
+      toast.error("Failed to delete project");
+    },
+  });
+
+  const handleUpdateProjectName = () => {
+    updateMutation.mutate({ projectId: Number(projectId), title: editedTitle });
+  };
+
+  const handleDeleteProject = () => {
+    if (window.confirm("Are you sure you want to delete this project?")) {
+      deleteMutation.mutate({ projectId: Number(projectId) });
+    }
+  };
+
   return (
-    <Card className="w-full max-w-4xl mx-auto shadow-lg hover:shadow-xl transition-shadow duration-300">
+    <Card className="flex flex-col space-y-6 container my-6 py-2">
       <CardHeader className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -50,15 +96,56 @@ export function ProjectCard({
               {data.title.charAt(0).toUpperCase()}
             </div>
             <div>
-              <CardTitle className="text-3xl font-bold">{data.title}</CardTitle>
+              {isEditing ? (
+                <div className="flex items-center space-x-2">
+                  <Input
+                    value={editedTitle}
+                    onChange={(e) => setEditedTitle(e.target.value)}
+                    className="text-2xl font-bold"
+                  />
+                  <Button onClick={handleUpdateProjectName} size="sm">
+                    Save
+                  </Button>
+                  <Button
+                    onClick={() => setIsEditing(false)}
+                    variant="outline"
+                    size="sm"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-2">
+                  <CardTitle className="text-3xl font-bold">
+                    {data.title}
+                  </CardTitle>
+                  <Button
+                    onClick={() => setIsEditing(true)}
+                    variant="ghost"
+                    size="sm"
+                  >
+                    <PencilIcon className="w-4 h-4" />
+                  </Button>
+                </div>
+              )}
               <CardDescription className="text-sm text-muted-foreground mt-1">
                 {data.description}
               </CardDescription>
             </div>
           </div>
-          <Badge variant="outline" className="text-xs font-semibold">
-            {data.components.length} Components
-          </Badge>
+          <div className="flex items-center space-x-2">
+            <Badge variant="outline" className="text-xs font-semibold">
+              {data.components.length} Components
+            </Badge>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleDeleteProject}
+            >
+              <TrashIcon className="w-4 h-4 mr-1" />
+              Delete Project
+            </Button>
+          </div>
         </div>
         <div className="flex items-center justify-start space-x-6 text-sm text-muted-foreground">
           <div className="flex items-center space-x-2">

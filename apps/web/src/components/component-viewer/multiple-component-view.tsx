@@ -12,7 +12,7 @@ import {
 } from "@shared/ui/components/ui/accordion";
 import { Button } from "@shared/ui/components/ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { NavigationIcon } from "lucide-react";
+import { CalendarIcon, NavigationIcon } from "lucide-react";
 import moment from "moment";
 import { useRouter } from "next/navigation";
 import { type JSX, useState } from "react";
@@ -50,80 +50,70 @@ export function MultipleComponentsView({
       return { previousProjectDetails };
     },
     onSuccess: () => {
-      toast.success("Successfully added to favorites", {
-        id: "favorite-component",
-      });
+      toast.success("Successfully added to favorites");
       setMutatingComponentId(null);
     },
     onError: () => {
-      toast.error("Failed to add to favorites", {
-        id: "favorite-component",
-      });
+      toast.error("Failed to add to favorites");
       setMutatingComponentId(null);
     },
   });
 
   return (
-    <Accordion
-      type="multiple"
-      className="w-full space-y-2"
-      defaultValue={["item-1"]}
-    >
-      {components.map((component) => {
-        return (
-          <AccordionItem
-            key={component.id}
-            value={`component-${String(component.id)}`}
-            className="border rounded-lg shadow-sm hover:shadow-md transition-all duration-200 relative"
-          >
-            {/* GO TO COMPONENT DETAIL'S BUTTON*/}
-            <div className="absolute top-1 right-[70px]">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="z-50"
-                onClick={() => {
-                  router.push(
-                    `/projects/${String(component.projectId)}/components/${String(component.id)}`,
-                  );
-                }}
-              >
-                <NavigationIcon className="size-6 text-gray-500" />
-              </Button>
-            </div>
-            {/* FAVORITE BUTTON*/}
-            <div className="absolute top-1 right-8">
-              <FavoriteButton
-                isPending={mutatingComponentId === component.id}
-                isFavorite={Boolean(component.isFavorite)}
-                favoriteHandler={() => {
-                  mutate({
-                    projectId: component.projectId,
-                    componentId: component.id,
-                    favoriteValue: !component.isFavorite,
-                  });
-                }}
-              />
-            </div>
-            {/* ACCORDION */}
-            <AccordionTrigger className="px-4 py-3 ">
-              <div className="flex items-center w-full">
-                <div className="flex items-center gap-3">
-                  <span className="font-medium">{component.title}</span>
-                  <div className="text-sm text-muted-foreground">
-                    {moment(protoTimestampToDate(component.updatedAt)).format(
-                      "DD/MM/YYYY",
-                    )}
-                  </div>
+    <Accordion type="multiple" className="space-y-4">
+      {components.map((component) => (
+        <AccordionItem
+          key={component.id}
+          value={`component-${String(component.id)}`}
+          className="border rounded-lg bg-card overflow-hidden"
+        >
+          <AccordionTrigger className="px-6 py-4 hover:bg-muted/50 transition-colors">
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center space-x-4">
+                <span className="font-semibold">{component.title}</span>
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <CalendarIcon className="w-4 h-4 mr-1" />
+                  {moment(protoTimestampToDate(component.createdAt)).format(
+                    "DD/MM/YYYY",
+                  )}
                 </div>
               </div>
-            </AccordionTrigger>
-            <AccordionContent className="px-4 pb-4 min-h-96 h-96 max-h-96">
+              <div className="flex items-center space-x-2">
+                <FavoriteButton
+                  isPending={mutatingComponentId === component.id}
+                  isFavorite={Boolean(component.isFavorite)}
+                  favoriteHandler={() => {
+                    mutate({
+                      projectId: component.projectId,
+                      componentId: component.id,
+                      favoriteValue: !component.isFavorite,
+                    });
+                  }}
+                />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-muted-foreground hover:text-foreground"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.push(
+                      `/projects/${String(component.projectId)}/components/${String(component.id)}`,
+                    );
+                  }}
+                >
+                  <NavigationIcon className="w-4 h-4 mr-1" />
+                  View
+                </Button>
+              </div>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="p-4 bg-muted/30">
               <CodeEditor codeValue={component.code} setCodeValue={() => {}} />
-            </AccordionContent>
-          </AccordionItem>
-        );
-      })}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      ))}
     </Accordion>
   );
 }
