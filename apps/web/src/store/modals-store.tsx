@@ -3,7 +3,7 @@ import { Project } from "@shared/types";
 
 interface ModalsStoreState {
   projectModal: {
-    data: Project;
+    data: Project | null;
     setData: (data: Project) => void;
     isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
@@ -20,7 +20,7 @@ interface ModalsStoreState {
 
 export const useModalsStateStore = create<ModalsStoreState>((set) => ({
   projectModal: {
-    data: {} as Project,
+    data: null,
     setData: (data) => {
       set((state) => ({
         projectModal: {

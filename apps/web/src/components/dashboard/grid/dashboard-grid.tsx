@@ -1,7 +1,6 @@
 "use client";
 
 import { getUserProjects } from "@/actions/projects/server-actions";
-import { NewProjectDialog } from "@/components/dialogs/new-project-dialog";
 import { useModalsStateStore } from "@/store/modals-store";
 import { type Project } from "@shared/types";
 import { Button } from "@shared/ui/components/ui/button";
@@ -11,6 +10,7 @@ import { useShallow } from "zustand/react/shallow";
 import Link from "next/link";
 import { Card } from "@shared/ui/components/ui/card";
 import CountUpWrapper from "@/components/credits/count-up-wrapper";
+import { ProjectDialog } from "@/components/dialogs/project-dialog";
 
 interface DashboardGridProps {
   initialData: Project[];
@@ -36,12 +36,13 @@ export function DashboardGrid({
             (your top 10 projects)
           </span>
         </h2>
-        <NewProjectDialog
+        <ProjectDialog
           dialogTrigger={
             <Button
               variant="default"
               size="default"
               onClick={() => {
+                projectModal.setMode("create");
                 projectModal.setIsOpen(true);
               }}
             >

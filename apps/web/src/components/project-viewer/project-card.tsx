@@ -1,5 +1,8 @@
 "use client";
-import { getProjectsDetailsFunction } from "@/actions/projects/server-actions";
+import {
+  deleteProjectFunction,
+  getProjectsDetailsFunction,
+} from "@/actions/projects/server-actions";
 import { MultipleComponentsView } from "@/components/component-viewer/multiple-component-view";
 import { protoTimestampToDate } from "@/lib/dates";
 import { type ProjectDetails } from "@shared/types";
@@ -12,13 +15,16 @@ import {
 } from "@shared/ui/components/ui/card";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import moment from "moment";
-import { type JSX, useMemo, useState } from "react";
+import { type JSX, useMemo } from "react";
 import { CalendarIcon, ClockIcon, PencilIcon, TrashIcon } from "lucide-react";
 import { Badge } from "@shared/ui/components/ui/badge";
-import { useRouter } from "next/navigation";
-import { Input } from "@shared/ui/components/ui/input";
 import { Button } from "@shared/ui/components/ui/button";
 import { toast } from "sonner";
+import { useModalsStateStore } from "@/store/modals-store";
+import { useShallow } from "zustand/react/shallow";
+import { getErrorMessage } from "@/lib/get-error-message";
+import { useConfirmationModalStore } from "@/store/confirmation-modal-store";
+import { ProjectDialog } from "@/components/dialogs/project-dialog";
 
 interface ProjectCardProps {
   projectData: ProjectDetails;
@@ -29,10 +35,14 @@ export function ProjectCard({
   projectData,
   projectId,
 }: Readonly<ProjectCardProps>): JSX.Element {
-  const router = useRouter();
   const queryClient = useQueryClient();
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedTitle, setEditedTitle] = useState(projectData.title);
+  const { projectModal } = useModalsStateStore(useShallow((state) => state));
+  const {
+    setIsModalOpen,
+    setIsPending,
+    setSaveButtonDisabled,
+    setConfirmationModalBasicState,
+  } = useConfirmationModalStore();
 
   const queryKey = useMemo(() => {
     return `project-details-${String(projectData.id)}`;
@@ -47,42 +57,20 @@ export function ProjectCard({
     initialData: projectData,
   });
 
-  const testFunction = async () => {
-    await setTimeout(() => console.log("This is a test function"), 1000);
-  };
-
-  const updateMutation = useMutation({
-    mutationFn: testFunction,
-    onSuccess: () => {
-      queryClient.invalidateQueries([queryKey]);
-      setIsEditing(false);
-      toast.success("Project name updated successfully");
-    },
-    onError: () => {
-      toast.error("Failed to update project name");
-    },
-  });
-
   const deleteMutation = useMutation({
-    mutationFn: testFunction,
+    mutationFn: deleteProjectFunction,
     onSuccess: () => {
-      router.push("/projects");
-      toast.success("Project deleted successfully");
+      toast.success("Deleted project successfully", {
+        id: "delete-project",
+      });
+      queryClient.invalidateQueries({ queryKey: ["user-projects"] });
     },
     onError: () => {
-      toast.error("Failed to delete project");
+      toast.error("Failed to delete project", {
+        id: "delete-project",
+      });
     },
   });
-
-  const handleUpdateProjectName = () => {
-    updateMutation.mutate({ projectId: Number(projectId), title: editedTitle });
-  };
-
-  const handleDeleteProject = () => {
-    if (window.confirm("Are you sure you want to delete this project?")) {
-      deleteMutation.mutate({ projectId: Number(projectId) });
-    }
-  };
 
   return (
     <Card className="flex flex-col space-y-6 container my-6 py-2">
@@ -96,38 +84,27 @@ export function ProjectCard({
               {data.title.charAt(0).toUpperCase()}
             </div>
             <div>
-              {isEditing ? (
-                <div className="flex items-center space-x-2">
-                  <Input
-                    value={editedTitle}
-                    onChange={(e) => setEditedTitle(e.target.value)}
-                    className="text-2xl font-bold"
-                  />
-                  <Button onClick={handleUpdateProjectName} size="sm">
-                    Save
-                  </Button>
-                  <Button
-                    onClick={() => setIsEditing(false)}
-                    variant="outline"
-                    size="sm"
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex items-center space-x-2">
-                  <CardTitle className="text-3xl font-bold">
-                    {data.title}
-                  </CardTitle>
-                  <Button
-                    onClick={() => setIsEditing(true)}
-                    variant="ghost"
-                    size="sm"
-                  >
-                    <PencilIcon className="w-4 h-4" />
-                  </Button>
-                </div>
-              )}
+              <div className="flex items-center space-x-2">
+                <CardTitle className="text-3xl font-bold">
+                  {data.title}
+                </CardTitle>
+                <ProjectDialog
+                  dialogTrigger={
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={"flex items-center justify-center"}
+                      onClick={() => {
+                        projectModal.setMode("edit");
+                        projectModal.setData(data);
+                        projectModal.setIsOpen(true);
+                      }}
+                    >
+                      <PencilIcon className="size-4" />
+                    </Button>
+                  }
+                />
+              </div>
               <CardDescription className="text-sm text-muted-foreground mt-1">
                 {data.description}
               </CardDescription>
@@ -140,7 +117,31 @@ export function ProjectCard({
             <Button
               variant="destructive"
               size="sm"
-              onClick={handleDeleteProject}
+              onClick={() => {
+                setConfirmationModalBasicState({
+                  isModalOpen: true,
+                  modalTitle: `Delete ${projectData.title}`,
+                  modalSubtitle: `Are you sure you want to delete ${projectData.title}?`,
+                  saveButtonText: "Yes, delete",
+                  cancelButtonText: "I've changed my mind",
+                  saveButtonFunction: () => {
+                    try {
+                      toast.loading("Deleting project...", {
+                        id: "delete-project",
+                      });
+                      setIsPending(true);
+                      setSaveButtonDisabled(true);
+                      deleteMutation.mutate(projectData.id);
+                    } catch (e) {
+                      throw new Error(getErrorMessage(e));
+                    } finally {
+                      setIsPending(false);
+                      setSaveButtonDisabled(false);
+                      setIsModalOpen(false);
+                    }
+                  },
+                });
+              }}
             >
               <TrashIcon className="w-4 h-4 mr-1" />
               Delete Project
