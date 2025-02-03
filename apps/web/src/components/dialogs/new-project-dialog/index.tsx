@@ -23,18 +23,13 @@ interface NewProjectDialogProps {
 export function NewProjectDialog({
   dialogTrigger,
 }: Readonly<NewProjectDialogProps>): JSX.Element {
-  const { createNewProjectModal } = useModalsStateStore(
-    useShallow((state) => state),
-  );
+  const { projectModal } = useModalsStateStore(useShallow((state) => state));
   const { form, handleSubmit, isPending, isSubmitDisabled } =
     useNewProjectForm();
   const isFormDisabled = isPending || form.formState.isSubmitting;
 
   return (
-    <Dialog
-      open={createNewProjectModal.isOpen}
-      onOpenChange={createNewProjectModal.setIsOpen}
-    >
+    <Dialog open={projectModal.isOpen} onOpenChange={projectModal.setIsOpen}>
       {dialogTrigger ? (
         <DialogTrigger asChild>{dialogTrigger}</DialogTrigger>
       ) : null}
@@ -59,7 +54,7 @@ export function NewProjectDialog({
               <Button
                 type="button"
                 onClick={() => {
-                  createNewProjectModal.setIsOpen(false);
+                  projectModal.setIsOpen(false);
                   form.reset();
                 }}
                 disabled={isFormDisabled}

@@ -23,6 +23,25 @@ export async function createNewProjectFunction(
 }
 
 /**
+ * Edits a project
+ */
+export async function editProjectFunction(
+  projectId: number,
+  form: Readonly<CreateNewProjectSchemaType>,
+): Promise<Project> {
+  // Validate input before processing
+  const validatedForm = await validateProjectInput(form);
+  return ProjectsService.editProject(projectId, validatedForm);
+}
+
+/**
+ * Deletes a project
+ */
+export async function deleteProjectFunction(projectId: number): Promise<void> {
+  return ProjectsService.deleteProject(projectId);
+}
+
+/**
  * Fetches project details
  */
 export async function getProjectsDetailsFunction(

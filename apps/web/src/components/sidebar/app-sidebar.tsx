@@ -16,6 +16,14 @@ import { Bot, EditIcon, Trash2Icon } from "lucide-react";
 import { SidebarOptions } from "@/config/sidebar-config";
 import { useModalsStateStore } from "@/store/modals-store";
 import { useShallow } from "zustand/react/shallow";
+import { getErrorMessage } from "@/lib/get-error-message";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useConfirmationModalStore } from "@/store/confirmation-modal-store";
+import {
+  deleteProjectFunction,
+  getUserProjects,
+} from "@/actions/projects/server-actions";
+import { toast } from "sonner";
 
 /**
  * Props for the AppSidebar component
@@ -37,9 +45,35 @@ export function AppSidebar({
   userProjects,
   ...props
 }: Readonly<AppSidebarProps>): JSX.Element {
-  const { createNewProjectModal } = useModalsStateStore(
-    useShallow((state) => state),
-  );
+  const queryClient = useQueryClient();
+  const { projectModal } = useModalsStateStore(useShallow((state) => state));
+  const {
+    setIsModalOpen,
+    setIsPending,
+    setSaveButtonDisabled,
+    setConfirmationModalBasicState,
+  } = useConfirmationModalStore();
+
+  const { data } = useQuery({
+    queryKey: ["user-projects"],
+    queryFn: getUserProjects,
+    initialData: userProjects,
+  });
+
+  const { mutate } = useMutation({
+    mutationFn: deleteProjectFunction,
+    onSuccess: () => {
+      toast.success("Deleted project successfully", {
+        id: "delete-project",
+      });
+      queryClient.invalidateQueries({ queryKey: ["user-projects"] });
+    },
+    onError: () => {
+      toast.error("Failed to delete project", {
+        id: "delete-project",
+      });
+    },
+  });
 
   const mainContentData = useMemo(() => {
     const filteredNavMain = SidebarOptions.navMain.filter(
@@ -50,9 +84,10 @@ export function AppSidebar({
       url: "#",
       icon: Bot,
       action: () => {
-        createNewProjectModal.setIsOpen(true);
+        projectModal.setMode("create");
+        projectModal.setIsOpen(true);
       },
-      items: userProjects.map((project) => ({
+      items: data.map((project) => ({
         title: project.title,
         url: `/projects/${project.id}`,
         color: project.color,
@@ -61,14 +96,38 @@ export function AppSidebar({
             icon: EditIcon,
             tooltipInfo: `Edit ${project.title}`,
             action: () => {
-              console.log(`Edit project: ${project.title}`);
+              projectModal.setMode("edit");
+              projectModal.setData(project);
+              projectModal.setIsOpen(true);
             },
           },
           {
             icon: Trash2Icon,
             tooltipInfo: `Delete ${project.title}`,
             action: () => {
-              console.log(`Delete project: ${project.title}`);
+              setConfirmationModalBasicState({
+                isModalOpen: true,
+                modalTitle: `Delete ${project.title}`,
+                modalSubtitle: `Are you sure you want to delete ${project.title}?`,
+                saveButtonText: "Yes, delete",
+                cancelButtonText: "I've changed my mind",
+                saveButtonFunction: () => {
+                  try {
+                    toast.loading("Deleting project...", {
+                      id: "delete-project",
+                    });
+                    setIsPending(true);
+                    setSaveButtonDisabled(true);
+                    mutate(project.id);
+                  } catch (e) {
+                    throw new Error(getErrorMessage(e));
+                  } finally {
+                    setIsPending(false);
+                    setSaveButtonDisabled(false);
+                    setIsModalOpen(false);
+                  }
+                },
+              });
             },
           },
         ],
@@ -76,7 +135,7 @@ export function AppSidebar({
     };
     filteredNavMain.splice(3, 0, projectsItem);
     return filteredNavMain;
-  }, [userProjects]);
+  }, [data]);
 
   return (
     <Sidebar collapsible="icon" {...props}>

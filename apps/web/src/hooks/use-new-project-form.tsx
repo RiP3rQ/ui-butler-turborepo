@@ -21,9 +21,7 @@ export function useNewProjectForm(): {
   isSubmitDisabled: boolean;
 } {
   const queryClient = useQueryClient();
-  const { createNewProjectModal } = useModalsStateStore(
-    useShallow((state) => state),
-  );
+  const { projectModal } = useModalsStateStore(useShallow((state) => state));
   const form = useForm<CreateNewProjectSchemaType>({
     resolver: zodResolver(createNewProjectSchema),
     defaultValues: {
@@ -37,7 +35,7 @@ export function useNewProjectForm(): {
     mutationFn: createNewProjectFunction,
     onSuccess: () => {
       form.reset();
-      createNewProjectModal.setIsOpen(false);
+      projectModal.setIsOpen(false);
       queryClient.invalidateQueries({ queryKey: "user-projects" });
       queryClient.invalidateQueries({ queryKey: "dashboard-stat-cards" });
       queryClient.invalidateQueries({

@@ -19,9 +19,7 @@ interface DashboardGridProps {
 export function DashboardGrid({
   initialData,
 }: Readonly<DashboardGridProps>): JSX.Element {
-  const { createNewProjectModal } = useModalsStateStore(
-    useShallow((state) => state),
-  );
+  const { projectModal } = useModalsStateStore(useShallow((state) => state));
 
   const { data } = useQuery({
     queryKey: ["user-projects"],
@@ -44,7 +42,7 @@ export function DashboardGrid({
               variant="default"
               size="default"
               onClick={() => {
-                createNewProjectModal.setIsOpen(true);
+                projectModal.setIsOpen(true);
               }}
             >
               Add new project

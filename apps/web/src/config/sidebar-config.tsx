@@ -1,7 +1,6 @@
 import {
   AirplayIcon,
   AreaChartIcon as ChartAreaIcon,
-  Bot,
   ComponentIcon,
   PuzzleIcon,
   SquareTerminal,
@@ -42,12 +41,6 @@ export const SidebarOptions: { navMain: NavMainType[] } = {
       title: "Workflows",
       url: "/workflows-list",
       icon: SquareTerminal,
-      isActive: false,
-    },
-    {
-      title: "Projects",
-      url: "#",
-      icon: Bot,
       isActive: false,
     },
     {
