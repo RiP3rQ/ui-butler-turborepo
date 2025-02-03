@@ -48,11 +48,13 @@ export const SidebarOptions: { navMain: NavMainType[] } = {
       title: "Projects",
       url: "#",
       icon: Bot,
+      isActive: false,
     },
     {
       title: "Credentials",
       url: "/credentials",
       icon: VariableIcon,
+      isActive: false,
     },
   ],
 };

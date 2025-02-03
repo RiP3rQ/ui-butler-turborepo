@@ -11,6 +11,7 @@ export interface NavMainType {
   url: string;
   icon?: LucideIcon;
   isActive?: boolean;
+  action?: () => void;
   items?: {
     title: string;
     url: string;

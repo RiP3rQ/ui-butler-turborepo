@@ -14,6 +14,8 @@ import {
 } from "@shared/ui/components/ui/sidebar";
 import { Bot, EditIcon, Trash2Icon } from "lucide-react";
 import { SidebarOptions } from "@/config/sidebar-config";
+import { useModalsStateStore } from "@/store/modals-store";
+import { useShallow } from "zustand/react/shallow";
 
 /**
  * Props for the AppSidebar component
@@ -27,6 +29,7 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 
 /**
  * AppSidebar component renders the main sidebar of the application
+ * @param {userProjects} userProjects - Array of user projects
  * @param {AppSidebarProps} props - Component props
  * @returns {JSX.Element} Rendered app sidebar
  */
@@ -34,6 +37,10 @@ export function AppSidebar({
   userProjects,
   ...props
 }: Readonly<AppSidebarProps>): JSX.Element {
+  const { createNewProjectModal } = useModalsStateStore(
+    useShallow((state) => state),
+  );
+
   const mainContentData = useMemo(() => {
     const filteredNavMain = SidebarOptions.navMain.filter(
       (item) => item.title !== "Projects",
@@ -42,6 +49,9 @@ export function AppSidebar({
       title: "Projects",
       url: "#",
       icon: Bot,
+      action: () => {
+        createNewProjectModal.setIsOpen(true);
+      },
       items: userProjects.map((project) => ({
         title: project.title,
         url: `/projects/${project.id}`,

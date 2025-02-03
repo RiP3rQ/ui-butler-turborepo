@@ -33,12 +33,12 @@ export function DataTableColumnHeader<TData, TValue>({
 
   const renderSortIcon = useMemo(() => {
     if (column.getIsSorted() === "desc") {
-      return <ArrowDownIcon className="ml-2 h-4 w-4" />;
+      return <ArrowDownIcon className="ml-2 size-4" />;
     }
     if (column.getIsSorted() === "asc") {
-      return <ArrowUpIcon className="ml-2 h-4 w-4" />;
+      return <ArrowUpIcon className="ml-2 size-4" />;
     }
-    return <CaretSortIcon className="ml-2 h-4 w-4" />;
+    return <CaretSortIcon className="ml-2 size-4" />;
   }, [column.getIsSorted()]);
 
   return (

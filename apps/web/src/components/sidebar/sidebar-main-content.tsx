@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, MoreHorizontal } from "lucide-react";
+import { ChevronRight, MoreHorizontal, PlusCircleIcon } from "lucide-react";
 import Link from "next/link";
 import {
   Collapsible,
@@ -81,10 +81,20 @@ function CollapsibleMenuItem({ item }: CollapsibleMenuItemProps): JSX.Element {
             tooltip={item.title}
           >
             <div className="flex items-center">
-              {item.icon && <item.icon className="mr-2 h-4 w-4" />}
+              {item.icon && <item.icon className="mr-2 size-4" />}
               <span>{item.title}</span>
             </div>
-            <ChevronRight className="h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+            <div className={"flex items-center gap-1"}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0 hover:bg-muted/50"
+                onClick={item?.action}
+              >
+                <PlusCircleIcon className="size-4" />
+              </Button>
+              <ChevronRight className="size-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+            </div>
           </SidebarMenuButton>
         </CollapsibleTrigger>
         <CollapsibleContent>
@@ -149,7 +159,7 @@ function NonCollapsibleMenuItem({
           )}
           tooltip={item.title}
         >
-          {item.icon && <item.icon className="mr-2 h-4 w-4" />}
+          {item.icon && <item.icon className="mr-2 size-4" />}
           <span>{item.title}</span>
         </SidebarMenuButton>
       </Link>
@@ -172,7 +182,7 @@ function ActionsDropdown({ actions }: ActionsDropdownProps): JSX.Element {
           size="sm"
           className="h-6 w-6 p-0 hover:bg-muted/50"
         >
-          <MoreHorizontal className="h-4 w-4" />
+          <MoreHorizontal className="size-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
@@ -184,7 +194,7 @@ function ActionsDropdown({ actions }: ActionsDropdownProps): JSX.Element {
               action.action();
             }}
           >
-            {action.icon && <action.icon className="mr-2 h-4 w-4" />}
+            {action.icon && <action.icon className="mr-2 size-4" />}
             <span>{action.tooltipInfo}</span>
           </DropdownMenuItem>
         ))}
