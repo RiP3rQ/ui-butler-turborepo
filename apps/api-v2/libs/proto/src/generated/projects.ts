@@ -983,6 +983,10 @@ export interface ProjectsServiceClient {
   ): Observable<ProjectDetails>;
 
   createProject(request: CreateProjectRequest): Observable<Project>;
+
+  updateProject(request: CreateProjectDto): Observable<Project>;
+
+  deleteProject(request: GetProjectDetailsRequest): Observable<Project>;
 }
 
 export interface ProjectsServiceController {
@@ -1000,6 +1004,14 @@ export interface ProjectsServiceController {
   createProject(
     request: CreateProjectRequest,
   ): Promise<Project> | Observable<Project> | Project;
+
+  updateProject(
+    request: CreateProjectDto,
+  ): Promise<Project> | Observable<Project> | Project;
+
+  deleteProject(
+    request: GetProjectDetailsRequest,
+  ): Promise<Project> | Observable<Project> | Project;
 }
 
 export function ProjectsServiceControllerMethods() {
@@ -1008,6 +1020,8 @@ export function ProjectsServiceControllerMethods() {
       "getProjectsByUserId",
       "getProjectDetails",
       "createProject",
+      "updateProject",
+      "deleteProject",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(
