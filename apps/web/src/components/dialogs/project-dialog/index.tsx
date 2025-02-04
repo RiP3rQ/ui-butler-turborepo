@@ -29,13 +29,11 @@ export function ProjectDialog({
     return Boolean(projectModal.mode === "edit" && projectModal.data);
   }, [projectModal]);
 
-  const { form, handleSubmit, isPending, isSubmitDisabled } = useProjectForm(
-    isInEditMode,
-    projectModal.data,
-  );
+  const { form, handleSubmit, isPending, isSubmitDisabled } =
+    useProjectForm(isInEditMode);
   const isFormDisabled = isPending || form.formState.isSubmitting;
 
-  const resetDialog = (open: boolean) => {
+  const resetDialog = (open?: boolean) => {
     if (!open) {
       projectModal.reset();
       form.reset();
@@ -70,10 +68,7 @@ export function ProjectDialog({
             <DialogFooter>
               <Button
                 type="button"
-                onClick={() => {
-                  projectModal.close();
-                  form.reset();
-                }}
+                onClick={() => resetDialog()}
                 disabled={isFormDisabled}
               >
                 Cancel

@@ -97,6 +97,7 @@ export function ProjectCard({
                       onClick={() => {
                         projectModal.setMode("edit");
                         projectModal.setData(data);
+                        projectModal.setQueryKey(queryKey);
                         projectModal.open();
                       }}
                     >

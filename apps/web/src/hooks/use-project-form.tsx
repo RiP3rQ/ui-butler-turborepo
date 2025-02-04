@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
 import {
   createNewProjectSchema,
@@ -23,10 +23,7 @@ type ProjectMutationVariables = {
   projectId?: number;
 };
 
-export function useProjectForm(
-  isInEditMode: boolean,
-  data?: Project,
-): {
+export function useProjectForm(isInEditMode: boolean): {
   form: ReturnType<typeof useForm<CreateNewProjectSchemaType>>;
   isPending: boolean;
   handleSubmit: (values: CreateNewProjectSchemaType) => void;
@@ -34,14 +31,25 @@ export function useProjectForm(
 } {
   const queryClient = useQueryClient();
   const projectModal = useProjectModalStore(useShallow((state) => state));
+  console.log("data", projectModal.data);
   const form = useForm<CreateNewProjectSchemaType>({
     resolver: zodResolver(createNewProjectSchema),
     defaultValues: {
-      title: data?.title ?? "",
-      description: data?.description ?? "",
-      color: data?.color ?? "#000000",
+      title: "",
+      description: "",
+      color: "#000000",
     },
   });
+
+  useEffect(() => {
+    if (projectModal.data) {
+      form.setValue("title", projectModal.data.title);
+      form.setValue("description", projectModal.data.description);
+      form.setValue("color", projectModal.data.color);
+    } else {
+      form.reset();
+    }
+  }, [projectModal.data]);
 
   const mutationFn = async ({ form, projectId }: ProjectMutationVariables) => {
     if (isInEditMode) {
@@ -64,9 +72,11 @@ export function useProjectForm(
       form.reset();
       projectModal.close();
       queryClient.invalidateQueries({ queryKey: ["user-projects"] });
-      queryClient.invalidateQueries({ queryKey: ["dashboard-stat-cards"] });
       queryClient.invalidateQueries({
-        queryKey: ["dashboard-favorited-components"],
+        queryKey: ["projects"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [projectModal.queryKey],
       });
       toast.success(
         isInEditMode
@@ -91,7 +101,7 @@ export function useProjectForm(
 
       // For editing, include the project id in the mutation variables.
       if (isInEditMode) {
-        mutate({ form: values, projectId: data?.id });
+        mutate({ form: values, projectId: projectModal.data?.id });
       } else {
         mutate({ form: values });
       }
@@ -104,11 +114,9 @@ export function useProjectForm(
 
   const isSubmitDisabled = useMemo(() => {
     return (
-      !form.formState.isValid ||
-      !form.getValues("title") ||
-      !form.getValues("color")
+      !form.formState.isValid || !form.watch("title") || !form.watch("color")
     );
-  }, [form]);
+  }, [form, form.formState.isValid, form.watch("title"), form.watch("color")]);
 
   return { form, isPending, handleSubmit, isSubmitDisabled };
 }
