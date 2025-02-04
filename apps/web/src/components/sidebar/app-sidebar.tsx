@@ -14,7 +14,7 @@ import {
 } from "@shared/ui/components/ui/sidebar";
 import { Bot, EditIcon, Trash2Icon } from "lucide-react";
 import { SidebarOptions } from "@/config/sidebar-config";
-import { useModalsStateStore } from "@/store/modals-store";
+import { useModalsStateStore } from "@/store/component-modal-store";
 import { useShallow } from "zustand/react/shallow";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

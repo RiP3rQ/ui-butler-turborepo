@@ -1,7 +1,7 @@
 "use client";
 
 import { getUserProjects } from "@/actions/projects/server-actions";
-import { useModalsStateStore } from "@/store/modals-store";
+import { useModalsStateStore } from "@/store/component-modal-store";
 import { type Project } from "@shared/types";
 import { Button } from "@shared/ui/components/ui/button";
 import { useQuery } from "@tanstack/react-query";

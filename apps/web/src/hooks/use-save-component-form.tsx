@@ -4,10 +4,10 @@ import { saveComponentFunction } from "@/actions/components/server-actions";
 import { getUserProjects } from "@/actions/projects/server-actions";
 import { getErrorMessage } from "@/lib/get-error-message";
 import {
-  type SaveComponentSchemaType,
   saveComponentSchema,
+  type SaveComponentSchemaType,
 } from "@/schemas/component";
-import { useModalsStateStore } from "@/store/modals-store";
+import { useModalsStateStore } from "@/store/component-modal-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type Component, type Project } from "@shared/types";
 import { useMutation, useQuery } from "@tanstack/react-query";

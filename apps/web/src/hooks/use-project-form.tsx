@@ -11,7 +11,7 @@ import {
   type CreateNewProjectSchemaType,
 } from "@/schemas/project";
 import { getErrorMessage } from "@/lib/get-error-message";
-import { useModalsStateStore } from "@/store/modals-store";
+import { useModalsStateStore } from "@/store/component-modal-store";
 import {
   createNewProjectFunction,
   editProjectFunction,
@@ -25,7 +25,7 @@ type ProjectMutationVariables = {
 
 export function useProjectForm(
   isInEditMode: boolean,
-  data: Project | null,
+  data?: Project,
 ): {
   form: ReturnType<typeof useForm<CreateNewProjectSchemaType>>;
   isPending: boolean;

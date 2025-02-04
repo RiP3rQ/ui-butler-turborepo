@@ -12,7 +12,7 @@ import { useShallow } from "zustand/react/shallow";
 import { Form } from "@shared/ui/components/ui/form";
 import { Loader2Icon } from "lucide-react";
 import { type JSX, useMemo } from "react";
-import { useModalsStateStore } from "@/store/modals-store";
+import { useModalsStateStore } from "@/store/component-modal-store";
 import { useProjectForm } from "@/hooks/use-project-form";
 import { ProjectFormFields } from "@/components/dialogs/project-dialog/project-form-fields";
 
@@ -24,6 +24,7 @@ export function ProjectDialog({
   dialogTrigger,
 }: Readonly<NewProjectDialogProps>): JSX.Element {
   const { projectModal } = useModalsStateStore(useShallow((state) => state));
+  console.log(projectModal);
   const isInEditMode = useMemo(() => {
     return Boolean(projectModal.mode === "edit" && projectModal.data);
   }, [projectModal]);
@@ -34,8 +35,15 @@ export function ProjectDialog({
   );
   const isFormDisabled = isPending || form.formState.isSubmitting;
 
+  const resetDialog = (open: boolean) => {
+    if (!open) {
+      projectModal.reset();
+      form.reset();
+    }
+  };
+
   return (
-    <Dialog open={projectModal.isOpen} onOpenChange={projectModal.setIsOpen}>
+    <Dialog open={projectModal.isOpen} onOpenChange={resetDialog}>
       {dialogTrigger ? (
         <DialogTrigger asChild>{dialogTrigger}</DialogTrigger>
       ) : null}

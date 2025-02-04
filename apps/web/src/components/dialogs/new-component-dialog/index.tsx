@@ -1,7 +1,7 @@
 "use client";
 
 import { useSaveComponentForm } from "@/hooks/use-save-component-form";
-import { useModalsStateStore } from "@/store/modals-store";
+import { useModalsStateStore } from "@/store/component-modal-store";
 import { Button } from "@shared/ui/components/ui/button";
 import { CardContent, CardFooter } from "@shared/ui/components/ui/card";
 import {

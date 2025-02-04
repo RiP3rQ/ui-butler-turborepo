@@ -38,7 +38,7 @@ import {
   type GenerateComponentSchemaType,
 } from "@/schemas/component";
 import CodeEditor from "@/components/code-editor/editor";
-import { useModalsStateStore } from "@/store/modals-store";
+import { useModalsStateStore } from "@/store/component-modal-store";
 import { CopyButton } from "@/components/copy-code-button";
 import { PageHeader } from "@/components/page-header";
 

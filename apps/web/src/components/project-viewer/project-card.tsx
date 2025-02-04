@@ -20,7 +20,7 @@ import { CalendarIcon, ClockIcon, PencilIcon, TrashIcon } from "lucide-react";
 import { Badge } from "@shared/ui/components/ui/badge";
 import { Button } from "@shared/ui/components/ui/button";
 import { toast } from "sonner";
-import { useModalsStateStore } from "@/store/modals-store";
+import { useModalsStateStore } from "@/store/component-modal-store";
 import { useShallow } from "zustand/react/shallow";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useConfirmationModalStore } from "@/store/confirmation-modal-store";
