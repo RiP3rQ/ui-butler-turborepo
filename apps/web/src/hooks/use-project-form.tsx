@@ -11,7 +11,7 @@ import {
   type CreateNewProjectSchemaType,
 } from "@/schemas/project";
 import { getErrorMessage } from "@/lib/get-error-message";
-import { useModalsStateStore } from "@/store/component-modal-store";
+import { useProjectModalStore } from "@/store/project-modal-store";
 import {
   createNewProjectFunction,
   editProjectFunction,
@@ -33,7 +33,7 @@ export function useProjectForm(
   isSubmitDisabled: boolean;
 } {
   const queryClient = useQueryClient();
-  const { projectModal } = useModalsStateStore(useShallow((state) => state));
+  const projectModal = useProjectModalStore(useShallow((state) => state));
   const form = useForm<CreateNewProjectSchemaType>({
     resolver: zodResolver(createNewProjectSchema),
     defaultValues: {
@@ -62,7 +62,7 @@ export function useProjectForm(
     mutationFn,
     onSuccess: () => {
       form.reset();
-      projectModal.setIsOpen(false);
+      projectModal.close();
       queryClient.invalidateQueries({ queryKey: ["user-projects"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard-stat-cards"] });
       queryClient.invalidateQueries({

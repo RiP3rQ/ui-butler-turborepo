@@ -7,7 +7,7 @@ import {
   saveComponentSchema,
   type SaveComponentSchemaType,
 } from "@/schemas/component";
-import { useModalsStateStore } from "@/store/component-modal-store";
+import { useComponentModalStore } from "@/store/component-modal-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type Component, type Project } from "@shared/types";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -28,10 +28,8 @@ export function useSaveComponentForm(): {
   const router = useRouter();
   const [_, startTransition] = useTransition();
 
-  const { createNewComponentModal } = useModalsStateStore(
-    useShallow((state) => ({
-      createNewComponentModal: state.createNewComponentModal,
-    })),
+  const createNewComponentModal = useComponentModalStore(
+    useShallow((state) => state),
   );
 
   const form = useForm<SaveComponentSchemaType>({
@@ -45,7 +43,7 @@ export function useSaveComponentForm(): {
 
   const closeButtonOnClickHandler = useCallback(() => {
     form.reset();
-    createNewComponentModal.setIsOpen(false);
+    createNewComponentModal.close();
   }, [createNewComponentModal, form]);
 
   const { data: projects, isLoading: isLoadingProjects } = useQuery<Project[]>({

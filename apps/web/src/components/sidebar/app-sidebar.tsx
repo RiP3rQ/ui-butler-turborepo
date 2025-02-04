@@ -14,7 +14,7 @@ import {
 } from "@shared/ui/components/ui/sidebar";
 import { Bot, EditIcon, Trash2Icon } from "lucide-react";
 import { SidebarOptions } from "@/config/sidebar-config";
-import { useModalsStateStore } from "@/store/component-modal-store";
+import { useProjectModalStore } from "@/store/project-modal-store";
 import { useShallow } from "zustand/react/shallow";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -46,7 +46,7 @@ export function AppSidebar({
   ...props
 }: Readonly<AppSidebarProps>): JSX.Element {
   const queryClient = useQueryClient();
-  const { projectModal } = useModalsStateStore(useShallow((state) => state));
+  const projectModal = useProjectModalStore(useShallow((state) => state));
   const {
     setIsModalOpen,
     setIsPending,
@@ -85,7 +85,7 @@ export function AppSidebar({
       icon: Bot,
       action: () => {
         projectModal.setMode("create");
-        projectModal.setIsOpen(true);
+        projectModal.open();
       },
       items: data.map((project) => ({
         title: project.title,
@@ -98,7 +98,7 @@ export function AppSidebar({
             action: () => {
               projectModal.setMode("edit");
               projectModal.setData(project);
-              projectModal.setIsOpen(true);
+              projectModal.open();
             },
           },
           {

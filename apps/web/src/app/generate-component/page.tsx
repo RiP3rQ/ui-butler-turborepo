@@ -38,12 +38,12 @@ import {
   type GenerateComponentSchemaType,
 } from "@/schemas/component";
 import CodeEditor from "@/components/code-editor/editor";
-import { useModalsStateStore } from "@/store/component-modal-store";
+import { useComponentModalStore } from "@/store/component-modal-store";
 import { CopyButton } from "@/components/copy-code-button";
 import { PageHeader } from "@/components/page-header";
 
 export default function GenerateComponentPage(): JSX.Element {
-  const { createNewComponentModal } = useModalsStateStore(
+  const createNewComponentModal = useComponentModalStore(
     useShallow((state) => state),
   );
 
@@ -114,7 +114,7 @@ export default function GenerateComponentPage(): JSX.Element {
       return;
     }
     createNewComponentModal.setCode(latestAssistantMessage.content);
-    createNewComponentModal.setIsOpen(true);
+    createNewComponentModal.open();
   }, [createNewComponentModal, latestAssistantMessage]);
 
   // Add keyboard shortcuts

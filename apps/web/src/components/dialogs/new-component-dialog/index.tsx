@@ -1,7 +1,7 @@
 "use client";
 
 import { useSaveComponentForm } from "@/hooks/use-save-component-form";
-import { useModalsStateStore } from "@/store/component-modal-store";
+import { useComponentModalStore } from "@/store/component-modal-store";
 import { Button } from "@shared/ui/components/ui/button";
 import { CardContent, CardFooter } from "@shared/ui/components/ui/card";
 import {
@@ -22,10 +22,8 @@ import { SaveNewComponentFormFields } from "./save-new-component-form-fields";
  * Handles form submission, validation and API integration
  */
 export function CreateNewComponentDialog(): JSX.Element {
-  const { createNewComponentModal } = useModalsStateStore(
-    useShallow((state) => ({
-      createNewComponentModal: state.createNewComponentModal,
-    })),
+  const createNewComponentModal = useComponentModalStore(
+    useShallow((state) => state),
   );
 
   const {

@@ -12,7 +12,7 @@ import { useShallow } from "zustand/react/shallow";
 import { Form } from "@shared/ui/components/ui/form";
 import { Loader2Icon } from "lucide-react";
 import { type JSX, useMemo } from "react";
-import { useModalsStateStore } from "@/store/component-modal-store";
+import { useProjectModalStore } from "@/store/project-modal-store";
 import { useProjectForm } from "@/hooks/use-project-form";
 import { ProjectFormFields } from "@/components/dialogs/project-dialog/project-form-fields";
 
@@ -23,7 +23,7 @@ interface NewProjectDialogProps {
 export function ProjectDialog({
   dialogTrigger,
 }: Readonly<NewProjectDialogProps>): JSX.Element {
-  const { projectModal } = useModalsStateStore(useShallow((state) => state));
+  const projectModal = useProjectModalStore(useShallow((state) => state));
   console.log(projectModal);
   const isInEditMode = useMemo(() => {
     return Boolean(projectModal.mode === "edit" && projectModal.data);
@@ -71,7 +71,7 @@ export function ProjectDialog({
               <Button
                 type="button"
                 onClick={() => {
-                  projectModal.setIsOpen(false);
+                  projectModal.close();
                   form.reset();
                 }}
                 disabled={isFormDisabled}

@@ -1,7 +1,7 @@
 "use client";
 
 import { getUserProjects } from "@/actions/projects/server-actions";
-import { useModalsStateStore } from "@/store/component-modal-store";
+import { useProjectModalStore } from "@/store/project-modal-store";
 import { type Project } from "@shared/types";
 import { Button } from "@shared/ui/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
@@ -19,7 +19,7 @@ interface DashboardGridProps {
 export function DashboardGrid({
   initialData,
 }: Readonly<DashboardGridProps>): JSX.Element {
-  const { projectModal } = useModalsStateStore(useShallow((state) => state));
+  const projectModal = useProjectModalStore(useShallow((state) => state));
 
   const { data } = useQuery({
     queryKey: ["user-projects"],
@@ -43,7 +43,7 @@ export function DashboardGrid({
               size="default"
               onClick={() => {
                 projectModal.setMode("create");
-                projectModal.setIsOpen(true);
+                projectModal.open();
               }}
             >
               Add new project
