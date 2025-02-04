@@ -3,6 +3,7 @@ import { ProjectsProto } from '@microservices/proto';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Inject,
   NotFoundException,
@@ -279,7 +280,7 @@ export class ProjectsController implements OnModuleInit {
   })
   @ApiResponse({ status: 404, description: 'Project not found' })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
-  @Put(':projectId')
+  @Delete(':projectId')
   public async deleteProject(
     @CurrentUser() user: ProjectsProto.User,
     @Param('projectId', ParseIntPipe) projectId: number,

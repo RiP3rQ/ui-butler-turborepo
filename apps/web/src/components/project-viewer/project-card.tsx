@@ -25,6 +25,7 @@ import { useShallow } from "zustand/react/shallow";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useConfirmationModalStore } from "@/store/confirmation-modal-store";
 import { ProjectDialog } from "@/components/dialogs/project-dialog";
+import { useRouter } from "next/navigation";
 
 interface ProjectCardProps {
   projectData: ProjectDetails;
@@ -35,6 +36,7 @@ export function ProjectCard({
   projectData,
   projectId,
 }: Readonly<ProjectCardProps>): JSX.Element {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const projectModal = useProjectModalStore(useShallow((state) => state));
   const {
@@ -64,6 +66,7 @@ export function ProjectCard({
         id: "delete-project",
       });
       queryClient.invalidateQueries({ queryKey: ["user-projects"] });
+      router.push("/dashboard");
     },
     onError: () => {
       toast.error("Failed to delete project", {
