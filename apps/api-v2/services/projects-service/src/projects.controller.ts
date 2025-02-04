@@ -31,7 +31,7 @@ export class ProjectsController {
 
   @GrpcMethod('ProjectsService', 'UpdateProject')
   public async updateProject(
-    request: ProjectsProto.CreateProjectRequest,
+    request: ProjectsProto.UpdateProjectRequest,
   ): Promise<ProjectsProto.Project> {
     return await this.projectsService.updateProject(request);
   }

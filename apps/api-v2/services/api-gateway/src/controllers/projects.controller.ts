@@ -235,14 +235,15 @@ export class ProjectsController implements OnModuleInit {
     }
 
     try {
-      const request: ProjectsProto.CreateProjectRequest = {
-        $type: 'api.projects.CreateProjectRequest',
+      const request: ProjectsProto.UpdateProjectRequest = {
+        $type: 'api.projects.UpdateProjectRequest',
         user: {
           $type: 'api.projects.User',
           id: user.id,
           email: user.email,
           username: user.username,
         },
+        projectId,
         project: {
           ...updateProjectDto,
         },

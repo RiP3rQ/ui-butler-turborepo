@@ -182,7 +182,7 @@ export class ProjectsService {
   }
 
   public async updateProject(
-    request: ProjectsProto.CreateProjectRequest,
+    request: ProjectsProto.UpdateProjectRequest,
   ): Promise<ProjectsProto.Project> {
     try {
       if (!request.user || !request.project) {
@@ -206,7 +206,7 @@ export class ProjectsService {
         .where(
           and(
             eq(projects.userId, request.user.id),
-            eq(projects.id, request.project.id),
+            eq(projects.id, request.projectId),
           ),
         )
         .returning();

@@ -1064,7 +1064,7 @@ export interface ProjectsServiceClient {
 
   createProject(request: CreateProjectRequest): Observable<Project>;
 
-  updateProject(request: CreateProjectRequest): Observable<Project>;
+  updateProject(request: UpdateProjectRequest): Observable<Project>;
 
   deleteProject(request: GetProjectDetailsRequest): Observable<Project>;
 }
@@ -1086,7 +1086,7 @@ export interface ProjectsServiceController {
   ): Promise<Project> | Observable<Project> | Project;
 
   updateProject(
-    request: CreateProjectRequest,
+    request: UpdateProjectRequest,
   ): Promise<Project> | Observable<Project> | Project;
 
   deleteProject(

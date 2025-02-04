@@ -8,7 +8,7 @@ service ProjectsService {
     rpc GetProjectsByUserId (GetProjectsRequest) returns (GetProjectsResponse);
     rpc GetProjectDetails (GetProjectDetailsRequest) returns (ProjectDetails);
     rpc CreateProject (CreateProjectRequest) returns (Project);
-    rpc UpdateProject (CreateProjectRequest) returns (Project);
+    rpc UpdateProject (UpdateProjectRequest) returns (Project);
     rpc DeleteProject (GetProjectDetailsRequest) returns (Project);
 }
 
