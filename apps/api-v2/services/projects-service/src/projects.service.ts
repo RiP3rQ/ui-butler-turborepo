@@ -17,6 +17,7 @@ import {
   convertToGrpcProject,
   convertToGrpcProjectDetails,
 } from './utils/timestamp.utils';
+import { dateToTimestamp } from '@microservices/common';
 
 @Injectable()
 export class ProjectsService {
@@ -172,6 +173,105 @@ export class ProjectsService {
       });
     } catch (error: unknown) {
       console.error(`[ERROR] Error creating project: ${JSON.stringify(error)}`);
+      if (error instanceof RpcException) throw error;
+      throw new RpcException({
+        code: status.INTERNAL,
+        message: error instanceof Error ? error.message : 'Internal error',
+      });
+    }
+  }
+
+  public async updateProject(
+    request: ProjectsProto.CreateProjectRequest,
+  ): Promise<ProjectsProto.Project> {
+    try {
+      if (!request.user || !request.project) {
+        throw new RpcException({
+          code: status.INVALID_ARGUMENT,
+          message: 'Invalid request',
+        });
+      }
+
+      const now = new Date();
+      const updatedProjectData = {
+        title: request.project.title,
+        description: request.project.description,
+        color: request.project.color,
+        updatedAt: now,
+      };
+
+      const [updatedProject] = await this.database
+        .update(projects)
+        .set(updatedProjectData)
+        .where(
+          and(
+            eq(projects.userId, request.user.id),
+            eq(projects.id, request.project.id),
+          ),
+        )
+        .returning();
+
+      if (!updatedProject) {
+        throw new RpcException({
+          code: status.NOT_FOUND,
+          message: 'Project not found',
+        });
+      }
+
+      return convertToGrpcProject({
+        ...updatedProject,
+        numberOfComponents: 0,
+      });
+    } catch (error: unknown) {
+      console.error(`[ERROR] Error updating project: ${JSON.stringify(error)}`);
+      if (error instanceof RpcException) throw error;
+      throw new RpcException({
+        code: status.INTERNAL,
+        message: error instanceof Error ? error.message : 'Internal error',
+      });
+    }
+  }
+
+  public async deleteProject(
+    request: ProjectsProto.GetProjectDetailsRequest,
+  ): Promise<ProjectsProto.Project> {
+    try {
+      if (!request.user || !request.projectId) {
+        throw new RpcException({
+          code: status.INVALID_ARGUMENT,
+          message: 'Invalid request',
+        });
+      }
+
+      const [deletedProject] = await this.database
+        .delete(projects)
+        .where(
+          and(
+            eq(projects.userId, request.user.id),
+            eq(projects.id, request.projectId),
+          ),
+        )
+        .returning();
+
+      if (!deletedProject) {
+        throw new RpcException({
+          code: status.NOT_FOUND,
+          message: 'Project not found',
+        });
+      }
+
+      return {
+        $type: 'api.projects.Project',
+        id: deletedProject.id,
+        title: deletedProject.title ?? '',
+        description: deletedProject.description ?? '',
+        color: deletedProject.color ?? '',
+        createdAt: dateToTimestamp(deletedProject.createdAt),
+        updatedAt: dateToTimestamp(deletedProject.updatedAt),
+        userId: deletedProject.userId,
+      };
+    } catch (error: unknown) {
+      console.error(`[ERROR] Error deleting project: ${JSON.stringify(error)}`);
       if (error instanceof RpcException) throw error;
       throw new RpcException({
         code: status.INTERNAL,

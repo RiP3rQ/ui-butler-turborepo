@@ -28,4 +28,18 @@ export class ProjectsController {
   ): Promise<ProjectsProto.Project> {
     return await this.projectsService.createProject(request);
   }
+
+  @GrpcMethod('ProjectsService', 'UpdateProject')
+  public async updateProject(
+    request: ProjectsProto.CreateProjectRequest,
+  ): Promise<ProjectsProto.Project> {
+    return await this.projectsService.updateProject(request);
+  }
+
+  @GrpcMethod('ProjectsService', 'DeleteProject')
+  public async deleteProject(
+    request: ProjectsProto.GetProjectDetailsRequest,
+  ): Promise<ProjectsProto.Project> {
+    return await this.projectsService.deleteProject(request);
+  }
 }

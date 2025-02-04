@@ -71,6 +71,12 @@ message CreateProjectRequest {
     CreateProjectDto project = 2;
 }
 
+message UpdateProjectRequest {
+    User user = 1;
+    int32 projectId = 2;
+    CreateProjectDto project = 3;
+}
+
 message CreateProjectDto {
     string title = 1;
     string description = 2;
