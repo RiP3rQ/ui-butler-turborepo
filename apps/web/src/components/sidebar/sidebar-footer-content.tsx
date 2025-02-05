@@ -1,7 +1,6 @@
 "use client";
 
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { logoutUser } from "@shared/ui/actions/auth/logout-user";
 import {
   Avatar,
   AvatarFallback,
@@ -31,9 +30,15 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { type JSX } from "react";
 import { toast } from "sonner";
+import { logoutUser } from "@shared/ui/actions/auth/logout-user";
+import { JSX } from "react";
+import { Separator } from "@shared/ui/components/ui/separator";
 
+/**
+ * SidebarFooterContent component renders the footer content of the sidebar
+ * @returns {JSX.Element} Rendered sidebar footer content
+ */
 export function SidebarFooterContent(): JSX.Element {
   const router = useRouter();
   const { isMobile } = useSidebar();
@@ -42,28 +47,31 @@ export function SidebarFooterContent(): JSX.Element {
   async function handleUserLogout(): Promise<void> {
     await logoutUser();
     toast.success("You have been logged out.");
+    router.push("/login");
   }
 
   if (isLoading || !user) {
-    return <Skeleton className="w-[180px] h-[40px]" />;
+    return <Skeleton className="w-[180px] h-[40px] rounded-md" />;
   }
 
   return (
     <SidebarMenu>
+      <Separator className="my-2" />
+
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground transition-colors"
               size="lg"
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage
-                  alt={user.username ?? "UNKNOWN"}
-                  src={String(user.avatar ?? "https://github.com/shadcn.png")}
+                  alt={user.username ?? "User"}
+                  src={user.avatar ?? "https://github.com/shadcn.png"}
                 />
                 <AvatarFallback className="rounded-lg">
-                  {user.username?.slice(0, 2) ?? "UN"}
+                  {user.username?.slice(0, 2) ?? "U"}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -83,11 +91,11 @@ export function SidebarFooterContent(): JSX.Element {
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage
-                    alt={user.username ?? "UNKNOWN"}
-                    src={String(user.avatar ?? "https://github.com/shadcn.png")}
+                    alt={user.username ?? "User"}
+                    src={user.avatar ?? "https://github.com/shadcn.png"}
                   />
                   <AvatarFallback className="rounded-lg">
-                    {user.username?.slice(0, 2)}
+                    {user.username?.slice(0, 2) ?? "U"}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
@@ -100,33 +108,25 @@ export function SidebarFooterContent(): JSX.Element {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
+              <DropdownMenuItem onClick={() => router.push("/upgrade")}>
+                <Sparkles className="mr-2" />
                 Upgrade to Pro
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
+              <DropdownMenuItem onClick={() => router.push("/account")}>
+                <BadgeCheck className="mr-2" />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => {
-                  router.push("/billing");
-                }}
-              >
-                <CreditCard />
+              <DropdownMenuItem onClick={() => router.push("/billing")}>
+                <CreditCard className="mr-2" />
                 Billing
               </DropdownMenuItem>
-              {/*<DropdownMenuItem>*/}
-              {/*  <Bell />*/}
-              {/*  Notifications*/}
-              {/*</DropdownMenuItem>*/}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => handleUserLogout()}>
-              <LogOut />
+            <DropdownMenuItem onClick={handleUserLogout}>
+              <LogOut className="mr-2" />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>

@@ -3,7 +3,6 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -39,11 +38,12 @@ import {
   type GenerateComponentSchemaType,
 } from "@/schemas/component";
 import CodeEditor from "@/components/code-editor/editor";
-import { useModalsStateStore } from "@/store/modals-store";
+import { useComponentModalStore } from "@/store/component-modal-store";
 import { CopyButton } from "@/components/copy-code-button";
+import { PageHeader } from "@/components/page-header";
 
 export default function GenerateComponentPage(): JSX.Element {
-  const { createNewComponentModal } = useModalsStateStore(
+  const createNewComponentModal = useComponentModalStore(
     useShallow((state) => state),
   );
 
@@ -114,7 +114,7 @@ export default function GenerateComponentPage(): JSX.Element {
       return;
     }
     createNewComponentModal.setCode(latestAssistantMessage.content);
-    createNewComponentModal.setIsOpen(true);
+    createNewComponentModal.open();
   }, [createNewComponentModal, latestAssistantMessage]);
 
   // Add keyboard shortcuts
@@ -132,17 +132,13 @@ export default function GenerateComponentPage(): JSX.Element {
   }, [form, handleGenerateComponent]);
 
   return (
-    <div className="flex flex-col items-center min-h-[calc(100vh-200px)] w-full max-w-full px-8 py-4 space-y-6">
+    <div className="flex flex-col space-y-6 container py-6">
+      <PageHeader
+        title="Generate Component"
+        description="Use AI to generate a new component"
+      />
       <Card className="w-full">
-        <CardHeader>
-          <CardTitle>Generate Component</CardTitle>
-          <CardDescription>
-            Using this textarea type your prompt to generate a component. If
-            possible make the prompt as specific as possible for the best
-            results. The generated code can be saved in the selected project.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+        <CardContent className={"pt-4"}>
           <Form {...form}>
             <form
               className="space-y-6 w-full relative"
@@ -205,7 +201,7 @@ export default function GenerateComponentPage(): JSX.Element {
                     isLoading && "opacity-50 cursor-not-allowed",
                   )}
                 >
-                  <RotateCcwIcon className="h-4 w-4" />
+                  <RotateCcwIcon className="size-4" />
                   Reset
                 </Button>
                 <Button
@@ -218,12 +214,12 @@ export default function GenerateComponentPage(): JSX.Element {
                 >
                   {isLoading ? (
                     <>
-                      <Loader2Icon className="h-4 w-4 animate-spin" />
+                      <Loader2Icon className="size-4 animate-spin" />
                       Generating...
                     </>
                   ) : (
                     <>
-                      <PlayCircleIcon className="h-4 w-4" />
+                      <PlayCircleIcon className="size-4" />
                       Generate
                     </>
                   )}
@@ -249,7 +245,7 @@ export default function GenerateComponentPage(): JSX.Element {
                     className="gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={!latestAssistantMessage.content || isLoading}
                   >
-                    <SaveIcon className="h-4 w-4" />
+                    <SaveIcon className="size-4" />
                     Save component
                   </Button>
                 </TooltipWrapper>

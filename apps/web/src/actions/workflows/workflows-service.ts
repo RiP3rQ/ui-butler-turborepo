@@ -4,11 +4,7 @@ import {
   type CreateWorkflowSchemaType,
   type DuplicateWorkflowSchemaType,
 } from "@/schemas/workflow";
-import {
-  type Workflow,
-  type WorkflowExecution,
-  type WorkflowsEndpoints,
-} from "@shared/types";
+import { type Workflow, type WorkflowsEndpoints } from "@shared/types";
 
 /**
  * Service class for workflow-related API calls
@@ -91,7 +87,7 @@ export class WorkflowService {
     request: Readonly<
       WorkflowsEndpoints["getHistoricWorkflowExecutions"]["request"]
     >,
-  ): Promise<WorkflowExecution[]> {
+  ): Promise<WorkflowsEndpoints["getHistoricWorkflowExecutions"]["response"]> {
     try {
       const response = await ApiClient.get<
         WorkflowsEndpoints["getHistoricWorkflowExecutions"]["response"]

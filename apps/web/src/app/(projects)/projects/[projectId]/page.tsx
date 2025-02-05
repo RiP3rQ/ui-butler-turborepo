@@ -5,6 +5,7 @@ import { type JSX } from "react";
 import { toast } from "sonner";
 
 type Params = Promise<{ projectId: string }>;
+
 export default async function SingleProjectPage({
   params,
 }: Readonly<{

@@ -36,18 +36,18 @@ export function CodeSection({
             onClick={onDiscard}
             disabled={isUpdating}
           >
-            <XIcon className="h-4 w-4 mr-2" />
+            <XIcon className="size-4 mr-2" />
             Discard Changes
           </Button>
           <Button size="sm" onClick={onSave} disabled={isUpdating}>
             {isUpdating ? (
               <>
-                <Loader2Icon className="h-4 w-4 mr-2 animate-spin" />
+                <Loader2Icon className="size-4 mr-2 animate-spin" />
                 Saving...
               </>
             ) : (
               <>
-                <SaveIcon className="h-4 w-4 mr-2" />
+                <SaveIcon className="size-4 mr-2" />
                 Save Changes
               </>
             )}

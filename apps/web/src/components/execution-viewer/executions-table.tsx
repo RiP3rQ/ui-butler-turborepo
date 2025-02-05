@@ -43,8 +43,8 @@ function ExecutionsTable({
 
   return (
     <div className="border rounded-lg shadow-md overflow-auto">
-      <Table className="h-full">
-        <TableHeader className="bg-muted">
+      <Table className="h-full bg-background">
+        <TableHeader>
           <TableRow>
             <TableHead className="text-center">Id</TableHead>
             <TableHead className="text-center">Status</TableHead>
@@ -54,8 +54,8 @@ function ExecutionsTable({
             </TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody className="gap-2 h-full overflow-auto">
-          {query.data.map((execution) => {
+        <TableBody className="gap-2 h-full overflow-auto ">
+          {query.data.executions.map((execution) => {
             const duration = dateToDurationString(
               protoTimestampToDate(execution.startedAt).toISOString(),
               protoTimestampToDate(execution.completedAt).toISOString(),
@@ -77,7 +77,7 @@ function ExecutionsTable({
                 }}
               >
                 <TableCell>
-                  <div className="flex flex-col">
+                  <div className="flex flex-col items-center">
                     <span className="font-semibold">{execution.id}</span>
                     <div className="text-muted-foreground text-xs space-x-2">
                       <span>Triggered via</span>
@@ -86,7 +86,7 @@ function ExecutionsTable({
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="flex flex-col">
+                  <div className="flex flex-col items-center">
                     <div className="flex gap-2 items-center">
                       <ExecutionStatusIndicator
                         status={execution.status as IWorkflowExecutionStatus}
@@ -101,7 +101,7 @@ function ExecutionsTable({
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="flex flex-col">
+                  <div className="flex flex-col items-center">
                     <div className="flex gap-2 items-center">
                       <CoinsIcon className="size-4 stroke-primary" />
                       <span className="ml-2 font-semibold capitalize">

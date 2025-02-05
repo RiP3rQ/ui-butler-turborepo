@@ -203,7 +203,9 @@ export interface WorkflowsEndpoints {
     query: {
       workflowId: number;
     };
-    response: WorkflowExecution[];
+    response: {
+      executions: WorkflowExecution[];
+    };
     request: {
       workflowId: number;
     };

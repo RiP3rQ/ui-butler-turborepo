@@ -13,15 +13,15 @@ import { ColorPicker } from "@shared/ui/components/color-picker";
 import { type JSX } from "react";
 import { type CreateNewProjectSchemaType } from "@/schemas/project";
 
-interface CreateNewProjectFormFieldsProps {
+interface ProjectFormFieldsProps {
   control: Control<CreateNewProjectSchemaType>;
   isDisabled: boolean;
 }
 
-export function CreateNewProjectFormFields({
+export function ProjectFormFields({
   control,
   isDisabled,
-}: Readonly<CreateNewProjectFormFieldsProps>): JSX.Element {
+}: Readonly<ProjectFormFieldsProps>): JSX.Element {
   return (
     <>
       <FormField

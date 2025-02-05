@@ -38,7 +38,7 @@ export function ColorPicker({
         <Button variant="outline" size="sm" className="flex w-fit items-center">
           {color ? String(color) : "Pick color"}
           <div
-            className="ml-2 h-4 w-4 rounded-full"
+            className="ml-2 size-4 rounded-full"
             style={{
               backgroundColor,
             }}

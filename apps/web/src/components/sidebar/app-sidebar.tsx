@@ -1,9 +1,10 @@
 "use client";
 
+import React, { JSX, useMemo } from "react"; // Import React
 import { SidebarFooterContent } from "@/components/sidebar/sidebar-footer-content";
 import { CustomSidebarHeader } from "@/components/sidebar/sidebar-header";
 import { SidebarMainContent } from "@/components/sidebar/sidebar-main-content";
-import { type Project } from "@shared/types";
+import type { Project } from "@shared/types";
 import {
   Sidebar,
   SidebarContent,
@@ -11,93 +12,133 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@shared/ui/components/ui/sidebar";
+import { Bot, EditIcon, Trash2Icon } from "lucide-react";
+import { SidebarOptions } from "@/config/sidebar-config";
+import { useProjectModalStore } from "@/store/project-modal-store";
+import { useShallow } from "zustand/react/shallow";
+import { getErrorMessage } from "@/lib/get-error-message";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useConfirmationModalStore } from "@/store/confirmation-modal-store";
 import {
-  AirplayIcon,
-  Bot,
-  ChartAreaIcon,
-  ComponentIcon,
-  PuzzleIcon,
-  SquareTerminal,
-  VariableIcon,
-} from "lucide-react";
-import { type JSX, useMemo } from "react";
+  deleteProjectFunction,
+  getUserProjects,
+} from "@/actions/projects/server-actions";
+import { toast } from "sonner";
 
-// This is sample data.
-const data = {
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "/dashboard",
-      icon: AirplayIcon,
-      isActive: false,
-    },
-    {
-      title: "Analytics dashboard",
-      url: "/analytics-dashboard",
-      icon: ChartAreaIcon,
-      isActive: false,
-    },
-    {
-      title: "Generate new component",
-      url: "/generate-component",
-      icon: PuzzleIcon,
-      isActive: false,
-    },
-    {
-      title: "Save component",
-      url: "/save-component",
-      icon: ComponentIcon,
-      isActive: false,
-    },
-    {
-      title: "Workflows",
-      url: "/workflows-list",
-      icon: SquareTerminal,
-      isActive: false,
-    },
-    {
-      title: "Projects",
-      url: "#",
-      icon: Bot,
-    },
-    {
-      title: "Credentials",
-      url: "/credentials",
-      icon: VariableIcon,
-    },
-  ],
-};
-
-interface AdditionalAppSidebarProps {
+/**
+ * Props for the AppSidebar component
+ * @interface AppSidebarProps
+ * @extends {React.ComponentProps<typeof Sidebar>}
+ * @property {Project[]} userProjects - Array of user projects
+ */
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   userProjects: Project[];
 }
 
+/**
+ * AppSidebar component renders the main sidebar of the application
+ * @param {userProjects} userProjects - Array of user projects
+ * @param {AppSidebarProps} props - Component props
+ * @returns {JSX.Element} Rendered app sidebar
+ */
 export function AppSidebar({
+  userProjects,
   ...props
-}: React.ComponentProps<typeof Sidebar> &
-  AdditionalAppSidebarProps): JSX.Element {
-  const { userProjects, ...slicedProps } = props;
+}: Readonly<AppSidebarProps>): JSX.Element {
+  const queryClient = useQueryClient();
+  const projectModal = useProjectModalStore(useShallow((state) => state));
+  const {
+    setIsModalOpen,
+    setIsPending,
+    setSaveButtonDisabled,
+    setConfirmationModalBasicState,
+  } = useConfirmationModalStore();
+
+  const { data } = useQuery({
+    queryKey: ["user-projects"],
+    queryFn: getUserProjects,
+    initialData: userProjects,
+  });
+
+  const { mutate } = useMutation({
+    mutationFn: deleteProjectFunction,
+    onSuccess: () => {
+      toast.success("Deleted project successfully", {
+        id: "delete-project",
+      });
+      queryClient.invalidateQueries({ queryKey: ["user-projects"] });
+    },
+    onError: () => {
+      toast.error("Failed to delete project", {
+        id: "delete-project",
+      });
+    },
+  });
 
   const mainContentData = useMemo(() => {
-    const filteredNavMain = data.navMain.filter(
+    const filteredNavMain = SidebarOptions.navMain.filter(
       (item) => item.title !== "Projects",
     );
     const projectsItem = {
       title: "Projects",
       url: "#",
       icon: Bot,
-      items: userProjects.map((project) => ({
+      action: () => {
+        projectModal.setMode("create");
+        projectModal.open();
+      },
+      items: data.map((project) => ({
         title: project.title,
-        url: `/projects/${String(project.id)}`,
+        url: `/projects/${project.id}`,
         color: project.color,
+        actions: [
+          {
+            icon: EditIcon,
+            tooltipInfo: `Edit ${project.title}`,
+            action: () => {
+              projectModal.setMode("edit");
+              projectModal.setData(project);
+              projectModal.open();
+            },
+          },
+          {
+            icon: Trash2Icon,
+            tooltipInfo: `Delete ${project.title}`,
+            action: () => {
+              setConfirmationModalBasicState({
+                isModalOpen: true,
+                modalTitle: `Delete ${project.title}`,
+                modalSubtitle: `Are you sure you want to delete ${project.title}?`,
+                saveButtonText: "Yes, delete",
+                cancelButtonText: "I've changed my mind",
+                saveButtonFunction: () => {
+                  try {
+                    toast.loading("Deleting project...", {
+                      id: "delete-project",
+                    });
+                    setIsPending(true);
+                    setSaveButtonDisabled(true);
+                    mutate(project.id);
+                  } catch (e) {
+                    throw new Error(getErrorMessage(e));
+                  } finally {
+                    setIsPending(false);
+                    setSaveButtonDisabled(false);
+                    setIsModalOpen(false);
+                  }
+                },
+              });
+            },
+          },
+        ],
       })),
     };
     filteredNavMain.splice(3, 0, projectsItem);
     return filteredNavMain;
-  }, [userProjects]);
+  }, [data]);
 
   return (
-    <Sidebar collapsible="icon" {...slicedProps}>
+    <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <CustomSidebarHeader />
       </SidebarHeader>

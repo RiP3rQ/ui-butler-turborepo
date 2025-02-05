@@ -102,9 +102,9 @@ export function RevealCredentialDialog({
             }}
           >
             {isValueVisible ? (
-              <EyeOff className="h-4 w-4" />
+              <EyeOff className="size-4" />
             ) : (
-              <Eye className="h-4 w-4" />
+              <Eye className="size-4" />
             )}
           </Button>
         </div>
@@ -116,7 +116,7 @@ export function RevealCredentialDialog({
             onClick={handleCopyToClipboard}
             disabled={!revealedCredential?.value}
           >
-            <Copy className="h-4 w-4" />
+            <Copy className="size-4" />
             Copy to Clipboard
           </Button>
         </div>

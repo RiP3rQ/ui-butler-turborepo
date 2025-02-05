@@ -1,5 +1,8 @@
 "use client";
-import { getProjectsDetailsFunction } from "@/actions/projects/server-actions";
+import {
+  deleteProjectFunction,
+  getProjectsDetailsFunction,
+} from "@/actions/projects/server-actions";
 import { MultipleComponentsView } from "@/components/component-viewer/multiple-component-view";
 import { protoTimestampToDate } from "@/lib/dates";
 import { type ProjectDetails } from "@shared/types";
@@ -10,10 +13,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@shared/ui/components/ui/card";
-import { Label } from "@shared/ui/components/ui/label";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import moment from "moment";
 import { type JSX, useMemo } from "react";
+import { CalendarIcon, ClockIcon, PencilIcon, TrashIcon } from "lucide-react";
+import { Badge } from "@shared/ui/components/ui/badge";
+import { Button } from "@shared/ui/components/ui/button";
+import { toast } from "sonner";
+import { useProjectModalStore } from "@/store/project-modal-store";
+import { useShallow } from "zustand/react/shallow";
+import { getErrorMessage } from "@/lib/get-error-message";
+import { useConfirmationModalStore } from "@/store/confirmation-modal-store";
+import { ProjectDialog } from "@/components/dialogs/project-dialog";
+import { useRouter } from "next/navigation";
 
 interface ProjectCardProps {
   projectData: ProjectDetails;
@@ -24,9 +36,20 @@ export function ProjectCard({
   projectData,
   projectId,
 }: Readonly<ProjectCardProps>): JSX.Element {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const projectModal = useProjectModalStore(useShallow((state) => state));
+  const {
+    setIsModalOpen,
+    setIsPending,
+    setSaveButtonDisabled,
+    setConfirmationModalBasicState,
+  } = useConfirmationModalStore();
+
   const queryKey = useMemo(() => {
     return `project-details-${String(projectData.id)}`;
   }, [projectData.id]);
+
   const { data } = useQuery({
     queryKey: [queryKey],
     queryFn: async () =>
@@ -36,56 +59,129 @@ export function ProjectCard({
     initialData: projectData,
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: deleteProjectFunction,
+    onSuccess: () => {
+      toast.success("Deleted project successfully", {
+        id: "delete-project",
+      });
+      queryClient.invalidateQueries({ queryKey: ["user-projects"] });
+      router.push("/dashboard");
+    },
+    onError: () => {
+      toast.error("Failed to delete project", {
+        id: "delete-project",
+      });
+    },
+  });
+
   return (
-    <div className="flex flex-col items-center min-h-[calc(100vh-200px)] w-full max-w-full px-8 py-4">
-      <Card className="w-full h-full">
-        <CardHeader>
-          <CardTitle>
-            <div className="w-full flex justify-center flex-col">
-              <div className="flex items-center justify-between">
-                <Label className="font-semibold text-4xl flex items-center justify-center">
-                  <div
-                    className="size-7 rounded-full mr-2"
-                    style={{
-                      backgroundColor: data.color,
-                    }}
-                  />
+    <Card className="flex flex-col space-y-6 container my-6 py-2">
+      <CardHeader className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <div
+              className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-2xl"
+              style={{ backgroundColor: data.color }}
+            >
+              {data.title.charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <CardTitle className="text-3xl font-bold">
                   {data.title}
-                </Label>
+                </CardTitle>
+                <ProjectDialog
+                  dialogTrigger={
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={"flex items-center justify-center"}
+                      onClick={() => {
+                        projectModal.setMode("edit");
+                        projectModal.setData(data);
+                        projectModal.setQueryKey(queryKey);
+                        projectModal.open();
+                      }}
+                    >
+                      <PencilIcon className="size-4" />
+                    </Button>
+                  }
+                />
               </div>
-              <Label className="text-muted-foreground text-xl">
-                <span className="text-sm">{data.description}</span>
-              </Label>
+              <CardDescription className="text-sm text-muted-foreground mt-1">
+                {data.description}
+              </CardDescription>
             </div>
-          </CardTitle>
-          <CardDescription>
-            <div className="flex items-center justify-between w-full space-x-4">
-              <div>
-                Created at:{" "}
-                <span>
-                  {moment(protoTimestampToDate(data.createdAt)).format(
-                    "DD/MM/YYYY",
-                  )}
-                </span>
-              </div>
-              <div>
-                Updated at:{" "}
-                <span>
-                  {moment(protoTimestampToDate(data.updatedAt)).format(
-                    "DD/MM/YYYY",
-                  )}
-                </span>
-              </div>
-            </div>
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="h-fit w-full">
+          </div>
+          <div className="flex items-center space-x-2">
+            <Badge variant="outline" className="text-xs font-semibold">
+              {data.components.length} Components
+            </Badge>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => {
+                setConfirmationModalBasicState({
+                  isModalOpen: true,
+                  modalTitle: `Delete ${projectData.title}`,
+                  modalSubtitle: `Are you sure you want to delete ${projectData.title}?`,
+                  saveButtonText: "Yes, delete",
+                  cancelButtonText: "I've changed my mind",
+                  saveButtonFunction: () => {
+                    try {
+                      toast.loading("Deleting project...", {
+                        id: "delete-project",
+                      });
+                      setIsPending(true);
+                      setSaveButtonDisabled(true);
+                      deleteMutation.mutate(projectData.id);
+                    } catch (e) {
+                      throw new Error(getErrorMessage(e));
+                    } finally {
+                      setIsPending(false);
+                      setSaveButtonDisabled(false);
+                      setIsModalOpen(false);
+                    }
+                  },
+                });
+              }}
+            >
+              <TrashIcon className="w-4 h-4 mr-1" />
+              Delete Project
+            </Button>
+          </div>
+        </div>
+        <div className="flex items-center justify-start space-x-6 text-sm text-muted-foreground">
+          <div className="flex items-center space-x-2">
+            <CalendarIcon className="w-4 h-4" />
+            <span>
+              Created:{" "}
+              {moment(protoTimestampToDate(data.createdAt)).format(
+                "DD/MM/YYYY",
+              )}
+            </span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <ClockIcon className="w-4 h-4" />
+            <span>
+              Updated:{" "}
+              {moment(protoTimestampToDate(data.updatedAt)).format(
+                "DD/MM/YYYY",
+              )}
+            </span>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="bg-muted p-4 rounded-lg">
+          <h3 className="text-lg font-semibold mb-4">Project Components</h3>
           <MultipleComponentsView
             components={data.components}
             queryKey={queryKey}
           />
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

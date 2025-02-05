@@ -8,6 +8,7 @@ import {
   getUsedCreditsInPeriod,
   getWorkflowExecutionStats,
 } from "@/actions/analytics/server-actions";
+import { PageHeader } from "@/components/page-header";
 
 export default async function AnalyticsPage({
   searchParams,
@@ -17,8 +18,8 @@ export default async function AnalyticsPage({
   const { month, year } = await searchParams;
   const currentDate = new Date();
   const period: Period = {
-    month: month ? parseInt(month) : currentDate.getMonth() + 1,
-    year: year ? parseInt(year) : currentDate.getFullYear(),
+    month: month ? Number.parseInt(month) : currentDate.getMonth() + 1,
+    year: year ? Number.parseInt(year) : currentDate.getFullYear(),
   };
 
   const [
@@ -34,11 +35,11 @@ export default async function AnalyticsPage({
   ]);
 
   return (
-    <div className="flex flex-1 flex-col h-full gap-2 mx-auto max-w-6xl mt-4">
-      <div className="flex justify-between">
-        <h1 className="text-3xl font-bold">Analytics Dashboard</h1>
-        <PeriodSelector periods={periods} selectedPeriod={period} />
-      </div>
+    <div className="flex flex-col space-y-6 container py-6">
+      <PageHeader
+        title="Analytics Dashboard"
+        action={<PeriodSelector periods={periods} selectedPeriod={period} />}
+      />
       <AnalyticsPageContent
         period={period}
         statCardsValues={statCardsValues}

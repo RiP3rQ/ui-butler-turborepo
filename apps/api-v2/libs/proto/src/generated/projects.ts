@@ -80,6 +80,13 @@ export interface CreateProjectRequest {
   project?: CreateProjectDto | undefined;
 }
 
+export interface UpdateProjectRequest {
+  $type: "api.projects.UpdateProjectRequest";
+  user?: User | undefined;
+  projectId: number;
+  project?: CreateProjectDto | undefined;
+}
+
 export interface CreateProjectDto {
   $type: "api.projects.CreateProjectDto";
   title: string;
@@ -809,6 +816,79 @@ export const CreateProjectRequest: MessageFns<
 
 messageTypeRegistry.set(CreateProjectRequest.$type, CreateProjectRequest);
 
+function createBaseUpdateProjectRequest(): UpdateProjectRequest {
+  return { $type: "api.projects.UpdateProjectRequest", projectId: 0 };
+}
+
+export const UpdateProjectRequest: MessageFns<
+  UpdateProjectRequest,
+  "api.projects.UpdateProjectRequest"
+> = {
+  $type: "api.projects.UpdateProjectRequest" as const,
+
+  encode(
+    message: UpdateProjectRequest,
+    writer: BinaryWriter = new BinaryWriter(),
+  ): BinaryWriter {
+    if (message.user !== undefined) {
+      User.encode(message.user, writer.uint32(10).fork()).join();
+    }
+    if (message.projectId !== 0) {
+      writer.uint32(16).int32(message.projectId);
+    }
+    if (message.project !== undefined) {
+      CreateProjectDto.encode(message.project, writer.uint32(26).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(
+    input: BinaryReader | Uint8Array,
+    length?: number,
+  ): UpdateProjectRequest {
+    const reader =
+      input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUpdateProjectRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.user = User.decode(reader, reader.uint32());
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.projectId = reader.int32();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.project = CreateProjectDto.decode(reader, reader.uint32());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+};
+
+messageTypeRegistry.set(UpdateProjectRequest.$type, UpdateProjectRequest);
+
 function createBaseCreateProjectDto(): CreateProjectDto {
   return {
     $type: "api.projects.CreateProjectDto",
@@ -983,6 +1063,10 @@ export interface ProjectsServiceClient {
   ): Observable<ProjectDetails>;
 
   createProject(request: CreateProjectRequest): Observable<Project>;
+
+  updateProject(request: UpdateProjectRequest): Observable<Project>;
+
+  deleteProject(request: GetProjectDetailsRequest): Observable<Project>;
 }
 
 export interface ProjectsServiceController {
@@ -1000,6 +1084,14 @@ export interface ProjectsServiceController {
   createProject(
     request: CreateProjectRequest,
   ): Promise<Project> | Observable<Project> | Project;
+
+  updateProject(
+    request: UpdateProjectRequest,
+  ): Promise<Project> | Observable<Project> | Project;
+
+  deleteProject(
+    request: GetProjectDetailsRequest,
+  ): Promise<Project> | Observable<Project> | Project;
 }
 
 export function ProjectsServiceControllerMethods() {
@@ -1008,6 +1100,8 @@ export function ProjectsServiceControllerMethods() {
       "getProjectsByUserId",
       "getProjectDetails",
       "createProject",
+      "updateProject",
+      "deleteProject",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(

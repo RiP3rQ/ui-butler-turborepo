@@ -49,9 +49,9 @@ export function CopyButton({ value, className }: CopyButtonProps): JSX.Element {
         <span className="sr-only">{copied ? "Copied!" : "Copy code"}</span>
 
         {copied ? (
-          <CheckIcon className="h-4 w-4 text-green-500" />
+          <CheckIcon className="size-4 text-green-500" />
         ) : (
-          <CopyIcon className="h-4 w-4" />
+          <CopyIcon className="size-4" />
         )}
       </Button>
     </TooltipWrapper>

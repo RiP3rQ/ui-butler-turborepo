@@ -39,6 +39,50 @@ export class ProjectsService {
   }
 
   /**
+   * Edits a project
+   */
+  static async editProject(
+    projectId: number,
+    form: Readonly<CreateNewProjectSchemaType>,
+  ): Promise<Project> {
+    try {
+      const response = await ApiClient.put<
+        ProjectsEndpoints["updateProject"]["body"],
+        ProjectsEndpoints["updateProject"]["response"]
+      >(`${this.BASE_PATH}/${String(projectId)}`, {
+        body: form,
+      });
+
+      if (!response.success) {
+        throw new Error("Failed to edit project");
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error("Failed to edit project:", error);
+      throw new Error(getErrorMessage(error));
+    }
+  }
+
+  /**
+   * Deletes a project
+   */
+  static async deleteProject(projectId: number): Promise<void> {
+    try {
+      const response = await ApiClient.delete<
+        ProjectsEndpoints["deleteProject"]["response"]
+      >(`${this.BASE_PATH}/${String(projectId)}`);
+
+      if (!response.success) {
+        throw new Error("Failed to delete project");
+      }
+    } catch (error) {
+      console.error("Failed to delete project:", error);
+      throw new Error(getErrorMessage(error));
+    }
+  }
+
+  /**
    * Fetches project details by ID
    */
   static async getProjectDetails(

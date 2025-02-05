@@ -44,4 +44,27 @@ export interface ProjectsEndpoints {
     };
     response: Project;
   };
+
+  /** PUT /projects/:projectId */
+  updateProject: {
+    params: {
+      projectId: number;
+    };
+    body: {
+      title: string;
+      color: string;
+      description?: string;
+    };
+    response: Project;
+  };
+
+  /** DELETE /projects/:projectId */
+  deleteProject: {
+    params: {
+      projectId: number;
+    };
+    response: {
+      success: boolean;
+    };
+  };
 }

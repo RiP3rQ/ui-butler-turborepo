@@ -39,7 +39,7 @@ export default async function Home(): Promise<React.ReactNode> {
   return (
     <div className="flex flex-col items-center w-full">
       <Navbar isUserLoggedIn={userLoggedIn} />
-      <section className="w-full relative flex items-center justify-center flex-col px-4 md:px-0 py-8">
+      <section className="w-full relative flex items-center justify-center flex-col px-4 md:px-0 pt-8 ">
         {/* hero */}
         <Wrapper>
           <div className="absolute inset-0 dark:bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-[linear-gradient(to_right,#161616_1px,transparent_1px),linear-gradient(to_bottom,#161616_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_110%)] -z-10 h-[150vh]" />
@@ -63,7 +63,7 @@ export default async function Home(): Promise<React.ReactNode> {
                     src="/icons/sparkles-dark.svg"
                     width={24}
                   />
-                  Introducing Astra AI
+                  Introducing UI-Butler
                   <ChevronRight className="w-4 h-4" />
                 </span>
               </button>
@@ -115,151 +115,157 @@ export default async function Home(): Promise<React.ReactNode> {
         </Wrapper>
 
         {/* how it works */}
-        <Wrapper className="flex flex-col items-center justify-center py-12 relative">
-          <Container>
-            <div className="max-w-md mx-auto text-start md:text-center">
-              <SectionBadge title="The Process" />
-              <h2 className="text-3xl lg:text-4xl font-semibold mt-6">
-                Three steps to build your dream website
-              </h2>
-              <p className="text-muted-foreground mt-6">
-                Turn your vision into reality in just 3 simple steps
-              </p>
-            </div>
-          </Container>
-          <Container>
-            <div className="flex flex-col items-center justify-center py-10 md:py-20 w-full">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full divide-x-0 md:divide-x divide-y md:divide-y-0 divide-gray-900 first:border-l-2 lg:first:border-none first:border-gray-900">
-                {perks.map((perk: Perk) => (
-                  <div
-                    className="flex flex-col items-start px-4 md:px-6 lg:px-8 lg:py-6 py-4"
-                    key={perk.title}
-                  >
-                    <div className="flex items-center justify-center">
-                      <perk.Icon className="w-8 h-8" />
-                    </div>
-                    <h3 className="text-lg font-medium mt-4">{perk.title}</h3>
-                    <p className="text-muted-foreground mt-2 text-start lg:text-start">
-                      {perk.info}
-                    </p>
-                  </div>
-                ))}
+        <section id={"how-it-works"}>
+          <Wrapper className="flex flex-col items-center justify-center pt-20 relative">
+            <Container>
+              <div className="max-w-md mx-auto text-start md:text-center">
+                <SectionBadge title="The Process" />
+                <h2 className="text-3xl lg:text-4xl font-semibold mt-6">
+                  Three steps to build your dream website
+                </h2>
+                <p className="text-muted-foreground mt-6">
+                  Turn your vision into reality in just 3 simple steps
+                </p>
               </div>
-            </div>
-          </Container>
-        </Wrapper>
+            </Container>
+            <Container>
+              <div className="flex flex-col items-center justify-center py-10 md:py-20 w-full">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full divide-x-0 md:divide-x divide-y md:divide-y-0 divide-gray-900 first:border-l-2 lg:first:border-none first:border-gray-900">
+                  {perks.map((perk: Perk) => (
+                    <div
+                      className="flex flex-col items-start px-4 md:px-6 lg:px-8 lg:py-6 py-4"
+                      key={perk.title}
+                    >
+                      <div className="flex items-center justify-center">
+                        <perk.Icon className="w-8 h-8" />
+                      </div>
+                      <h3 className="text-lg font-medium mt-4">{perk.title}</h3>
+                      <p className="text-muted-foreground mt-2 text-start lg:text-start">
+                        {perk.info}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Container>
+          </Wrapper>
+        </section>
 
         {/* features */}
-        <Wrapper className="flex flex-col items-center justify-center py-12 relative">
-          <div className="hidden md:block absolute top-0 -right-1/3 w-72 h-72 bg-primary rounded-full blur-[10rem] -z-10" />
-          <div className="hidden md:block absolute bottom-0 -left-1/3 w-72 h-72 bg-indigo-600 rounded-full blur-[10rem] -z-10" />
-          <Container>
-            <div className="max-w-md mx-auto text-start md:text-center">
-              <SectionBadge title="Features" />
-              <h2 className="text-3xl lg:text-4xl font-semibold mt-6">
-                Discover our powerful features
-              </h2>
-              <p className="text-muted-foreground mt-6">
-                Astra offers a range of features to help you build a stunning
-                website in no time
-              </p>
-            </div>
-          </Container>
-          <Container>
-            <div className="flex items-center justify-center mx-auto mt-8">
-              <Icons.Feature className="w-auto h-80" />
-            </div>
-          </Container>
-          <Container>
-            <div className="flex flex-col items-center justify-center py-10 md:py-20 w-full">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full gap-8">
-                {features.map((feature: Feature) => (
-                  <div
-                    className="flex flex-col items-start lg:items-start px-0 md:px-0"
-                    key={feature.title}
-                  >
-                    <div className="flex items-center justify-center">
-                      <feature.Icon className="w-8 h-8" />
-                    </div>
-                    <h3 className="text-lg font-medium mt-4">
-                      {feature.title}
-                    </h3>
-                    <p className="text-muted-foreground mt-2 text-start lg:text-start">
-                      {feature.info}
-                    </p>
-                  </div>
-                ))}
+        <section id={"features"}>
+          <Wrapper className="flex flex-col items-center justify-center pt-20 relative">
+            <div className="hidden md:block absolute top-0 -right-1/3 w-72 h-72 bg-primary rounded-full blur-[10rem] -z-10" />
+            <div className="hidden md:block absolute bottom-0 -left-1/3 w-72 h-72 bg-indigo-600 rounded-full blur-[10rem] -z-10" />
+            <Container>
+              <div className="max-w-md mx-auto text-start md:text-center">
+                <SectionBadge title="Features" />
+                <h2 className="text-3xl lg:text-4xl font-semibold mt-6">
+                  Discover our powerful features
+                </h2>
+                <p className="text-muted-foreground mt-6">
+                  UI-Butler offers a range of features to help you build a
+                  stunning website in no time
+                </p>
               </div>
-            </div>
-          </Container>
-        </Wrapper>
+            </Container>
+            <Container>
+              <div className="flex items-center justify-center mx-auto mt-8">
+                <Icons.Feature className="w-auto h-80" />
+              </div>
+            </Container>
+            <Container>
+              <div className="flex flex-col items-center justify-center py-10 md:py-20 w-full">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full gap-8">
+                  {features.map((feature: Feature) => (
+                    <div
+                      className="flex flex-col items-start lg:items-start px-0 md:px-0"
+                      key={feature.title}
+                    >
+                      <div className="flex items-center justify-center">
+                        <feature.Icon className="w-8 h-8" />
+                      </div>
+                      <h3 className="text-lg font-medium mt-4">
+                        {feature.title}
+                      </h3>
+                      <p className="text-muted-foreground mt-2 text-start lg:text-start">
+                        {feature.info}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Container>
+          </Wrapper>
+        </section>
 
         {/* pricing */}
-        <Wrapper className="flex flex-col items-center justify-center py-12 relative">
-          <div className="hidden md:block absolute top-0 -right-1/3 w-72 h-72 bg-blue-500 rounded-full blur-[10rem] -z-10" />
-          <Container>
-            <div className="max-w-md mx-auto text-start md:text-center">
-              <SectionBadge title="Pricing" />
-              <h2 className="text-3xl lg:text-4xl font-semibold mt-6">
-                Unlock the right plan for your business
-              </h2>
-              <p className="text-muted-foreground mt-6">
-                Choose the best plan for your business and start building your
-                dream website today
-              </p>
-            </div>
-          </Container>
-          <Container className="flex items-center justify-center">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 w-full md:gap-8 py-10 md:py-20 flex-wrap max-w-4xl">
-              {pricingCards.map((card: PricingCard) => (
-                <Card
-                  className={cn(
-                    "flex flex-col w-full border-neutral-700",
-                    card.title === "Unlimited Saas" &&
-                      "border-2 border-primary",
-                  )}
-                  key={card.title}
-                >
-                  <CardHeader className="border-b border-border">
-                    <span>{card.title}</span>
-                    <CardTitle
-                      className={cn(
-                        card.title !== "Unlimited Saas" &&
-                          "text-muted-foreground",
-                      )}
-                    >
-                      {card.price}
-                    </CardTitle>
-                    <CardDescription>{card.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="pt-6 space-y-3">
-                    {card.features.map((feature: string) => (
-                      <div className="flex items-center gap-2" key={feature}>
-                        <Zap className="w-4 h-4 fill-primary text-primary" />
-                        <p>{feature}</p>
-                      </div>
-                    ))}
-                  </CardContent>
-                  <CardFooter className="mt-auto">
-                    <Link
-                      className={cn(
-                        "w-full text-center text-primary-foreground bg-primary p-2 rounded-md text-sm font-medium",
-                        card.title !== "Unlimited Saas" &&
-                          "!bg-foreground !text-background",
-                      )}
-                      href="#"
-                    >
-                      {card.buttonText}
-                    </Link>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          </Container>
-        </Wrapper>
+        <section id={"pricing"}>
+          <Wrapper className="flex flex-col items-center justify-center pt-20 relative">
+            <div className="hidden md:block absolute top-0 -right-1/3 w-72 h-72 bg-blue-500 rounded-full blur-[10rem] -z-10" />
+            <Container>
+              <div className="max-w-md mx-auto text-start md:text-center">
+                <SectionBadge title="Pricing" />
+                <h2 className="text-3xl lg:text-4xl font-semibold mt-6">
+                  Unlock the right plan for your business
+                </h2>
+                <p className="text-muted-foreground mt-6">
+                  Choose the best plan for your business and start building your
+                  dream website today
+                </p>
+              </div>
+            </Container>
+            <Container className="flex items-center justify-center">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 w-full md:gap-8 py-10 md:py-20 flex-wrap max-w-4xl">
+                {pricingCards.map((card: PricingCard) => (
+                  <Card
+                    className={cn(
+                      "flex flex-col w-full border-neutral-700",
+                      card.title === "Unlimited Saas" &&
+                        "border-2 border-primary",
+                    )}
+                    key={card.title}
+                  >
+                    <CardHeader className="border-b border-border">
+                      <span>{card.title}</span>
+                      <CardTitle
+                        className={cn(
+                          card.title !== "Unlimited Saas" &&
+                            "text-muted-foreground",
+                        )}
+                      >
+                        {card.price}
+                      </CardTitle>
+                      <CardDescription>{card.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="pt-6 space-y-3">
+                      {card.features.map((feature: string) => (
+                        <div className="flex items-center gap-2" key={feature}>
+                          <Zap className="w-4 h-4 fill-primary text-primary" />
+                          <p>{feature}</p>
+                        </div>
+                      ))}
+                    </CardContent>
+                    <CardFooter className="mt-auto">
+                      <Link
+                        className={cn(
+                          "w-full text-center text-primary-foreground bg-primary p-2 rounded-md text-sm font-medium",
+                          card.title !== "Unlimited Saas" &&
+                            "!bg-foreground !text-background",
+                        )}
+                        href="#"
+                      >
+                        {card.buttonText}
+                      </Link>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
+            </Container>
+          </Wrapper>
+        </section>
 
         {/* testimonials */}
-        <Wrapper className="flex flex-col items-center justify-center py-12 relative">
+        <Wrapper className="flex flex-col items-center justify-center pt-20 relative">
           <div className="hidden md:block absolute -top-1/4 -left-1/3 w-72 h-72 bg-indigo-500 rounded-full blur-[10rem] -z-10" />
           <Container>
             <div className="max-w-md mx-auto text-start md:text-center">
@@ -268,8 +274,8 @@ export default async function Home(): Promise<React.ReactNode> {
                 What people are saying
               </h2>
               <p className="text-muted-foreground mt-6">
-                See how Astra empowers businesses of all sizes. Here&apos;s what
-                real people are saying on Twitter
+                See how UI-Butler empowers businesses of all sizes. Here&apos;s
+                what real people are saying on Twitter
               </p>
             </div>
           </Container>
@@ -340,15 +346,15 @@ export default async function Home(): Promise<React.ReactNode> {
         </Wrapper>
 
         {/* newsletter */}
-        <Wrapper className="flex flex-col items-center justify-center py-12 relative">
-          <Container>
+        <section id={"newsletter"}>
+          <Wrapper className="flex flex-col items-center justify-center pt-20 relative">
             <LampContainer>
-              <div className="flex flex-col items-center justify-center relative w-full text-center">
+              <div className="flex flex-col items-center justify-center relative w-full text-center ">
                 <h2 className="text-4xl lg:text-5xl xl:text-6xl lg:!leading-snug font-semibold mt-8">
                   From Idea to Launch <br /> Faster Than Ever
                 </h2>
                 <p className="text-muted-foreground mt-6 max-w-md mx-auto">
-                  Build stunning websites with Astra&apos;s intuitive
+                  Build stunning websites with UI-Butler&apos;s intuitive
                   drag-and-drop builder and powerful AI assistant
                 </p>
                 <Button asChild className="mt-6" variant="link">
@@ -359,47 +365,47 @@ export default async function Home(): Promise<React.ReactNode> {
                 </Button>
               </div>
             </LampContainer>
-          </Container>
-          <Container className="relative z-[999999]">
-            <div className="flex items-center justify-center w-full -mt-40">
-              <div className="flex flex-col md:flex-row items-start md:items-center justify-start md:justify-between w-full px-4 md:px-8 rounded-lg lg:rounded-2xl border border-border/80 py-4 md:py-8">
-                <div className="flex flex-col items-start gap-4 w-full">
-                  <h4 className="text-xl md:text-2xl font-semibold">
-                    Join our newsletter
-                  </h4>
-                  <p className="text-base text-muted-foreground">
-                    Be up to date with everything about AI builder
-                  </p>
-                </div>
-                <div className="flex flex-col items-start gap-2 md:min-w-80 mt-5 md:mt-0 w-full md:w-max">
-                  <form
-                    action="#"
-                    className="flex flex-col md:flex-row items-center gap-2 w-full md:max-w-xs"
-                  >
-                    <Input
-                      className="focus-visible:ring-0 focus-visible:ring-transparent focus-visible:border-primary duration-300 w-full"
-                      placeholder="Enter your email"
-                      required
-                      type="email"
-                    />
-                    <Button
-                      className="w-full md:w-max"
-                      size="sm"
-                      type="submit"
-                      variant="secondary"
+            <Container className="relative z-[999999]">
+              <div className="flex items-center justify-center w-full -mt-40">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-start md:justify-between w-full px-4 md:px-8 rounded-lg lg:rounded-2xl border border-border/80 py-4 md:py-8">
+                  <div className="flex flex-col items-start gap-4 w-full">
+                    <h4 className="text-xl md:text-2xl font-semibold">
+                      Join our newsletter
+                    </h4>
+                    <p className="text-base text-muted-foreground">
+                      Be up to date with everything about AI builder
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-start gap-2 md:min-w-80 mt-5 md:mt-0 w-full md:w-max">
+                    <form
+                      action="#"
+                      className="flex flex-col md:flex-row items-center gap-2 w-full md:max-w-xs"
                     >
-                      Subscribe
-                    </Button>
-                  </form>
-                  <p className="text-xs text-muted-foreground">
-                    By subscribing you agree with our{" "}
-                    <Link href="#">Privacy Policy</Link>
-                  </p>
+                      <Input
+                        className="focus-visible:ring-0 focus-visible:ring-transparent focus-visible:border-primary duration-300 w-full"
+                        placeholder="Enter your email"
+                        required
+                        type="email"
+                      />
+                      <Button
+                        className="w-full md:w-max"
+                        size="sm"
+                        type="submit"
+                        variant="secondary"
+                      >
+                        Subscribe
+                      </Button>
+                    </form>
+                    <p className="text-xs text-muted-foreground">
+                      By subscribing you agree with our{" "}
+                      <Link href="#">Privacy Policy</Link>
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          </Container>
-        </Wrapper>
+            </Container>
+          </Wrapper>
+        </section>
       </section>
       <Footer />
     </div>
