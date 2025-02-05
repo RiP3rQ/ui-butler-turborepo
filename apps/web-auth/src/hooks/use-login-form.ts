@@ -46,11 +46,9 @@ export function useLoginForm(): {
 
   const isSubmitDisabled = useMemo(() => {
     return (
-      !form.formState.isValid ||
-      !form.getValues("email") ||
-      !form.getValues("password")
+      !form.formState.isValid || !form.watch("email") || !form.watch("password")
     );
-  }, [form]);
+  }, [form, form.formState.isValid, form.watch]);
 
   return { form, isPending, handleSubmit, isSubmitDisabled };
 }

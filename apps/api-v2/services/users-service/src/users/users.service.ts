@@ -135,6 +135,7 @@ export class UsersService {
         $type: 'api.users.User',
         id: user.id,
         username: user.username ?? 'UNKNOWN_USERNAME',
+        password: user.password ?? 'UNKNOWN_PASSWORD',
         email: user.email ?? 'UNKNOWN_EMAIL',
         refreshToken: user.refreshToken ?? 'UNKOWN_REFRESH_TOKEN',
       } satisfies UsersProto.User;

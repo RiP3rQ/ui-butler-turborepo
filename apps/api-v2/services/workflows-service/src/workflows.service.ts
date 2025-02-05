@@ -578,10 +578,6 @@ export class WorkflowsService implements OnModuleInit {
         )
         .orderBy(desc(workflowExecutions.createdAt));
 
-      if (workflowExecutionsData.length === 0) {
-        throw new RpcException('Workflow executions not found');
-      }
-
       return {
         $type: 'api.workflows.WorkflowExecutionsResponse',
         executions: workflowExecutionsData.map((execution) => ({
@@ -600,7 +596,7 @@ export class WorkflowsService implements OnModuleInit {
             : undefined,
           creditsConsumed: execution.creditsConsumed
             ? Number(execution.creditsConsumed)
-            : undefined,
+            : 0,
         })),
       };
     } catch (error) {

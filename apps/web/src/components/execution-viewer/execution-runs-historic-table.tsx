@@ -1,7 +1,7 @@
 "use client";
 
 import { InboxIcon } from "lucide-react";
-import { type WorkflowExecution } from "@shared/types";
+import { type WorkflowsEndpoints } from "@shared/types";
 import { useQuery } from "@tanstack/react-query";
 import { type JSX } from "react";
 import ExecutionsTable from "@/components/execution-viewer/executions-table";
@@ -9,7 +9,7 @@ import { getHistoricWorkflowExecutions } from "@/actions/workflows/server-action
 
 interface ExecutionRunsHistoricTableProps {
   workflowId: string;
-  historicExecutions: WorkflowExecution[];
+  historicExecutions: WorkflowsEndpoints["getHistoricWorkflowExecutions"]["response"];
 }
 
 function WorkflowHistoricExecutionsTable({
@@ -27,7 +27,7 @@ function WorkflowHistoricExecutionsTable({
     return <div>Could not find any historic executions</div>;
   }
 
-  if (data.length === 0) {
+  if (data.executions.length === 0) {
     return <RenderEmptyState />;
   }
 

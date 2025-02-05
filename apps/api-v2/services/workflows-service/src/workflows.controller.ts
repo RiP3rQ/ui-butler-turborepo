@@ -167,9 +167,7 @@ export class WorkflowsController {
       );
     return {
       $type: 'api.workflows.WorkflowExecutionsResponse',
-      executions: executions.executions.map((execution) => ({
-        ...execution,
-      })),
+      executions: executions.executions,
     };
   }
 
