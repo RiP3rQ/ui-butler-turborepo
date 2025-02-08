@@ -36,6 +36,7 @@ import { handleGrpcError } from '../utils/grpc-error.util';
 import { CACHE_TTL, CacheGroup, CacheTTL } from '../caching/cache.decorator';
 import { CustomCacheInterceptor } from '../caching/custom-cache.interceptor';
 import { CacheService } from '../caching/cache.service';
+import { ThrottleGuard } from '../throttling/throttle.guard';
 
 /**
 /**
@@ -232,6 +233,7 @@ export class CredentialsController implements OnModuleInit {
   })
   @ApiResponse({ status: 404, description: 'User or credential not found' })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
+  @UseGuards(ThrottleGuard)
   @RateLimit({
     ttl: 60,
     limit: 5,

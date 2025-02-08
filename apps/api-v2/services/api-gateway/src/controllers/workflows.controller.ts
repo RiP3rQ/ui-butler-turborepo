@@ -46,6 +46,7 @@ import {
   SkipCache,
 } from '../caching/cache.decorator';
 import { CacheService } from 'src/caching/cache.service';
+import { ThrottleGuard } from '../throttling/throttle.guard';
 
 /**
  * Controller handling workflow-related operations through gRPC communication
@@ -183,6 +184,7 @@ export class WorkflowsController implements OnModuleInit {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 400, description: 'Invalid input' })
+  @UseGuards(ThrottleGuard)
   @RateLimit({
     ttl: 60,
     limit: 5,
@@ -299,6 +301,7 @@ export class WorkflowsController implements OnModuleInit {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Workflow not found' })
   // @SetMetadata(IGNORE_CACHE_KEY, true)
+  @UseGuards(ThrottleGuard)
   @RateLimit({
     ttl: 60,
     limit: 3,
@@ -343,6 +346,7 @@ export class WorkflowsController implements OnModuleInit {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Workflow not found' })
   // @SetMetadata(IGNORE_CACHE_KEY, true)
+  @UseGuards(ThrottleGuard)
   @RateLimit({
     ttl: 60,
     limit: 3,
@@ -383,6 +387,7 @@ export class WorkflowsController implements OnModuleInit {
     description: 'Workflow execution started',
     type: JSON.stringify(WorkflowsProto.RunWorkflowResponse),
   })
+  @UseGuards(ThrottleGuard)
   @RateLimit({
     ttl: 60,
     limit: 2,
@@ -427,6 +432,7 @@ export class WorkflowsController implements OnModuleInit {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Workflow not found' })
   // 5 requests per minute
+  @UseGuards(ThrottleGuard)
   @RateLimit({
     limit: 5,
     ttl: 60,

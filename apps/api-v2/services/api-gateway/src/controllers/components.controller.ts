@@ -41,6 +41,7 @@ import type { ClientGrpc } from '@nestjs/microservices';
 import { RateLimit } from '../throttling/rate-limit.decorator';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
+import { ThrottleGuard } from '../throttling/throttle.guard';
 
 /**
  * Controller handling component-related operations through gRPC communication
@@ -352,6 +353,7 @@ export class ComponentsController implements OnModuleInit {
     description: 'Code generated successfully',
     type: 'ComponentsProto.Component',
   })
+  @UseGuards(ThrottleGuard)
   @RateLimit({
     ttl: 60,
     limit: 10,
