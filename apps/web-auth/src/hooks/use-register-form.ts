@@ -53,17 +53,15 @@ export function useRegisterForm(): {
     const errors = form.formState.errors;
 
     const hasValues = Boolean(
-      values.username.trim() &&
-        values.email.trim() &&
-        values.password.trim() &&
-        values.confirmPassword.trim(),
+      values.username?.trim() &&
+        values.email?.trim() &&
+        values.password?.trim() &&
+        values.confirmPassword?.trim(),
     );
 
     const hasNoErrors = Object.keys(errors).length === 0;
-    const isPasswordMatch = values.password === values.confirmPassword;
-
-    return !hasValues || !hasNoErrors || !isPasswordMatch;
-  }, [form]);
+    return !hasValues || !hasNoErrors;
+  }, [form, form.formState]);
 
   return { form, isPending, onSubmit, isSubmitButtonBlocked };
 }
