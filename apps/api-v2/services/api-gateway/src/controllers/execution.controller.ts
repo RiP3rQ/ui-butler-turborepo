@@ -29,6 +29,7 @@ import {
 import { RateLimit } from '../throttling/rate-limit.decorator';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
+import { ThrottleGuard } from '../throttling/throttle.guard';
 
 /**
  * Controller handling workflow execution operations through gRPC communication
@@ -152,6 +153,7 @@ export class ExecutionsController implements OnModuleInit {
   })
   @ApiResponse({ status: 404, description: 'User or execution not found' })
   @ApiResponse({ status: 500, description: 'gRPC service error' })
+  @UseGuards(ThrottleGuard)
   @RateLimit({
     ttl: 60,
     limit: 10,

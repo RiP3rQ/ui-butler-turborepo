@@ -8,7 +8,7 @@ import {
 import { DatabaseModule } from '@microservices/database';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ClientsModule } from '@nestjs/microservices';
 import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -36,7 +36,6 @@ import { CustomCacheInterceptor } from './caching/custom-cache.interceptor';
 import { rateLimitConfig } from './config/rate-limit.config';
 import { CacheModule } from './caching/cache.module';
 import { ThrottleModule } from './throttling/throttle.module';
-import { ThrottleGuard } from './throttling/throttle.guard';
 
 @Module({
   imports: [
@@ -93,7 +92,6 @@ import { ThrottleGuard } from './throttling/throttle.guard';
         REDIS_TOKEN: Joi.string().default('token'),
       }),
     }),
-    // @ts-expect-error - In Nest v11 the type of the options is not correct
     ClientsModule.registerAsync([
       // AUTH
       {
@@ -227,11 +225,11 @@ import { ThrottleGuard } from './throttling/throttle.guard';
     JwtStrategy,
     JwtRefreshStrategy,
 
-    // THROTTLER - RATE LIMITING
-    {
-      provide: APP_GUARD,
-      useClass: ThrottleGuard,
-    },
+    // THROTTLER - RATE LIMITING (uncomment for global rate limiting or use @RateLimit() decorator for specific routes)
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: ThrottleGuard,
+    // },
 
     // CACHING ------------------
     {
