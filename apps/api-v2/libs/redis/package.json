@@ -11,7 +11,7 @@
   },
   "scripts": {
     "dev": "tsc --watch",
-    "clean": "rimraf node_modules",
+    "clean": "rimraf node_modules dist .turbo",
     "type-check": "tsc --noEmit",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "build": "tsc"
@@ -30,6 +30,6 @@
     "typescript": "^5.7.3"
   },
   "peerDependencies": {
-    "@nestjs/common": "^10.4.15"
+    "@nestjs/common": "^11.0.8"
   }
 }

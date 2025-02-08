@@ -9,7 +9,6 @@ import { WorkflowsService } from './workflows.service';
   imports: [
     DatabaseModule,
     // Import the ClientsModule and register the EXECUTIONS_SERVICE client for communication with the execution service
-    // @ts-expect-error - In Nest v11 the type of the options is not correct
     ClientsModule.register([
       {
         name: 'EXECUTIONS_SERVICE',
