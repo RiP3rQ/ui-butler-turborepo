@@ -2,12 +2,17 @@ import { ExecutionProto } from '@microservices/proto';
 import { Controller, Logger } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { ExecutionsService } from './execution.service';
+import { InjectQueue } from '@nestjs/bullmq';
+import type { Queue } from 'bullmq';
 
 @Controller()
 export class ExecutionsController {
   private readonly logger = new Logger(ExecutionsController.name);
 
-  constructor(private readonly executionsService: ExecutionsService) {}
+  constructor(
+    private readonly executionsService: ExecutionsService,
+    @InjectQueue('executions') private executionsQueue: Queue,
+  ) {}
 
   @GrpcMethod('ExecutionsService', 'GetPendingChanges')
   public async getPendingChanges(
@@ -32,7 +37,7 @@ export class ExecutionsController {
     this.logger.debug(
       `Executing workflow ${String(request.workflowExecutionId)} with component ${String(request.componentId)}`,
     );
-    await this.executionsService.executeWorkflow(request);
+    await this.executionsQueue.add('executions', request);
     return {
       $type: 'api.execution.Empty',
     };

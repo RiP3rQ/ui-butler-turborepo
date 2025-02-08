@@ -1,23 +1,21 @@
 {
   "extends": "@shared/typescript-config/base.json",
   "compilerOptions": {
-    "strictNullChecks": true,
-    "declaration": true,
-    "removeComments": true,
+    // Essential NestJS decorators support
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "ES2021",
-    "sourceMap": true,
+    // Output configuration
     "outDir": "./dist",
     "jsx": "react-jsx",
+    "sourceMap": true,
+    "declaration": true,
+    // Path resolution
     "baseUrl": "./",
-    "incremental": true,
-    "skipLibCheck": true,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    // Override specific base settings that might cause issues
+    "moduleResolution": "NodeNext",
     "allowImportingTsExtensions": false
   },
   "include": ["src/**/*"],
