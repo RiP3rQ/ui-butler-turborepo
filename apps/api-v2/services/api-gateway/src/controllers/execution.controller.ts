@@ -40,7 +40,7 @@ import { ThrottleGuard } from '../throttling/throttle.guard';
 @ApiBearerAuth()
 @Controller('executions')
 @UseGuards(JwtAuthGuard)
-export class ExecutionsController implements OnModuleInit {
+export class ExecutionController implements OnModuleInit {
   private executionsService: ExecutionProto.ExecutionsServiceClient;
 
   constructor(

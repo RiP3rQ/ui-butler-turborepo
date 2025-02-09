@@ -4,10 +4,22 @@ import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { WorkflowsController } from './workflows.controller';
 import { WorkflowsService } from './workflows.service';
+import { ConfigModule } from '@nestjs/config';
+import Joi from 'joi';
 
 @Module({
   imports: [
     DatabaseModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validationSchema: Joi.object({
+        DATABASE_URL: Joi.string().required(),
+        EXECUTION_SERVICE_HOST: Joi.string().required(),
+        EXECUTION_SERVICE_PORT: Joi.number().required(),
+        WORKFLOWS_SERVICE_HOST: Joi.string().required(),
+        WORKFLOWS_SERVICE_PORT: Joi.number().required(),
+      }),
+    }),
     // Import the ClientsModule and register the EXECUTIONS_SERVICE client for communication with the execution service
     ClientsModule.register([
       {

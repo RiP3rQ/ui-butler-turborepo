@@ -35,7 +35,8 @@
     "@shared/typescript-config": "workspace:*",
     "bcryptjs": "^2.4.3",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "joi": "^17.13.3"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.2",

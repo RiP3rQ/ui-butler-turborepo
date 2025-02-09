@@ -16,7 +16,6 @@ import { ExecutionsQueueEventsListener } from '@/bullmq/executions-queue.events'
     DatabaseModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['.env'],
       validationSchema: Joi.object({
         DATABASE_URL: Joi.string().required(),
         GOOGLE_GENERATIVE_AI_API_KEY: Joi.string().required(),

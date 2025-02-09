@@ -6,25 +6,33 @@ import { JwtModule } from '@nestjs/jwt';
 import Joi from 'joi';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { ENV_VARS } from './constants';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
-        [ENV_VARS.AUTH_SERVICE.HOST]: Joi.string().default('localhost'),
-        [ENV_VARS.AUTH_SERVICE.PORT]: Joi.number().default(
-          ENV_VARS.AUTH_SERVICE.DEFAULT_PORT,
-        ),
-        [ENV_VARS.USERS_SERVICE.HOST]: Joi.string().default('localhost'),
-        [ENV_VARS.USERS_SERVICE.PORT]: Joi.number().default(
-          ENV_VARS.USERS_SERVICE.DEFAULT_PORT,
-        ),
-        [ENV_VARS.JWT.ACCESS_TOKEN_SECRET]: Joi.string().required(),
-        [ENV_VARS.JWT.REFRESH_TOKEN_SECRET]: Joi.string().required(),
-        [ENV_VARS.JWT.ACCESS_TOKEN_EXPIRATION_MS]: Joi.number().required(),
-        [ENV_VARS.JWT.REFRESH_TOKEN_EXPIRATION_MS]: Joi.number().required(),
+        AUTH_SERVICE_HOST: Joi.string().required(),
+        AUTH_SERVICE_PORT: Joi.number().required(),
+
+        USERS_SERVICE_HOST: Joi.string().required(),
+        USERS_SERVICE_PORT: Joi.number().required(),
+
+        JWT_ACCESS_TOKEN_SECRET: Joi.string().required(),
+        JWT_ACCESS_TOKEN_EXPIRATION_MS: Joi.number().required(),
+
+        JWT_REFRESH_TOKEN_SECRET: Joi.string().required(),
+        JWT_REFRESH_TOKEN_EXPIRATION_MS: Joi.number().required(),
+
+        GOOGLE_AUTH_CLIENT_ID: Joi.string().required(),
+        GOOGLE_AUTH_CLIENT_SECRET: Joi.string().required(),
+        GOOGLE_AUTH_REDIRECT_URI: Joi.string().required(),
+
+        GITHUB_AUTH_CLIENT_ID: Joi.string().required(),
+        GITHUB_AUTH_CLIENT_SECRET: Joi.string().required(),
+        GITHUB_AUTH_REDIRECT_URI: Joi.string().required(),
+
+        AUTH_UI_REDIRECT: Joi.string().required(),
       }),
     }),
     ClientsModule.registerAsync([
@@ -33,7 +41,7 @@ import { ENV_VARS } from './constants';
         useFactory: (configService: ConfigService) => ({
           transport: Transport.GRPC,
           options: {
-            url: `${String(configService.get(ENV_VARS.USERS_SERVICE.HOST))}:${String(configService.get(ENV_VARS.USERS_SERVICE.PORT))}`,
+            url: `${String(configService.get('USERS_SERVICE_HOST'))}:${String(configService.get('USERS_SERVICE_HOST'))}`,
             package: 'api.users',
             protoPath: join(
               __dirname,

@@ -454,6 +454,9 @@ importers:
       '@nestjs/common':
         specifier: ^11.0.8
         version: 11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
+      '@nestjs/config':
+        specifier: ^4.0.0
+        version: 4.0.0(@nestjs/common@11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(rxjs@7.8.1)
       '@nestjs/core':
         specifier: ^11.0.8
         version: 11.0.8(@nestjs/common@11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/microservices@11.0.8)(@nestjs/platform-express@11.0.8)(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -466,6 +469,9 @@ importers:
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
+      joi:
+        specifier: ^17.13.3
+        version: 17.13.3
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -886,6 +892,9 @@ importers:
       '@nestjs/common':
         specifier: ^11.0.8
         version: 11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
+      '@nestjs/config':
+        specifier: ^4.0.0
+        version: 4.0.0(@nestjs/common@11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(rxjs@7.8.1)
       '@nestjs/core':
         specifier: ^11.0.8
         version: 11.0.8(@nestjs/common@11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/microservices@11.0.8)(@nestjs/platform-express@11.0.8)(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -898,6 +907,9 @@ importers:
       '@shared/types':
         specifier: workspace:*
         version: link:../../../../packages/types
+      joi:
+        specifier: ^17.13.3
+        version: 17.13.3
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -983,6 +995,9 @@ importers:
       '@nestjs/common':
         specifier: ^11.0.8
         version: 11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
+      '@nestjs/config':
+        specifier: ^4.0.0
+        version: 4.0.0(@nestjs/common@11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(rxjs@7.8.1)
       '@nestjs/core':
         specifier: ^11.0.8
         version: 11.0.8(@nestjs/common@11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/microservices@11.0.8)(@nestjs/platform-express@11.0.8)(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -1013,6 +1028,9 @@ importers:
       helmet:
         specifier: ^8.0.0
         version: 8.0.0
+      joi:
+        specifier: ^17.13.3
+        version: 17.13.3
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -1228,6 +1246,9 @@ importers:
       '@nestjs/common':
         specifier: ^11.0.8
         version: 11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
+      '@nestjs/config':
+        specifier: ^4.0.0
+        version: 4.0.0(@nestjs/common@11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(rxjs@7.8.1)
       '@nestjs/core':
         specifier: ^11.0.8
         version: 11.0.8(@nestjs/common@11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/microservices@11.0.8)(@nestjs/platform-express@11.0.8)(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -1243,6 +1264,9 @@ importers:
       '@shared/typescript-config':
         specifier: workspace:*
         version: link:../../../../packages/config-typescript
+      joi:
+        specifier: ^17.13.3
+        version: 17.13.3
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -1349,6 +1373,9 @@ importers:
       bcryptjs:
         specifier: ^2.4.3
         version: 2.4.3
+      joi:
+        specifier: ^17.13.3
+        version: 17.13.3
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -1434,6 +1461,9 @@ importers:
       '@nestjs/common':
         specifier: ^11.0.8
         version: 11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
+      '@nestjs/config':
+        specifier: ^4.0.0
+        version: 4.0.0(@nestjs/common@11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(rxjs@7.8.1)
       '@nestjs/core':
         specifier: ^11.0.8
         version: 11.0.8(@nestjs/common@11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/microservices@11.0.8)(@nestjs/platform-express@11.0.8)(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -1452,6 +1482,9 @@ importers:
       '@shared/typescript-config':
         specifier: workspace:*
         version: link:../../../../packages/config-typescript
+      joi:
+        specifier: ^17.13.3
+        version: 17.13.3
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -1850,7 +1883,7 @@ importers:
         version: 3.0.1
       tailwindcss-animate:
         specifier: ^1.0.7
-        version: 1.0.7(tailwindcss@4.0.5)
+        version: 1.0.7(tailwindcss@3.4.17(ts-node@10.9.2(@types/node@22.13.1)(typescript@5.7.3)))
     devDependencies:
       '@shared/config-tailwindcss':
         specifier: workspace:*
@@ -1880,8 +1913,8 @@ importers:
         specifier: ^8.5.1
         version: 8.5.1
       tailwindcss:
-        specifier: ^4.0.5
-        version: 4.0.5
+        specifier: ^3.4.17
+        version: 3.4.17(ts-node@10.9.2(@types/node@22.13.1)(typescript@5.7.3))
       typescript:
         specifier: ^5.7.3
         version: 5.7.3
@@ -8845,9 +8878,6 @@ packages:
     resolution: {integrity: sha512-w33E2aCvSDP0tW9RZuNXadXlkHXqFzSkQew/aIa2i/Sj8fThxwovwlXHSPXTbAHwEIhBFXAedUhP2tueAKP8Og==}
     engines: {node: '>=14.0.0'}
     hasBin: true
-
-  tailwindcss@4.0.5:
-    resolution: {integrity: sha512-DZZIKX3tA23LGTjHdnwlJOTxfICD1cPeykLLsYF1RQBI9QsCR3i0szohJfJDVjr6aNRAIio5WVO7FGB77fRHwg==}
 
   tapable@2.2.1:
     resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}
@@ -16593,10 +16623,6 @@ snapshots:
     dependencies:
       tailwindcss: 3.4.17(ts-node@10.9.2(@types/node@22.13.1)(typescript@5.7.3))
 
-  tailwindcss-animate@1.0.7(tailwindcss@4.0.5):
-    dependencies:
-      tailwindcss: 4.0.5
-
   tailwindcss@3.4.17(ts-node@10.9.2(@types/node@22.13.1)(typescript@5.7.3)):
     dependencies:
       '@alloc/quick-lru': 5.2.0
@@ -16623,8 +16649,6 @@ snapshots:
       sucrase: 3.35.0
     transitivePeerDependencies:
       - ts-node
-
-  tailwindcss@4.0.5: {}
 
   tapable@2.2.1: {}
 
