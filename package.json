@@ -5,6 +5,7 @@
     "build": "turbo bootstrap --parallel --concurrency=5 & turbo build --parallel --concurrency=20",
     "start": "turbo start --parallel --concurrency=20",
     "start:frontend": "turbo start:frontend --parallel --concurrency=5",
+    "start:backend": "turbo start:backend --parallel --concurrency=10",
     "dev": "turbo bootstrap --parallel --concurrency=5 & turbo dev --parallel --concurrency=20",
     "lint": "turbo bootstrap --parallel --concurrency=5 &turbo lint --parallel --concurrency=20",
     "type-check": "turbo bootstrap --parallel --concurrency=5 & turbo type-check  --parallel --concurrency=20",

@@ -54,6 +54,10 @@
       "dependsOn": ["^start:frontend"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"]
     },
+    "start:backend": {
+      "dependsOn": ["^start:backend"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"]
+    },
     "lint": {
       "cache": false,
       "outputs": []

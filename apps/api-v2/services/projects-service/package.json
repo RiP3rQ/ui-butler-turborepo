@@ -9,6 +9,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
+    "start:backend": "node dist/main",
     "dev": "nest start --watch",
     "clean": "rimraf dist node_modules .turbo",
     "start:debug": "nest start --debug --watch",
