@@ -46,6 +46,10 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["node_modules"]
     },
+    "start": {
+      "dependsOn": ["^start"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"]
+    },
     "lint": {
       "cache": false,
       "outputs": []
