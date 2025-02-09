@@ -11,7 +11,7 @@
     "sourceMap": true,
     "outDir": "./dist",
     "jsx": "react-jsx",
-    "baseUrl": ".",
+    "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
     "noImplicitAny": false,
