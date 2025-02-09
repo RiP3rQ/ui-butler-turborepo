@@ -1,7 +1,7 @@
 # ==========================================
 # BUILD STAGE
 # ==========================================
-FROM node:18-slim AS builder
+FROM node:22-alpine AS builder
 
 WORKDIR /workspace
 
@@ -26,7 +26,7 @@ COPY apps/api-v2/services/workflows-service/nest-cli.json ./apps/api-v2/services
 COPY apps/api-v2/services/workflows-service/src ./apps/api-v2/services/workflows-service/src
 
 # Install pnpm
-RUN npm install -g pnpm@8.15.6
+RUN npm install -g pnpm@10.2.1
 
 # Install dependencies and build
 RUN pnpm install --no-frozen-lockfile
@@ -35,12 +35,12 @@ RUN cd apps/api-v2/services/workflows-service && pnpm run build
 # ==========================================
 # PRODUCTION STAGE
 # ==========================================
-FROM node:18-slim AS runner
+FROM node:22-alpine AS runner
 
 WORKDIR /app
 
 # Install pnpm
-RUN npm install -g pnpm@8.15.6
+RUN npm install -g pnpm@10.2.1
 
 # Set production environment
 ENV NODE_ENV=production

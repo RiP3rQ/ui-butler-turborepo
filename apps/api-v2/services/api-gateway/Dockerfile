@@ -1,7 +1,7 @@
 # ==========================================
 # BUILD STAGE
 # ==========================================
-FROM node:18-slim AS builder
+FROM node:22-alpine AS builder
 
 WORKDIR /workspace
 
@@ -18,6 +18,7 @@ COPY packages ./packages
 COPY apps/api-v2/libs/common ./apps/api-v2/libs/common
 COPY apps/api-v2/libs/database ./apps/api-v2/libs/database
 COPY apps/api-v2/libs/proto ./apps/api-v2/libs/proto
+COPY apps/api-v2/libs/redis ./apps/api-v2/libs/redis
 
 # Copy service-specific files
 COPY apps/api-v2/services/api-gateway/package.json ./apps/api-v2/services/api-gateway/
@@ -26,7 +27,7 @@ COPY apps/api-v2/services/api-gateway/nest-cli.json ./apps/api-v2/services/api-g
 COPY apps/api-v2/services/api-gateway/src ./apps/api-v2/services/api-gateway/src
 
 # Install pnpm
-RUN npm install -g pnpm@8.15.6
+RUN npm install -g pnpm@10.2.1
 
 # Install dependencies and build
 RUN pnpm install --no-frozen-lockfile
@@ -35,12 +36,12 @@ RUN cd apps/api-v2/services/api-gateway && pnpm run build
 # ==========================================
 # PRODUCTION STAGE
 # ==========================================
-FROM node:18-slim AS runner
+FROM node:22-alpine AS runner
 
 WORKDIR /app
 
 # Install pnpm
-RUN npm install -g pnpm@8.15.6
+RUN npm install -g pnpm@10.2.1
 
 # Set production environment
 ENV NODE_ENV=production

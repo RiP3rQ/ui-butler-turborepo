@@ -21,7 +21,7 @@ importers:
         specifier: ^15.4.3
         version: 15.4.3
       prettier:
-        specifier: ^3.4.2
+        specifier: ^3.5.0
         version: 3.5.0
       prettier-plugin-tailwindcss:
         specifier: ^0.6.11
@@ -33,7 +33,7 @@ importers:
   apps/api:
     dependencies:
       '@ai-sdk/google':
-        specifier: ^1.1.10
+        specifier: ^1.1.11
         version: 1.1.11(zod@3.24.1)
       '@ai-sdk/openai':
         specifier: ^1.1.9
@@ -75,7 +75,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/types
       ai:
-        specifier: ^4.1.26
+        specifier: ^4.1.28
         version: 4.1.28(react@19.0.0)(zod@3.24.1)
       bcryptjs:
         specifier: ^2.4.3
@@ -205,7 +205,7 @@ importers:
         specifier: ^13.0.0
         version: 13.0.0
       prettier:
-        specifier: ^3.4.2
+        specifier: ^3.5.0
         version: 3.5.0
       source-map-support:
         specifier: ^0.5.21
@@ -232,7 +232,7 @@ importers:
   apps/api-v2/libs/common:
     dependencies:
       '@ai-sdk/google':
-        specifier: ^1.1.10
+        specifier: ^1.1.11
         version: 1.1.11(zod@3.24.1)
       '@grpc/grpc-js':
         specifier: ^1.12.6
@@ -250,8 +250,8 @@ importers:
         specifier: ^11.0.8
         version: 11.0.8(@nestjs/common@11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/microservices@11.0.8)(@nestjs/platform-express@11.0.8)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       '@nestjs/jwt':
-        specifier: ^10.2.0
-        version: 10.2.0(@nestjs/common@11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))
+        specifier: ^11.0.0
+        version: 11.0.0(@nestjs/common@11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))
       '@nestjs/microservices':
         specifier: ^11.0.8
         version: 11.0.8(@grpc/grpc-js@1.12.6)(@nestjs/common@11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.0.8)(cache-manager@6.4.0)(ioredis@5.5.0)(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -516,7 +516,7 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.13.1)(ts-node@10.9.2(@types/node@22.13.1)(typescript@5.7.3))
       prettier:
-        specifier: ^3.4.2
+        specifier: ^3.5.0
         version: 3.5.0
       source-map-support:
         specifier: ^0.5.21
@@ -706,7 +706,7 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.13.1)(ts-node@10.9.2(@types/node@22.13.1)(typescript@5.7.3))
       prettier:
-        specifier: ^3.4.2
+        specifier: ^3.5.0
         version: 3.5.0
       source-map-support:
         specifier: ^0.5.21
@@ -845,7 +845,7 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.13.1)(ts-node@10.9.2(@types/node@22.13.1)(typescript@5.7.3))
       prettier:
-        specifier: ^3.4.2
+        specifier: ^3.5.0
         version: 3.5.0
       source-map-support:
         specifier: ^0.5.21
@@ -945,7 +945,7 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.13.1)(ts-node@10.9.2(@types/node@22.13.1)(typescript@5.7.3))
       prettier:
-        specifier: ^3.4.2
+        specifier: ^3.5.0
         version: 3.5.0
       source-map-support:
         specifier: ^0.5.21
@@ -1002,7 +1002,7 @@ importers:
         specifier: workspace:*
         version: link:../../../../packages/config-typescript
       ai:
-        specifier: ^4.1.26
+        specifier: ^4.1.28
         version: 4.1.28(react@19.0.0)(zod@3.24.1)
       compression:
         specifier: ^1.7.5
@@ -1063,7 +1063,7 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.13.1)(ts-node@10.9.2(@types/node@22.13.1)(typescript@5.7.3))
       prettier:
-        specifier: ^3.4.2
+        specifier: ^3.5.0
         version: 3.5.0
       source-map-support:
         specifier: ^0.5.21
@@ -1126,7 +1126,7 @@ importers:
         specifier: workspace:*
         version: link:../../../../packages/config-typescript
       ai:
-        specifier: ^4.1.26
+        specifier: ^4.1.28
         version: 4.1.28(react@19.0.0)(zod@3.24.1)
       joi:
         specifier: ^17.13.3
@@ -1184,7 +1184,7 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.13.1)(ts-node@10.9.2(@types/node@22.13.1)(typescript@5.7.3))
       prettier:
-        specifier: ^3.4.2
+        specifier: ^3.5.0
         version: 3.5.0
       source-map-support:
         specifier: ^0.5.21
@@ -1284,7 +1284,7 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.13.1)(ts-node@10.9.2(@types/node@22.13.1)(typescript@5.7.3))
       prettier:
-        specifier: ^3.4.2
+        specifier: ^3.5.0
         version: 3.5.0
       source-map-support:
         specifier: ^0.5.21
@@ -1393,7 +1393,7 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.13.1)(ts-node@10.9.2(@types/node@22.13.1)(typescript@5.7.3))
       prettier:
-        specifier: ^3.4.2
+        specifier: ^3.5.0
         version: 3.5.0
       source-map-support:
         specifier: ^0.5.21
@@ -1493,7 +1493,7 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.13.1)(ts-node@10.9.2(@types/node@22.13.1)(typescript@5.7.3))
       prettier:
-        specifier: ^3.4.2
+        specifier: ^3.5.0
         version: 3.5.0
       source-map-support:
         specifier: ^0.5.21
@@ -1553,7 +1553,7 @@ importers:
         specifier: ^12.4.2
         version: 12.4.2(@types/react@19.0.8)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       ai:
-        specifier: ^4.1.26
+        specifier: ^4.1.28
         version: 4.1.28(react@19.0.0)(zod@3.24.1)
       class-variance-authority:
         specifier: ^0.7.1
@@ -1847,7 +1847,7 @@ importers:
         version: 3.0.1
       tailwindcss-animate:
         specifier: ^1.0.7
-        version: 1.0.7(tailwindcss@3.4.17(ts-node@10.9.2(@types/node@22.13.1)(typescript@5.7.3)))
+        version: 1.0.7(tailwindcss@4.0.5)
     devDependencies:
       '@shared/config-tailwindcss':
         specifier: workspace:*
@@ -1877,8 +1877,8 @@ importers:
         specifier: ^8.5.1
         version: 8.5.1
       tailwindcss:
-        specifier: ^3.4.17
-        version: 3.4.17(ts-node@10.9.2(@types/node@22.13.1)(typescript@5.7.3))
+        specifier: ^4.0.5
+        version: 4.0.5
       typescript:
         specifier: ^5.7.3
         version: 5.7.3
@@ -1960,17 +1960,17 @@ importers:
         specifier: ^22.13.1
         version: 22.13.1
       '@types/react':
-        specifier: ^19
+        specifier: ^19.0.8
         version: 19.0.8
       eslint:
         specifier: ^9.20.0
         version: 9.20.0(jiti@1.21.7)
       lucide-react:
-        specifier: ^0.454.0
-        version: 0.454.0(react@19.0.0-rc-02c0e824-20241028)
+        specifier: ^0.475.0
+        version: 0.475.0(react@19.0.0)
       react:
-        specifier: 19.0.0-rc-02c0e824-20241028
-        version: 19.0.0-rc-02c0e824-20241028
+        specifier: 19.0.0
+        version: 19.0.0
       typescript:
         specifier: ^5.7.3
         version: 5.7.3
@@ -1996,20 +1996,20 @@ importers:
         specifier: ^22.13.1
         version: 22.13.1
       '@types/react':
-        specifier: ^19
+        specifier: ^19.0.8
         version: 19.0.8
       '@xyflow/react':
-        specifier: ^12.3.5
-        version: 12.4.2(@types/react@19.0.8)(react-dom@19.0.0(react@19.0.0-rc-02c0e824-20241028))(react@19.0.0-rc-02c0e824-20241028)
+        specifier: ^12.4.2
+        version: 12.4.2(@types/react@19.0.8)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       eslint:
         specifier: ^9.20.0
         version: 9.20.0(jiti@1.21.7)
       lucide-react:
         specifier: ^0.454.0
-        version: 0.454.0(react@19.0.0-rc-02c0e824-20241028)
+        version: 0.454.0(react@19.0.0)
       react:
-        specifier: 19.0.0-rc-02c0e824-20241028
-        version: 19.0.0-rc-02c0e824-20241028
+        specifier: 19.0.0
+        version: 19.0.0
       typescript:
         specifier: ^5.7.3
         version: 5.7.3
@@ -2029,20 +2029,20 @@ importers:
         specifier: ^22.13.1
         version: 22.13.1
       '@types/react':
-        specifier: ^19
+        specifier: ^19.0.8
         version: 19.0.8
       '@xyflow/react':
-        specifier: ^12.3.5
-        version: 12.4.2(@types/react@19.0.8)(react-dom@19.0.0(react@19.0.0-rc-02c0e824-20241028))(react@19.0.0-rc-02c0e824-20241028)
+        specifier: ^12.4.2
+        version: 12.4.2(@types/react@19.0.8)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       eslint:
         specifier: ^9.20.0
         version: 9.20.0(jiti@1.21.7)
       lucide-react:
         specifier: ^0.454.0
-        version: 0.454.0(react@19.0.0-rc-02c0e824-20241028)
+        version: 0.454.0(react@19.0.0)
       react:
-        specifier: 19.0.0-rc-02c0e824-20241028
-        version: 19.0.0-rc-02c0e824-20241028
+        specifier: 19.0.0
+        version: 19.0.0
       typescript:
         specifier: ^5.7.3
         version: 5.7.3
@@ -2134,7 +2134,7 @@ importers:
         specifier: ^0.3.0
         version: 0.3.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       react:
-        specifier: ^19.0.0-rc-02c0e824-20241028
+        specifier: ^19.0.0
         version: 19.0.0
       react-color:
         specifier: ^2.19.3
@@ -2143,7 +2143,7 @@ importers:
         specifier: ^6.5.3
         version: 6.5.3(react@19.0.0)
       react-dom:
-        specifier: ^19.0.0-rc-02c0e824-20241028
+        specifier: ^19.0.0
         version: 19.0.0(react@19.0.0)
       react-hook-form:
         specifier: ^7.54.2
@@ -3510,11 +3510,6 @@ packages:
       '@nestjs/websockets':
         optional: true
 
-  '@nestjs/jwt@10.2.0':
-    resolution: {integrity: sha512-x8cG90SURkEiLOehNaN2aRlotxT0KZESUliOPKKnjWiyJOcWurkF3w345WOX0P4MgFzUjGoZ1Sy0aZnxeihT0g==}
-    peerDependencies:
-      '@nestjs/common': ^8.0.0 || ^9.0.0 || ^10.0.0
-
   '@nestjs/jwt@11.0.0':
     resolution: {integrity: sha512-v7YRsW3Xi8HNTsO+jeHSEEqelX37TVWgwt+BcxtkG/OfXJEOs6GZdbdza200d6KqId1pJQZ6UPj1F0M6E+mxaA==}
     peerDependencies:
@@ -4597,9 +4592,6 @@ packages:
 
   '@types/json5@0.0.29':
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
-
-  '@types/jsonwebtoken@9.0.5':
-    resolution: {integrity: sha512-VRLSGzik+Unrup6BsouBeHsf4d1hOEgYWTm/7Nmw1sXoN1+tRly/Gy/po3yeahnP4jfnQWWAhQAqcNfH7ngOkA==}
 
   '@types/jsonwebtoken@9.0.7':
     resolution: {integrity: sha512-ugo316mmTYBl2g81zDFnZ7cfxlut3o+/EQdaP7J8QN2kY6lJ22hmQYCK5EHcJHbrW+dkCGSCPgbG8JtYj6qSrg==}
@@ -8318,10 +8310,6 @@ packages:
     resolution: {integrity: sha512-V8AVnmPIICiWpGfm6GLzCR/W5FXLchHop40W4nXBmdlEceh16rCN8O8LNWm5bh5XUX91fh7KpA+W0TgMKmgTpQ==}
     engines: {node: '>=0.10.0'}
 
-  react@19.0.0-rc-02c0e824-20241028:
-    resolution: {integrity: sha512-GbZ7hpPHQMiEu53BqEaPQVM/4GG4hARo+mqEEnx4rYporDvNvUjutiAFxYFSbu6sgHwcr7LeFv8htEOwALVA2A==}
-    engines: {node: '>=0.10.0'}
-
   reactcss@1.2.3:
     resolution: {integrity: sha512-KiwVUcFu1RErkI97ywr8nvx8dNOpT03rbnma0SSalTYjkrPYaEajR4a/MRt6DZ46K6arDRbWMNHF+xH7G7n/8A==}
     peerDependencies:
@@ -8854,6 +8842,9 @@ packages:
     resolution: {integrity: sha512-w33E2aCvSDP0tW9RZuNXadXlkHXqFzSkQew/aIa2i/Sj8fThxwovwlXHSPXTbAHwEIhBFXAedUhP2tueAKP8Og==}
     engines: {node: '>=14.0.0'}
     hasBin: true
+
+  tailwindcss@4.0.5:
+    resolution: {integrity: sha512-DZZIKX3tA23LGTjHdnwlJOTxfICD1cPeykLLsYF1RQBI9QsCR3i0szohJfJDVjr6aNRAIio5WVO7FGB77fRHwg==}
 
   tapable@2.2.1:
     resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}
@@ -10759,12 +10750,6 @@ snapshots:
       '@nestjs/microservices': 11.0.8(@grpc/grpc-js@1.12.6)(@nestjs/common@11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.0.8)(cache-manager@6.4.0)(ioredis@5.5.0)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       '@nestjs/platform-express': 11.0.8(@nestjs/common@11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.0.8)
 
-  '@nestjs/jwt@10.2.0(@nestjs/common@11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))':
-    dependencies:
-      '@nestjs/common': 11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
-      '@types/jsonwebtoken': 9.0.5
-      jsonwebtoken: 9.0.2
-
   '@nestjs/jwt@11.0.0(@nestjs/common@11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))':
     dependencies:
       '@nestjs/common': 11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -11737,10 +11722,6 @@ snapshots:
 
   '@types/json5@0.0.29': {}
 
-  '@types/jsonwebtoken@9.0.5':
-    dependencies:
-      '@types/node': 22.13.1
-
   '@types/jsonwebtoken@9.0.7':
     dependencies:
       '@types/node': 22.13.1
@@ -12058,17 +12039,6 @@ snapshots:
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
       zustand: 4.5.6(@types/react@19.0.8)(react@19.0.0)
-    transitivePeerDependencies:
-      - '@types/react'
-      - immer
-
-  '@xyflow/react@12.4.2(@types/react@19.0.8)(react-dom@19.0.0(react@19.0.0-rc-02c0e824-20241028))(react@19.0.0-rc-02c0e824-20241028)':
-    dependencies:
-      '@xyflow/system': 0.0.50
-      classcat: 5.0.5
-      react: 19.0.0-rc-02c0e824-20241028
-      react-dom: 19.0.0(react@19.0.0-rc-02c0e824-20241028)
-      zustand: 4.5.6(@types/react@19.0.8)(react@19.0.0-rc-02c0e824-20241028)
     transitivePeerDependencies:
       - '@types/react'
       - immer
@@ -15056,9 +15026,9 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
-  lucide-react@0.454.0(react@19.0.0-rc-02c0e824-20241028):
+  lucide-react@0.454.0(react@19.0.0):
     dependencies:
-      react: 19.0.0-rc-02c0e824-20241028
+      react: 19.0.0
 
   lucide-react@0.475.0(react@19.0.0):
     dependencies:
@@ -15865,11 +15835,6 @@ snapshots:
       react: 19.0.0
       scheduler: 0.25.0
 
-  react-dom@19.0.0(react@19.0.0-rc-02c0e824-20241028):
-    dependencies:
-      react: 19.0.0-rc-02c0e824-20241028
-      scheduler: 0.25.0
-
   react-hook-form@7.54.2(react@19.0.0):
     dependencies:
       react: 19.0.0
@@ -15946,8 +15911,6 @@ snapshots:
       react-dom: 19.0.0(react@19.0.0)
 
   react@19.0.0: {}
-
-  react@19.0.0-rc-02c0e824-20241028: {}
 
   reactcss@1.2.3(react@19.0.0):
     dependencies:
@@ -16627,6 +16590,10 @@ snapshots:
     dependencies:
       tailwindcss: 3.4.17(ts-node@10.9.2(@types/node@22.13.1)(typescript@5.7.3))
 
+  tailwindcss-animate@1.0.7(tailwindcss@4.0.5):
+    dependencies:
+      tailwindcss: 4.0.5
+
   tailwindcss@3.4.17(ts-node@10.9.2(@types/node@22.13.1)(typescript@5.7.3)):
     dependencies:
       '@alloc/quick-lru': 5.2.0
@@ -16653,6 +16620,8 @@ snapshots:
       sucrase: 3.35.0
     transitivePeerDependencies:
       - ts-node
+
+  tailwindcss@4.0.5: {}
 
   tapable@2.2.1: {}
 
@@ -17060,10 +17029,6 @@ snapshots:
     dependencies:
       react: 19.0.0
 
-  use-sync-external-store@1.4.0(react@19.0.0-rc-02c0e824-20241028):
-    dependencies:
-      react: 19.0.0-rc-02c0e824-20241028
-
   useragent@2.3.0:
     dependencies:
       lru-cache: 4.1.5
@@ -17364,13 +17329,6 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.0.8
       react: 19.0.0
-
-  zustand@4.5.6(@types/react@19.0.8)(react@19.0.0-rc-02c0e824-20241028):
-    dependencies:
-      use-sync-external-store: 1.4.0(react@19.0.0-rc-02c0e824-20241028)
-    optionalDependencies:
-      '@types/react': 19.0.8
-      react: 19.0.0-rc-02c0e824-20241028
 
   zustand@5.0.3(@types/react@19.0.8)(react@19.0.0)(use-sync-external-store@1.4.0(react@19.0.0)):
     optionalDependencies:

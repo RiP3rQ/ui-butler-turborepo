@@ -23,7 +23,7 @@
     "@tanstack/react-query": "^5.66.0",
     "@tanstack/react-table": "^8.20.6",
     "@xyflow/react": "^12.4.2",
-    "ai": "^4.1.26",
+    "ai": "^4.1.28",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
