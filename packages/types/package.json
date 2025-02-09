@@ -2,20 +2,13 @@
   "name": "@shared/types",
   "version": "0.0.1",
   "private": true,
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
+    "bootstrap": "tsc",
     "clean": "rimraf dist node_modules .turbo",
     "type-check": "tsc --noEmit",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
-  },
-  "peerDependencies": {
-    "@types/react": "^19",
-    "@xyflow/react": "^12.3.5",
-    "lucide-react": "^0.454.0",
-    "react": "19.0.0-rc-02c0e824-20241028"
   },
   "devDependencies": {
     "@shared/eslint-config": "workspace:*",
@@ -23,9 +16,15 @@
     "@types/eslint": "^9.6.1",
     "@types/node": "^22.13.1",
     "eslint": "^9.20.0",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "@types/react": "^19",
+    "@xyflow/react": "^12.3.5",
+    "lucide-react": "^0.454.0",
+    "react": "19.0.0-rc-02c0e824-20241028"
   },
   "files": [
     "dist/**"
-  ]
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts"
 }

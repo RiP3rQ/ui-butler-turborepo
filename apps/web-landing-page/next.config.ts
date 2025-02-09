@@ -8,8 +8,8 @@ const nextConfig: NextConfig = {
   redirects: async () => {
     return [
       {
-        source: "/analytics-dashboard",
-        destination: `${NEXT_PUBLIC_MAIN_APP_URL}/analytics-dashboard`,
+        source: "/dashboard",
+        destination: `${NEXT_PUBLIC_MAIN_APP_URL}/dashboard`,
         permanent: false,
       },
       {

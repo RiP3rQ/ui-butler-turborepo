@@ -53,15 +53,14 @@ export function Navbar({ isUserLoggedIn }: Readonly<NavbarProps>): JSX.Element {
               <div className="flex items-center gap-2">
                 {/* <Icons.User className="w-6 h-6" /> */}
                 <Link
-                  className={buttonVariants({ size: "sm", variant: "ghost" })}
-                  href="/analytics-dashboard"
+                  className={buttonVariants({ size: "sm", variant: "default" })}
+                  href="/dashboard"
                 >
                   Dashboard
                 </Link>
-                <span className="text-sm font-medium">User</span>
               </div>
             ) : (
-              <div>
+              <div className={"flex items-center gap-2"}>
                 <Link
                   className={buttonVariants({ size: "sm", variant: "ghost" })}
                   href="/sign-in"
@@ -75,7 +74,7 @@ export function Navbar({ isUserLoggedIn }: Readonly<NavbarProps>): JSX.Element {
                   })}
                   href="/sign-up"
                 >
-                  Start free trial
+                  Register
                 </Link>
               </div>
             )}

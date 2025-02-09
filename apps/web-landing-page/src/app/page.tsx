@@ -56,14 +56,7 @@ export default async function Home(): Promise<React.ReactNode> {
                 <span className="backdrop absolute inset-[1px] rounded-full bg-neutral-950 transition-colors duration-200 group-hover:bg-neutral-900" />
                 <span className="h-full w-full blur-md absolute bottom-0 inset-x-0 bg-gradient-to-tr from-primary/40" />
                 <span className="z-10 py-0.5 text-sm text-neutral-100 flex items-center justify-center gap-1.5">
-                  <Image
-                    alt="✨"
-                    className="w-4 h-4"
-                    height={24}
-                    src="/icons/sparkles-dark.svg"
-                    width={24}
-                  />
-                  Introducing UI-Butler
+                  ✨ Introducing UI-Butler
                   <ChevronRight className="w-4 h-4" />
                 </span>
               </button>
@@ -101,10 +94,10 @@ export default async function Home(): Promise<React.ReactNode> {
                   <Image
                     alt="banner image"
                     className="rounded-md lg:rounded-xl bg-foreground/10 shadow-2xl ring-1 ring-border"
-                    height={1200}
+                    height={800}
                     quality={100}
-                    src="/assets/dashboard.svg"
-                    width={1200}
+                    src="/workflow.png"
+                    width={1000}
                   />
 
                   <BorderBeam delay={9} duration={12} size={250} />

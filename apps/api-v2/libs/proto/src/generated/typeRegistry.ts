@@ -3,7 +3,6 @@
 //   protoc-gen-ts_proto  v2.6.1
 //   protoc               v3.20.3
 
-/* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 
 export interface MessageType<Message extends UnknownMessage = UnknownMessage> {
