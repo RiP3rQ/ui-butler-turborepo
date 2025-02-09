@@ -12,13 +12,7 @@
     // Path resolution
     "baseUrl": "./",
     "paths": {
-      "@/*": ["./src/*"],
-      "@shared/types": ["../../../../packages/types/src/index.ts"],
-      "@shared/tasks-registry": [
-        "../../../../packages/tasks-registry/src/index.ts"
-      ],
-      "@shared/prompts": ["../../../../packages/prompts/src/index.ts"],
-      "@microservices/common": ["../../libs/common/src/index.ts"]
+      "@/*": ["src/*"]
     },
     // Override specific base settings that might cause issues
     "moduleResolution": "NodeNext",

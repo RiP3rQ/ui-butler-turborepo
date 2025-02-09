@@ -7,9 +7,7 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "@shared/types": ["../../packages/types/src/index.ts"],
-      "@shared/tasks-registry": ["../../packages/tasks-registry/src/index.ts"]
+      "@/*": ["./src/*"]
     }
   },
   "include": [

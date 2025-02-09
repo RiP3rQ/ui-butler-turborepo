@@ -1,12 +1,9 @@
 {
   "extends": "@shared/typescript-config/base.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@shared/*": ["../*"],
-      "@shared/types": ["../types/src/index.ts"]
-    }
+    "strictNullChecks": true,
+    "outDir": "dist"
   },
-  "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "include": ["src"],
+  "exclude": ["dist", "node_modules"]
 }

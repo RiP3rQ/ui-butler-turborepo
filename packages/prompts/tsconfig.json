@@ -2,17 +2,9 @@
   "extends": "@shared/typescript-config/base.json",
   "compilerOptions": {
     "strictNullChecks": true,
-    "baseUrl": ".",
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
-    "paths": {
-      "@shared/*": ["../*"],
-      "@shared/prompts/*": ["./*"]
-    }
+    "outDir": "dist",
+    "strict": false
   },
-  "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "include": ["src"],
+  "exclude": ["dist", "node_modules"]
 }
