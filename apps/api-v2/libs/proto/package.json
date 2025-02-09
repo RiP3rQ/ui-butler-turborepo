@@ -28,6 +28,7 @@
     "@grpc/proto-loader": "^0.7.13",
     "@nestjs/microservices": "^11.0.8",
     "@shared/typescript-config": "workspace:*",
+    "@shared/eslint-config": "workspace:*",
     "@types/google-protobuf": "^3.15.12",
     "@types/node": "^22.13.1",
     "google-proto-files": "^4.2.0",
@@ -40,7 +41,6 @@
   "dependencies": {
     "@bufbuild/protobuf": "^2.2.3",
     "@nestjs/common": "^11.0.8",
-    "@shared/eslint-config": "workspace:*",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "rimraf": "^6.0.1",

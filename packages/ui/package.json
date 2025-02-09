@@ -66,14 +66,10 @@
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.24.1",
-    "zustand": "^5.0.3"
-  },
-  "peerDependencies": {
+    "zustand": "^5.0.3",
     "next-themes": "^0.3.0",
     "react": "^19.0.0-rc-02c0e824-20241028",
-    "react-dom": "^19.0.0-rc-02c0e824-20241028",
-    "tailwindcss": "^3.4.17",
-    "tailwindcss-animate": "^1.0.7"
+    "react-dom": "^19.0.0-rc-02c0e824-20241028"
   },
   "devDependencies": {
     "@shared/config-tailwindcss": "workspace:*",

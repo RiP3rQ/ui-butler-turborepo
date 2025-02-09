@@ -32,7 +32,8 @@
     "AUTH_SERVICE_PORT",
     "API_VERSION",
     "SSL_KEY_PATH",
-    "SSL_CERT_PATH"
+    "SSL_CERT_PATH",
+    "CACHE_DISABLED"
   ],
   "tasks": {
     "build": {
@@ -41,7 +42,7 @@
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
     "lint": {
-      "cache": true,
+      "cache": false,
       "outputs": []
     },
     "type-check": {
