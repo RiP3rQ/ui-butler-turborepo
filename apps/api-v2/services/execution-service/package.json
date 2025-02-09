@@ -36,6 +36,8 @@
     "@shared/tasks-registry": "workspace:*",
     "@shared/types": "workspace:*",
     "@shared/typescript-config": "workspace:*",
+    "@nestjs/bullmq": "^11.0.2",
+    "bullmq": "^5.40.2",
     "ai": "^4.1.28",
     "joi": "^17.13.3",
     "reflect-metadata": "^0.2.2",
@@ -43,7 +45,6 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@nestjs/bullmq": "^11.0.2",
     "@nestjs/cli": "^11.0.2",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.8",
@@ -52,7 +53,6 @@
     "@types/jest": "^29.5.14",
     "@types/node": "^22.13.1",
     "@types/supertest": "^6.0.2",
-    "bullmq": "^5.40.2",
     "eslint": "^9.20.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.3",

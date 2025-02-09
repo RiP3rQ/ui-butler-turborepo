@@ -10,6 +10,9 @@
     "type-check": "tsc --noEmit",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
   },
+  "dependencies": {
+    "lucide-react": "^0.454.0"
+  },
   "devDependencies": {
     "@shared/eslint-config": "workspace:*",
     "@shared/typescript-config": "workspace:*",
@@ -18,7 +21,6 @@
     "@types/react": "^19.0.8",
     "@xyflow/react": "^12.4.2",
     "eslint": "^9.20.0",
-    "lucide-react": "^0.454.0",
     "react": "19.0.0",
     "typescript": "^5.7.3"
   },
