@@ -10,6 +10,7 @@
     }
   },
   "scripts": {
+    "bootstrap": "tsc",
     "generate": "drizzle-kit generate",
     "migrate": "drizzle-kit push",
     "pull": "drizzle-kit pull",

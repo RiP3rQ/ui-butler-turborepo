@@ -10,8 +10,9 @@
     }
   },
   "scripts": {
+    "bootstrap": "tsc",
     "dev": "tsc --watch",
-    "clean": "rimraf node_modules dist .turbo",
+    "clean": "rimraf dist .turbo",
     "build": "tsc",
     "type-check": "tsc --noEmit",
     "generate": "protoc --plugin=protoc-gen-ts_proto=.\\node_modules\\.bin\\protoc-gen-ts_proto.cmd --ts_proto_out=./src/generated --ts_proto_opt=nestJs=true --proto_path=./src/proto-definitions v1/*.proto",

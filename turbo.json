@@ -41,6 +41,11 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
+    "bootstrap": {
+      "dependsOn": ["^bootstrap"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["node_modules"]
+    },
     "lint": {
       "cache": false,
       "outputs": []

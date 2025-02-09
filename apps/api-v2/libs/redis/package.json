@@ -10,6 +10,7 @@
     }
   },
   "scripts": {
+    "bootstrap": "tsc",
     "dev": "tsc --watch",
     "clean": "rimraf node_modules dist .turbo",
     "type-check": "tsc --noEmit",
