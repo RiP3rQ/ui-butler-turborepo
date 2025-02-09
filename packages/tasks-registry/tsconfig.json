@@ -1,9 +1,13 @@
 {
   "extends": "@shared/typescript-config/react-library.json",
   "compilerOptions": {
-    "strictNullChecks": true,
-    "outDir": "dist"
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@shared/*": ["../*"],
+      "@shared/types": ["../types/src/index.ts"]
+    }
   },
-  "include": ["src"],
-  "exclude": ["dist", "node_modules"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }

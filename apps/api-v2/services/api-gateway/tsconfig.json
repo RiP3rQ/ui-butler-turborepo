@@ -12,6 +12,11 @@
     "outDir": "./dist",
     "jsx": "react-jsx",
     "baseUrl": "./",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@shared/types": ["../../../../packages/types/src/index.ts"],
+      "@microservices/common": ["../../libs/common/src/index.ts"]
+    },
     "incremental": true,
     "skipLibCheck": true,
     "noImplicitAny": false,
