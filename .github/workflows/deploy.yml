@@ -70,8 +70,6 @@ jobs:
             NODE_ENV=${{ secrets.NODE_ENV }}
             DATABASE_URL=${{ secrets.DATABASE_URL }}
             PORT=${{ secrets.PORT }}
-            CORS_ORIGINS=${{ secrets.CORS_ORIGINS }}
-            TLS_ENABLED=${{ secrets.TLS_ENABLED }}
             GRPC_MAX_RETRIES=${{ secrets.GRPC_MAX_RETRIES }}
             GRPC_RETRY_DELAY_MS=${{ secrets.GRPC_RETRY_DELAY_MS }}
             AUTH_SERVICE_HOST=${{ secrets.AUTH_SERVICE_HOST }}

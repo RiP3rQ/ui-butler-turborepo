@@ -8,11 +8,13 @@ WORKDIR /workspace
 # Copy root workspace configuration files
 COPY package.json ./
 COPY pnpm-workspace.yaml ./
-COPY pnpm-lock.yaml ./
+#COPY pnpm-lock.yaml ./
 COPY turbo.json ./
 
 # Copy shared packages
-COPY packages ./packages
+COPY packages/config-typescript ./packages/config-typescript
+COPY packages/config-eslint ./packages/config-eslint
+COPY packages/types ./packages/types
 
 # Copy API libraries
 COPY apps/api-v2/libs/common ./apps/api-v2/libs/common
@@ -29,8 +31,8 @@ COPY apps/api-v2/services/analytics-service/src ./apps/api-v2/services/analytics
 RUN npm install -g pnpm@10.2.1
 
 # Install dependencies and build
-RUN pnpm install --no-frozen-lockfile
-RUN cd apps/api-v2/services/analytics-service && pnpm run build
+RUN pnpm install
+RUN pnpm run build
 
 # ==========================================
 # PRODUCTION STAGE
