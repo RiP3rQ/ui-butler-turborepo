@@ -30,6 +30,7 @@
     "ui": "pnpm dlx shadcn@latest"
   },
   "dependencies": {
+    "@shared/types": "workspace:*",
     "@hookform/resolvers": "^3.10.0",
     "@monaco-editor/react": "^4.6.0",
     "@radix-ui/react-accordion": "^1.2.3",
@@ -73,7 +74,6 @@
   "devDependencies": {
     "@shared/config-tailwindcss": "workspace:*",
     "@shared/eslint-config": "workspace:*",
-    "@shared/types": "workspace:*",
     "@shared/typescript-config": "workspace:*",
     "@types/node": "^22.13.1",
     "@types/react": "^19.0.8",

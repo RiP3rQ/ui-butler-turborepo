@@ -17,12 +17,12 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
   },
   "dependencies": {
+    "@shared/types": "workspace:*",
     "lucide-react": "^0.454.0"
   },
   "devDependencies": {
     "@shared/config-tailwindcss": "workspace:*",
     "@shared/eslint-config": "workspace:*",
-    "@shared/types": "workspace:*",
     "@shared/typescript-config": "workspace:*",
     "@types/eslint": "^9.6.1",
     "@types/node": "^22.13.1",

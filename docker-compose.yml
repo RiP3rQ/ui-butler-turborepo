@@ -6,9 +6,10 @@ services:
       context: .
       dockerfile: apps/api-v2/services/api-gateway/Dockerfile
     ports:
-      - "3333:3333"
+      - "3333:3333"  # External access
     env_file:
       - .env
+    hostname: api-gateway
     networks:
       - app-network
     depends_on:
@@ -20,105 +21,114 @@ services:
       - projects-service
       - users-service
       - workflows-service
-    restart: unless-stopped
+    restart: always
 
   analytics-service:
     build:
       context: .
       dockerfile: apps/api-v2/services/analytics-service/Dockerfile
-    ports:
-      - "3347:3347"
+    expose:
+      - "3347"  # Expose port for internal network communication
+    hostname: analytics-service
     env_file:
       - .env
     networks:
       - app-network
-    restart: unless-stopped
+    restart: always
 
   auth-service:
     build:
       context: .
       dockerfile: apps/api-v2/services/auth-service/Dockerfile
-    ports:
-      - "3346:3346"
+    expose:
+      - "3346"  # Expose port for internal network communication
+    hostname: auth-service
     env_file:
       - .env
     networks:
       - app-network
-    restart: unless-stopped
+    restart: always
 
   billing-service:
     build:
       context: .
       dockerfile: apps/api-v2/services/billing-service/Dockerfile
-    ports:
-      - "3345:3345"
+    expose:
+      - "3345"  # Expose port for internal network communication
+    hostname: billing-service
     env_file:
       - .env
     networks:
       - app-network
-    restart: unless-stopped
+    restart: always
 
   components-service:
     build:
       context: .
       dockerfile: apps/api-v2/services/components-service/Dockerfile
     ports:
-      - "3344:3344"
+      - "3348:3348" # External access
+    expose:
+      - "3344"  # Expose port for internal network communication
+    hostname: components-service
     env_file:
       - .env
     networks:
       - app-network
-    restart: unless-stopped
+    restart: always
 
   execution-service:
     build:
       context: .
       dockerfile: apps/api-v2/services/execution-service/Dockerfile
-    ports:
-      - "3343:3343"
+    expose:
+      - "3343"  # Expose port for internal network communication
+    hostname: execution-service
     env_file:
       - .env
     networks:
       - app-network
-    restart: unless-stopped
+    restart: always
 
   projects-service:
     build:
       context: .
       dockerfile: apps/api-v2/services/projects-service/Dockerfile
-    ports:
-      - "3342:3342"
+    expose:
+      - "3342"  # Expose port for internal network communication
+    hostname: projects-service
     env_file:
       - .env
     networks:
       - app-network
-    restart: unless-stopped
+    restart: always
 
   users-service:
     build:
       context: .
       dockerfile: apps/api-v2/services/users-service/Dockerfile
-    ports:
-      - "3341:3341"
+    expose:
+      - "3341"  # Expose port for internal network communication
+    hostname: users-service
     env_file:
       - .env
     networks:
       - app-network
-    restart: unless-stopped
+    restart: always
 
   workflows-service:
     build:
       context: .
       dockerfile: apps/api-v2/services/workflows-service/Dockerfile
-    ports:
-      - "3340:3340"
+    expose:
+      - "3340"  # Expose port for internal network communication
+    hostname: workflows-service
     env_file:
       - .env
     networks:
       - app-network
-    restart: unless-stopped
+    restart: always
 
 networks:
   app-network:
-    name: app-network
     driver: bridge

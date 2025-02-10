@@ -14,7 +14,7 @@ export const createGrpcOptions = (
       __dirname,
       `../../../../libs/proto/src/proto/${proto_name}.proto`,
     ),
-    url: `${host}:${String(port)}`,
+    url: `http:${host}:${String(port)}`,
     loader: {
       keepCase: true,
       longs: String,
