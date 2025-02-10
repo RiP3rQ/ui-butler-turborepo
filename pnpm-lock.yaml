@@ -1119,6 +1119,9 @@ importers:
       '@microservices/proto':
         specifier: workspace:*
         version: link:../../libs/proto
+      '@nestjs/bullmq':
+        specifier: ^11.0.2
+        version: 11.0.2(@nestjs/common@11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.0.8)(bullmq@5.40.2)
       '@nestjs/common':
         specifier: ^11.0.8
         version: 11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -1149,6 +1152,9 @@ importers:
       ai:
         specifier: ^4.1.28
         version: 4.1.28(react@19.0.0)(zod@3.24.1)
+      bullmq:
+        specifier: ^5.40.2
+        version: 5.40.2
       joi:
         specifier: ^17.13.3
         version: 17.13.3
@@ -1162,9 +1168,6 @@ importers:
         specifier: ^3.24.1
         version: 3.24.1
     devDependencies:
-      '@nestjs/bullmq':
-        specifier: ^11.0.2
-        version: 11.0.2(@nestjs/common@11.0.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.0.8)(bullmq@5.40.2)
       '@nestjs/cli':
         specifier: ^11.0.2
         version: 11.0.2(@types/node@22.13.1)
@@ -1189,9 +1192,6 @@ importers:
       '@types/supertest':
         specifier: ^6.0.2
         version: 6.0.2
-      bullmq:
-        specifier: ^5.40.2
-        version: 5.40.2
       eslint:
         specifier: ^9.20.0
         version: 9.20.0(jiti@1.21.7)
@@ -1976,6 +1976,10 @@ importers:
   packages/config-typescript: {}
 
   packages/prompts:
+    dependencies:
+      lucide-react:
+        specifier: ^0.454.0
+        version: 0.454.0(react@19.0.0)
     devDependencies:
       '@shared/config-tailwindcss':
         specifier: workspace:*
@@ -2001,9 +2005,6 @@ importers:
       eslint:
         specifier: ^9.20.0
         version: 9.20.0(jiti@1.21.7)
-      lucide-react:
-        specifier: ^0.454.0
-        version: 0.454.0(react@19.0.0)
       react:
         specifier: 19.0.0
         version: 19.0.0
@@ -2012,6 +2013,10 @@ importers:
         version: 5.7.3
 
   packages/tasks-registry:
+    dependencies:
+      lucide-react:
+        specifier: ^0.454.0
+        version: 0.454.0(react@19.0.0)
     devDependencies:
       '@shared/config-tailwindcss':
         specifier: workspace:*
@@ -2040,9 +2045,6 @@ importers:
       eslint:
         specifier: ^9.20.0
         version: 9.20.0(jiti@1.21.7)
-      lucide-react:
-        specifier: ^0.454.0
-        version: 0.454.0(react@19.0.0)
       react:
         specifier: 19.0.0
         version: 19.0.0
@@ -2051,6 +2053,10 @@ importers:
         version: 5.7.3
 
   packages/types:
+    dependencies:
+      lucide-react:
+        specifier: ^0.454.0
+        version: 0.454.0(react@19.0.0)
     devDependencies:
       '@shared/eslint-config':
         specifier: workspace:*
@@ -2073,9 +2079,6 @@ importers:
       eslint:
         specifier: ^9.20.0
         version: 9.20.0(jiti@1.21.7)
-      lucide-react:
-        specifier: ^0.454.0
-        version: 0.454.0(react@19.0.0)
       react:
         specifier: 19.0.0
         version: 19.0.0
