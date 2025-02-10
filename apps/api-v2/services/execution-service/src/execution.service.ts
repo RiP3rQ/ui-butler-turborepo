@@ -30,10 +30,6 @@ export class ExecutionsService {
     private readonly database: DrizzleDatabase,
   ) {}
 
-  public test() {
-    console.log('test');
-  }
-
   public async getPendingChanges(
     request: ExecutionProto.GetPendingChangesRequest,
   ): Promise<ExecutionProto.PendingChangesResponse> {

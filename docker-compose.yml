@@ -10,6 +10,7 @@ services:
     env_file:
       - .env
     hostname: api-gateway
+    container_name: api-gateway
     networks:
       - app-network
     depends_on:
@@ -30,6 +31,7 @@ services:
     expose:
       - "3347"  # Expose port for internal network communication
     hostname: analytics-service
+    container_name: analytics-service
     env_file:
       - .env
     networks:
@@ -41,8 +43,9 @@ services:
       context: .
       dockerfile: apps/api-v2/services/auth-service/Dockerfile
     expose:
-      - "3346"  # Expose port for internal network communication
+      - "3340"  # Expose port for internal network communication
     hostname: auth-service
+    container_name: auth-service
     env_file:
       - .env
     networks:
@@ -54,8 +57,9 @@ services:
       context: .
       dockerfile: apps/api-v2/services/billing-service/Dockerfile
     expose:
-      - "3345"  # Expose port for internal network communication
+      - "3344"  # Expose port for internal network communication
     hostname: billing-service
+    container_name: billing-service
     env_file:
       - .env
     networks:
@@ -69,8 +73,9 @@ services:
     ports:
       - "3348:3348" # External access
     expose:
-      - "3344"  # Expose port for internal network communication
+      - "3345"  # Expose port for internal network communication
     hostname: components-service
+    container_name: components-service
     env_file:
       - .env
     networks:
@@ -84,6 +89,7 @@ services:
     expose:
       - "3343"  # Expose port for internal network communication
     hostname: execution-service
+    container_name: execution-service
     env_file:
       - .env
     networks:
@@ -95,8 +101,9 @@ services:
       context: .
       dockerfile: apps/api-v2/services/projects-service/Dockerfile
     expose:
-      - "3342"  # Expose port for internal network communication
+      - "3346"  # Expose port for internal network communication
     hostname: projects-service
+    container_name: projects-service
     env_file:
       - .env
     networks:
@@ -110,6 +117,7 @@ services:
     expose:
       - "3341"  # Expose port for internal network communication
     hostname: users-service
+    container_name: users-service
     env_file:
       - .env
     networks:
@@ -120,9 +128,8 @@ services:
     build:
       context: .
       dockerfile: apps/api-v2/services/workflows-service/Dockerfile
-    expose:
-      - "3340"  # Expose port for internal network communication
     hostname: workflows-service
+    container_name: workflows-service
     env_file:
       - .env
     networks:
