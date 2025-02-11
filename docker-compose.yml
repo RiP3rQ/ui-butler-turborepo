@@ -1,8 +1,5 @@
 version: '3.8'
 
-networks:
-  app-network:
-
 services:
   api-gateway:
     build:
@@ -26,6 +23,10 @@ services:
       - users-service
       - workflows-service
     restart: always
+    volumes:
+      - ./apps/api-v2/services/api-gateway:/app/apps/api-v2/services/api-gateway
+      - ./packages:/app/packages
+      - ./apps/api-v2/libs:/app/apps/api-v2/libs
 
   analytics-service:
     build:
@@ -40,6 +41,10 @@ services:
     networks:
       - app-network
     restart: always
+    volumes:
+      - ./apps/api-v2/services/analytics-service:/app/apps/api-v2/services/analytics-service
+      - ./packages:/app/packages
+      - ./apps/api-v2/libs:/app/apps/api-v2/libs
 
   auth-service:
     build:
@@ -54,6 +59,10 @@ services:
     networks:
       - app-network
     restart: always
+    volumes:
+      - ./apps/api-v2/services/auth-service:/app/apps/api-v2/services/auth-service
+      - ./packages:/app/packages
+      - ./apps/api-v2/libs:/app/apps/api-v2/libs
 
   billing-service:
     build:
@@ -68,6 +77,10 @@ services:
     networks:
       - app-network
     restart: always
+    volumes:
+      - ./apps/api-v2/services/billing-service:/app/apps/api-v2/services/billing-service
+      - ./packages:/app/packages
+      - ./apps/api-v2/libs:/app/apps/api-v2/libs
 
   components-service:
     build:
@@ -85,6 +98,10 @@ services:
     networks:
       - app-network
     restart: always
+    volumes:
+      - ./apps/api-v2/services/components-service:/app/apps/api-v2/services/components-service
+      - ./packages:/app/packages
+      - ./apps/api-v2/libs:/app/apps/api-v2/libs
 
   execution-service:
     build:
@@ -99,6 +116,10 @@ services:
     networks:
       - app-network
     restart: always
+    volumes:
+      - ./apps/api-v2/services/execution-service:/app/apps/api-v2/services/execution-service
+      - ./packages:/app/packages
+      - ./apps/api-v2/libs:/app/apps/api-v2/libs
 
   projects-service:
     build:
@@ -113,6 +134,10 @@ services:
     networks:
       - app-network
     restart: always
+    volumes:
+      - ./apps/api-v2/services/projects-service:/app/apps/api-v2/services/projects-service
+      - ./packages:/app/packages
+      - ./apps/api-v2/libs:/app/apps/api-v2/libs
 
   users-service:
     build:
@@ -127,6 +152,10 @@ services:
     networks:
       - app-network
     restart: always
+    volumes:
+      - ./apps/api-v2/services/users-service:/app/apps/api-v2/services/users-service
+      - ./packages:/app/packages
+      - ./apps/api-v2/libs:/app/apps/api-v2/libs
 
   workflows-service:
     build:
@@ -139,4 +168,12 @@ services:
     networks:
       - app-network
     restart: always
+    volumes:
+      - ./apps/api-v2/services/workflows-service:/app/apps/api-v2/services/workflows-service
+      - ./packages:/app/packages
+      - ./apps/api-v2/libs:/app/apps/api-v2/libs
 
+networks:
+  app-network:
+    name: app-network
+    driver: bridge
