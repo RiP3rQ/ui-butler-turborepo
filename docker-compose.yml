@@ -11,6 +11,13 @@ services:
       - .env
     hostname: api-gateway
     container_name: api-gateway
+    volumes:
+      - ./package.json:/workspace/package.json
+      - ./pnpm-workspace.yaml:/workspace/pnpm-workspace.yaml
+      - ./turbo.json:/workspace/turbo.json
+      - ./packages:/workspace/packages
+      - ./apps/api-v2/libs:/workspace/apps/api-v2/libs
+      - ./apps/api-v2/services/api-gateway:/workspace/apps/api-v2/services/api-gateway
     networks:
       - app-network
     depends_on:
@@ -23,10 +30,6 @@ services:
       - users-service
       - workflows-service
     restart: always
-    volumes:
-      - ./apps/api-v2/services/api-gateway:/app/apps/api-v2/services/api-gateway
-      - ./packages:/app/packages
-      - ./apps/api-v2/libs:/app/apps/api-v2/libs
 
   analytics-service:
     build:
@@ -36,15 +39,18 @@ services:
       - "3347"  # Expose port for internal network communication
     hostname: analytics-service
     container_name: analytics-service
+    volumes:
+      - ./package.json:/workspace/package.json
+      - ./pnpm-workspace.yaml:/workspace/pnpm-workspace.yaml
+      - ./turbo.json:/workspace/turbo.json
+      - ./packages:/workspace/packages
+      - ./apps/api-v2/libs:/workspace/apps/api-v2/libs
+      - ./apps/api-v2/services/analytics-service:/workspace/apps/api-v2/services/analytics-service
     env_file:
       - .env
     networks:
       - app-network
     restart: always
-    volumes:
-      - ./apps/api-v2/services/analytics-service:/app/apps/api-v2/services/analytics-service
-      - ./packages:/app/packages
-      - ./apps/api-v2/libs:/app/apps/api-v2/libs
 
   auth-service:
     build:
@@ -54,15 +60,18 @@ services:
       - "3340"  # Expose port for internal network communication
     hostname: auth-service
     container_name: auth-service
+    volumes:
+      - ./package.json:/workspace/package.json
+      - ./pnpm-workspace.yaml:/workspace/pnpm-workspace.yaml
+      - ./turbo.json:/workspace/turbo.json
+      - ./packages:/workspace/packages
+      - ./apps/api-v2/libs:/workspace/apps/api-v2/libs
+      - ./apps/api-v2/services/auth-service:/workspace/apps/api-v2/services/auth-service
     env_file:
       - .env
     networks:
       - app-network
     restart: always
-    volumes:
-      - ./apps/api-v2/services/auth-service:/app/apps/api-v2/services/auth-service
-      - ./packages:/app/packages
-      - ./apps/api-v2/libs:/app/apps/api-v2/libs
 
   billing-service:
     build:
@@ -72,15 +81,18 @@ services:
       - "3344"  # Expose port for internal network communication
     hostname: billing-service
     container_name: billing-service
+    volumes:
+      - ./package.json:/workspace/package.json
+      - ./pnpm-workspace.yaml:/workspace/pnpm-workspace.yaml
+      - ./turbo.json:/workspace/turbo.json
+      - ./packages:/workspace/packages
+      - ./apps/api-v2/libs:/workspace/apps/api-v2/libs
+      - ./apps/api-v2/services/billing-service:/workspace/apps/api-v2/services/billing-service
     env_file:
       - .env
     networks:
       - app-network
     restart: always
-    volumes:
-      - ./apps/api-v2/services/billing-service:/app/apps/api-v2/services/billing-service
-      - ./packages:/app/packages
-      - ./apps/api-v2/libs:/app/apps/api-v2/libs
 
   components-service:
     build:
@@ -93,15 +105,18 @@ services:
       - "3348"  # Expose port for external network communication
     hostname: components-service
     container_name: components-service
+    volumes:
+      - ./package.json:/workspace/package.json
+      - ./pnpm-workspace.yaml:/workspace/pnpm-workspace.yaml
+      - ./turbo.json:/workspace/turbo.json
+      - ./packages:/workspace/packages
+      - ./apps/api-v2/libs:/workspace/apps/api-v2/libs
+      - ./apps/api-v2/services/components-service:/workspace/apps/api-v2/services/components-service
     env_file:
       - .env
     networks:
       - app-network
     restart: always
-    volumes:
-      - ./apps/api-v2/services/components-service:/app/apps/api-v2/services/components-service
-      - ./packages:/app/packages
-      - ./apps/api-v2/libs:/app/apps/api-v2/libs
 
   execution-service:
     build:
@@ -111,15 +126,18 @@ services:
       - "3343"  # Expose port for internal network communication
     hostname: execution-service
     container_name: execution-service
+    volumes:
+      - ./package.json:/workspace/package.json
+      - ./pnpm-workspace.yaml:/workspace/pnpm-workspace.yaml
+      - ./turbo.json:/workspace/turbo.json
+      - ./packages:/workspace/packages
+      - ./apps/api-v2/libs:/workspace/apps/api-v2/libs
+      - ./apps/api-v2/services/execution-service:/workspace/apps/api-v2/services/execution-service
     env_file:
       - .env
     networks:
       - app-network
     restart: always
-    volumes:
-      - ./apps/api-v2/services/execution-service:/app/apps/api-v2/services/execution-service
-      - ./packages:/app/packages
-      - ./apps/api-v2/libs:/app/apps/api-v2/libs
 
   projects-service:
     build:
@@ -129,15 +147,18 @@ services:
       - "3346"  # Expose port for internal network communication
     hostname: projects-service
     container_name: projects-service
+    volumes:
+      - ./package.json:/workspace/package.json
+      - ./pnpm-workspace.yaml:/workspace/pnpm-workspace.yaml
+      - ./turbo.json:/workspace/turbo.json
+      - ./packages:/workspace/packages
+      - ./apps/api-v2/libs:/workspace/apps/api-v2/libs
+      - ./apps/api-v2/services/projects-service:/workspace/apps/api-v2/services/projects-service
     env_file:
       - .env
     networks:
       - app-network
     restart: always
-    volumes:
-      - ./apps/api-v2/services/projects-service:/app/apps/api-v2/services/projects-service
-      - ./packages:/app/packages
-      - ./apps/api-v2/libs:/app/apps/api-v2/libs
 
   users-service:
     build:
@@ -147,15 +168,18 @@ services:
       - "3341"  # Expose port for internal network communication
     hostname: users-service
     container_name: users-service
+    volumes:
+      - ./package.json:/workspace/package.json
+      - ./pnpm-workspace.yaml:/workspace/pnpm-workspace.yaml
+      - ./turbo.json:/workspace/turbo.json
+      - ./packages:/workspace/packages
+      - ./apps/api-v2/libs:/workspace/apps/api-v2/libs
+      - ./apps/api-v2/services/users-service:/workspace/apps/api-v2/services/users-service
     env_file:
       - .env
     networks:
       - app-network
     restart: always
-    volumes:
-      - ./apps/api-v2/services/users-service:/app/apps/api-v2/services/users-service
-      - ./packages:/app/packages
-      - ./apps/api-v2/libs:/app/apps/api-v2/libs
 
   workflows-service:
     build:
@@ -163,15 +187,18 @@ services:
       dockerfile: apps/api-v2/services/workflows-service/Dockerfile
     hostname: workflows-service
     container_name: workflows-service
+    volumes:
+      - ./package.json:/workspace/package.json
+      - ./pnpm-workspace.yaml:/workspace/pnpm-workspace.yaml
+      - ./turbo.json:/workspace/turbo.json
+      - ./packages:/workspace/packages
+      - ./apps/api-v2/libs:/workspace/apps/api-v2/libs
+      - ./apps/api-v2/services/workflows-service:/workspace/apps/api-v2/services/workflows-service
     env_file:
       - .env
     networks:
       - app-network
     restart: always
-    volumes:
-      - ./apps/api-v2/services/workflows-service:/app/apps/api-v2/services/workflows-service
-      - ./packages:/app/packages
-      - ./apps/api-v2/libs:/app/apps/api-v2/libs
 
 networks:
   app-network:
