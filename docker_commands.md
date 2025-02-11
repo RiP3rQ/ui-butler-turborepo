@@ -148,6 +148,10 @@ docker rm -f analytics-service
 
 docker system prune
 
+# Clean build cache
+
+docker builder prune
+
 # Clean everything including volumes
 
 docker system prune -a --volumes
