@@ -1,103 +1,68 @@
-name: Build, Push, and Deploy Docker Images via Docker Compose
-
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-
-env:
-  AZURE_CONTAINER_REGISTRY: uibutler.azurecr.io
-  RESOURCE_GROUP: ui-butler
-
-jobs:
-  build-and-push:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Log in to ACR
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.AZURE_CONTAINER_REGISTRY }}
-          username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
-          password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
-
-      - name: Build Images with Docker Compose
-        run: docker compose build
-
-      - name: Tag and Push Docker Images to ACR
-        run: |
-          services=(api-gateway analytics-service auth-service billing-service components-service execution-service projects-service users-service workflows-service)
-          for service in "${services[@]}"; do
-            echo "Processing $service"
-            docker tag "$service:latest" "${{ env.AZURE_CONTAINER_REGISTRY }}/$service:latest"
-            docker push "${{ env.AZURE_CONTAINER_REGISTRY }}/$service:latest"
-          done
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build-and-push
-    strategy:
-      matrix:
-        service:
-          - api-gateway
-          - analytics-service
-          - auth-service
-          - billing-service
-          - components-service
-          - execution-service
-          - projects-service
-          - users-service
-          - workflows-service
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Deploy Container App for ${{ matrix.service }}
-        uses: azure/container-apps-deploy@v1
-        with:
-          imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ matrix.service }}:latest
-          resourceGroup: ${{ env.RESOURCE_GROUP }}
-          containerAppName: ${{ matrix.service }}
-          environmentVariables: |
-            NODE_ENV=${{ secrets.NODE_ENV }}
-            DATABASE_URL=${{ secrets.DATABASE_URL }}
-            PORT=${{ secrets.PORT }}
-            GRPC_MAX_RETRIES=${{ secrets.GRPC_MAX_RETRIES }}
-            GRPC_RETRY_DELAY_MS=${{ secrets.GRPC_RETRY_DELAY_MS }}
-            AUTH_SERVICE_HOST=${{ secrets.AUTH_SERVICE_HOST }}
-            AUTH_SERVICE_PORT=${{ secrets.AUTH_SERVICE_PORT }}
-            AUTH_UI_REDIRECT=${{ secrets.AUTH_UI_REDIRECT }}
-            USERS_SERVICE_HOST=${{ secrets.USERS_SERVICE_HOST }}
-            USERS_SERVICE_PORT=${{ secrets.USERS_SERVICE_PORT }}
-            WORKFLOWS_SERVICE_HOST=${{ secrets.WORKFLOWS_SERVICE_HOST }}
-            WORKFLOWS_SERVICE_PORT=${{ secrets.WORKFLOWS_SERVICE_PORT }}
-            EXECUTION_SERVICE_HOST=${{ secrets.EXECUTION_SERVICE_HOST }}
-            EXECUTION_SERVICE_PORT=${{ secrets.EXECUTION_SERVICE_PORT }}
-            BILLING_SERVICE_HOST=${{ secrets.BILLING_SERVICE_HOST }}
-            BILLING_SERVICE_PORT=${{ secrets.BILLING_SERVICE_PORT }}
-            COMPONENTS_SERVICE_HOST=${{ secrets.COMPONENTS_SERVICE_HOST }}
-            COMPONENTS_SERVICE_PORT=${{ secrets.COMPONENTS_SERVICE_PORT }}
-            COMPONENTS_SERVICE_HTTP_PORT=${{ secrets.COMPONENTS_SERVICE_HTTP_PORT }}
-            PROJECTS_SERVICE_HOST=${{ secrets.PROJECTS_SERVICE_HOST }}
-            PROJECTS_SERVICE_PORT=${{ secrets.PROJECTS_SERVICE_PORT }}
-            ANALYTICS_SERVICE_HOST=${{ secrets.ANALYTICS_SERVICE_HOST }}
-            ANALYTICS_SERVICE_PORT=${{ secrets.ANALYTICS_SERVICE_PORT }}
-            JWT_ACCESS_TOKEN_SECRET=${{ secrets.JWT_ACCESS_TOKEN_SECRET }}
-            JWT_ACCESS_TOKEN_EXPIRATION_MS=${{ secrets.JWT_ACCESS_TOKEN_EXPIRATION_MS }}
-            JWT_REFRESH_TOKEN_SECRET=${{ secrets.JWT_REFRESH_TOKEN_SECRET }}
-            JWT_REFRESH_TOKEN_EXPIRATION_MS=${{ secrets.JWT_REFRESH_TOKEN_EXPIRATION_MS }}
-            GOOGLE_AUTH_CLIENT_ID=${{ secrets.GOOGLE_AUTH_CLIENT_ID }}
-            GOOGLE_AUTH_CLIENT_SECRET=${{ secrets.GOOGLE_AUTH_CLIENT_SECRET }}
-            GOOGLE_AUTH_REDIRECT_URI=${{ secrets.GOOGLE_AUTH_REDIRECT_URI }}
-            GITHUB_AUTH_CLIENT_ID=${{ secrets.GITHUB_AUTH_CLIENT_ID }}
-            GITHUB_AUTH_CLIENT_SECRET=${{ secrets.GITHUB_AUTH_CLIENT_SECRET }}
-            GITHUB_AUTH_REDIRECT_URI=${{ secrets.GITHUB_AUTH_REDIRECT_URI }}
-            GOOGLE_GENERATIVE_AI_API_KEY=${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+#name: Build, Push, and Deploy Docker Images via Docker Compose
+#
+#on:
+#  workflow_dispatch:
+##  push:
+##    branches:
+##      - main
+#
+#env:
+#  AZURE_CONTAINER_REGISTRY: uibutler.azurecr.io
+#  RESOURCE_GROUP: ui-butler
+#
+#jobs:
+#  build-and-push:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout Code
+#        uses: actions/checkout@v4
+#
+#      - name: Log in to ACR
+#        uses: docker/login-action@v3
+#        with:
+#          registry: ${{ env.AZURE_CONTAINER_REGISTRY }}
+#          username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
+#          password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
+#
+#      - name: Build Images with Docker Compose
+#        run: docker compose build
+#
+#      - name: Tag and Push Docker Images to ACR
+#        run: |
+#          services=(api-gateway analytics-service auth-service billing-service components-service execution-service projects-service users-service workflows-service)
+#          for service in "${services[@]}"; do
+#            echo "Processing $service"
+#            docker tag "$service:latest" "${{ env.AZURE_CONTAINER_REGISTRY }}/$service:latest"
+#            docker push "${{ env.AZURE_CONTAINER_REGISTRY }}/$service:latest"
+#          done
+#
+#  deploy:
+#    runs-on: ubuntu-latest
+#    needs: build-and-push
+#    strategy:
+#      matrix:
+#        service:
+#          - api-gateway
+#          - analytics-service
+#          - auth-service
+#          - billing-service
+#          - components-service
+#          - execution-service
+#          - projects-service
+#          - users-service
+#          - workflows-service
+#    steps:
+#      - name: Checkout Code
+#        uses: actions/checkout@v4
+#
+#      - name: Azure Login
+#        uses: azure/login@v2
+#        with:
+#          creds: ${{ secrets.AZURE_CREDENTIALS }}
+#
+#      - name: Deploy Container App for ${{ matrix.service }}
+#        uses: azure/container-apps-deploy@v1
+#        with:
+#          imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ matrix.service }}:latest
+#          resourceGroup: ${{ env.RESOURCE_GROUP }}
+#          containerAppName: ${{ matrix.service }}
