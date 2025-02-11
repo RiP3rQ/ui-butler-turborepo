@@ -1,5 +1,8 @@
 version: '3.8'
 
+networks:
+  app-network:
+
 services:
   api-gateway:
     build:
@@ -74,6 +77,7 @@ services:
       - "3348:3348" # External access
     expose:
       - "3345"  # Expose port for internal network communication
+      - "3348"  # Expose port for external network communication
     hostname: components-service
     container_name: components-service
     env_file:
@@ -136,6 +140,3 @@ services:
       - app-network
     restart: always
 
-networks:
-  app-network:
-    driver: bridge

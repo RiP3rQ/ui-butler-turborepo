@@ -74,3 +74,4 @@ CMD ["node", "dist/main"]
 
 # Expose Components Service port
 EXPOSE 3344
+EXPOSE 3348

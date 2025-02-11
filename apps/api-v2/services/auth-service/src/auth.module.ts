@@ -41,7 +41,7 @@ import { AuthService } from './auth.service';
         useFactory: (configService: ConfigService) => ({
           transport: Transport.GRPC,
           options: {
-            url: `${String(configService.get('USERS_SERVICE_HOST'))}:${String(configService.get('USERS_SERVICE_HOST'))}`,
+            url: `${String(configService.get('USERS_SERVICE_HOST'))}:${String(configService.get('USERS_SERVICE_PORT'))}`,
             package: 'api.users',
             protoPath: join(
               __dirname,
