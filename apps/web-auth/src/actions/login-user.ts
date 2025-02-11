@@ -11,6 +11,7 @@ import { getApiUrl, getMainAppUrl } from "@/lib/utils";
 export default async function loginUser(
   formData: z.infer<typeof loginFormSchema>,
 ): Promise<void> {
+  let succeeded = false;
   try {
     // Validate the form data
     loginFormSchema.parse(formData);
@@ -28,11 +29,12 @@ export default async function loginUser(
 
     const cookie = getAuthCookie(res);
     await setResponseCookies(cookie);
+    succeeded = true;
   } catch (error) {
-    console.error(error);
-    const errorMessage = getErrorMessage(error);
-    throw new Error(errorMessage);
+    console.error(`[ERROR] Failed to login user:`, error);
+    throw new Error(getErrorMessage(error));
   }
-
-  redirect(getMainAppUrl());
+  if (succeeded) {
+    redirect(getMainAppUrl());
+  }
 }

@@ -8,7 +8,6 @@ import { toast } from "sonner";
 import { useMemo } from "react";
 import loginUser from "@/actions/login-user";
 import { loginFormSchema } from "@/schemas/login-schema";
-import { getErrorMessage } from "@/lib/get-error-message";
 
 export function useLoginForm(): {
   form: ReturnType<typeof useForm<z.infer<typeof loginFormSchema>>>;
@@ -24,16 +23,14 @@ export function useLoginForm(): {
     },
   });
 
-  const { mutate, isPending } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: loginUser,
     onSuccess: () => {
       form.reset();
       toast.success("Logged in successfully", { id: "login" });
     },
     onError: (error) => {
-      console.error(error);
-      const errorMessage = getErrorMessage(error);
-      toast.error(errorMessage, { id: "login" });
+      toast.error(error.message, { id: "login" });
     },
   });
 
@@ -41,7 +38,7 @@ export function useLoginForm(): {
     values: z.infer<typeof loginFormSchema>,
   ): Promise<void> => {
     toast.loading("Logging in...", { id: "login" });
-    mutate(values);
+    await mutateAsync(values);
   };
 
   const isSubmitDisabled = useMemo(() => {

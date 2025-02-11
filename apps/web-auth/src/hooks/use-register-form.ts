@@ -7,7 +7,6 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useMemo } from "react";
 import { registerFormSchema } from "@/schemas/register-schema";
-import { getErrorMessage } from "@/lib/get-error-message";
 import registerUser from "@/actions/register-user";
 
 export function useRegisterForm(): {
@@ -26,16 +25,14 @@ export function useRegisterForm(): {
     },
   });
 
-  const { mutate, isPending } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: registerUser,
     onSuccess: () => {
       form.reset();
       toast.success("Registration successful!", { id: "register" });
     },
     onError: (error) => {
-      console.error(error);
-      const errorMessage = getErrorMessage(error);
-      toast.error(errorMessage, {
+      toast.error(error.message, {
         id: "register",
       });
     },
@@ -45,7 +42,7 @@ export function useRegisterForm(): {
     values: z.infer<typeof registerFormSchema>,
   ): Promise<void> => {
     toast.loading("Registering...", { id: "register" });
-    mutate(values);
+    await mutateAsync(values);
   };
 
   const isSubmitButtonBlocked = useMemo(() => {
