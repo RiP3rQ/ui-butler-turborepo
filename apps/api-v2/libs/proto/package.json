@@ -11,7 +11,7 @@
   },
   "scripts": {
     "dev": "tsc --watch",
-    "clean": "rimraf dist .turbo",
+    "clean": "rimraf dist .turbo node_modules",
     "build": "tsc",
     "build:types": "tsc",
     "type-check": "tsc --noEmit",

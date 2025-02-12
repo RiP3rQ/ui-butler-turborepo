@@ -37,12 +37,6 @@
     "CACHE_DISABLED"
   ],
   "tasks": {
-    "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
-      "cache": true
-    },
     "build:types": {
       "dependsOn": ["^build:types"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
@@ -50,9 +44,15 @@
       "cache": true
     },
     "bootstrap": {
-      "dependsOn": ["^bootstrap"],
+      "dependsOn": ["build:types", "^bootstrap"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["node_modules", "dist/**"],
+      "cache": true
+    },
+    "build": {
+      "dependsOn": ["bootstrap", "^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
       "cache": true
     },
     "start": {
