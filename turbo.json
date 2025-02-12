@@ -40,18 +40,19 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+      "cache": true
     },
     "build:types": {
       "dependsOn": ["^build:types"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["dist/types/**"],
+      "outputs": ["node_modules", "dist/**"],
       "cache": true
     },
     "bootstrap": {
       "dependsOn": ["^bootstrap"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["node_modules"],
+      "outputs": ["node_modules", "dist/**"],
       "cache": true
     },
     "start": {
@@ -71,7 +72,8 @@
       "outputs": []
     },
     "type-check": {
-      "cache": true
+      "cache": false,
+      "outputs": []
     },
     "dev": {
       "cache": false,
