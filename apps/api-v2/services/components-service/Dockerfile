@@ -8,11 +8,14 @@ WORKDIR /workspace
 # Copy root workspace configuration files
 COPY package.json ./
 COPY pnpm-workspace.yaml ./
-COPY pnpm-lock.yaml ./
+#COPY pnpm-lock.yaml ./ <---DO NOT COPY pnpm-lock.yaml as it will cause blotted node_modules
 COPY turbo.json ./
 
 # Copy shared packages
-COPY packages ./packages
+COPY packages/config-typescript ./packages/config-typescript
+COPY packages/config-eslint ./packages/config-eslint
+COPY packages/prompts ./packages/prompts
+COPY packages/types ./packages/types
 
 # Copy API libraries
 COPY apps/api-v2/libs/common ./apps/api-v2/libs/common
@@ -28,9 +31,9 @@ COPY apps/api-v2/services/components-service/src ./apps/api-v2/services/componen
 # Install pnpm
 RUN npm install -g pnpm@10.2.1
 
-# Install dependencies and build
-RUN pnpm install --no-frozen-lockfile
-RUN cd apps/api-v2/services/components-service && pnpm run build
+# Install only needed dependencies (without pnpm-lock) and build using TURBO
+RUN pnpm install
+RUN pnpm run build
 
 # ==========================================
 # PRODUCTION STAGE
@@ -71,3 +74,4 @@ CMD ["node", "dist/main"]
 
 # Expose Components Service port
 EXPOSE 3344
+EXPOSE 3348

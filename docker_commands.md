@@ -126,7 +126,7 @@ docker exec -it analytics-service sh
 
 # Copy files from container
 
-docker cp analytics-service:/app/dist ./dist
+docker cp api-gateway:/app/apps/api-v2/services/api-gateway/dist ./dist_lookup
 
 # View container environment variables
 
@@ -147,6 +147,10 @@ docker rm -f analytics-service
 # Clean all unused containers, networks, images
 
 docker system prune
+
+# Clean build cache
+
+docker builder prune
 
 # Clean everything including volumes
 

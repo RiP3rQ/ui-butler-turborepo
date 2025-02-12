@@ -21,7 +21,7 @@ import { AuthController } from './controllers/auth.controller';
 import { BillingController } from './controllers/billing.controller';
 import { ComponentsController } from './controllers/components.controller';
 import { CredentialsController } from './controllers/credentials.controller';
-import { ExecutionsController } from './controllers/execution.controller';
+import { ExecutionController } from './controllers/execution.controller';
 import { ProjectsController } from './controllers/projects.controller';
 import { UsersController } from './controllers/users.controller';
 import { WorkflowsController } from './controllers/workflows.controller';
@@ -62,34 +62,57 @@ import { ThrottleModule } from './throttling/throttle.module';
       isGlobal: true,
       load: [rateLimitConfig],
       validationSchema: Joi.object({
-        PORT: Joi.number().default(3333),
+        DATABASE_URL: Joi.string().required(),
+        PORT: Joi.number().required(),
 
-        AUTH_SERVICE_HOST: Joi.string().default('localhost'),
-        AUTH_SERVICE_PORT: Joi.number().default(3340),
+        AUTH_SERVICE_HOST: Joi.string().required(),
+        AUTH_SERVICE_PORT: Joi.number().required(),
 
-        USERS_SERVICE_HOST: Joi.string().default('localhost'),
-        USERS_SERVICE_PORT: Joi.number().default(3341),
+        USERS_SERVICE_HOST: Joi.string().required(),
+        USERS_SERVICE_PORT: Joi.number().required(),
 
-        WORKFLOWS_SERVICE_HOST: Joi.string().default('localhost'),
-        WORKFLOWS_SERVICE_PORT: Joi.number().default(3342),
+        WORKFLOWS_SERVICE_HOST: Joi.string().required(),
+        WORKFLOWS_SERVICE_PORT: Joi.number().required(),
 
-        EXECUTION_SERVICE_HOST: Joi.string().default('localhost'),
-        EXECUTION_SERVICE_PORT: Joi.number().default(3343),
+        ANALYTICS_SERVICE_HOST: Joi.string().required(),
+        ANALYTICS_SERVICE_PORT: Joi.number().required(),
 
-        BILLING_SERVICE_HOST: Joi.string().default('localhost'),
-        BILLING_SERVICE_PORT: Joi.number().default(3344),
+        EXECUTION_SERVICE_HOST: Joi.string().required(),
+        EXECUTION_SERVICE_PORT: Joi.number().required(),
 
-        COMPONENTS_SERVICE_HOST: Joi.string().default('localhost'),
-        COMPONENTS_SERVICE_PORT: Joi.number().default(3345),
+        BILLING_SERVICE_HOST: Joi.string().required(),
+        BILLING_SERVICE_PORT: Joi.number().required(),
+
+        COMPONENTS_SERVICE_HOST: Joi.string().required(),
+        COMPONENTS_SERVICE_PORT: Joi.number().required(),
+
+        PROJECTS_SERVICE_HOST: Joi.string().required(),
+        PROJECTS_SERVICE_PORT: Joi.number().required(),
 
         RATE_LIMIT_TTL: Joi.number().default(60),
         RATE_LIMIT_MAX_REQUESTS: Joi.number().default(100),
         RATE_LIMIT_STORAGE: Joi.string()
           .valid('memory', 'redis')
           .default('redis'),
+        REDIS_URL: Joi.string().required(),
+        REDIS_TOKEN: Joi.string().required(),
 
-        REDIS_URL: Joi.string().default('localhost'),
-        REDIS_TOKEN: Joi.string().default('token'),
+        GRPC_MAX_RETRIES: Joi.number().default(5),
+        GRPC_RETRY_DELAY_MS: Joi.number().default(2000),
+
+        JWT_ACCESS_TOKEN_SECRET: Joi.string().required(),
+        JWT_ACCESS_TOKEN_EXPIRATION_MS: Joi.string().required(),
+
+        JWT_REFRESH_TOKEN_SECRET: Joi.string().required(),
+        JWT_REFRESH_TOKEN_EXPIRATION_MS: Joi.string().required(),
+
+        GOOGLE_AUTH_CLIENT_ID: Joi.string().required(),
+        GOOGLE_AUTH_CLIENT_SECRET: Joi.string().required(),
+        GOOGLE_AUTH_REDIRECT_URI: Joi.string().required(),
+
+        GITHUB_AUTH_CLIENT_ID: Joi.string().required(),
+        GITHUB_AUTH_CLIENT_SECRET: Joi.string().required(),
+        GITHUB_AUTH_REDIRECT_URI: Joi.string().required(),
       }),
     }),
     ClientsModule.registerAsync([
@@ -206,7 +229,7 @@ import { ThrottleModule } from './throttling/throttle.module';
     CredentialsController,
     ProjectsController,
     WorkflowsController,
-    ExecutionsController,
+    ExecutionController,
   ],
   providers: [
     // AUTH PROXY

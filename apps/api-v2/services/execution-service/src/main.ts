@@ -18,11 +18,12 @@ async function bootstrap() {
       },
     },
   );
+
   await app.listen();
   console.log('Execution Microservice is listening');
 }
 
 bootstrap().catch((error: unknown) => {
-  console.error(`Execution Microservice failed to start: ${error}`);
+  console.error(`Execution Microservice failed to start:`, error);
   process.exit(1);
 });

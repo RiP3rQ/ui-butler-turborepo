@@ -11,6 +11,7 @@ import { getApiUrl, getMainAppUrl } from "@/lib/utils";
 export default async function registerUser(
   formData: z.infer<typeof registerFormSchema>,
 ): Promise<void> {
+  let succeeded = false;
   try {
     // Delete confirm password field before sending to the server
     // @ts-expect-error - this is a temporary fix to remove the confirmPassword field
@@ -28,10 +29,12 @@ export default async function registerUser(
     }
     const cookie = getAuthCookie(res);
     await setResponseCookies(cookie);
+    succeeded = true;
   } catch (error) {
-    console.error(error);
-    const errorMessage = getErrorMessage(error);
-    throw new Error(errorMessage);
+    console.error(`[ERROR] Failed to register user:`, error);
+    throw new Error(getErrorMessage(error));
   }
-  redirect(getMainAppUrl());
+  if (succeeded) {
+    redirect(getMainAppUrl());
+  }
 }

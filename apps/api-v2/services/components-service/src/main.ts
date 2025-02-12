@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import { join } from 'node:path';
 import { ComponentsModule } from './components.module';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   // Create a hybrid application (HTTP + Microservice)
@@ -37,11 +38,19 @@ async function bootstrap() {
   app.use(helmet());
   app.use(compression());
 
+  // Get ConfigService instance
+  const configService = app.get(ConfigService);
+
   // Enable CORS if needed
   app.enableCors({
-    origin: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    origin: configService
+      .get<string>('ALLOWED_ORIGINS', 'http://localhost:3001')
+      .split(','),
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    exposedHeaders: ['Content-Range', 'X-Total-Count'],
     credentials: true,
+    maxAge: 3600,
   });
 
   // Get and display routes <-- WORKS FOR NEST.JS v10 BUT NOT v11 (deprecated)

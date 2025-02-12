@@ -7,6 +7,7 @@
     "NEXT_PUBLIC_API_URL",
     "NODE_ENV",
     "REDIS_URL",
+    "REDIS_FULL_URL",
     "REDIS_TOKEN",
     "RATE_LIMIT_TTL",
     "RATE_LIMIT_MAX_REQUESTS",
@@ -39,15 +40,31 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+      "cache": true
+    },
+    "build:types": {
+      "dependsOn": ["^build:types"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["node_modules", "dist/**"],
+      "cache": true
     },
     "bootstrap": {
       "dependsOn": ["^bootstrap"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["node_modules"]
+      "outputs": ["node_modules", "dist/**"],
+      "cache": true
     },
     "start": {
       "dependsOn": ["^start"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"]
+    },
+    "start:frontend": {
+      "dependsOn": ["^start:frontend"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"]
+    },
+    "start:backend": {
+      "dependsOn": ["^start:backend"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"]
     },
     "lint": {
@@ -55,7 +72,8 @@
       "outputs": []
     },
     "type-check": {
-      "cache": true
+      "cache": false,
+      "outputs": []
     },
     "dev": {
       "cache": false,

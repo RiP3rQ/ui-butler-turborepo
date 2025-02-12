@@ -16,18 +16,17 @@ import { ExecutionsQueueEventsListener } from '@/bullmq/executions-queue.events'
     DatabaseModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['.env'],
       validationSchema: Joi.object({
         DATABASE_URL: Joi.string().required(),
         GOOGLE_GENERATIVE_AI_API_KEY: Joi.string().required(),
         EXECUTION_SERVICE_HOST: Joi.string().required(),
         EXECUTION_SERVICE_PORT: Joi.number().required(),
-        REDIS_URL: Joi.string().required(),
+        REDIS_FULL_URL: Joi.string().required(),
       }),
     }),
     BullModule.forRoot({
       connection: {
-        url: process.env.REDIS_URL,
+        url: process.env.REDIS_FULL_URL,
       },
       defaultJobOptions: {
         attempts: 3, // 3 attempts before failing
