@@ -62,6 +62,3 @@ storybook-static
 
 # Turbo
 **/.turbo
-
-# Dist
-**/dist
