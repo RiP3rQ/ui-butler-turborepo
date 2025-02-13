@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   api-gateway:
     build:
@@ -13,15 +11,6 @@ services:
     container_name: api-gateway
     networks:
       - app-network
-    depends_on:
-      - analytics-service
-      - auth-service
-      - billing-service
-      - components-service
-      - execution-service
-      - projects-service
-      - users-service
-      - workflows-service
     restart: always
 
   analytics-service:

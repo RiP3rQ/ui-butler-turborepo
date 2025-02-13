@@ -6,6 +6,7 @@
     "dev": "next dev --turbopack --port 3002",
     "clean": "rimraf dist node_modules .turbo .next",
     "build": "next build",
+    "build:frontend": "next build",
     "start": "next start --port 3002",
     "start:frontend": "next start --port 3002",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",

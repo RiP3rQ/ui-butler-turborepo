@@ -10,10 +10,10 @@
     }
   },
   "scripts": {
-    "dev": "tsc --watch",
-    "clean": "rimraf dist .turbo",
-    "build": "tsc",
     "build:types": "tsc",
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rimraf dist .turbo node_modules",
     "type-check": "tsc --noEmit",
     "generate": "protoc --plugin=protoc-gen-ts_proto=.\\node_modules\\.bin\\protoc-gen-ts_proto.cmd --ts_proto_out=./src/generated --ts_proto_opt=nestJs=true --proto_path=./src/proto-definitions v1/*.proto",
     "proto:generate": "ts-node scripts/generate-protos.ts",

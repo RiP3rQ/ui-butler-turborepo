@@ -40,17 +40,27 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+      "outputs": ["node_modules", "dist/**", ".next/**", "!.next/cache/**"],
       "cache": true
     },
-    "build:types": {
-      "dependsOn": ["^build:types"],
+    "build:frontend": {
+      "dependsOn": ["^build:frontend"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**"],
+      "cache": true
+    },
+    "build:backend": {
+      "dependsOn": ["^build:backend"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/**"],
+      "cache": true
+    },
+    "bootstrap": {
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["node_modules", "dist/**"],
       "cache": true
     },
-    "bootstrap": {
-      "dependsOn": ["^bootstrap"],
+    "build:types": {
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["node_modules", "dist/**"],
       "cache": true

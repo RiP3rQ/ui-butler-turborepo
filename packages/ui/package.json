@@ -23,6 +23,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tailwindcss -i src/globals.css -o ./dist/index.css",
+    "build:frontend": "tailwindcss -i src/globals.css -o ./dist/index.css",
     "dev": "tsup --watch",
     "clean": "rimraf dist node_modules .turbo",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
