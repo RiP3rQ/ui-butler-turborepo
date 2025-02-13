@@ -59,6 +59,3 @@ yalc.lock
 # Storybook
 build-storybook.log
 storybook-static
-
-# Turbo
-**/.turbo
