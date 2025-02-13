@@ -1,4 +1,3 @@
-import * as fs from 'node:fs';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
@@ -18,13 +17,14 @@ async function bootstrap() {
   const app = await NestFactory.create(ApiGatewayModule, {
     bufferLogs: true,
     // Enable HTTPS in production
-    httpsOptions:
-      process.env.NODE_ENV === 'production'
-        ? {
-            key: fs.readFileSync(String(process.env.SSL_KEY_PATH)),
-            cert: fs.readFileSync(String(process.env.SSL_CERT_PATH)),
-          }
-        : undefined,
+    // IN OUR CASE WE WILL USE NGINX FOR HTTPS
+    // httpsOptions:
+    //   process.env.NODE_ENV === 'production'
+    //     ? {
+    //         key: fs.readFileSync(String(process.env.SSL_KEY_PATH)),
+    //         cert: fs.readFileSync(String(process.env.SSL_CERT_PATH)),
+    //       }
+    //     : undefined,
   });
 
   // Logger and request logging
