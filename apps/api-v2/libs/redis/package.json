@@ -11,11 +11,11 @@
   },
   "scripts": {
     "bootstrap": "tsc",
+    "build": "tsc",
     "dev": "tsc --watch",
     "clean": "rimraf node_modules dist .turbo",
     "type-check": "tsc --noEmit",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "build": "tsc"
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
   },
   "keywords": [],
   "author": "",

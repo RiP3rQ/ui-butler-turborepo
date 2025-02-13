@@ -2,8 +2,8 @@
   "name": "@microservices/common",
   "private": true,
   "scripts": {
-    "build": "tsc",
     "bootstrap": "tsc",
+    "build": "tsc",
     "dev": "tsc --watch",
     "clean": "rimraf dist node_modules .turbo",
     "type-check": "tsc --noEmit",

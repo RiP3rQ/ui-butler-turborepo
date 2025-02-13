@@ -32,7 +32,7 @@ RUN npm install -g pnpm@10.2.1
 
 # Install only needed dependencies (without pnpm-lock) and build using TURBO
 RUN pnpm install
-RUN pnpm run build
+RUN pnpm run build:backend
 
 # ==========================================
 # PRODUCTION STAGE
