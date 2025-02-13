@@ -1,8 +1,8 @@
-name: Deploy to VPS
+name: Deploy dockerized backend to VPS
 
 on:
   push:
-    branches:
+    branches: # Only deploy on push to main branch
       - main
   workflow_dispatch:  # Allow manual trigger
 
@@ -11,6 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - name: Fail if not manually triggered on main branch # Comment this out if you want automatic deployment on main branch
+        if: github.event_name != 'workflow_dispatch' || github.ref != 'refs/heads/main'
+        run: |
+          echo "This action can only be run manually on the main branch"
+          exit 1
+
       - name: Checkout code
         uses: actions/checkout@v4
 
