@@ -24,7 +24,8 @@ module.exports = {
       "pre-deploy-local": "echo 'Starting deployment process'",
       // Modified post-deploy to be more robust
       "post-deploy":
-        "source ~/.nvm/nvm.sh && export NVM_DIR=$HOME/.nvm && [ -s $NVM_DIR/nvm.sh ] && . $NVM_DIR/nvm.sh && curl -fsSL https://get.pnpm.io/install.sh | env PNPM_VERSION=10.2.1 sh -  && pnpm install && pnpm run build:backend && pm2 reload ecosystem.config.js --env production",
+        // post-deploy script runs in a non-interactive shell and doesn't have access to the same PATH and environment variables as your interactive shell. You need to source your .bashrc or .bash_profile to ensure that the PATH and environment variables are set correctly.
+        "source ~/.profile && source ~/.bashrc && source ~/.nvm/nvm.sh && export NVM_DIR=$HOME/.nvm && [ -s $NVM_DIR/nvm.sh ] && . $NVM_DIR/nvm.sh && pnpm install && pnpm run build:backend && pm2 reload ecosystem.config.js --env production",
       // Fixed ssh_options format
       ssh_options: ["ForwardAgent=yes"],
       // Add these recommended options
