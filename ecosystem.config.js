@@ -30,12 +30,11 @@ module.exports = {
         "source ~/.nvm/nvm.sh && " +
         "export NVM_DIR=$HOME/.nvm && " +
         "[ -s $NVM_DIR/nvm.sh ] && . $NVM_DIR/nvm.sh && " +
-        "export PNPM_HOME='/home/uibutler/.local/share/pnpm' && " +
-        "export PATH='$PNPM_HOME:$PATH'' && " +
+        "npm install -g pnpm && " +
         "export NODE_OPTIONS='--max_old_space_size=2048' && " +
-        "/home/uibutler/.local/share/pnpm/pnpm install --frozen-lockfile && " +
         "cd /home/uibutler/current && " +
-        "/home/uibutler/.local/share/pnpm/pnpm run build:backend && " +
+        "pnpm install --frozen-lockfile && " +
+        "pnpm run build:backend && " +
         "pm2 reload ecosystem.config.js --env production",
       // Fixed ssh_options format
       ssh_options: ["ForwardAgent=yes"],
