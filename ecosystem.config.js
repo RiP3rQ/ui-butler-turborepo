@@ -25,7 +25,16 @@ module.exports = {
       // Modified post-deploy to be more robust
       "post-deploy":
         // post-deploy script runs in a non-interactive shell and doesn't have access to the same PATH and environment variables as your interactive shell. You need to source your .bashrc or .bash_profile to ensure that the PATH and environment variables are set correctly.
-        "source ~/.profile && source ~/.bashrc && source ~/.nvm/nvm.sh && export NVM_DIR=$HOME/.nvm && [ -s $NVM_DIR/nvm.sh ] && . $NVM_DIR/nvm.sh && /home/uibutler/.local/share/pnpm/pnpm install && /home/uibutler/.local/share/pnpm/pnpm run build:backend && pm2 reload ecosystem.config.js --env production",
+        "source ~/.profile && " +
+        "source ~/.bashrc && " +
+        "source ~/.nvm/nvm.sh && " +
+        "export NVM_DIR=$HOME/.nvm && " +
+        "[ -s $NVM_DIR/nvm.sh ] && . $NVM_DIR/nvm.sh && " +
+        "export NODE_OPTIONS='--max_old_space_size=2048' && " +
+        "/home/uibutler/.local/share/pnpm/pnpm install --production --ignore-scripts && " +
+        "/home/uibutler/.local/share/pnpm/pnpm rebuild && " +
+        "/home/uibutler/.local/share/pnpm/pnpm run build:backend && " +
+        "pm2 reload ecosystem.config.js --env production",
       // Fixed ssh_options format
       ssh_options: ["ForwardAgent=yes"],
       // Add these recommended options

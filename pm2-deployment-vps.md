@@ -73,3 +73,16 @@ ForwardAgent yes
 export GITHUB_USERNAME=[YOUR_GITHUB_USERNAME]
 export GITHUB_TOKEN=[YOUR_GITHUB_PRIVATE_TOKEN]
 pm2 deploy production setup
+
+# When running week VPS, run this command to activate swap memory
+
+## SSH into your VPS and run the following commands
+
+sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+
+# Make swap permanent
+
+sudo echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
