@@ -24,13 +24,7 @@ module.exports = {
       "pre-deploy-local": "echo 'Starting deployment process'",
       // Modified post-deploy to be more robust
       "post-deploy":
-        "set -e && " +
-        "source ~/.nvm/nvm.sh && " +
-        "export NVM_DIR=$HOME/.nvm && " +
-        "[ -s $NVM_DIR/nvm.sh ] && . $NVM_DIR/nvm.sh && " +
-        "pnpm install && " +
-        "pnpm run build:backend && " +
-        "pm2 reload ecosystem.config.js --env production",
+        "source ~/.nvm/nvm.sh && export NVM_DIR=$HOME/.nvm && [ -s $NVM_DIR/nvm.sh ] && . $NVM_DIR/nvm.sh && pnpm install && pnpm run build:backend && pm2 reload ecosystem.config.js --env production",
       // Fixed ssh_options format
       ssh_options: ["ForwardAgent=yes"],
       // Add these recommended options
