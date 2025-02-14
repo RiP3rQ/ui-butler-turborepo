@@ -20,7 +20,8 @@ module.exports = {
       // Remove the pre-setup GitHub check as it's causing issues
       "post-setup": "echo 'Post-setup complete'",
       // Modified pre-deploy to ensure it runs correctly
-      "pre-deploy": "git pull",
+      "pre-deploy":
+        "git pull && curl -fsSL https://get.pnpm.io/install.sh | env PNPM_VERSION=10.2.1 sh -",
       "pre-deploy-local": "echo 'Starting deployment process'",
       // Modified post-deploy to be more robust
       "post-deploy":
