@@ -34,6 +34,8 @@ module.exports = {
         "export NODE_OPTIONS='--max_old_space_size=2048' && " +
         "cd /home/uibutler/current && " +
         "pnpm install --frozen-lockfile && " +
+        "pnpm run build:types && " +
+        "pnpm run bootstrap && " +
         "pnpm run build:backend && " +
         "pm2 reload ecosystem.config.js --env production",
       // Fixed ssh_options format
