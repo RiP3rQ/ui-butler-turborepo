@@ -23,50 +23,14 @@ module.exports = {
       "pre-deploy": "git pull",
       "pre-deploy-local": "echo 'Starting deployment process'",
       // Modified post-deploy to be more robust
-      "post-deploy": `
-        set -e
-        
-        echo "Starting deployment process..."
-        
-        # Load NVM
-        echo "Loading NVM..."
-        export NVM_DIR=$HOME/.nvm
-        [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-        
-        # Verify NVM and Node
-        if ! command -v nvm &> /dev/null; then
-          echo "NVM is not installed or not properly loaded"
-          exit 1
-        fi
-        
-        # Verify PNPM
-        if ! command -v pnpm &> /dev/null; then
-          echo "Installing pnpm..."
-          npm install -g pnpm
-        fi
-        
-        echo "Installing dependencies..."
-        pnpm install --frozen-lockfile || {
-          echo "Failed to install dependencies"
-          exit 1
-        }
-        
-        echo "Building backend..."
-        pnpm run build:backend || {
-          echo "Failed to build backend"
-          exit 1
-        }
-        
-        echo "Reloading PM2..."
-        pm2 reload ecosystem.config.js --env production || {
-          echo "Failed to reload PM2"
-          exit 1
-        }
-        
-        echo "Deployment completed successfully!"
-      `
-        .trim()
-        .replace(/\n        /g, "\n"),
+      "post-deploy":
+        "set -e && " +
+        "source ~/.nvm/nvm.sh && " +
+        "export NVM_DIR=$HOME/.nvm && " +
+        "[ -s $NVM_DIR/nvm.sh ] && . $NVM_DIR/nvm.sh && " +
+        "pnpm install && " +
+        "pnpm run build:backend && " +
+        "pm2 reload ecosystem.config.js --env production",
       // Fixed ssh_options format
       ssh_options: ["ForwardAgent=yes"],
       // Add these recommended options
