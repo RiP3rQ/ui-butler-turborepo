@@ -10,7 +10,15 @@ export async function middleware(
   request: NextRequest,
 ): Promise<NextResponse | Response | undefined> {
   const cookiesStore = await getCookies();
-  const authenticated = Boolean(cookiesStore.get(AUTH_COOKIE)?.value);
+  const authCookies = cookiesStore.get(AUTH_COOKIE);
+  console.log("authCookies", authCookies);
+  const authenticated = Boolean(
+    authCookies?.value &&
+      // @ts-expect-error `expires` is a cookie object
+      authCookies?.expires > Date.now() &&
+      // @ts-expect-error `maxAge` is a cookie object
+      authCookies?.maxAge,
+  );
 
   if (authenticated) {
     // redirect to main page if authenticated

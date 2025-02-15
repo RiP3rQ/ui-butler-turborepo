@@ -9,8 +9,16 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
   const cookieStore = await cookies();
   const authCookie = cookieStore.get(AUTH_COOKIE);
 
+  console.log("authCookie", authCookie);
+
   // Quick check for valid auth cookie
-  if (authCookie?.value) {
+  if (
+    authCookie?.value &&
+    // @ts-expect-error `expires` is a cookie object
+    authCookie.expires > Date.now() &&
+    // @ts-expect-error `maxAge` is a cookie object
+    authCookie.maxAge
+  ) {
     try {
       const parts = authCookie.value.split(".");
       if (parts[1]) {
