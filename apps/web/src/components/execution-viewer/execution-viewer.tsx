@@ -39,13 +39,17 @@ interface ExecutionViewerProps {
   initialData: WorkflowsEndpoints["getWorkflowExecutions"]["response"];
 }
 
+/**
+ * ExecutionViewer component displays details about a workflow execution,
+ * including its phases, status, duration, and logs.
+ */
 export function ExecutionViewer({
   executionId,
   initialData,
 }: Readonly<ExecutionViewerProps>): JSX.Element {
   const [selectedPhase, setSelectedPhase] = useState<number | null>(null);
 
-  const query = useQuery({
+  const { data: executionData } = useQuery({
     queryKey: ["execution", executionId],
     queryFn: () =>
       getWorkflowExecutionWithPhasesDetailsFunction({
@@ -59,76 +63,147 @@ export function ExecutionViewer({
         : 1000,
   });
 
-  const pendingChangesQuery = useQuery({
-    queryKey: ["pendingChanges", query.data.execution.id],
-    queryFn: () => getPendingChanges({ executionId: query.data.execution.id }),
+  const { data: pendingChangesData } = useQuery({
+    queryKey: ["pendingChanges", executionData.execution.id],
+    queryFn: () =>
+      getPendingChanges({ executionId: executionData.execution.id }),
     enabled:
-      query.data.execution.status ===
+      executionData.execution.status ===
       WorkflowExecutionStatus.WAITING_FOR_APPROVAL,
     refetchInterval: (q) =>
       q.state.data?.status === WorkflowExecutionStatus.RUNNING ? 1000 : false,
   });
 
-  console.log("pendingChangesQuery", pendingChangesQuery);
-
   const shouldOpenApproveChangesModal = useMemo(() => {
     return Boolean(
-      query.data.execution.status ===
+      executionData.execution.status ===
         WorkflowExecutionStatus.WAITING_FOR_APPROVAL &&
-        pendingChangesQuery.data?.pendingApproval,
+        pendingChangesData?.pendingApproval,
     );
-  }, [query.data.execution.status, pendingChangesQuery.data?.pendingApproval]);
-
-  console.log("shouldOpenApproveChangesModal", shouldOpenApproveChangesModal);
+  }, [executionData.execution.status, pendingChangesData?.pendingApproval]);
 
   const isRunning =
-    query.data.execution.status === WorkflowExecutionStatus.RUNNING;
+    executionData.execution.status === WorkflowExecutionStatus.RUNNING;
 
-  // currently running phase-executors
   useEffect(() => {
-    // While running we auto-select the currently running phase-executors in sidebar
-    const allPhases = query.data.phases;
-    if (isRunning) {
-      // Select the last executed phase-executors
-      const phaseToSelect = [...allPhases].sort((a, b) =>
-        protoTimestampToDate(a.startedAt) > protoTimestampToDate(b.startedAt)
-          ? -1
-          : 1,
-      )[0];
-
-      setSelectedPhase(phaseToSelect?.id ?? null);
-      return;
-    }
-    const phaseToSelect = [...allPhases].sort((a, b) =>
-      protoTimestampToDate(a.completedAt) > protoTimestampToDate(b.completedAt)
+    const allPhases = executionData.phases;
+    const sortedPhases = [...allPhases].sort((a, b) =>
+      protoTimestampToDate(a.startedAt) > protoTimestampToDate(b.startedAt)
         ? -1
         : 1,
-    )[0];
-    setSelectedPhase(phaseToSelect?.id ?? null);
-  }, [query.data.phases, isRunning, setSelectedPhase]);
+    );
 
-  const phaseDetails = useQuery({
-    queryKey: ["phaseDetails", selectedPhase, query.data.execution.status],
+    const phaseToSelect = isRunning
+      ? sortedPhases[0]
+      : (sortedPhases.find((phase) => phase.completedAt) ?? sortedPhases[0]);
+
+    setSelectedPhase(phaseToSelect?.id ?? null);
+  }, [executionData.phases, isRunning]);
+
+  const { data: phaseDetails, status: phaseDetailsStatus } = useQuery({
+    queryKey: ["phaseDetails", selectedPhase, executionData.execution.status],
     enabled: selectedPhase !== null,
     queryFn: () =>
       getWorkflowPhaseDetailsFunction({ phaseId: selectedPhase ?? 1 }),
   });
 
-  console.log("phaseDetails", phaseDetails.data);
-
   const duration = dateToDurationString(
-    protoTimestampToDate(query.data.execution.startedAt).toISOString(),
-    protoTimestampToDate(query.data.execution.completedAt).toISOString(),
+    protoTimestampToDate(executionData.execution.startedAt).toISOString(),
+    protoTimestampToDate(executionData.execution.completedAt).toISOString(),
   );
 
-  const creditsConsumed = getPhasesTotalCost(query.data.phases);
+  const creditsConsumed = getPhasesTotalCost(executionData.phases);
+
+  const renderPhaseContent = () => {
+    if (!selectedPhase) {
+      return (
+        <div className="flex w-full h-full justify-center items-center flex-col gap-2">
+          <div className="flex flex-col gap-1 text-center">
+            <p className="font-bold text-2xl">No phase selected</p>
+            <p className="text-md text-muted-foreground">
+              Select a phase to view its details
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    const selectedPhaseData = executionData.phases.find(
+      (phase) => phase.id === selectedPhase,
+    );
+
+    if (isRunning && selectedPhaseData && !selectedPhaseData.completedAt) {
+      return (
+        <div className="flex w-full h-full justify-center items-center flex-col gap-2">
+          <Loader2Icon className="animate-spin" size={40} />
+          <p className="font-bold">Phase is being executed, please wait...</p>
+        </div>
+      );
+    }
+
+    if (phaseDetailsStatus === "pending" || !phaseDetails) {
+      return (
+        <div className="flex w-full h-full justify-center items-center">
+          <Loader2Icon className="animate-spin" size={40} />
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex flex-col py-4 container gap-4 overflow-auto">
+        <div className="flex items-center gap-2">
+          <Badge className="space-x-4" variant="outline">
+            <div className="flex gap-1 items-center">
+              <ClockIcon className="stroke-muted-foreground" size={18} />
+              <span>Duration</span>
+            </div>
+            <span>
+              {dateToDurationString(
+                protoTimestampToDate(
+                  phaseDetails.phase.startedAt,
+                ).toISOString(),
+                protoTimestampToDate(
+                  phaseDetails.phase.completedAt,
+                ).toISOString(),
+              ) ?? "-"}
+            </span>
+          </Badge>
+          <Badge className="space-x-4" variant="outline">
+            <div className="flex gap-1 items-center">
+              <CoinsIcon className="stroke-muted-foreground" size={18} />
+              <span>Credits</span>
+            </div>
+            <span>{phaseDetails.phase.creditsCost}</span>
+          </Badge>
+        </div>
+
+        <ParameterViewer
+          paramsJSON={phaseDetails.phase.inputs}
+          subTitle="Inputs used for this phase"
+          title="Inputs"
+        />
+
+        <ParameterViewer
+          paramsJSON={phaseDetails.phase.outputs}
+          subTitle="Outputs generated by this phase"
+          title="Outputs"
+        />
+
+        <LogsViewer
+          logs={phaseDetails.logs}
+          subTitle="Logs generated by this phase"
+          title="Logs"
+        />
+      </div>
+    );
+  };
 
   return (
     <div className="flex w-full h-full">
       <ApproveChangesDialog
-        executionId={query.data.execution.id}
+        executionId={executionData.execution.id}
         open={shouldOpenApproveChangesModal}
-        data={pendingChangesQuery.data?.pendingApproval}
+        data={pendingChangesData?.pendingApproval}
       />
       <aside className="w-[440px] min-w-[440px] max-w-[440px] border-r-2 border-separate flex flex-grow flex-col overflow-hidden">
         <div className="py-4 px-2">
@@ -138,9 +213,11 @@ export function ExecutionViewer({
             value={
               <div className="font-semibold capitalize flex gap-2 items-center">
                 <ExecutionPhaseStatusBadge
-                  status={query.data.execution.status as IExecutionPhaseStatus} // SHOULD be casted as WorkflowExecutionStatus
+                  status={
+                    executionData.execution.status as IExecutionPhaseStatus
+                  }
                 />
-                <span>{query.data.execution.status}</span>
+                <span>{executionData.execution.status}</span>
               </div>
             }
           />
@@ -149,9 +226,9 @@ export function ExecutionViewer({
             label="Started at"
             value={
               <span className="lowercase">
-                {query.data.execution.startedAt
+                {executionData.execution.startedAt
                   ? formatDistanceToNow(
-                      protoTimestampToDate(query.data.execution.startedAt),
+                      protoTimestampToDate(executionData.execution.startedAt),
                       {
                         addSuffix: true,
                       },
@@ -182,85 +259,12 @@ export function ExecutionViewer({
         <Separator />
         <ExecutionRunPhasesRenderer
           isRunning={isRunning}
-          phases={query.data.phases}
+          phases={executionData.phases}
           selectedPhase={selectedPhase}
           setSelectedPhase={setSelectedPhase}
         />
       </aside>
-      <div className="flex w-full h-full">
-        {/*  TODO: CREATE A CUSTOM RENDERER */}
-        {isRunning ? (
-          <div className="flex w-full h-full justify-center items-center flex-col gap-2">
-            <div>
-              <Loader2Icon className="animate-spin" size={40} />
-            </div>
-            <div>
-              <p className="font-bold">
-                Workflow is being executed, please wait...
-              </p>
-            </div>
-          </div>
-        ) : null}
-        {!isRunning && !selectedPhase && (
-          <div className="flex w-full h-full justify-center items-center flex-col gap-2">
-            <div className="flex flex-col gap-1 text-center">
-              <p className="font-bold text-2xl">No phase selected</p>
-              <p className="text-md text-muted-foreground">
-                Select a phase to view its details
-              </p>
-            </div>
-          </div>
-        )}
-        {!isRunning && selectedPhase && phaseDetails.data ? (
-          <div className="flex flex-col py-4 container gap-4 overflow-auto">
-            <div className="flex items-center gap-2">
-              {/*  TIME BADGE */}
-              <Badge className="space-x-4" variant="outline">
-                <div className="flex gap-1 items-center">
-                  <ClockIcon className="stroke-muted-foreground" size={18} />
-                  <span>Duration</span>
-                </div>
-                <span>
-                  {dateToDurationString(
-                    protoTimestampToDate(
-                      phaseDetails.data.phase.startedAt,
-                    ).toISOString(),
-                    protoTimestampToDate(
-                      phaseDetails.data.phase.completedAt,
-                    ).toISOString(),
-                  ) ?? "-"}
-                </span>
-              </Badge>
-              {/* Creadits BADGE*/}
-              <Badge className="space-x-4" variant="outline">
-                <div className="flex gap-1 items-center">
-                  <CoinsIcon className="stroke-muted-foreground" size={18} />
-                  <span>Credits</span>
-                </div>
-                <span>{phaseDetails.data.phase.creditsCost}</span>
-              </Badge>
-            </div>
-
-            <ParameterViewer
-              paramsJSON={phaseDetails.data.phase.inputs}
-              subTitle="Inputs used for this phase-executors"
-              title="Inputs"
-            />
-
-            <ParameterViewer
-              paramsJSON={phaseDetails.data.phase.outputs}
-              subTitle="Outputs generated by this phase-executors"
-              title="Outputs"
-            />
-
-            <LogsViewer
-              logs={phaseDetails.data.logs}
-              subTitle="Logs generated by this phase-executors"
-              title="Logs"
-            />
-          </div>
-        ) : null}
-      </div>
+      <div className="flex w-full h-full">{renderPhaseContent()}</div>
     </div>
   );
 }
