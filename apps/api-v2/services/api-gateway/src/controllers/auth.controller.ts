@@ -316,6 +316,10 @@ export class AuthController {
       secure: process.env.NODE_ENV === 'production',
     };
 
+    if (process.env.NODE_ENV === 'production' && process.env.DOMAIN) {
+      console.log('GENERATING COOKIE FOR DOMAIN: ', process.env.DOMAIN);
+    }
+
     try {
       const expiresAccessToken = new Date(
         (authData.expiresAccessToken.seconds || 0) * 1000 +

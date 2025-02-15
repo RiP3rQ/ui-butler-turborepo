@@ -51,7 +51,7 @@
       "cache": true
     },
     "build:backend": {
-      "dependsOn": ["^build:backend"],
+      "dependsOn": ["clean:microservices", "^build:backend"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**"],
       "cache": true
@@ -91,6 +91,9 @@
       "persistent": true
     },
     "clean": {
+      "cache": false
+    },
+    "clean:microservices": {
       "cache": false
     }
   }
