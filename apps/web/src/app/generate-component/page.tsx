@@ -41,6 +41,7 @@ import CodeEditor from "@/components/code-editor/editor";
 import { useComponentModalStore } from "@/store/component-modal-store";
 import { CopyButton } from "@/components/copy-code-button";
 import { PageHeader } from "@/components/page-header";
+import { getApiUrl } from "@/lib/api-client";
 
 export default function GenerateComponentPage(): JSX.Element {
   const createNewComponentModal = useComponentModalStore(
@@ -55,7 +56,7 @@ export default function GenerateComponentPage(): JSX.Element {
   });
 
   const { messages, isLoading, append, reload, stop } = useChat({
-    api: `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333/api"}/components/generate`,
+    api: `${getApiUrl()}/components/generate`,
     credentials: "include",
     headers: {
       Accept: "text/event-stream",
