@@ -1,0 +1,47 @@
+#name: Deploy backend to VPS using PM2
+#
+#on:
+#  push:
+#    branches: # Only deploy on push to main branch
+#      - main
+#  workflow_dispatch:  # Allow manual trigger
+#
+#jobs:
+#  deploy:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Fail if not manually triggered on main branch # Comment this out if you want automatic deployment on main branch
+#        if: github.event_name != 'workflow_dispatch' || github.ref != 'refs/heads/main'
+#        run: |
+#          echo "This action can only be run manually on the main branch"
+#          exit 1
+#
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#
+#      - name: Setup SSH Agent
+#        uses: webfactory/ssh-agent@v0.5.3
+#        with:
+#          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+#
+#      - name: Add VPS to known hosts
+#        run: |
+#          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+#
+#      - name: Deploy to VPS
+#        run: |
+#          ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} "\
+#            cd ${{ secrets.DEPLOY_PATH }} && \
+#            git fetch origin main && \
+#            git reset --hard origin/main && \
+#            pnpm install && \
+#            pm2 reload ecosystem.config.js --env production \
+#          "
+#
+#      - name: Verify Deployment
+#        run: |
+#          ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} "\
+#            cd ${{ secrets.DEPLOY_PATH }} && \
+#            pm2 list \
+#          "
