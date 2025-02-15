@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { AUTH_COOKIE, getAuthCookie, REFRESH_COOKIE } from "@/lib/auth-cookie";
-import { getApiUrl } from "@/lib/api-client";
+import { getApiUrl } from "@/lib/api-url";
 
 export async function middleware(request: NextRequest): Promise<NextResponse> {
   const cookieStore = await cookies();

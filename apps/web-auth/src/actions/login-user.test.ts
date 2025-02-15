@@ -67,7 +67,7 @@ describe("loginUser", () => {
     // Mock the return value of getAuthCookie
     (
       getAuthCookie as jest.MockedFunction<typeof getAuthCookie>
-    ).mockReturnValue(apiResponse);
+    ).mockReturnValue(apiResponse as any); // TODO: FIX THIS as any
   });
 
   afterAll(() => {

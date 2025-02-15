@@ -66,7 +66,7 @@ describe("registerUser", () => {
     });
     (
       getAuthCookie as jest.MockedFunction<typeof getAuthCookie>
-    ).mockReturnValue(apiResponse);
+    ).mockReturnValue(apiResponse as any); // TODO: FIX THIS as any
   });
 
   it("should call fetch with correct arguments", async () => {

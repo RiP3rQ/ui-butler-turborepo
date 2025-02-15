@@ -41,7 +41,7 @@ import CodeEditor from "@/components/code-editor/editor";
 import { useComponentModalStore } from "@/store/component-modal-store";
 import { CopyButton } from "@/components/copy-code-button";
 import { PageHeader } from "@/components/page-header";
-import { getApiUrl } from "@/lib/api-client";
+import { getApiUrl } from "@/lib/api-url";
 
 export default function GenerateComponentPage(): JSX.Element {
   const createNewComponentModal = useComponentModalStore(

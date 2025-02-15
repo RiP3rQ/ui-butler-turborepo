@@ -116,7 +116,7 @@ describe("decodeToken", () => {
   });
 
   it("should return undefined when token is undefined", () => {
-    const result = decodeToken(undefined);
+    const result = decodeToken(undefined as any); // TODO: Fix this as any
     expect(result).toBeUndefined();
   });
 
