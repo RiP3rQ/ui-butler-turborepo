@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { AUTH_COOKIE, getAuthCookie, REFRESH_COOKIE } from "@/lib/auth-cookie";
+import { getApiUrl } from "@/lib/api-client";
 
 export async function middleware(request: NextRequest): Promise<NextResponse> {
   const cookieStore = await cookies();
@@ -25,15 +26,10 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
   // Try refresh token
   const refreshCookie = cookieStore.get(REFRESH_COOKIE);
   if (refreshCookie) {
-    const refreshRes = await fetch(
-      process.env.NEXT_PUBLIC_API_UR
-        ? `${process.env.NEXT_PUBLIC_API_URL}/api/auth/refresh`
-        : `http://localhost:3333/api/auth/refresh`,
-      {
-        headers: { Cookie: cookieStore.toString() },
-        method: "POST",
-      },
-    );
+    const refreshRes = await fetch(`${getApiUrl()}/auth/refresh`, {
+      headers: { Cookie: cookieStore.toString() },
+      method: "POST",
+    });
 
     if (refreshRes.ok) {
       const authCookies = getAuthCookie(refreshRes);
