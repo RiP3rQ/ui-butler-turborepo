@@ -33,15 +33,22 @@ jobs:
       - name: Deploy to VPS
         run: |
           ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} "\
-            cd ${{ secrets.DEPLOY_PATH }} && \
-            git fetch origin main && \
-            git reset --hard origin/main && \
-            source ~/.bashrc && \
-            source ~/.nvm/nvm.sh && \
-            export NVM_DIR=$HOME/.nvm && \
-            [ -s $NVM_DIR/nvm.sh ] && \. $NVM_DIR/nvm.sh && \
-            npm install -g pnpm@10.2.1 && \
-            pnpm install && \
-            pnpm run build:backend && \
-            pnpm run start:backend \
-          "
+             set -e && \
+             cd ${{ secrets.DEPLOY_PATH }} && \
+             echo 'Fetching latest code...' && \
+             git fetch origin main && \
+             git reset --hard origin/main && \
+             echo 'Setting up Node environment...' && \
+             source ~/.bashrc && \
+             source ~/.nvm/nvm.sh && \
+             export NVM_DIR=\$HOME/.nvm && \
+             [ -s \$NVM_DIR/nvm.sh ] && \. \$NVM_DIR/nvm.sh && \
+             echo 'Installing dependencies...' && \
+             npm install -g pnpm@10.2.1 && \
+             npm install -g pm2 && \
+             pnpm install && \
+             echo 'Building backend...' && \
+             pnpm run build:backend && \
+             echo 'Restarting service...' && \
+             pm2 restart backend || pm2 start 'pnpm run start:backend' --name backend \
+           "
