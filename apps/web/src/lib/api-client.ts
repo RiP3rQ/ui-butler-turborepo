@@ -1,5 +1,6 @@
 import { type RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { cookies } from "next/headers";
+import { getApiUrl } from "@/lib/api-url";
 
 /**
  * Supported HTTP methods for API requests
@@ -76,8 +77,7 @@ export class ApiError extends Error {
  * API Client for making HTTP requests
  */
 export class ApiClient {
-  private static readonly baseUrl: string =
-    process.env.NEXT_PUBLIC_API_URL ?? "";
+  private static readonly baseUrl: string = getApiUrl();
 
   /**
    * Makes a GET request to the specified endpoint
