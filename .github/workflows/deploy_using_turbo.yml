@@ -34,6 +34,13 @@ jobs:
         run: |
           ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} "\
              set -e && \
+             echo 'Setting up environment variables in azure...' && \
+             export TURBO_TOKEN=${{ secrets.TURBO_TOKEN }} && \
+             export TURBO_TEAM=${{ vars.TURBO_TEAM }} && \
+             export NODE_ENV=production && \
+             export HUSKY=0 && \
+             export CI=1 && \
+             echo 'Changing directory to deployment path...' && \
              cd ${{ secrets.DEPLOY_PATH }} && \
              echo 'Fetching latest code...' && \
              git fetch origin main && \
