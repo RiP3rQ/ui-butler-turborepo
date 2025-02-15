@@ -24,9 +24,6 @@ function ExecutionRunPhasesRenderer({
           className="w-full justify-between"
           key={phase.id}
           onClick={() => {
-            if (isRunning) {
-              return;
-            }
             setSelectedPhase(selectedPhase === phase.id ? null : phase.id);
           }}
           variant={selectedPhase === phase.id ? "default" : "ghost"}
