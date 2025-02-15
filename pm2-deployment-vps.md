@@ -21,9 +21,9 @@ nvm install --lts
 curl -fsSL https://get.pnpm.io/install.sh | sh - [LATEST_VERSION]
 curl -fsSL https://get.pnpm.io/install.sh | env PNPM_VERSION=10.2.1 sh - [SPECIFIC_VERSION]
 
-# Install pm2 via pnpm
+# Install pm2
 
-pnpm install pm2 -g
+npm install pm2 -g
 
 # Install nginx
 
@@ -40,6 +40,7 @@ sudo nano /etc/nginx/sites-available/api.uibutler.site
 # Type this into file ->
 
 server {
+listen 3333;
 server_name your_domain www.your_domain;
 
     location / {
@@ -52,6 +53,8 @@ server_name your_domain www.your_domain;
     }
 
 }
+[ctrl + s] -> save
+[ctrl + x] -> exit
 
 # Create a symlink to tell Nginx for available sites
 

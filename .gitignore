@@ -37,4 +37,3 @@ yarn-error.log*
 dist/
 
 .idea
-azure_public_key
