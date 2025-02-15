@@ -70,8 +70,16 @@ ForwardAgent yes
 
 # If deploying a private repository, before running the pm2 command, you need to authenticate with the repository
 
-export GITHUB_USERNAME=[YOUR_GITHUB_USERNAME]
-export GITHUB_TOKEN=[YOUR_GITHUB_PRIVATE_TOKEN]
+(Needed only for private repositories)
+(LINUX)export GITHUB_USERNAME=[YOUR_GITHUB_USERNAME] or (WINDOWS)$env:GITHUB_USERNAME=[YOUR_GITHUB_USERNAME]
+(LINUX)export GITHUB_TOKEN=[YOUR_GITHUB_PRIVATE_TOKEN]  or (WINDOWS)$env:GITHUB_TOKEN=[YOUR_GITHUB_PRIVATE_TOKEN]
+
+(Setup system environment variables(windows in this case) for turbo remote caching for faster deployment)
+(LINUX)export TURBO_TOKEN=[YOUR_VERCEL_TOKEN] or (WINDOWS)$env:TURBO_ENV=[YOUR_VERCEL_TOKEN]
+(LINUX)export TURBO_TEAM=[YOUR_VERCEL_TEAM]  or (WINDOWS)$env:TURBO_TEAM=[YOUR_VERCEL_TEAM]
+
+# Deploy the setup production script to the vps
+
 pm2 deploy production setup
 
 # When running week VPS, run this command to activate swap memory
@@ -83,6 +91,6 @@ sudo chmod 600 /swapfile
 sudo mkswap /swapfile
 sudo swapon /swapfile
 
-# Make swap permanent
+# Makes swap permanent
 
 sudo echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab

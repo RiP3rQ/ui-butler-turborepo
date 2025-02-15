@@ -25,6 +25,11 @@ module.exports = {
       // Modified post-deploy to be more robust
       // post-deploy script runs in a non-interactive shell and doesn't have access to the same PATH and environment variables as your interactive shell. You need to source your .bashrc or .bash_profile to ensure that the PATH and environment variables are set correctly.
       "post-deploy":
+        `export TURBO_TOKEN=${process.env.TURBO_TOKEN} && ` +
+        `export TURBO_TEAM=${process.env.TURBO_TEAM} && ` +
+        "export NODE_ENV=production && " +
+        "export HUSKY=0 && " +
+        "export CI=1 && " +
         "source ~/.profile && " +
         "source ~/.bashrc && " +
         "source ~/.nvm/nvm.sh && " +
