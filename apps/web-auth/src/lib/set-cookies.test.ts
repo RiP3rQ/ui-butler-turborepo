@@ -40,7 +40,7 @@ describe("setResponseCookies", () => {
 
   it("should set both accessToken and refreshToken cookies", async () => {
     const cookie = { accessToken, refreshToken };
-    await setResponseCookies(cookie);
+    await setResponseCookies(cookie as any); // TODO: FIX THIS as any
 
     expect(mockCookiesSet).toHaveBeenCalledTimes(2);
     expect(mockCookiesSet).toHaveBeenCalledWith(accessToken);
@@ -49,7 +49,7 @@ describe("setResponseCookies", () => {
 
   it("should set only accessToken cookie if refreshToken is missing", async () => {
     const cookie = { accessToken, refreshToken: undefined };
-    await setResponseCookies(cookie);
+    await setResponseCookies(cookie as any); // TODO: FIX THIS as any
 
     expect(mockCookiesSet).toHaveBeenCalledTimes(1);
     expect(mockCookiesSet).toHaveBeenCalledWith(accessToken);
@@ -57,7 +57,7 @@ describe("setResponseCookies", () => {
 
   it("should set only refreshToken cookie if accessToken is missing", async () => {
     const cookie = { accessToken: undefined, refreshToken };
-    await setResponseCookies(cookie);
+    await setResponseCookies(cookie as any); // TODO: FIX THIS as any
 
     expect(mockCookiesSet).toHaveBeenCalledTimes(1);
     expect(mockCookiesSet).toHaveBeenCalledWith(refreshToken);

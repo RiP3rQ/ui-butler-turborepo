@@ -175,7 +175,7 @@ function parseCookieString(cookieStr: string): ParsedCookieData {
  * @param token - JWT token string
  * @returns Expiration date or undefined if invalid
  */
-function decodeToken(token: string): Date | undefined {
+export function decodeToken(token: string): Date | undefined {
   try {
     const decoded = jwtDecode<DecodedToken>(token);
     return typeof decoded.exp === "number" && !isNaN(decoded.exp)
