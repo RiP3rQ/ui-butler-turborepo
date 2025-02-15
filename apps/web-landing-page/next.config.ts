@@ -10,17 +10,17 @@ const nextConfig: NextConfig = {
       {
         source: "/dashboard",
         destination: `${NEXT_PUBLIC_MAIN_APP_URL}/dashboard`,
-        permanent: false,
+        permanent: true,
       },
       {
         source: "/sign-in",
         destination: `${NEXT_PUBLIC_MAIN_AUTH_APP_URL}/sign-in`,
-        permanent: false,
+        permanent: true,
       },
       {
         source: "/sign-up",
         destination: `${NEXT_PUBLIC_MAIN_AUTH_APP_URL}/sign-up`,
-        permanent: false,
+        permanent: true,
       },
     ];
   },

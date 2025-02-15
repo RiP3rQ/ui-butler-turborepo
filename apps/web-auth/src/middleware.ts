@@ -2,6 +2,7 @@ import { cookies as getCookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 import { type ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { AUTH_COOKIE, getAuthCookie, REFRESH_COOKIE } from "./lib/auth-cookie";
+import { getApiUrl, getMainAppUrl } from "@/lib/utils";
 
 const unauthenticatedRoutes = ["/sign-up", "/sign-in", "/auth/google"];
 
@@ -12,17 +13,12 @@ export async function middleware(
   const authenticated = Boolean(cookiesStore.get(AUTH_COOKIE)?.value);
 
   if (authenticated) {
-    const mainAppUrl =
-      process.env.NEXT_PUBLIC_MAIN_APP_URL ?? "http://localhost:3001/dashboard";
-
     // redirect to main page if authenticated
-    return NextResponse.redirect(mainAppUrl);
+    return NextResponse.redirect(getMainAppUrl());
   }
 
   if (cookiesStore.get(REFRESH_COOKIE)) {
-    const apiUrl =
-      process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333/api";
-    const refreshRes = await fetch(`${apiUrl}/auth/refresh`, {
+    const refreshRes = await fetch(`${getApiUrl()}/auth/refresh`, {
       headers: {
         Cookie: cookiesStore.toString(),
       },

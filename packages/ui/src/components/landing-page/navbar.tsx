@@ -52,22 +52,22 @@ export function Navbar({ isUserLoggedIn }: Readonly<NavbarProps>): JSX.Element {
             {isUserLoggedIn ? (
               <div className="flex items-center gap-2">
                 {/* <Icons.User className="w-6 h-6" /> */}
-                <Link
+                <a
                   className={buttonVariants({ size: "sm", variant: "default" })}
                   href="/dashboard"
                 >
                   Dashboard
-                </Link>
+                </a>
               </div>
             ) : (
               <div className={"flex items-center gap-2"}>
-                <Link
+                <a
                   className={buttonVariants({ size: "sm", variant: "ghost" })}
                   href="/sign-in"
                 >
                   Login
-                </Link>
-                <Link
+                </a>
+                <a
                   className={buttonVariants({
                     size: "sm",
                     className: "hidden md:flex",
@@ -75,7 +75,7 @@ export function Navbar({ isUserLoggedIn }: Readonly<NavbarProps>): JSX.Element {
                   href="/sign-up"
                 >
                   Register
-                </Link>
+                </a>
               </div>
             )}
           </div>

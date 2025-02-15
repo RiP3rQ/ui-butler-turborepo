@@ -1,9 +1,10 @@
 import { type JSX } from "react";
 import { GithubIcon, GlobeIcon } from "lucide-react";
 import SocialPlatformButton from "@/app/sign-in/_components/social-platform-buttons/social-platform-button";
+import { getApiUrl } from "@/lib/utils";
 
 const getSocialAuthUrl = (provider: "google" | "github"): string => {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const apiUrl = getApiUrl();
 
   if (!apiUrl || apiUrl.trim() === "") {
     console.error(
