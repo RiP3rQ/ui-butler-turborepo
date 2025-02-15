@@ -40,7 +40,7 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["node_modules", "dist/**", ".next/**", "!.next/cache/**"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
       "cache": true
     },
     "build:frontend": {
@@ -57,12 +57,12 @@
     },
     "bootstrap": {
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["node_modules", "dist/**"],
+      "outputs": ["dist/**"],
       "cache": true
     },
     "build:types": {
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["node_modules", "dist/**"],
+      "outputs": ["dist/**"],
       "cache": true
     },
     "start": {
