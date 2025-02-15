@@ -17,8 +17,7 @@ export default async function registerUser(
     // @ts-expect-error - this is a temporary fix to remove the confirmPassword field
     delete formData["confirmPassword"];
 
-    const apiUrl = getApiUrl();
-    const res = await fetch(`${apiUrl}/auth/register`, {
+    const res = await fetch(`${getApiUrl()}/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),

@@ -78,7 +78,7 @@ describe("loginUser", () => {
     await loginUser(formData);
 
     expect(global.fetch).toHaveBeenCalledWith(
-      `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333/api"}/auth/login`,
+      `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333"}/api/auth/login`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

@@ -16,8 +16,7 @@ export default async function loginUser(
     // Validate the form data
     loginFormSchema.parse(formData);
 
-    const apiUrl = getApiUrl();
-    const res = await fetch(`${apiUrl}/auth/login`, {
+    const res = await fetch(`${getApiUrl()}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
