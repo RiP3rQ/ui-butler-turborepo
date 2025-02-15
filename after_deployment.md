@@ -32,7 +32,7 @@ crontab -l
 
 # Install cronitor
 
-curl https://cronitor.io/install-linux?sudo=1 -H "API-KEY: 9ec8a8e560844034b1fe726b61b4ebb9" | sh
+curl https://cronitor.io/install-linux?sudo=1 -H "API-KEY: [YOUR_API_KEY]" | sh
 
 # Run cronitor discover to add monitoring of the cron job with logs
 
