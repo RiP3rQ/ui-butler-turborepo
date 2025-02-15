@@ -6,7 +6,7 @@
     "bootstrap": "turbo run bootstrap",
     "build": "turbo run build:types & turbo run bootstrap & turbo run build --parallel --concurrency=20",
     "build:frontend": "turbo run build:types & turbo run build:frontend",
-    "build:backend": "turbo run build:types & turbo run bootstrap & turbo run build:backend --parallel --concurrency=20",
+    "build:backend": "turbo run build:types & turbo run bootstrap & turbo run build:backend --concurrency=2",
     "start": "turbo run start --parallel --concurrency=20",
     "start:frontend": "turbo run start:frontend",
     "start:backend": "turbo run start:backend",
