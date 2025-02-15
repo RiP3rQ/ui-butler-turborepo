@@ -49,7 +49,7 @@ export function ExecutionViewer({
 }: Readonly<ExecutionViewerProps>): JSX.Element {
   const [selectedPhase, setSelectedPhase] = useState<number | null>(null);
 
-  const { data: executionData, status: executionStatus } = useQuery({
+  const { data: executionData } = useQuery({
     queryKey: ["execution", executionId],
     queryFn: () =>
       getWorkflowExecutionWithPhasesDetailsFunction({
