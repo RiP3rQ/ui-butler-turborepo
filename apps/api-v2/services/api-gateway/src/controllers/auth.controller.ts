@@ -28,7 +28,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { type Response } from 'express';
+import { CookieOptions, type Response } from 'express';
 import { AuthProxyService } from '../proxies/auth.proxy.service';
 
 /**
@@ -307,14 +307,18 @@ export class AuthController {
       httpOnly: true,
       path: '/',
       ...(process.env.NODE_ENV === 'production' && {
-        sameSite: 'lax' as const,
+        sameSite: 'lax',
       }),
       ...(process.env.NODE_ENV === 'production' &&
         process.env.DOMAIN && {
           domain: `.${process.env.DOMAIN}`,
         }),
       secure: process.env.NODE_ENV === 'production',
-    };
+    } satisfies CookieOptions;
+
+    if (process.env.NODE_ENV === 'production' && process.env.DOMAIN) {
+      console.log('GENERATING COOKIE FOR DOMAIN: ', process.env.DOMAIN);
+    }
 
     try {
       const expiresAccessToken = new Date(

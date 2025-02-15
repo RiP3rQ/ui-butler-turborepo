@@ -26,7 +26,9 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
   const refreshCookie = cookieStore.get(REFRESH_COOKIE);
   if (refreshCookie) {
     const refreshRes = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333/api"}/auth/refresh`,
+      process.env.NEXT_PUBLIC_API_UR
+        ? `${process.env.NEXT_PUBLIC_API_URL}/api/auth/refresh`
+        : `http://localhost:3333/api/auth/refresh`,
       {
         headers: { Cookie: cookieStore.toString() },
         method: "POST",

@@ -8,6 +8,7 @@
   "scripts": {
     "build": "nest build",
     "build:backend": "nest build",
+    "clean:microservices": "rimraf dist",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:backend": "node dist/main",
