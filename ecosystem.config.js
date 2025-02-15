@@ -10,7 +10,7 @@ module.exports = {
     production: {
       key: "uibutler.pem",
       user: "uibutler",
-      host: "20.215.33.2",
+      host: "20.215.32.98",
       ref: "origin/main",
       // VVV ---- FOR PRIVATE REPOS ---- VVV
       repo: `https://${process.env.GITHUB_USERNAME}:${process.env.GITHUB_TOKEN}@github.com/RiP3rQ/ui-butler-turborepo.git`,
