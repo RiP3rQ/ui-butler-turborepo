@@ -93,11 +93,17 @@ ForwardAgent yes
 (LINUX)export GITHUB_USERNAME=[YOUR_GITHUB_USERNAME] or (WINDOWS)$env:GITHUB_USERNAME=[YOUR_GITHUB_USERNAME]
 (LINUX)export GITHUB_TOKEN=[YOUR_GITHUB_PRIVATE_TOKEN]  or (WINDOWS)$env:GITHUB_TOKEN=[YOUR_GITHUB_PRIVATE_TOKEN]
 
-(Setup system environment variables(windows in this case) for turbo remote caching for faster deployment)
-(LINUX)export TURBO_TOKEN=[YOUR_VERCEL_TOKEN] or (WINDOWS)$env:TURBO_ENV=[YOUR_VERCEL_TOKEN]
-(LINUX)export TURBO_TEAM=[YOUR_VERCEL_TEAM]  or (WINDOWS)$env:TURBO_TEAM=[YOUR_VERCEL_TEAM]
+# If you want to utilize turbo remote caching for faster deployment, you need to set up the following environment variables
 
-# Deploy the setup production script to the vps
+(Setup LOCAL system environment variables for turbo remote caching for faster deployment)
+(LINUX)export TURBO_TOKEN=[YOUR_VERCEL_TOKEN] or (
+WINDOWS)$env:TURBO_ENV=[YOUR_VERCEL_TOKEN] (from https://vercel.com/account/settings/tokens)
+(LINUX)export TURBO_TEAM=[YOUR_VERCEL_TEAM]  or (WINDOWS)$env:TURBO_TEAM=[YOUR_VERCEL_TEAM] (everything after
+vercel.com/[YOUR_VERCEL_TEAM])
+
+### ALL THIS ENVIRONMENT VARIABLES ARE NEEDED TO BE USED IN THE 'ecosystem.congif.js' FILE
+
+# Deploy the setup production setup script to the vps
 
 pm2 deploy production setup
 
@@ -113,3 +119,7 @@ sudo swapon /swapfile
 # Makes swap permanent
 
 sudo echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+
+# Deploy the setup production script to the vps
+
+pm2 deploy production
