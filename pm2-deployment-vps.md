@@ -37,6 +37,22 @@ sudo systemctl restart nginx
 
 sudo nano /etc/nginx/sites-available/api.uibutler.site
 
+# Type this into file ->
+
+server {
+server_name your_domain www.your_domain;
+
+    location / {
+        proxy_pass http://localhost:3333;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+}
+
 # Create a symlink to tell Nginx for available sites
 
 sudo ln -s /etc/nginx/sites-available/api.uibutler.site /etc/nginx/sites-enabled/
