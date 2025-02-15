@@ -9,6 +9,13 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+      NODE_ENV: production
+      HUSKY: 0
+      CI: 1
+
 
     steps:
       - name: Checkout code
@@ -29,6 +36,11 @@ jobs:
             cd ${{ secrets.DEPLOY_PATH }} && \
             git fetch origin main && \
             git reset --hard origin/main && \
+            source ~/.bashrc && \
+            source ~/.nvm/nvm.sh && \
+            export NVM_DIR=$HOME/.nvm && \
+            [ -s $NVM_DIR/nvm.sh ] && \. $NVM_DIR/nvm.sh && \
+            npm install -g pnpm@10.2.1 && \
             pnpm install && \
             pnpm run build:backend && \
             pnpm run start:backend \
