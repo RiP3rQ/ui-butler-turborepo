@@ -18,28 +18,67 @@ export interface Cookie {
 }
 
 export interface AuthCookies {
-  accessToken?: Cookie | string;
-  refreshToken?: Cookie | string;
+  accessToken?: Cookie;
+  refreshToken?: Cookie;
 }
 
 export interface DecodedToken {
   exp?: number;
-
   [key: string]: unknown;
 }
 
-/**
- * Constants for cookie names
- */
 export const COOKIE_CONFIG = {
   AUTH_COOKIE: "Authentication",
   REFRESH_COOKIE: "Refresh",
 } as const;
 
 /**
+ * Splits Set-Cookie header into individual cookie strings
+ * Uses a more precise approach to split only on commas that separate cookies
+ */
+function splitSetCookieHeader(setCookieHeader: string): string[] {
+  const cookies: string[] = [];
+  let currentCookie = "";
+  let depth = 0;
+
+  // Iterate through the header character by character
+  for (let i = 0; i < setCookieHeader.length; i++) {
+    const char = setCookieHeader[i];
+
+    // Track nested structures (if any)
+    if (char === "{" || char === "[") depth++;
+    if (char === "}" || char === "]") depth--;
+
+    // Only split on commas that are followed by a known cookie name
+    if (char === "," && depth === 0) {
+      const nextChars = setCookieHeader.slice(i + 1).trim();
+      if (
+        nextChars.startsWith(COOKIE_CONFIG.AUTH_COOKIE) ||
+        nextChars.startsWith(COOKIE_CONFIG.REFRESH_COOKIE)
+      ) {
+        cookies.push(currentCookie.trim());
+        currentCookie = "";
+        continue;
+      }
+    }
+
+    currentCookie += char;
+  }
+
+  // Don't forget the last cookie
+  if (currentCookie) {
+    cookies.push(currentCookie.trim());
+  }
+
+  return cookies.filter(
+    (cookie) =>
+      cookie.startsWith(COOKIE_CONFIG.AUTH_COOKIE) ||
+      cookie.startsWith(COOKIE_CONFIG.REFRESH_COOKIE),
+  );
+}
+
+/**
  * Parses individual cookie string into structured object
- * @param cookieStr - Raw cookie string from Set-Cookie header
- * @returns Parsed cookie object or undefined if parsing fails
  */
 export function parseCookieString(cookieStr: string):
   | {
@@ -49,30 +88,31 @@ export function parseCookieString(cookieStr: string):
     }
   | undefined {
   try {
-    const parts = cookieStr.split(";").map((part) => part.trim());
-    const [nameValue, ...attributes] = parts;
-    if (!nameValue) return undefined;
-    const [name, value] = nameValue.split("=").map((part) => part.trim());
+    const [nameValue, ...attributeParts] = cookieStr
+      .split(";")
+      .map((part) => part.trim());
+    const [name, ...valueParts] = nameValue.split("=");
+    const value = valueParts.join("="); // Handle values containing =
 
-    if (!name || !value) return undefined;
+    const attributes: Record<string, string | boolean> = {};
 
-    const attributesObj: Record<string, string | boolean> = {};
+    for (const attr of attributeParts) {
+      if (!attr) continue;
 
-    attributes.forEach((attr) => {
-      const [key, val] = attr.split("=").map((part) => part.trim());
-      // Handle boolean attributes like HttpOnly, Secure
-      if (!key) return;
+      const [key, ...valParts] = attr.split("=").map((part) => part.trim());
+      const val = valParts.join("="); // Handle values containing =
+
       if (!val) {
-        attributesObj[key.toLowerCase()] = true;
+        attributes[key.toLowerCase()] = true;
       } else {
-        attributesObj[key.toLowerCase()] = val;
+        attributes[key.toLowerCase()] = val;
       }
-    });
+    }
 
     return {
-      name,
-      value,
-      attributes: attributesObj,
+      name: name.trim(),
+      value: value.trim(),
+      attributes,
     };
   } catch (error) {
     console.error("Error parsing cookie string:", error);
@@ -82,8 +122,6 @@ export function parseCookieString(cookieStr: string):
 
 /**
  * Decodes JWT token and extracts expiration date
- * @param token - JWT token string
- * @returns Expiration date or undefined if token is invalid
  */
 export function decodeToken(token: string | undefined): Date | undefined {
   if (!token) return undefined;
@@ -100,9 +138,7 @@ export function decodeToken(token: string | undefined): Date | undefined {
 }
 
 /**
- * Converts parsed cookie data into Cookie interface
- * @param parsedCookie - Parsed cookie data
- * @returns Structured Cookie object
+ * Creates a Cookie object from parsed cookie data
  */
 function createCookieObject(parsedCookie: {
   name: string;
@@ -131,8 +167,6 @@ function createCookieObject(parsedCookie: {
 
 /**
  * Main function to extract and parse authentication cookies from response
- * @param response - Response object containing Set-Cookie header
- * @returns Object containing parsed access and refresh tokens
  */
 export const getAuthCookie = (response: Response): AuthCookies | undefined => {
   const setCookieHeader = response.headers.get("Set-Cookie");
@@ -140,16 +174,23 @@ export const getAuthCookie = (response: Response): AuthCookies | undefined => {
     return undefined;
   }
 
-  // Split multiple cookies and parse each one
-  // Using a more robust splitting approach to handle commas in cookie values
-  const cookieStrings = setCookieHeader.split(/,(?=[^\s])/);
-  const cookies = cookieStrings.map((cookie) => parseCookieString(cookie));
+  // Split and parse cookies
+  const cookieStrings = splitSetCookieHeader(setCookieHeader);
+  console.log("Split cookies:", cookieStrings); // Debug log
+
+  const cookies = cookieStrings
+    .map((cookie) => parseCookieString(cookie))
+    .filter(
+      (cookie): cookie is NonNullable<typeof cookie> => cookie !== undefined,
+    );
+
+  console.log("Parsed cookies:", cookies); // Debug log
 
   const authCookie = cookies.find(
-    (cookie) => cookie?.name === COOKIE_CONFIG.AUTH_COOKIE,
+    (cookie) => cookie.name === COOKIE_CONFIG.AUTH_COOKIE,
   );
   const refreshCookie = cookies.find(
-    (cookie) => cookie?.name === COOKIE_CONFIG.REFRESH_COOKIE,
+    (cookie) => cookie.name === COOKIE_CONFIG.REFRESH_COOKIE,
   );
 
   return {
