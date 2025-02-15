@@ -2,8 +2,6 @@ import { ExecutionProto } from '@microservices/proto';
 import { Controller, Logger } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { ExecutionsService } from './execution.service';
-import { InjectQueue } from '@nestjs/bullmq';
-import type { Queue } from 'bullmq';
 
 @Controller()
 export class ExecutionsController {
@@ -11,7 +9,7 @@ export class ExecutionsController {
 
   constructor(
     private readonly executionsService: ExecutionsService,
-    @InjectQueue('executions') private executionsQueue: Queue,
+    // @InjectQueue('executions') private executionsQueue: Queue,
   ) {}
 
   @GrpcMethod('ExecutionsService', 'GetPendingChanges')
@@ -37,7 +35,9 @@ export class ExecutionsController {
     this.logger.debug(
       `Executing workflow ${String(request.workflowExecutionId)} with component ${String(request.componentId)}`,
     );
-    await this.executionsQueue.add('executions', request);
+    // COMMENTED OUT BULLMQ FOR TOO MANY REDIS CONNECTIONS IN PRODUCTION
+    // await this.executionsQueue.add('executions', request);
+    await this.executionsService.executeWorkflow(request);
     return {
       $type: 'api.execution.Empty',
     };
