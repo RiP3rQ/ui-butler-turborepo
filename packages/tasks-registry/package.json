@@ -11,8 +11,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "build:backend": "tsc",
-    "build:frontend": "tsc",
+    "bootstrap": "tsc",
     "dev": "tsc --watch",
     "clean": "rimraf dist node_modules .turbo",
     "type-check": "tsc --noEmit",
