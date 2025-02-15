@@ -40,11 +40,11 @@ sudo nano /etc/nginx/sites-available/api.uibutler.site
 # Type this into file ->
 
 server {
-listen 3333;
-server_name your_domain www.your_domain;
+listen 80;
+server_name your_domain www.your_domain [OR AT THE BEGINNING URL OF THE VPS];
 
     location / {
-        proxy_pass http://localhost:3333;
+        proxy_pass http://120.0.0.1:3333/;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
