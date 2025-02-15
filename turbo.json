@@ -34,7 +34,8 @@
     "API_VERSION",
     "SSL_KEY_PATH",
     "SSL_CERT_PATH",
-    "CACHE_DISABLED"
+    "CACHE_DISABLED",
+    "DOMAIN"
   ],
   "tasks": {
     "build": {

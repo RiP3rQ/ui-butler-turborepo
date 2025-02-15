@@ -305,6 +305,14 @@ export class AuthController {
 
     const cookieOptions = {
       httpOnly: true,
+      path: '/',
+      ...(process.env.NODE_ENV === 'production' && {
+        sameSite: 'lax' as const,
+      }),
+      ...(process.env.NODE_ENV === 'production' &&
+        process.env.DOMAIN && {
+          domain: `.${process.env.DOMAIN}`,
+        }),
       secure: process.env.NODE_ENV === 'production',
     };
 
