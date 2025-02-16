@@ -4,7 +4,12 @@ import { type ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { AUTH_COOKIE, getAuthCookie, REFRESH_COOKIE } from "./lib/auth-cookie";
 import { getApiUrl, getMainAppUrl } from "@/lib/utils";
 
-const unauthenticatedRoutes = ["/sign-up", "/sign-in", "/auth/google"];
+const unauthenticatedRoutes = [
+  "/sign-up",
+  "/sign-in",
+  "/auth/google",
+  "/auth/github",
+];
 
 export async function middleware(
   request: NextRequest,

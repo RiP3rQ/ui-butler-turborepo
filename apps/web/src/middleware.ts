@@ -9,8 +9,6 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
   const cookieStore = await cookies();
   const authCookie = cookieStore.get(AUTH_COOKIE);
 
-  console.log("authCookie", authCookie);
-
   // Quick check for valid auth cookie
   if (authCookie?.value) {
     try {
@@ -46,3 +44,7 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 
   return NextResponse.redirect(new URL("/sign-in", request.url));
 }
+
+export const config = {
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+};
