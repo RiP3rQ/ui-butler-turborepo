@@ -12,13 +12,7 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
   console.log("authCookie", authCookie);
 
   // Quick check for valid auth cookie
-  if (
-    authCookie?.value &&
-    // @ts-expect-error `expires` is a cookie object
-    authCookie.expires > Date.now() &&
-    // @ts-expect-error `maxAge` is a cookie object
-    authCookie.maxAge
-  ) {
+  if (authCookie?.value) {
     try {
       const parts = authCookie.value.split(".");
       if (parts[1]) {
