@@ -1,58 +1,245 @@
-# Turborepo Tailwind CSS starter
+# 🎨 UI-Butler 🤵
 
-This is an official starter Turborepo.
+# Advanced Full-Stack Monorepo Architecture with Nest.js (Microservices) & Next.js (Microfrontends)
 
-## Using this example
+## 📚 Educational Repository Overview
 
-Run the following command:
+This repository serves as a **comprehensive educational resource demonstrating** a **production-ready**, full-stack
+monolithic architecture using **Nest.js microservices** and **Next.js microfrontends** within a **Turborepo** as a
+meneger. It showcases **industry best practices**, advanced architectural patterns, and modern development workflows.
 
-```sh
-npx create-turbo@latest -e with-tailwind
+### 🎯 Purpose
+
+- Provide a complete reference implementation of microservices architecture
+- Demonstrate real-world patterns and best practices
+- Serve as a learning resource for developers at all levels
+- Showcase advanced features and integrations
+- Illustrate various deployment strategies
+
+### 🏗️ Architecture Overview
+
+```mermaid
+COMMUNICATION FLOW
+
+Client[Client Applications] --> Gateway[API Gateway]
+
+Gateway --> Auth [auth-microservice]
+Gateway --> Analytics [analytics-microservice]
+Gateway --> Billing [billing-microservice]
+Gateway --> Components [components-microservice]
+Gateway --> Workflow Executions [executions-microservice]
+Gateway --> Projects [projects-microservice]
+Gateway --> Users [users-microservice]
+Gateway --> Workflows [workflows-microservice]
+
+PROJECT STRUCTURE
+
+"Microfrontends"
+   -> MF1[Auth Frontend]
+   -> MF2[Main App Frontend]
+   -> MF3[Landing Page Frontend]
+
+
+"Backend Microservices"
+    -> API GATEWAY
+
+        -> Auth
+        -> Analytics
+        -> Billing
+        -> Components
+        -> Workflow Executions
+        -> Projects
+        -> Users
+        -> Workflows
+
 ```
 
-## What's inside?
+## 🚀 Key Features
 
-This Turborepo includes the following packages/apps:
+### Backend Architecture
 
-### Apps and Packages
+- **Microservices Framework**: Nest.js-based services with modular architecture
+- **Inter-Service Communication**: gRPC protocol implementation
+- **Caching System**: Custom Redis-based caching implementation
+- **Authentication**: JWT and Passport.js integration
+- **Rate Limiting**: Redis-based request rate limiting
+- **Job Processing**: BullMQ integration for async
+  operations [recomended only for dev because of large amount of redis calls in production]
+- **AI Integration**: `GEMINI` AI response streaming
+- **Workflow Management**: Custom AI workflow handling for planning the execution
+- **Microservices proxing**: Implementing proxing from API-GATEWAY to components microservice
+- **Hybrid backend microservice**: Generated a Nest.js app that is a hybrid application. It serves as an HTTP server and
+  as a microservice.
+- **Containerization**: Containerizing microservices with docker and docker-compose
 
-- `docs`: a [Next.js](https://nextjs.org/) app with [Tailwind CSS](https://tailwindcss.com/)
-- `web`: another [Next.js](https://nextjs.org/) app with [Tailwind CSS](https://tailwindcss.com/)
-- `ui`: a stub React component library with [Tailwind CSS](https://tailwindcss.com/) shared by both `web` and `docs` applications
-- `@shared/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@shared/typescript-config`: `tsconfig.json`s used throughout the monorepo
+### Frontend Implementation
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+- **Microfrontends**: Next.js-based modular frontend architecture
+- **SSE**: Showcased how to handle Server-Sent Events on the frontend and backend for instantaneous streaming the AI
+  responses
+- **Workflow Visualization**: React-flow implementation
+- **State Management**: Advanced state management patterns
+- **API Integration**: Comprehensive API service integration
 
-### Building packages/ui
+## 🛠️ Technology Stack
 
-This example is set up to produce compiled styles for `ui` components into the `dist` directory. The component `.tsx` files are consumed by the Next.js apps directly using `transpilePackages` in `next.config.js`. This was chosen for several reasons:
+- **Monorepo Management**: Turborepo
+- **Backend Framework**: Nest.js
+- **Frontend Framework**: Next.js
+- **Language**: TypeScript
+- **Communication**: gRPC, REST
+- **Caching**: Redis
+- **Queue**: BullMQ
+- **Database**: PostgreSQL
+- **Testing**: Jest
+- **Deployment**: Docker, PM2, turbo
+- **CI/CD**: GitHub Actions
+- **Auth**: JWT, passport.js
 
-- Make sharing one `tailwind.config.js` to apps and packages as easy as possible.
-- Make package compilation simple by only depending on the Next.js Compiler and `tailwindcss`.
-- Ensure Tailwind classes do not overwrite each other. The `ui` package uses a `ui-` prefix for it's classes.
-- Maintain clear package export boundaries.
+## 📦 Repository Structure
 
-Another option is to consume `packages/ui` directly from source without building. If using this option, you will need to update the `tailwind.config.js` in your apps to be aware of your package locations, so it can find all usages of the `tailwindcss` class names for CSS compilation.
-
-For example, in [tailwind.config.js](packages/tailwind-config/tailwind.config.js):
-
-```js
-  content: [
-    // app content
-    `src/**/*.{js,ts,jsx,tsx}`,
-    // include packages if not transpiling
-    "../../packages/ui/*.{js,ts,jsx,tsx}",
-  ],
+```
+├── apps/
+│   ├── api/ (deprecated -> monolith nest.js app)
+│   ├── api-v2/
+│   │   ├── libs/
+│   │   │   ├── common/
+│   │   │   ├── database/
+│   │   │   ├── proto/
+│   │   │   └── redis/
+│   │   ├── services/
+│   │   │   ├── analytics-service/
+│   │   │   ├── api-gateway/
+│   │   │   ├── auth-service/
+│   │   │   ├── billing-service/
+│   │   │   ├── components-service/
+│   │   │   ├── execution-service/
+│   │   │   ├── projects-service/
+│   │   │   ├── users-service/
+│   │   │   └── workflows-service/
+│   │   └── README.md
+│   ├── web/
+│   ├── web-auth/
+│   └── web-landing-page/
+│
+└── packages/
+    ├── config-eslint/
+    ├── config-tailwindcss/
+    ├── config-typescript/
+    ├── prompts/
+    ├── tasks-registry/
+    ├── types/
+    └── ui/
 ```
 
-If you choose this strategy, you can remove the `tailwindcss` and `autoprefixer` dependencies from the `ui` package.
+## 🚦 Getting Started
 
-### Utilities
+### Prerequisites
 
-This Turborepo has some additional tools already setup for you:
+- Node.js >= 22
+- Docker
+- Redis (Upstash)
+- PostgreSQL
+- pnpm
+- `GEMINI` API key
 
-- [Tailwind CSS](https://tailwindcss.com/) for styles
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/RiP3rQ/ui-butler-turborepo.git
+   cd ui-butler-turborepo
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   pnpm install
+   ```
+
+3. Configure environment variables for microservice and microfrontend:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+4. Start development environment:
+   ```bash
+   pnpm dev
+   ```
+
+## 🚢 Deployment Strategies
+
+### 1. Docker Deployment
+
+Detailed documentation for containerized deployment:
+
+- Container orchestration
+- Service configuration
+- Network setup
+- Automatic deployment using Github Actions
+
+### 2. PM2 Ecosystem
+
+Guide for PM2-based deployment:
+
+- Process management
+- Ecosystem handling
+- Automatic deployment using Github Actions
+
+### 3. Turborepo with PM2
+
+Advanced deployment strategy combining:
+
+- Build optimization
+- Service orchestration
+- Resource management
+- Performance tuning
+- Automatic deployment using Github Actions
+
+## 🧪 Testing
+
+- Service-level test examples
+- Component testing strategies
+- Mocking patterns
+- Test coverage requirements
+
+## 📈 Performance Optimization
+
+- Turborepo caching strategies
+- Build optimization techniques
+- Service performance tuning
+- Caching implementation
+- Rate limiting implementation
+- Asynchronous processing of workflows using BullMQ
+
+## 🔒 Security Implementations
+
+- JWT authentication
+- Rate limiting
+- CORS configuration
+- Form validation
+- Security headers
+- SSL/TLS setup
+
+## 🤝 Contributing
+
+We welcome contributions! If you have any tips how to improve this repo, just create a PR.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👥 Maintainers
+
+- [RiP3rQ](https://github.com/RiP3rQ)
+
+---
+
+## 💡 Support
+
+For support, please:
+
+1. Create an issue
+2. Contact me through my website -> [Website](https://riperq.pro/)
