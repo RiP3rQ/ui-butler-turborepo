@@ -81,9 +81,10 @@ export class ComponentsController implements OnModuleInit {
         const requestId = randomUUID();
 
         // Set streaming-specific headers
-        proxyReq.setHeader('X-Request-ID', requestId);
-        proxyReq.setHeader('Connection', 'keep-alive');
-        proxyReq.setHeader('Cache-Control', 'no-cache');
+        proxyReq.setHeader('X-Request-ID', requestId); // Request ID for tracing
+        proxyReq.setHeader('Connection', 'keep-alive'); // Server-Sent Events
+        proxyReq.setHeader('Cache-Control', 'no-cache'); // Server-Sent Events
+        proxyReq.setHeader('Content-Type', 'text/event-stream'); // Server-Sent Events
         proxyReq.setHeader('X-Accel-Buffering', 'no'); // Disable nginx buffering
 
         if (originalReq.headers.authorization) {
