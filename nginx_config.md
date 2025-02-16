@@ -93,12 +93,10 @@ if ($host = api.uibutler.xyz) {
 return 301 https://$host$request_uri;
 }
 
-# Listen on port 80 (HTTP)
+    # Listen on port 80 (HTTP)
+    listen 80;
+    server_name api.uibutler.xyz;
+    # Return 404 for all other HTTP requests
+    return 404;
 
-listen 80;
-server_name api.uibutler.xyz;
-
-# Return 404 for all other HTTP requests
-
-return 404;
 }
