@@ -59,6 +59,7 @@ server_name your_domain www.your_domain [OR AT THE BEGINNING URL OF THE VPS];
 }
 [ctrl + s] -> save
 [ctrl + x] -> exit
+[ctrl + k] -> delete whole line
 
 # Create a symlink to tell Nginx for available sites
 
