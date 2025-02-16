@@ -15,10 +15,12 @@ export default function LoginPage(): React.ReactNode {
     <div className="container relative hidden h-[800px] flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
       <div className="relative hidden min-h-screen flex-col bg-muted p-10 text-white dark:border-r lg:flex">
         <div className="absolute inset-0 bg-zinc-900" />
-        <div className="relative z-20 flex items-center gap-2">
-          <Icons.Logo className="size-12" />
-          <span className="text-4xl font-bold">UI-Butler</span>
-        </div>
+        <a href={process.env.NEXT_PUBLIC_LANDING_PAGE_URL}>
+          <div className="relative z-20 flex items-center gap-2 cursor-pointer">
+            <Icons.Logo className="size-12" />
+            <span className="text-4xl font-bold">UI-Butler</span>
+          </div>
+        </a>
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-2xl">

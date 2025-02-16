@@ -35,7 +35,8 @@
     "SSL_KEY_PATH",
     "SSL_CERT_PATH",
     "CACHE_DISABLED",
-    "DOMAIN"
+    "DOMAIN",
+    "COOKIE_DOMAIN"
   ],
   "tasks": {
     "build": {

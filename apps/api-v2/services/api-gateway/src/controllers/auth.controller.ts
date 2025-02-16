@@ -311,7 +311,7 @@ export class AuthController {
       }),
       ...(process.env.NODE_ENV === 'production' &&
         process.env.DOMAIN && {
-          domain: `${process.env.DOMAIN}`,
+          domain: `.${process.env.DOMAIN}`,
         }),
       secure: process.env.NODE_ENV === 'production',
     } satisfies CookieOptions;

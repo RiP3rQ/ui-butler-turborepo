@@ -47,7 +47,6 @@ export function SidebarFooterContent(): JSX.Element {
   async function handleUserLogout(): Promise<void> {
     await logoutUser();
     toast.success("You have been logged out.");
-    router.push("/sign-in");
   }
 
   if (isLoading || !user) {
