@@ -167,6 +167,12 @@ export class ComponentsController {
     @Res() res: Response,
   ) {
     try {
+      // Configure response headers for streaming
+      res.setHeader('Content-Type', 'text/event-stream');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Connection', 'keep-alive');
+      res.setHeader('X-Accel-Buffering', 'no');
+
       const prompt = body.messages[body.messages.length - 1]?.content;
 
       if (!prompt) {

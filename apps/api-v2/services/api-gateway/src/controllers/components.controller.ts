@@ -14,6 +14,7 @@ import {
   Controller,
   Get,
   Inject,
+  Logger,
   NotFoundException,
   OnModuleInit,
   Param,
@@ -42,6 +43,7 @@ import { RateLimit } from '../throttling/rate-limit.decorator';
 import { GrpcClientProxy } from '../proxies/grpc-client.proxy';
 import { handleGrpcError } from '../utils/grpc-error.util';
 import { ThrottleGuard } from '../throttling/throttle.guard';
+import { randomUUID } from 'node:crypto';
 
 /**
  * Controller handling component-related operations through gRPC communication
@@ -55,13 +57,19 @@ import { ThrottleGuard } from '../throttling/throttle.guard';
 export class ComponentsController implements OnModuleInit {
   private componentsService: ComponentsProto.ComponentsServiceClient;
   private readonly proxy: HttpProxy;
+  private readonly logger = new Logger(ComponentsController.name);
 
   constructor(
     @Inject('COMPONENTS_SERVICE')
     private readonly client: ClientGrpc,
     private readonly grpcClient: GrpcClientProxy,
   ) {
-    this.proxy = HttpProxy.createProxyServer();
+    this.proxy = HttpProxy.createProxyServer({
+      // Streaming-specific proxy options
+      timeout: 600000, // 10 minutes
+      proxyTimeout: 600000,
+      ws: true,
+    });
     this.setupProxyEventHandlers();
   }
 
@@ -70,6 +78,14 @@ export class ComponentsController implements OnModuleInit {
       'proxyReq',
       (proxyReq: ClientRequest, req: IncomingMessage) => {
         const originalReq = req as Request;
+        const requestId = randomUUID();
+
+        // Set streaming-specific headers
+        proxyReq.setHeader('X-Request-ID', requestId);
+        proxyReq.setHeader('Connection', 'keep-alive');
+        proxyReq.setHeader('Cache-Control', 'no-cache');
+        proxyReq.setHeader('X-Accel-Buffering', 'no'); // Disable nginx buffering
+
         if (originalReq.headers.authorization) {
           proxyReq.setHeader(
             'Authorization',
@@ -83,6 +99,8 @@ export class ComponentsController implements OnModuleInit {
           proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
           proxyReq.write(bodyData);
         }
+
+        this.logger.debug(`Streaming request initiated: ${requestId}`);
       },
     );
   }
@@ -248,10 +266,12 @@ export class ComponentsController implements OnModuleInit {
     @Req() req: Request,
     @Res() res: Response,
   ): Promise<void> {
+    const target = `http://${process.env.COMPONENTS_SERVICE_HOST ?? 'localhost'}:${
+      process.env.COMPONENTS_SERVICE_HTTP_PORT ?? '3348'
+    }`;
+
     return new Promise((resolve, reject) => {
-      const target = `http://${process.env.COMPONENTS_SERVICE_HOST ?? 'localhost'}:${
-        process.env.COMPONENTS_SERVICE_HTTP_PORT ?? '3348'
-      }`;
+      const streamStart = Date.now();
 
       this.proxy.web(
         req,
@@ -285,6 +305,13 @@ export class ComponentsController implements OnModuleInit {
         if (proxyRes.statusCode === 200) {
           resolve();
         }
+      });
+
+      this.proxy.on('end', () => {
+        const streamEnd = Date.now();
+        console.log(
+          `Streaming request completed in ${streamEnd - streamStart}ms`,
+        );
       });
     });
   }

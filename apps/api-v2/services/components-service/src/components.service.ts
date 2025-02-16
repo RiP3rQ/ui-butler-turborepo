@@ -5,6 +5,7 @@ import {
   UpdateComponentCodeDto,
   User,
 } from '@microservices/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import {
   and,
   Component,
@@ -16,7 +17,6 @@ import {
   projects,
 } from '@microservices/database';
 import { ComponentsProto } from '@microservices/proto';
-import { Inject, Injectable } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { singleGeneratedPrompts } from '@shared/prompts';
 import { CodeType, protoCodeTypeToEnumMap } from '@shared/types';
@@ -25,6 +25,8 @@ import { type Response } from 'express';
 
 @Injectable()
 export class ComponentsService {
+  private readonly logger = new Logger(ComponentsService.name);
+
   constructor(
     @Inject(DATABASE_CONNECTION)
     private readonly database: DrizzleDatabase,
@@ -213,20 +215,21 @@ export class ComponentsService {
     res: Response,
   ): Promise<void> {
     const enhancedPrompt = this.enhancePrompt(prompt);
+    // STREAMING HANDLER
     pipeDataStreamToResponse(res, {
       execute: async (dataStreamWriter) => {
-        dataStreamWriter.writeData('initialized call');
+        dataStreamWriter.writeData('stream_started');
 
         const result = streamText({
           model: GET_GEMINI_MODEL(),
           prompt: enhancedPrompt,
+          maxTokens: 4096,
         });
-
+        // WRITE STREAM DATA
         result.mergeIntoDataStream(dataStreamWriter);
       },
       onError: (error) => {
-        // Error messages are masked by default for security reasons.
-        // If you want to expose the error message to the client, you can do so here:
+        this.logger.error('Stream processing error:', error);
         return error instanceof Error ? error.message : String(error);
       },
     });
