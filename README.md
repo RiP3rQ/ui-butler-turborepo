@@ -19,39 +19,21 @@ meneger. It showcases **industry best practices**, advanced architectural patter
 ### 🏗️ Architecture Overview
 
 ```mermaid
-COMMUNICATION FLOW
-
-Client[Client Applications] --> Gateway[API Gateway]
-
-Gateway --> Auth [auth-microservice]
-Gateway --> Analytics [analytics-microservice]
-Gateway --> Billing [billing-microservice]
-Gateway --> Components [components-microservice]
-Gateway --> Workflow Executions [executions-microservice]
-Gateway --> Projects [projects-microservice]
-Gateway --> Users [users-microservice]
-Gateway --> Workflows [workflows-microservice]
-
-PROJECT STRUCTURE
-
-"Microfrontends"
-   -> MF1[Auth Frontend]
-   -> MF2[Main App Frontend]
-   -> MF3[Landing Page Frontend]
-
-
-"Backend Microservices"
-    -> API GATEWAY
-
-        -> Auth
-        -> Analytics
-        -> Billing
-        -> Components
-        -> Workflow Executions
-        -> Projects
-        -> Users
-        -> Workflows
-
+graph TD
+    MF1[Auth Microfrontend] <--> Gateway[API Gateway]
+    MF2[Main App Microfrontend] <--> Gateway[API Gateway]
+    Gateway <--> auth-microservice
+    Gateway <--> analytics-microservice
+    Gateway <--> billing-microservice
+    Gateway <--> components-microservice
+    Gateway <--> executions-microservice
+    Gateway <--> projects-microservice
+    Gateway <--> users-microservice
+    Gateway <--> workflows-microservice
+    auth-microservice <--> users-microservice
+    workflows-microservice --> executions-microservice
+    MF3[Landing Page Microfrontend] --> MF1[Auth Microfrontend]
+    MF1[Auth Microfrontend] --> MF2[Main App Microfrontend]
 ```
 
 ## 🚀 Key Features
