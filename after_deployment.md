@@ -14,6 +14,11 @@ nano restart.sh
 
 chmod +x restart.sh
 
+# Generate simlinks for the node and npm binaries from the nvm installation
+
+sudo ln -s "$(which node)" /usr/bin/node
+sudo ln -s "$(which npm)" /usr/bin/npm
+
 # Add a cron job to restart the server
 
 crontab -e
