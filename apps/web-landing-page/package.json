@@ -7,6 +7,7 @@
     "clean": "rimraf dist node_modules .turbo .next",
     "build": "next build",
     "build:frontend": "next build",
+    "dev:frontend": "next dev --turbopack --port 3000",
     "start": "next start --port 3000",
     "start:frontend": "next start --port 3000",
     "type-check": "tsc --noEmit",

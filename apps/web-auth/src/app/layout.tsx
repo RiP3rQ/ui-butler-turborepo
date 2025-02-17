@@ -3,8 +3,9 @@ import "@shared/ui/globals.css";
 import { ThemeProvider } from "@shared/ui/providers/theme-provider";
 import type { Metadata } from "next";
 import { Toaster } from "@shared/ui/components/ui/sonner";
-import { SITE_CONFIG } from "../config";
-import { QueryProvider } from "../components/query-provider";
+import { SITE_CONFIG } from "@/config";
+import { QueryProvider } from "@/components/query-provider";
+import { PrefetchCrossZoneLinks } from "@/components/prefetch-cross-zone-links";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -33,6 +34,23 @@ export default function RootLayout({
           <ThemeProvider defaultTheme="dark">
             {children}
             <Toaster />
+            <PrefetchCrossZoneLinks
+              hrefs={[
+                // MAIN APP MICRO FRONTEND REDIRECTS
+                "/dashboard",
+                "/analytics-dashboard",
+                "/billing",
+                "/projects",
+                "/workflow",
+                "/workflow-list",
+                "/credentials",
+                "/generate-component",
+                "/save-component",
+                "/setup",
+                // LADING PAGE MICRO FRONTEND REDIRECTS
+                "/",
+              ]}
+            />
           </ThemeProvider>
         </QueryProvider>
       </body>

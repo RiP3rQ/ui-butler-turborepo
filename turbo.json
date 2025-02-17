@@ -87,15 +87,19 @@
       "cache": false,
       "outputs": []
     },
-    "dev": {
-      "cache": false,
-      "persistent": true
-    },
     "clean": {
       "cache": false
     },
     "clean:microservices": {
       "cache": false
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "dev:frontend": {
+      "cache": false,
+      "persistent": true
     }
   }
 }

@@ -3,6 +3,7 @@ import "@shared/ui/globals.css";
 import { ThemeProvider } from "@shared/ui/providers/theme-provider";
 import type { Metadata } from "next";
 import { SITE_CONFIG } from "../config";
+import { PrefetchCrossZoneLinks } from "@/components/prefetch-cross-zone-links";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -27,7 +28,27 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-background text-foreground antialiased max-w-full overflow-x-hidden`}
       >
-        <ThemeProvider defaultTheme="dark">{children}</ThemeProvider>
+        <ThemeProvider defaultTheme="dark">
+          {children}
+          <PrefetchCrossZoneLinks
+            hrefs={[
+              // MAIN APP MICRO FRONTEND REDIRECTS
+              "/dashboard",
+              "/analytics-dashboard",
+              "/billing",
+              "/projects",
+              "/workflow",
+              "/workflow-list",
+              "/credentials",
+              "/generate-component",
+              "/save-component",
+              "/setup",
+              // AUTH APP MICRO FRONTEND REDIRECTS
+              "/sign-in",
+              "/sign-up",
+            ]}
+          />
+        </ThemeProvider>
       </body>
     </html>
   );
