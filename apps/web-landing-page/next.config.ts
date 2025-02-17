@@ -64,9 +64,10 @@ const nextConfig: NextConfig = {
         destination: `${NEXT_PUBLIC_MAIN_APP_URL}/setup`,
       },
       // AUTH MICRO FRONTEND REDIRECTS
+      // Auth static files handling
       {
-        source: "/auth-static/:path*",
-        destination: `${NEXT_PUBLIC_MAIN_AUTH_APP_URL}/auth-static/:path*`,
+        source: "/auth-static/_next/:path*",
+        destination: `${NEXT_PUBLIC_MAIN_AUTH_APP_URL}/_next/:path*`,
       },
       {
         source: "/sign-in",

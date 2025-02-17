@@ -1,7 +1,9 @@
+const { NEXT_PUBLIC_MAIN_APP_URL } = process.env;
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   /* config options here */
-  assetPrefix: "/app-static",
+  assetPrefix: `${NEXT_PUBLIC_MAIN_APP_URL}/app-static`,
   async rewrites() {
     return {
       beforeFiles: [
