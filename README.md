@@ -1,11 +1,12 @@
 # 🎨 UI-Butler 🤵
 
-# Advanced Full-Stack Monorepo Architecture with Nest.js (Microservices) & Next.js (Microfrontends)
+# Advanced Full-Stack Monorepo Architecture with Nest.js (Microservices) & Next.js (Frontend Microservices)
 
 ## 📚 Educational Repository Overview
 
 This repository serves as a **comprehensive educational resource demonstrating** a **production-ready**, full-stack
-monolithic architecture using **Nest.js microservices** and **Next.js microfrontends** within a **Turborepo** as a
+monolithic architecture using **Nest.js microservices** and **Next.js Frontend Microservices** within a **Turborepo** as
+a
 meneger. It showcases **industry best practices**, advanced architectural patterns, and modern development workflows.
 
 ### 🎯 Purpose
@@ -20,8 +21,8 @@ meneger. It showcases **industry best practices**, advanced architectural patter
 
 ```mermaid
 graph TD
-    MF1[Auth Microfrontend] <--> Gateway[API Gateway]
-    MF2[Main App Microfrontend] <--> Gateway[API Gateway]
+    MF1[Auth Frontend Microservice] <--> Gateway[API Gateway]
+    MF2[Main App Frontend Microservice] <--> Gateway[API Gateway]
     Gateway <--> auth-microservice
     Gateway <--> analytics-microservice
     Gateway <--> billing-microservice
@@ -32,8 +33,8 @@ graph TD
     Gateway <--> workflows-microservice
     auth-microservice <--> users-microservice
     workflows-microservice --> executions-microservice
-    MF3[Landing Page Microfrontend] --> MF1[Auth Microfrontend]
-    MF1[Auth Microfrontend] --> MF2[Main App Microfrontend]
+    MF3[Landing Page Frontend Microservice] --> MF1[Auth Frontend Microservice]
+    MF1[Auth Frontend Microservice] --> MF2[Main App Frontend Microservice]
 ```
 
 ## 🚀 Key Features
@@ -56,7 +57,7 @@ graph TD
 
 ### Frontend Implementation
 
-- **Microfrontends**: Next.js-based modular frontend architecture
+- **Frontend Microservices**: Next.js-based modular frontend architecture
 - **SSE**: Showcased how to handle Server-Sent Events on the frontend and backend for instantaneous streaming the AI
   responses
 - **Workflow Visualization**: React-flow implementation
@@ -140,7 +141,7 @@ graph TD
    pnpm install
    ```
 
-3. Configure environment variables for microservice and microfrontend:
+3. Configure environment variables for backend microservice and frontend microservice:
 
    ```bash
    cp .env.example .env
